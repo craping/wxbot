@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type=module>
+	import log from "./lib/log4j-wrapper.js";
+	log.info("555");
+</script>
+<script type="text/javascript">
+</script>
+</head>
+<body>
+	<a href="#" onclick="wxbot.exit()">点击退出</a>
+	<br />
+	<a href="#" onclick="wxbot.param('aaa', {a:1,b:2})">带参方法</a>
+	<br />
+	<a href="#" onclick="log.info('asdasd')">Java执行Js</a>
+</body>
+</html>

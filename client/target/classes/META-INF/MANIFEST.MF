@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Built-By: Crap
+Build-Jdk: 11.0.1
+Class-Path: lib/log4j-core-2.6.2.jar lib/log4j-api-2.6.2.jar
+Main-Class: client.Launch
+Created-By: Maven Integration for Eclipse
+
