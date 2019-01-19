@@ -26,6 +26,7 @@ public class BaseDaoImpl<T> implements BaseDao<T> {
 	@Autowired
 	private MongoUtil mongoUtil;
 
+	@SuppressWarnings("unchecked")
 	public BaseDaoImpl() {
 		ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
 		clazz = (Class<T>) parameterizedType.getActualTypeArguments()[0];
@@ -78,6 +79,7 @@ public class BaseDaoImpl<T> implements BaseDao<T> {
 		return getMongoTemplate().count(query, clazz);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public List<T> findList(Integer skip, Integer limit, Query query) {
 		query.with(new Sort(new Sort.Order(Sort.Direction.ASC, "createTime")));
