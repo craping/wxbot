@@ -17,4 +17,8 @@ public class User {
 
 	@Field
 	private UserInfo userInfo;
+
+	/** 用户tokend */
+	@Field
+	private String token;
 }
