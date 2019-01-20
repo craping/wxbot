@@ -40,5 +40,10 @@
 		<logger name="org.apache.activemq" level="off">
 			<appender-ref ref="Console" />
 		</logger>
+		
+		<logger name="org.mongodb.driver" level="off">
+			<appender-ref ref="Console" />
+		</logger>
+		
 	</loggers>
 </configuration> 
