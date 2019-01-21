@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.sun.javafx.webkit.WebConsoleListener;
 
+import client.Launch;
 import client.view.function.Wxbot;
 import javafx.concurrent.Worker.State;
 import javafx.scene.layout.AnchorPane;
@@ -22,12 +23,11 @@ public class AppView extends AnchorPane {
 	public static WebEngine webEngine = webView.getEngine();
 	
 	public AppView() {
-		
 		webEngine.getLoadWorker().stateProperty()
 		.addListener((ov, oldState, newState) -> {
 			if (newState == State.SUCCEEDED) {
 				JSObject win = (JSObject) webEngine.executeScript("window");
-				win.setMember("wxbot", new Wxbot());
+				win.setMember("wxbot", Launch.context.getBean(Wxbot.class));
 			}
 		});
 		webEngine.setOnAlert(e -> {
@@ -36,7 +36,7 @@ public class AppView extends AnchorPane {
 		webEngine.load(getClass().getClassLoader().getResource("view/index.html").toExternalForm());
 		
 		WebConsoleListener.setDefaultListener((WebView webView, String message, int lineNumber, String sourceId) -> {
-			System.out.println(message + " [" + sourceId + ":" + lineNumber + "] ");
+			logger.info(message + " [" + sourceId + ":" + lineNumber + "] ");
 		});
 //		webView.setContextMenuEnabled(false);
 		

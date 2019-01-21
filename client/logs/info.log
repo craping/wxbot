@@ -1,0 +1,153 @@
+2019-01-21 02:40:08.527 INFO  com.cherry.jeeves.Jeeves.start(Jeeves.java:22) - Jeeves starts
+2019-01-21 02:40:08.528 INFO  com.cherry.jeeves.Jeeves.start(Jeeves.java:23) - Jeeves id = jeeves
+2019-01-21 02:40:09.060 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:52) - [0] entry completed
+2019-01-21 02:40:09.267 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:56) - [1] uuid completed
+2019-01-21 02:40:09.448 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:69) - [2] qrcode completed
+2019-01-21 02:40:09.584 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:72) - [3] statReport completed
+2019-01-21 16:47:04.674 INFO  com.cherry.jeeves.Jeeves.start(Jeeves.java:23) - Jeeves starts
+2019-01-21 16:47:04.681 INFO  com.cherry.jeeves.Jeeves.start(Jeeves.java:24) - Jeeves id = jeeves
+2019-01-21 16:47:05.144 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:52) - [0] entry completed
+2019-01-21 16:47:05.345 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:56) - [1] uuid completed
+2019-01-21 16:47:05.470 INFO  com.cherry.jeeves.MessageHandlerImpl.onQR(MessageHandlerImpl.java:33) - 获取登录二维码
+2019-01-21 16:47:05.499 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:66) - [2] qrcode completed
+2019-01-21 16:47:05.599 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:69) - [3] statReport completed
+2019-01-21 16:50:50.964 INFO  com.cherry.jeeves.Jeeves.start(Jeeves.java:23) - Jeeves starts
+2019-01-21 16:50:50.966 INFO  com.cherry.jeeves.Jeeves.start(Jeeves.java:24) - Jeeves id = jeeves
+2019-01-21 16:50:51.412 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:52) - [0] entry completed
+2019-01-21 16:50:51.613 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:56) - [1] uuid completed
+2019-01-21 16:50:51.737 INFO  com.cherry.jeeves.MessageHandlerImpl.onQR(MessageHandlerImpl.java:33) - 获取登录二维码
+2019-01-21 16:50:51.759 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:66) - [2] qrcode completed
+2019-01-21 16:50:51.863 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:69) - [3] statReport completed
+2019-01-21 16:51:16.925 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:98) - [*] login status = AWAIT_SCANNING
+2019-01-21 16:51:58.610 INFO  com.cherry.jeeves.Jeeves.start(Jeeves.java:23) - Jeeves starts
+2019-01-21 16:51:58.612 INFO  com.cherry.jeeves.Jeeves.start(Jeeves.java:24) - Jeeves id = jeeves
+2019-01-21 16:51:59.075 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:52) - [0] entry completed
+2019-01-21 16:51:59.292 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:56) - [1] uuid completed
+2019-01-21 16:51:59.428 INFO  com.cherry.jeeves.MessageHandlerImpl.onQR(MessageHandlerImpl.java:33) - 获取登录二维码
+2019-01-21 16:51:59.448 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:66) - [2] qrcode completed
+2019-01-21 16:51:59.553 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:69) - [3] statReport completed
+2019-01-21 16:56:40.964 INFO  com.cherry.jeeves.Jeeves.start(Jeeves.java:23) - Jeeves starts
+2019-01-21 16:56:40.965 INFO  com.cherry.jeeves.Jeeves.start(Jeeves.java:24) - Jeeves id = jeeves
+2019-01-21 16:56:41.398 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:52) - [0] entry completed
+2019-01-21 16:56:41.604 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:56) - [1] uuid completed
+2019-01-21 16:56:41.718 INFO  com.cherry.jeeves.MessageHandlerImpl.onQR(MessageHandlerImpl.java:33) - 获取登录二维码
+2019-01-21 16:56:41.739 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:66) - [2] qrcode completed
+2019-01-21 16:56:41.842 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:69) - [3] statReport completed
+2019-01-21 16:57:06.909 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:98) - [*] login status = AWAIT_SCANNING
+2019-01-21 16:59:12.004 INFO  com.cherry.jeeves.Jeeves.start(Jeeves.java:23) - Jeeves starts
+2019-01-21 16:59:12.007 INFO  com.cherry.jeeves.Jeeves.start(Jeeves.java:24) - Jeeves id = jeeves
+2019-01-21 16:59:12.543 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:52) - [0] entry completed
+2019-01-21 16:59:12.718 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:56) - [1] uuid completed
+2019-01-21 16:59:12.846 INFO  com.cherry.jeeves.MessageHandlerImpl.onQR(MessageHandlerImpl.java:33) - 获取登录二维码
+2019-01-21 16:59:12.871 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:66) - [2] qrcode completed
+2019-01-21 16:59:12.996 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:69) - [3] statReport completed
+2019-01-21 16:59:29.089 INFO  com.cherry.jeeves.Jeeves.stop(Jeeves.java:39) - Jeeves stop
+2019-01-21 16:59:31.241 INFO  com.cherry.jeeves.Jeeves.stop(Jeeves.java:40) - Jeeves id = jeeves
+2019-01-21 16:59:35.065 INFO  com.cherry.jeeves.MessageHandlerImpl.onLogout(MessageHandlerImpl.java:60) - 用户退出
+2019-01-21 16:59:38.057 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:98) - [*] login status = AWAIT_SCANNING
+2019-01-21 16:59:38.057 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:74) - [Stop] exit bye
+2019-01-21 17:00:16.487 INFO  com.cherry.jeeves.Jeeves.stop(Jeeves.java:39) - Jeeves stop
+2019-01-21 17:00:16.487 INFO  com.cherry.jeeves.Jeeves.stop(Jeeves.java:40) - Jeeves id = jeeves
+2019-01-21 17:00:16.487 INFO  com.cherry.jeeves.MessageHandlerImpl.onLogout(MessageHandlerImpl.java:60) - 用户退出
+2019-01-21 17:01:25.087 INFO  com.cherry.jeeves.Jeeves.stop(Jeeves.java:39) - Jeeves stop
+2019-01-21 17:01:25.088 INFO  com.cherry.jeeves.Jeeves.stop(Jeeves.java:40) - Jeeves id = jeeves
+2019-01-21 17:01:25.088 INFO  com.cherry.jeeves.MessageHandlerImpl.onLogout(MessageHandlerImpl.java:60) - 用户退出
+2019-01-21 17:01:26.495 INFO  com.cherry.jeeves.Jeeves.stop(Jeeves.java:39) - Jeeves stop
+2019-01-21 17:01:26.495 INFO  com.cherry.jeeves.Jeeves.stop(Jeeves.java:40) - Jeeves id = jeeves
+2019-01-21 17:01:26.496 INFO  com.cherry.jeeves.MessageHandlerImpl.onLogout(MessageHandlerImpl.java:60) - 用户退出
+2019-01-21 17:01:26.696 INFO  com.cherry.jeeves.Jeeves.stop(Jeeves.java:39) - Jeeves stop
+2019-01-21 17:01:26.696 INFO  com.cherry.jeeves.Jeeves.stop(Jeeves.java:40) - Jeeves id = jeeves
+2019-01-21 17:01:26.696 INFO  com.cherry.jeeves.MessageHandlerImpl.onLogout(MessageHandlerImpl.java:60) - 用户退出
+2019-01-21 17:01:26.871 INFO  com.cherry.jeeves.Jeeves.stop(Jeeves.java:39) - Jeeves stop
+2019-01-21 17:01:26.871 INFO  com.cherry.jeeves.Jeeves.stop(Jeeves.java:40) - Jeeves id = jeeves
+2019-01-21 17:01:26.872 INFO  com.cherry.jeeves.MessageHandlerImpl.onLogout(MessageHandlerImpl.java:60) - 用户退出
+2019-01-21 17:01:27.047 INFO  com.cherry.jeeves.Jeeves.stop(Jeeves.java:39) - Jeeves stop
+2019-01-21 17:01:27.047 INFO  com.cherry.jeeves.Jeeves.stop(Jeeves.java:40) - Jeeves id = jeeves
+2019-01-21 17:01:27.047 INFO  com.cherry.jeeves.MessageHandlerImpl.onLogout(MessageHandlerImpl.java:60) - 用户退出
+2019-01-21 17:03:23.748 INFO  com.cherry.jeeves.Jeeves.stop(Jeeves.java:39) - Jeeves stop
+2019-01-21 17:03:23.750 INFO  com.cherry.jeeves.Jeeves.stop(Jeeves.java:40) - Jeeves id = jeeves
+2019-01-21 17:03:23.751 INFO  com.cherry.jeeves.MessageHandlerImpl.onLogout(MessageHandlerImpl.java:60) - 用户退出
+2019-01-21 17:04:26.894 INFO  com.cherry.jeeves.Jeeves.stop(Jeeves.java:39) - Jeeves stop
+2019-01-21 17:04:26.894 INFO  com.cherry.jeeves.Jeeves.stop(Jeeves.java:40) - Jeeves id = jeeves
+2019-01-21 17:04:26.895 INFO  com.cherry.jeeves.MessageHandlerImpl.onLogout(MessageHandlerImpl.java:60) - 用户退出
+2019-01-21 17:04:56.899 INFO  com.cherry.jeeves.Jeeves.stop(Jeeves.java:39) - Jeeves stop
+2019-01-21 17:04:56.954 INFO  com.cherry.jeeves.Jeeves.stop(Jeeves.java:40) - Jeeves id = jeeves
+2019-01-21 17:04:56.958 INFO  com.cherry.jeeves.MessageHandlerImpl.onLogout(MessageHandlerImpl.java:60) - 用户退出
+2019-01-21 17:05:36.703 INFO  com.cherry.jeeves.Jeeves.stop(Jeeves.java:39) - Jeeves stop
+2019-01-21 17:05:36.703 INFO  com.cherry.jeeves.Jeeves.stop(Jeeves.java:40) - Jeeves id = jeeves
+2019-01-21 17:05:36.703 INFO  com.cherry.jeeves.MessageHandlerImpl.onLogout(MessageHandlerImpl.java:60) - 用户退出
+2019-01-21 17:06:00.379 INFO  com.cherry.jeeves.Jeeves.stop(Jeeves.java:39) - Jeeves stop
+2019-01-21 17:06:01.078 INFO  com.cherry.jeeves.Jeeves.stop(Jeeves.java:40) - Jeeves id = jeeves
+2019-01-21 17:06:11.083 INFO  com.cherry.jeeves.MessageHandlerImpl.onLogout(MessageHandlerImpl.java:60) - 用户退出
+2019-01-21 17:06:35.074 INFO  com.cherry.jeeves.Jeeves.stop(Jeeves.java:39) - Jeeves stop
+2019-01-21 17:06:35.075 INFO  com.cherry.jeeves.Jeeves.stop(Jeeves.java:40) - Jeeves id = jeeves
+2019-01-21 17:06:35.075 INFO  com.cherry.jeeves.MessageHandlerImpl.onLogout(MessageHandlerImpl.java:60) - 用户退出
+2019-01-21 17:06:49.864 INFO  com.cherry.jeeves.Jeeves.stop(Jeeves.java:39) - Jeeves stop
+2019-01-21 17:06:49.864 INFO  com.cherry.jeeves.Jeeves.stop(Jeeves.java:40) - Jeeves id = jeeves
+2019-01-21 17:06:49.865 INFO  com.cherry.jeeves.MessageHandlerImpl.onLogout(MessageHandlerImpl.java:60) - 用户退出
+2019-01-21 17:08:05.047 INFO  com.cherry.jeeves.Jeeves.stop(Jeeves.java:39) - Jeeves stop
+2019-01-21 17:08:05.047 INFO  com.cherry.jeeves.Jeeves.stop(Jeeves.java:40) - Jeeves id = jeeves
+2019-01-21 17:08:05.047 INFO  com.cherry.jeeves.MessageHandlerImpl.onLogout(MessageHandlerImpl.java:60) - 用户退出
+2019-01-21 17:12:01.444 INFO  com.cherry.jeeves.Jeeves.stop(Jeeves.java:39) - Jeeves stop
+2019-01-21 17:12:01.445 INFO  com.cherry.jeeves.Jeeves.stop(Jeeves.java:40) - Jeeves id = jeeves
+2019-01-21 17:12:01.446 INFO  com.cherry.jeeves.MessageHandlerImpl.onLogout(MessageHandlerImpl.java:60) - 用户退出
+2019-01-21 17:12:48.474 INFO  com.cherry.jeeves.Jeeves.stop(Jeeves.java:39) - Jeeves stop
+2019-01-21 17:12:48.476 INFO  com.cherry.jeeves.Jeeves.stop(Jeeves.java:40) - Jeeves id = jeeves
+2019-01-21 17:12:48.477 INFO  com.cherry.jeeves.MessageHandlerImpl.onLogout(MessageHandlerImpl.java:60) - 用户退出
+2019-01-21 17:13:21.780 INFO  com.cherry.jeeves.Jeeves.stop(Jeeves.java:39) - Jeeves stop
+2019-01-21 17:13:21.783 INFO  com.cherry.jeeves.Jeeves.stop(Jeeves.java:40) - Jeeves id = jeeves
+2019-01-21 17:13:44.548 INFO  com.cherry.jeeves.MessageHandlerImpl.onLogout(MessageHandlerImpl.java:60) - 用户退出
+2019-01-21 17:16:27.450 INFO  com.cherry.jeeves.Jeeves.stop(Jeeves.java:39) - Jeeves stop
+2019-01-21 17:16:27.452 INFO  com.cherry.jeeves.Jeeves.stop(Jeeves.java:40) - Jeeves id = jeeves
+2019-01-21 17:16:35.608 INFO  com.cherry.jeeves.Jeeves.start(Jeeves.java:23) - Jeeves starts
+2019-01-21 17:16:35.608 INFO  com.cherry.jeeves.Jeeves.start(Jeeves.java:24) - Jeeves id = jeeves
+2019-01-21 17:16:36.080 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:52) - [0] entry completed
+2019-01-21 17:16:36.280 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:56) - [1] uuid completed
+2019-01-21 17:16:36.394 INFO  com.cherry.jeeves.MessageHandlerImpl.onQR(MessageHandlerImpl.java:33) - 获取登录二维码
+2019-01-21 17:16:36.456 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:66) - [2] qrcode completed
+2019-01-21 17:16:36.564 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:69) - [3] statReport completed
+2019-01-21 17:16:40.279 INFO  com.cherry.jeeves.Jeeves.stop(Jeeves.java:39) - Jeeves stop
+2019-01-21 17:16:40.279 INFO  com.cherry.jeeves.Jeeves.stop(Jeeves.java:40) - Jeeves id = jeeves
+2019-01-21 17:16:42.671 INFO  com.cherry.jeeves.Jeeves.stop(Jeeves.java:39) - Jeeves stop
+2019-01-21 17:16:42.672 INFO  com.cherry.jeeves.Jeeves.stop(Jeeves.java:40) - Jeeves id = jeeves
+2019-01-21 17:23:33.568 WARN  org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:554) - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanDefinitionStoreException: Failed to parse configuration class [client.Launch]; nested exception is java.io.FileNotFoundException: class path resource [classpath*:application.properties] cannot be opened because it does not exist
+2019-01-21 17:24:02.411 WARN  org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:554) - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanDefinitionStoreException: Failed to parse configuration class [client.Launch]; nested exception is java.io.FileNotFoundException: class path resource [classpath*:application.properties] cannot be opened because it does not exist
+2019-01-21 17:33:55.605 WARN  org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:554) - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanDefinitionStoreException: Failed to parse configuration class [client.Launch]; nested exception is java.io.FileNotFoundException: class path resource [classpath*/:application.properties] cannot be opened because it does not exist
+2019-01-21 17:34:09.573 WARN  org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:554) - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanDefinitionStoreException: Failed to parse configuration class [client.Launch]; nested exception is java.io.FileNotFoundException: class path resource [classpath*:/application.properties] cannot be opened because it does not exist
+2019-01-21 17:43:09.700 INFO  com.cherry.jeeves.Jeeves.start(Jeeves.java:23) - Jeeves starts
+2019-01-21 17:43:09.702 INFO  com.cherry.jeeves.Jeeves.start(Jeeves.java:24) - Jeeves id = jeeves
+2019-01-21 17:43:10.186 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:52) - [0] entry completed
+2019-01-21 17:43:10.389 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:56) - [1] uuid completed
+2019-01-21 17:43:10.510 INFO  com.cherry.jeeves.MessageHandlerImpl.onQR(MessageHandlerImpl.java:33) - 获取登录二维码
+2019-01-21 17:43:10.532 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:66) - [2] qrcode completed
+2019-01-21 17:43:10.634 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:69) - [3] statReport completed
+2019-01-21 17:43:14.775 INFO  com.cherry.jeeves.Jeeves.stop(Jeeves.java:39) - Jeeves stop
+2019-01-21 17:43:14.776 INFO  com.cherry.jeeves.Jeeves.stop(Jeeves.java:40) - Jeeves id = jeeves
+2019-01-21 17:50:21.625 WARN  org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:554) - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'wxbot': Unsatisfied dependency expressed through field 'jeeves'; nested exception is org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'com.cherry.jeeves.Jeeves' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {@org.springframework.beans.factory.annotation.Autowired(required=true)}
+2019-01-21 17:51:25.374 WARN  org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:554) - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'wxbot': Unsatisfied dependency expressed through field 'jeeves'; nested exception is org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'com.cherry.jeeves.Jeeves' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {@org.springframework.beans.factory.annotation.Autowired(required=true)}
+2019-01-21 17:52:06.641 WARN  org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:554) - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'wxbot': Unsatisfied dependency expressed through field 'jeeves'; nested exception is org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'com.cherry.jeeves.Jeeves' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {@org.springframework.beans.factory.annotation.Autowired(required=true)}
+2019-01-21 17:52:58.642 INFO  com.cherry.jeeves.Jeeves.start(Jeeves.java:23) - Jeeves starts
+2019-01-21 17:52:58.645 INFO  com.cherry.jeeves.Jeeves.start(Jeeves.java:24) - Jeeves id = jeeves
+2019-01-21 17:52:59.091 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:52) - [0] entry completed
+2019-01-21 17:52:59.287 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:56) - [1] uuid completed
+2019-01-21 17:52:59.410 INFO  com.cherry.jeeves.MessageHandlerImpl.onQR(MessageHandlerImpl.java:33) - 获取登录二维码
+2019-01-21 17:52:59.430 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:66) - [2] qrcode completed
+2019-01-21 17:52:59.527 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:69) - [3] statReport completed
+2019-01-21 17:53:01.680 INFO  com.cherry.jeeves.Jeeves.stop(Jeeves.java:39) - Jeeves stop
+2019-01-21 17:53:01.681 INFO  com.cherry.jeeves.Jeeves.stop(Jeeves.java:40) - Jeeves id = jeeves
+2019-01-21 18:08:14.803 INFO  com.cherry.jeeves.Jeeves.start(Jeeves.java:22) - Jeeves starts
+2019-01-21 18:08:14.806 INFO  com.cherry.jeeves.Jeeves.start(Jeeves.java:23) - Jeeves id = jeeves
+2019-01-21 18:08:15.269 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:52) - [0] entry completed
+2019-01-21 18:08:15.480 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:56) - [1] uuid completed
+2019-01-21 18:08:15.603 INFO  client.view.function.MessageHandlerImpl.onQR(MessageHandlerImpl.java:33) - 获取登录二维码
+2019-01-21 18:08:15.630 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:66) - [2] qrcode completed
+2019-01-21 18:08:15.743 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:69) - [3] statReport completed
+2019-01-21 18:08:22.520 INFO  com.cherry.jeeves.Jeeves.stop(Jeeves.java:29) - Jeeves stop
+2019-01-21 18:08:22.520 INFO  com.cherry.jeeves.Jeeves.stop(Jeeves.java:30) - Jeeves id = jeeves
+2019-01-21 18:13:23.643 INFO  com.cherry.jeeves.Jeeves.start(Jeeves.java:22) - Jeeves starts
+2019-01-21 18:13:23.645 INFO  com.cherry.jeeves.Jeeves.start(Jeeves.java:23) - Jeeves id = jeeves
+2019-01-21 18:13:24.125 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:50) - [0] entry completed
+2019-01-21 18:13:24.332 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:54) - [1] uuid completed
+2019-01-21 18:13:24.458 INFO  client.view.function.MessageHandlerImpl.onQR(MessageHandlerImpl.java:35) - 获取登录二维码
+2019-01-21 18:13:24.480 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:58) - [2] qrcode completed
+2019-01-21 18:13:24.592 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:61) - [3] statReport completed
