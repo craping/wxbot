@@ -195,6 +195,20 @@ var Web = {
 					}
 					if (defaultParam.error)
 						defaultParam.error(XMLHttpRequest, textStatus, errorThrown, defaultParam.param);
+				},
+				fail: function (data) {
+					if (param.safe) {
+						console.log(cipher);
+						data = decodeURIComponent(cipher.decrypt(data).replace(/\+/g, '%20'));
+					}
+					data = JSON.parse(data);
+					if (!data.result) {
+						if (defaultParam.success)
+							defaultParam.success(data.data ? data.data : data, defaultParam.param);
+					} else {
+						if (defaultParam.fail)
+							defaultParam.fail(data, defaultParam.param);
+					}
 				}
 			});
 		}

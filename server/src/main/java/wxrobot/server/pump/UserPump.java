@@ -2,6 +2,7 @@ package wxrobot.server.pump;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.crap.jrain.core.ErrcodeException;
 import org.crap.jrain.core.asm.annotation.Pipe;
 import org.crap.jrain.core.asm.annotation.Pump;
 import org.crap.jrain.core.asm.handler.DataPump;
@@ -33,7 +34,7 @@ public class UserPump extends DataPump<JSONObject, FullHttpRequest, Channel> {
 	@BarScreen(
 		desc="用户注册"
 	)
-	public Errcode register (JSONObject params) {
+	public Errcode register (JSONObject params) throws ErrcodeException {
 		User user = new User();
 		UserInfo info = new UserInfo();
 		info.setUserName("admin");

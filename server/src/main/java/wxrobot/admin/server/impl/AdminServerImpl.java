@@ -1,6 +1,8 @@
 package wxrobot.admin.server.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import wxrobot.admin.server.AdminServer;
@@ -23,7 +25,9 @@ public class AdminServerImpl implements AdminServer {
 
 	@Override
 	public AdminUser getUser(String userName, String userPwd) {
-		// TODO Auto-generated method stub
-		return null;
+		Query query = new Query();
+		query.addCriteria(Criteria.where("userName").is(userName));
+		query.addCriteria(Criteria.where("userPwd").is(userPwd));
+		return adminDao.findOne(query);
 	}
 }
