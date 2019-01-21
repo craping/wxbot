@@ -4,6 +4,10 @@ import java.lang.reflect.ParameterizedType;
 import java.util.List;
 import java.util.Map;
 
+import org.crap.jrain.core.bean.result.criteria.Data;
+import org.crap.jrain.core.bean.result.criteria.DataResult;
+import org.crap.jrain.core.bean.result.criteria.Page;
+import org.crap.jrain.core.error.support.Errors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -15,7 +19,6 @@ import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
 
 import wxrobot.dao.BaseDao;
-import wxrobot.dao.page.Page;
 import wxrobot.dao.utils.MongoUtil;
 
 public class BaseDaoImpl<T> implements BaseDao<T> {
@@ -36,7 +39,7 @@ public class BaseDaoImpl<T> implements BaseDao<T> {
 	public T insert(T entity) {
 		return mongoTemplate.insert(entity);
 	}
-	
+
 	@Override
 	public void batchInsert(List<T> l) {
 		mongoTemplate.insert(l, clazz);
@@ -88,7 +91,7 @@ public class BaseDaoImpl<T> implements BaseDao<T> {
 	}
 
 	@Override
-	public Integer update(Query query, Update update) throws Exception {
+	public Integer update(Query query, Update update) {
 		UpdateResult result = getMongoTemplate().updateFirst(query, update, clazz);
 		return (int) result.getModifiedCount();
 	}
@@ -115,16 +118,21 @@ public class BaseDaoImpl<T> implements BaseDao<T> {
 	}
 
 	@Override
-	public Page<T> findPage(Page<T> page, Query query) {
+	public DataResult findPage(Page page, Query query) {
+		DataResult dataResult = new DataResult(Errors.EXCEPTION_UNKNOW);
 		query = query == null ? new Query(Criteria.where("_id").exists(true)) : query;
 		long count = this.findCount(query);
-		page.setTotalCount((int) count);
-		int currentPage = page.getCurrentPage();
-		int pageSize = page.getPageSize();
+		page.setTotalnum((int) count);
+		
+		int currentPage = page.getPage();
+		int pageSize = page.getNum();
+		
 		query.skip((currentPage - 1) * pageSize).limit(pageSize);
 		List<T> rows = this.find(query);
-		page.build(rows);
-		return page;
+		
+		dataResult.setErrcode(Errors.OK);
+		dataResult.setData(new Data(rows, page));
+		return dataResult;
 	}
 
 	@Override

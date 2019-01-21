@@ -20,6 +20,7 @@ import org.springframework.stereotype.Component;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.FullHttpRequest;
 import net.sf.json.JSONObject;
+import wxrobot.admin.server.AdminServer;
 import wxrobot.biz.server.UserServer;
 import wxrobot.dao.entity.User;
 import wxrobot.dao.entity.field.UserInfo;
@@ -33,12 +34,15 @@ public class AdminUserPump extends DataPump<JSONObject, FullHttpRequest, Channel
 	@Autowired
 	private UserServer userServer;
 	
+	@Autowired
+	private AdminServer adminServer;
+	
 	@Pipe("list")
 	@BarScreen(
 		desc="用户列表"
 	)
 	public Errcode list (JSONObject params) {
-		return null;
+		return adminServer.getUserList(params);
 	}
 	
 	@Pipe("addUser")
@@ -71,7 +75,8 @@ public class AdminUserPump extends DataPump<JSONObject, FullHttpRequest, Channel
 		}
 	)
 	public Errcode extension (JSONObject params) {
-		return new DataResult(Errors.OK);
+		int ret = adminServer.extension(params);
+		return new DataResult(Errors.OK, new Data(ret));
 	}
 	
 	@Pipe("lock")
@@ -79,10 +84,11 @@ public class AdminUserPump extends DataPump<JSONObject, FullHttpRequest, Channel
 		desc="锁定用户",
 		params= {
 			@Parameter(value="id",  desc="用户id"),
-			@Parameter(value="locked",  desc="服务状态")
+			@Parameter(value="server_state",  desc="服务状态")
 		}
 	)
 	public Errcode lock (JSONObject params) {
-		return new DataResult(Errors.OK);
+		int ret = adminServer.lockUser(params);
+		return new DataResult(Errors.OK, new Data(ret));
 	}
 }

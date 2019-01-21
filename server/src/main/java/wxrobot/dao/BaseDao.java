@@ -2,10 +2,10 @@ package wxrobot.dao;
 
 import java.util.List;
 
+import org.crap.jrain.core.bean.result.criteria.DataResult;
+import org.crap.jrain.core.bean.result.criteria.Page;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
-
-import wxrobot.dao.page.Page;
 
 public interface BaseDao<T> {
 
@@ -40,10 +40,10 @@ public interface BaseDao<T> {
 	List<T> findList(Integer skip, Integer limit, Query query);
 
 	/** 按条件分页查询 */
-	Page<T> findPage(Page<T> page, Query query);
+	DataResult findPage(Page page, Query query);
 
 	/** 查找并更新第一个 */
-	Integer update(Query query, Update update) throws Exception;
+	Integer update(Query query, Update update);
 
 	/** 按照主键更新第一个 */
 	Integer update(T entity) throws Exception;
