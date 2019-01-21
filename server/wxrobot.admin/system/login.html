@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>后台登录</title>
+    <link rel="stylesheet" type="text/css" href="../resources/libs/bootstrap/css/bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="../resources/css/manage/reset.css"/>
+    <link rel="stylesheet" type="text/css" href="../resources/css/manage/main.css"/>
+    <script type="text/javascript" src="../resources/libs/jquery/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="../resources/libs/plug/crypto.min.js"></script>
+	<script type="text/javascript" src="../resources/libs/bootstrap/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="../resources/libs/jquery/jquery.form.js"></script>
+	<script type="text/javascript" src="../resources/js/common/common_.js"></script>
+	<script type="text/javascript" src="../resources/js/system/sys_login.js"></script>
+</head>
+<body>
+<!--头部开始-->
+<div class="header">
+    <div class="header-content clearfix">
+        <div class="logo left"></div>
+    </div>
+</div>
+<!--头部结束-->
+<!--主体内容开始-->
+<div class="container">
+    <div class="supplier-container">
+        <div class="supplier-content">
+            
+            <form action="">
+                <div class="supplier-login-box clearfix">
+                    <h2><i>用户登录</i></h2>
+                    <div class="supplier-box1">
+                        <div class="supplier-input clearfix">
+                            <span class="supplier-span1"></span>
+                            <input type="text" id="user_name" localstring="signIn_uid" placeholder="请输入登录帐号" value="admin">
+                        </div>
+                        <div class="supplier-help"></div>
+                    </div>
+                    <div class="supplier-box1">
+                        <div class="supplier-input clearfix">
+                            <span class="supplier-span2"></span>
+                            <input type="password" name="password" id="user_pwd" localstring="signIn_password" placeholder="请输入登录密码" value="123456">
+                        </div>
+                        <div class="supplier-help"></div>
+                    </div>
+                    <button type="button" class="supplier-login-btn" id="sys_login">登<em></em>录</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

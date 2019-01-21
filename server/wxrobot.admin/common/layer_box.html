@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>查看图片</title>
+    <link rel="stylesheet" type="text/css" href="../resources/libs/bootstrap/css/bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="../resources/css/manage/reset.css"/>
+    <link rel="stylesheet" type="text/css" href="../resources/css/manage/main.css"/>
+    <script type="text/javascript" src="../resources/libs/jquery/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="../resources/js/common/jquery.SuperSlide.2.1.1.js"></script>
+    <script type="text/javascript" src="../resources/js/common/common_.js"></script>
+    <script type="text/javascript" src="../resources/js/common/show_pic.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            jQuery(".layer-box").slide({mainCell:".bd ul",effect:"left",trigger:"click"});
+        })
+    </script>
+</head>
+<body>
+    <div class="layer-box">
+        <div class="bd">
+            <ul id="pic_image">
+            </ul>
+        </div>
+        <a class="prev" href="javascript:void(0)"></a>
+        <a class="next" href="javascript:void(0)"></a>
+    </div>
+</body>
+</html>
