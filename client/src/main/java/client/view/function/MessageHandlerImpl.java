@@ -1,8 +1,6 @@
 package client.view.function;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -21,6 +19,9 @@ import com.cherry.jeeves.service.MessageHandler;
 import com.cherry.jeeves.service.WechatHttpService;
 import com.cherry.jeeves.utils.MessageUtils;
 
+import client.view.QRView;
+import javafx.application.Platform;
+
 @Component
 public class MessageHandlerImpl implements MessageHandler {
 
@@ -33,16 +34,14 @@ public class MessageHandlerImpl implements MessageHandler {
 	@Override
 	public void onQR(byte[] qrData) {
 		logger.info("获取登录二维码");
-		try {
-			OutputStream out = new FileOutputStream("QR.jpg");
-			out.write(qrData);
-			out.flush();
-			out.close();
-			//Runtime runtime = Runtime.getRuntime();
-			//runtime.exec("cmd /c start QR.jpg");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		Platform.runLater(() -> {
+			try {
+				new QRView().open(qrData);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		});
+		logger.info("获取登录二维码");
 	}
 	
 	@Override
