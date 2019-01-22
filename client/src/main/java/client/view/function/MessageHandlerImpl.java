@@ -38,8 +38,8 @@ public class MessageHandlerImpl implements MessageHandler {
 			out.write(qrData);
 			out.flush();
 			out.close();
-			Runtime runtime = Runtime.getRuntime();
-			runtime.exec("cmd /c start QR.jpg");
+			//Runtime runtime = Runtime.getRuntime();
+			//runtime.exec("cmd /c start QR.jpg");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
