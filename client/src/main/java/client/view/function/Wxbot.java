@@ -5,8 +5,6 @@ import org.springframework.stereotype.Component;
 
 import com.cherry.jeeves.Jeeves;
 
-import javafx.application.Platform;
-
 @Component
 public class Wxbot {
 	
@@ -28,10 +26,9 @@ public class Wxbot {
     	
 	}
 	
-	public void exit() {
+	public void stop() {
 		jeeves.stop();
 		if(wxbotThread != null)
 			wxbotThread.interrupt();
-		Platform.exit();
     }
 }
