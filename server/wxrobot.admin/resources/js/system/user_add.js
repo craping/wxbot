@@ -6,7 +6,7 @@ $(function(){
 		$(this).parent().parent().prev().attr("value",$(this).attr("value"));
 	})
 	
-	// 保存商品
+	// 用户新增
 	$("#ok_btn").click(function(){
 		var user_name = $("#user_name").val();
 		if(isNullOrEmpty(user_name)){
@@ -29,7 +29,6 @@ $(function(){
 			return false;
 		}
 
-		showLayer();
 		Web.Method.ajax("admin_user/addUser", {
 			data: {
 				user_name: user_name,
@@ -37,16 +36,14 @@ $(function(){
 				server_end: server_end
 			},
 			success: function(data){
-				hideLayer();
-				console.log(data);
-				if(data.result==0){
-					alert("添加成功");
-					window.location.href="user_list.html";
-				}
+				alert("添加成功");
+				window.location.href="user_list.html";
 			},
 			error: function(data){
-				hideLayer();
 				alert("添加失败！");
+			},
+			fail: function(data){
+				alert(data.data.info);
 			}
 		});
 	});
@@ -56,16 +53,3 @@ $(function(){
 		window.location.href="user_list.html";
 	});
 });
-
-function showLayer(){
-	layer.msg('提交中....',{icon:16,time:false});
-	$("#hiddensd").show();
-}
-function hideLayer(){
-	$("#layui-layer1").hide();
-	layer.closeAll('loading');
-	$("#hiddensd").hide();
-	setTimeout(function(){
-	    layer.closeAll('loading');
-	}, 1000);
-}

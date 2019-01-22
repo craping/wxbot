@@ -1,6 +1,8 @@
 package wxrobot.server.pump.admin;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -54,26 +56,19 @@ public class AdminPump extends DataPump<JSONObject, FullHttpRequest, Channel> {
 		if (user == null) //判断用户是否存在
 			return new Result(CustomErrors.USER_ACC_ERR);
 		
+		// 删除正在登录中的管理员
 		String flag = "admin_user_";
-		String old_token = user.getToken(); 	// 获取上一次用户token
-		String new_token = StringUtil.uuid(); 	// 生成新的用户token
-	
-		Map<Object, Object> userMap = redisTemplate.opsForHash().entries(flag + old_token);
-		if (userMap == null || userMap.isEmpty()) {
-			userMap.put("uid", user.getId().toString());
-			userMap.put("user_name", user.getUserName());
-		} else {
-			redisTemplate.delete(flag+old_token);
-		}
+		Set<String> keys = redisTemplate.keys(flag + "*");
+		redisTemplate.delete(keys); 
 		
-		// 保存用户token 持久化
-		user.setToken(new_token);
-		int result = 1;//userServer.updateAdminUser(user.getId(), new_token);
-		if (result == 1) {
-			redisTemplate.opsForHash().putAll(flag+new_token, userMap);
-		} else {
-			return new Result(CustomErrors.USER_LOGIN_ERR_EX);
-		}
+		Map<Object, Object> userMap = new HashMap<Object, Object>();
+		userMap.put("uid", user.getId());
+		userMap.put("userName", user.getUserName());
+		
+		String token = StringUtil.uuid(); 	// 生成新的用户token
+		redisTemplate.opsForHash().putAll(flag+token, userMap);
+		
+		user.setToken(token);
 		user.setUserPwd(null);
 		return new DataResult(Errors.OK, new Data(user));
 	}
@@ -95,10 +90,9 @@ public class AdminPump extends DataPump<JSONObject, FullHttpRequest, Channel> {
 	public Errcode userInfo (JSONObject params) {
 		String key = "admin_user_" + params.optString("token");
 		Map<Object, Object> userMap = redisTemplate.opsForHash().entries(key);
-		userMap.remove("user_pwd");
 		if (userMap.isEmpty() || userMap == null)
 			return new DataResult(CustomErrors.USER_NOT_LOGIN);
-		
+	
 		return new DataResult(Errors.OK, new Data(userMap));
 	}
 }

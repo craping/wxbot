@@ -23,16 +23,17 @@ $(function () {
 				}
 			}
 
+			var idx = parseInt(item.indexKey) + 1;
 			var date = new Date();
-			date.setTime(item.server_end);
+			date.setTime(item.userInfo.serverEnd);
 			date = date.format("yyyy/MM/dd HH:mm");
 			var page = $("#system-page").data("lishe.pageSet").options.pageSet.page - 1;
 			var html = "<tr>";
 			//html+="<td width='3%'><input type='checkbox' accept='" + item.checkStatus + "' class='middle' value='"+item.id+"'></label></td>" ;
-			html += "<td >" + item.id + "</td>";
-			html += "<td>" + item.user_name + "</td>";
+			html += "<td >" + idx + "</td>";
+			html += "<td>" + item.userInfo.userName + "</td>";
 			html += "<td>" + date + "</td>";
-			if (item.locked == 0) {
+			if (item.userInfo.serverState) {
 				html += "<td>有效</td>";
 			} else {
 				html += "<td>无效</td>";
@@ -41,10 +42,10 @@ $(function () {
 			html += "<td><div class='system-table-list'>";
 			html += "<ul>";
 			html += "<li value='" + item.id + "'><a target='_blank' href='http://www.wufk.net/product.html?id=" + item.id + "'  class='operate-icon23' target='iframe' title='详情'></a></li>";
-			if (item.locked == 0) {
-				html += "<li><a target='iframe' href='javascript:;' onclick='oprStatus(" + item.id + ", 1)' target='iframe' class='operate-icon26' title='置为无效'></a></li>";
+			if (item.userInfo.serverState) {
+				html += "<li><a target='iframe' href='javascript:;' onclick='oprStatus(&quot;" + item.id + "&quot;, false)' target='iframe' class='operate-icon26' title='置为无效'></a></li>";
 			} else {
-				html += "<li><a target='iframe' href='javascript:;' onclick='oprStatus(" + item.id + ", 0)' target='iframe' class='operate-icon25' title='置为有效'></a></li>";
+				html += "<li><a target='iframe' href='javascript:;' onclick='oprStatus(&quot;" + item.id + "&quot;, true)' target='iframe' class='operate-icon25' title='置为有效'></a></li>";
 			}
 			html += "<li><a target='iframe' href='javascript:;' target='iframe' class='operate-icon5' title='编辑服务时间' rel='"+item.id+"'></a></li>";
 			html += "</ul>";
@@ -125,18 +126,16 @@ $(function () {
 
 function oprStatus(id, status) {
 	Web.Method.ajax("admin_user/lock", {
-		data: { id: id, locked: status },
+		data: { id: id, server_state: status },
 		success: function (data) {
-			if (data.errcode == "0") {
-				$.confAlert({
-					size: "sm",
-					context: "操作成功",
-					noButton: false,
-					onOk: function () {
-						queryList(1);
-					}
-				})
-			}
+			$.confAlert({
+				size: "sm",
+				context: "操作成功",
+				noButton: false,
+				onOk: function () {
+					queryList(1);
+				}
+			})	
 		},
 		fail: function (data) {
 			$.confAlert({

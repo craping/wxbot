@@ -24,5 +24,7 @@ public class UserInfo {
 	private String phoneNum;
 	/** 手机认证状态 */
 	private Boolean phoneState=false;
+	/** 帐号来源0管理员添加，1注册*/
+	private int comefrom=0;
 	private String regIp;
 }
