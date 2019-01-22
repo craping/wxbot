@@ -33,7 +33,7 @@ public class AppView extends AnchorPane {
 		webEngine.setOnAlert(e -> {
 			System.out.println("Alert Event  -  Message:  " + e.getData());
 		});
-		webEngine.load(getClass().getClassLoader().getResource("view/index.html").toExternalForm());
+		webEngine.load(getClass().getClassLoader().getResource("view/main.html").toExternalForm());
 		
 		WebConsoleListener.setDefaultListener((WebView webView, String message, int lineNumber, String sourceId) -> {
 			logger.info(message + " [" + sourceId + ":" + lineNumber + "] ");

@@ -6,10 +6,11 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
-import client.view.AppView;
+import client.view.WxbotView;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 
 @Configuration
@@ -22,16 +23,27 @@ public class Launch extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		try {
-			Scene scene = new Scene(new AppView(), 900, 600);
+	        Scene scene = new Scene(new WxbotView(), 900, 600);
+//			Scene scene = new Scene(new AppView(), 900, 600);
 			scene.getStylesheets().add(getClass().getClassLoader().getResource("application.css").toExternalForm());
 			primaryStage.setIconified(false);
 			primaryStage.setScene(scene);
 			primaryStage.setTitle("微信机器人");
 			primaryStage.show();
 			primaryStage.setOnCloseRequest(e -> {
-				System.exit(0);
+				new Thread(() -> {
+					System.out.println("wxbotView is disposed = " + WxbotView.browser.dispose(true));
+				}).start();
+			});
+			scene.setOnKeyPressed(e -> {
+				if(e.getCode() == KeyCode.F12) {
+					WxbotView.debug();
+				}
 			});
 			Platform.setImplicitExit(false);
+			String url = getClass().getClassLoader().getResource("view/main.html").toExternalForm();
+			System.out.println(url);
+			
 		} catch(Exception e) {
 			e.printStackTrace();
 		}

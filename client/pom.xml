@@ -8,12 +8,19 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>client</artifactId>
-	
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<log4j.version>2.6.2</log4j.version>
 		<jackson.version>2.9.7</jackson.version>
 	</properties>
+
+	<repositories>
+		<repository>
+			<id>com.teamdev</id>
+			<url>http://maven.teamdev.com/repository/products</url>
+		</repository>
+	</repositories>
 	
 	<dependencies>
 		<dependency>
@@ -38,8 +45,14 @@
 			<version>${log4j.version}</version>
 		</dependency>
 		<!-- log end -->
+		<dependency>
+			<groupId>com.teamdev.jxbrowser</groupId>
+			<artifactId>jxbrowser-cross-platform</artifactId>
+			<type>pom</type>
+			<version>6.22.2</version>
+		</dependency>
 	</dependencies>
-	
+
 	<build>
 		<!-- <finalName>TicketScript</finalName> -->
 		<plugins>

@@ -151,3 +151,19 @@
 2019-01-21 18:13:24.458 INFO  client.view.function.MessageHandlerImpl.onQR(MessageHandlerImpl.java:35) - 获取登录二维码
 2019-01-21 18:13:24.480 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:58) - [2] qrcode completed
 2019-01-21 18:13:24.592 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:61) - [3] statReport completed
+2019-01-21 19:42:39.675 INFO  com.cherry.jeeves.Jeeves.start(Jeeves.java:22) - Jeeves starts
+2019-01-21 19:42:39.678 INFO  com.cherry.jeeves.Jeeves.start(Jeeves.java:23) - Jeeves id = jeeves
+2019-01-21 19:42:40.134 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:50) - [0] entry completed
+2019-01-21 19:42:40.334 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:54) - [1] uuid completed
+2019-01-21 19:42:40.456 INFO  client.view.function.MessageHandlerImpl.onQR(MessageHandlerImpl.java:35) - 获取登录二维码
+2019-01-21 19:42:40.508 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:58) - [2] qrcode completed
+2019-01-21 19:42:40.618 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:61) - [3] statReport completed
+2019-01-21 19:42:57.793 INFO  com.cherry.jeeves.Jeeves.stop(Jeeves.java:29) - Jeeves stop
+2019-01-21 19:42:57.794 INFO  com.cherry.jeeves.Jeeves.stop(Jeeves.java:30) - Jeeves id = jeeves
+2019-01-22 18:49:54.315 INFO  com.cherry.jeeves.Jeeves.start(Jeeves.java:22) - Jeeves starts
+2019-01-22 18:49:54.318 INFO  com.cherry.jeeves.Jeeves.start(Jeeves.java:23) - Jeeves id = jeeves
+2019-01-22 18:49:54.750 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:50) - [0] entry completed
+2019-01-22 18:49:54.952 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:54) - [1] uuid completed
+2019-01-22 18:49:55.066 INFO  client.view.function.MessageHandlerImpl.onQR(MessageHandlerImpl.java:35) - 获取登录二维码
+2019-01-22 18:49:55.122 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:58) - [2] qrcode completed
+2019-01-22 18:49:55.271 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:61) - [3] statReport completed
