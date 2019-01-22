@@ -11,6 +11,17 @@ import lombok.Data;
  */
 @Data
 public class UserInfo {
+	
+	public UserInfo() {}
+	
+	public UserInfo(String userName, String userPwd, String phoneNum) {
+		this.userName = userName;
+		this.userPwd = userPwd;
+		this.phoneNum = phoneNum;
+		this.serverState = true;
+		this.phoneState = true;
+		this.comefrom = 1;
+	}
 
 	private String userName;
 	private String userPwd;

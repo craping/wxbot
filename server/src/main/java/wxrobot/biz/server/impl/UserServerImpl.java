@@ -20,14 +20,6 @@ public class UserServerImpl implements UserServer {
 	@Autowired
 	private UserDao userDao;
 
-	public UserDao getUserDao() {
-		return userDao;
-	}
-
-	public void setUserDao(UserDao userDao) {
-		this.userDao = userDao;
-	}
-
 	@Override
 	public User insert(User user) throws ErrcodeException {
 		String userName = user.getUserInfo().getUserName();
@@ -49,6 +41,12 @@ public class UserServerImpl implements UserServer {
 		Query query = new BasicQuery(dbObject.toJson(), fieldsObject.toJson());
 
 		return userDao.findOne(query);
+	}
+
+	@Override
+	public User getUser(String userName, String userPwd) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

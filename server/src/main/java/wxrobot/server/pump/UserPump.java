@@ -1,5 +1,9 @@
 package wxrobot.server.pump;
 
+import java.net.InetSocketAddress;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.crap.jrain.core.ErrcodeException;
@@ -7,11 +11,15 @@ import org.crap.jrain.core.asm.annotation.Pipe;
 import org.crap.jrain.core.asm.annotation.Pump;
 import org.crap.jrain.core.asm.handler.DataPump;
 import org.crap.jrain.core.bean.result.Errcode;
+import org.crap.jrain.core.bean.result.Result;
 import org.crap.jrain.core.bean.result.criteria.Data;
 import org.crap.jrain.core.bean.result.criteria.DataResult;
 import org.crap.jrain.core.error.support.Errors;
+import org.crap.jrain.core.util.StringUtil;
 import org.crap.jrain.core.validate.annotation.BarScreen;
+import org.crap.jrain.core.validate.annotation.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 import io.netty.channel.Channel;
@@ -20,6 +28,9 @@ import net.sf.json.JSONObject;
 import wxrobot.biz.server.UserServer;
 import wxrobot.dao.entity.User;
 import wxrobot.dao.entity.field.UserInfo;
+import wxrobot.server.enums.CustomErrors;
+import wxrobot.server.param.MobileParam;
+import wxrobot.server.param.UserNameParam;
 
 @Pump("user")
 @Component
@@ -29,27 +40,79 @@ public class UserPump extends DataPump<JSONObject, FullHttpRequest, Channel> {
 	
 	@Autowired
 	private UserServer userServer;
+	@Autowired
+	private StringRedisTemplate redisTemplate;
 	
 	@Pipe("register")
 	@BarScreen(
-		desc="用户注册"
+		desc="用户注册",
+		params= {
+			@Parameter(value="user_name",  desc="登录名", type=UserNameParam.class),
+			@Parameter(value="user_pwd",  desc="密码"),
+			@Parameter(value="confirm_pwd",  desc="确认密码"),
+			@Parameter(value="phone_num",  desc="手机号码", type=MobileParam.class),
+			@Parameter(value="phone_code",  desc="手机验证码")
+		}
 	)
 	public Errcode register (JSONObject params) throws ErrcodeException {
+		String userPwd = params.getString("user_pwd");
+		if (!userPwd.equals(params.getString("confirm_pwd")))
+			throw new ErrcodeException(CustomErrors.USER_CHANGE_PWD_ERR);
+		
 		User user = new User();
-		UserInfo info = new UserInfo();
-		info.setUserName("admin");
-		info.setUserPwd("111111");
-		user.setUserInfo(info);
+		UserInfo userInfo = new UserInfo(params.getString("user_name"), userPwd, params.getString("phone_num"));
+		user.setUserInfo(userInfo);
 		userServer.insert(user);
 		return new DataResult(Errors.OK);
 	}
 	
-	@Pipe("info")
+	@Pipe("login")
 	@BarScreen(
-		desc="用户注册"
+		desc="用户登录",
+		//security=true,
+		params= {
+			@Parameter(value="login_name",  desc="登录名"),
+			@Parameter(value="login_pwd",  desc="密码"),
+		}
 	)
-	public Errcode info (JSONObject params) {
-		User user = userServer.find("5c43609a76785a40bca4aa5e");
+	public Errcode login (JSONObject params) {
+		String userName = params.getString("login_name");
+		String userPwd = params.getString("login_pwd");
+		User user = userServer.getUser(userName, userPwd);
+		if (user == null) //判断用户是否存在
+			return new Result(CustomErrors.USER_ACC_ERR);
+		
+		redisTemplate.delete("user_" + user.getToken()); //  删除当前缓存
+		
+		// 生成新的用户token 并持久化
+		String new_token = StringUtil.uuid(); 	
+		user.setToken(new_token);
+		int result = 1;//userServer.updateUser(user);
+		if (result == 1) {
+			// 插入登录日志 
+			InetSocketAddress insocket = (InetSocketAddress) getResponse().remoteAddress();
+			System.out.println("IP:"+insocket.getAddress().getHostAddress());
+			//userServer.insertLoginLog(user.getId(), insocket.getAddress().getHostAddress());
+			/*// 缓存用户配置信息
+			List<LotteryUserSetting> settings = settingServer.getSettings(user.getId());
+			settings.forEach((setting) -> 
+				userMap.put("setting" + setting.getId() + "_" + Coder.encryptMD5(setting.getName()), JSONObject.fromObject(setting).toString())
+			);*/
+			Map<Object, Object> userMap = new HashMap<Object, Object>();
+			userMap.put("id", user.getId().toString());
+			/*
+			 * userMap.put("locked", user.getLocked().toString()); userMap.put("userName",
+			 * user.getUserName()); userMap.put("regTime",
+			 * String.valueOf(user.getRegTime().getTime())); userMap.put("serverStart",
+			 * String.valueOf(user.getServerStart().getTime())); userMap.put("serverEnd",
+			 * String.valueOf(user.getServerEnd().getTime()));
+			 */
+			userMap.put("token", new_token);
+			redisTemplate.opsForHash().putAll("user_" + new_token, userMap);
+		} else {
+			return new Result(CustomErrors.USER_LOGIN_ERR_EX);
+		}
+		//user.setUserPwd(null);
 		return new DataResult(Errors.OK, new Data(user));
 	}
 }
