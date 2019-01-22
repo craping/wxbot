@@ -6,11 +6,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.cherry.jeeves.Jeeves;
+
+import client.Launch;
 import client.alert.AlertUtil;
 import client.utils.HttpUtil;
 import client.utils.Tools;
 import client.view.QRView;
 import client.view.WxbotView;
+import client.view.function.Wxbot;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -56,6 +62,9 @@ public class LoginController implements Initializable {
 		params.put("login_name", userName);
 		params.put("login_pwd", userPwd);
 		result = HttpUtil.sendRequest(LOGIN_URL, params);
+		
+		Wxbot bot = Launch.context.getBean(Wxbot.class);
+		bot.start();
 		
 		LOGIN_STAGE.close();
 		QRView qrView = new QRView();

@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
@@ -14,6 +15,10 @@ public class QRView extends AnchorPane {
 	public static Stage QR_STAGE;
 	
 	public void open() throws IOException {
+		
+		ImageView qr_img = new ImageView();
+		//qr_img.setImage(new Image());
+		
 		QR_STAGE = new Stage();
 		Scene scene = new Scene(FXMLLoader.load(getClass().getClassLoader().getResource("qr.fxml")));
 		scene.getStylesheets().add(getClass().getClassLoader().getResource("application.css").toExternalForm());
@@ -25,4 +30,5 @@ public class QRView extends AnchorPane {
 		});
 		QR_STAGE.show();
 	}
+	
 }
