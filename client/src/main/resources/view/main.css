@@ -5,3 +5,10 @@
     border-radius: 4px;
     overflow: hidden;
 }
+.content{
+    height: 400px;
+}
+.content > .ivu-row,
+.content > .ivu-row > .ivu-col {
+    height: inherit;
+}
