@@ -167,3 +167,10 @@
 2019-01-22 18:49:55.066 INFO  client.view.function.MessageHandlerImpl.onQR(MessageHandlerImpl.java:35) - 获取登录二维码
 2019-01-22 18:49:55.122 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:58) - [2] qrcode completed
 2019-01-22 18:49:55.271 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:61) - [3] statReport completed
+2019-01-22 19:56:36.044 INFO  com.cherry.jeeves.Jeeves.start(Jeeves.java:22) - Jeeves starts
+2019-01-22 19:56:36.045 INFO  com.cherry.jeeves.Jeeves.start(Jeeves.java:23) - Jeeves id = jeeves
+2019-01-22 19:56:36.459 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:50) - [0] entry completed
+2019-01-22 19:56:36.658 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:54) - [1] uuid completed
+2019-01-22 19:56:36.774 INFO  client.view.function.MessageHandlerImpl.onQR(MessageHandlerImpl.java:35) - 获取登录二维码
+2019-01-22 19:56:36.825 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:58) - [2] qrcode completed
+2019-01-22 19:56:36.940 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:61) - [3] statReport completed

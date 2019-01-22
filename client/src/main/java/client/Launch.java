@@ -6,11 +6,11 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
-import client.view.WxbotView;
+import client.controller.LoginController;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 
 @Configuration
@@ -23,27 +23,17 @@ public class Launch extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		try {
-	        Scene scene = new Scene(new WxbotView(), 900, 600);
-//			Scene scene = new Scene(new AppView(), 900, 600);
+			Scene scene = new Scene(FXMLLoader.load(getClass().getClassLoader().getResource("Login.fxml")));
 			scene.getStylesheets().add(getClass().getClassLoader().getResource("application.css").toExternalForm());
 			primaryStage.setIconified(false);
 			primaryStage.setScene(scene);
 			primaryStage.setTitle("微信机器人");
-			primaryStage.show();
 			primaryStage.setOnCloseRequest(e -> {
-				new Thread(() -> {
-					System.out.println("wxbotView is disposed = " + WxbotView.browser.dispose(true));
-				}).start();
+				System.exit(0);
 			});
-			scene.setOnKeyPressed(e -> {
-				if(e.getCode() == KeyCode.F12) {
-					WxbotView.debug();
-				}
-			});
+			primaryStage.show();
 			Platform.setImplicitExit(false);
-			String url = getClass().getClassLoader().getResource("view/main.html").toExternalForm();
-			System.out.println(url);
-			
+			LoginController.LOGIN_STAGE = primaryStage;
 		} catch(Exception e) {
 			e.printStackTrace();
 		}

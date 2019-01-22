@@ -18,10 +18,12 @@ import com.teamdev.jxbrowser.chromium.javafx.BrowserView;
 
 import client.Launch;
 import client.view.function.Wxbot;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.web.WebView;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 @SuppressWarnings("restriction")
@@ -29,9 +31,21 @@ public class WxbotView extends AnchorPane  {
 	
 	private static final Logger logger = LogManager.getLogger(WxbotView.class);
 	
-	public static Browser browser;
+	private Browser browser;
 	
-    public static BrowserView browserView;
+	private BrowserView browserView;
+	
+	private Stage viewStage;
+    
+	private Browser debugBrowser;
+	
+	private BrowserView debugBrowserview;
+	
+	private Stage debugStage;
+	
+	private boolean debug;
+	
+	private EventHandler<Event> close;
     
 	static {
 	    try {
@@ -50,11 +64,20 @@ public class WxbotView extends AnchorPane  {
 	        e1.printStackTrace();
 	    }
 	    BrowserPreferences.setChromiumSwitches("--disable-web-security", "--user-data-dir", "--allow-file-access-from-files", "--remote-debugging-port=9222");
-	    browser = new Browser();
-	    browserView = new BrowserView(browser);
 	}
 	
 	public WxbotView() {
+		this(false);
+	}
+	
+	public WxbotView(boolean debug) {
+		this.debug = debug;
+	}
+	
+	public void load() {
+		getChildren().remove(browserView);
+		browser = new Browser();
+	    browserView = new BrowserView(browser);
 		browser.addLoadListener(new LoadAdapter() {
             @Override
             public void onFinishLoadingFrame(FinishLoadingEvent event) {
@@ -67,42 +90,72 @@ public class WxbotView extends AnchorPane  {
         });
         browser.addDisposeListener(event -> {
         	System.out.println("disposed event = "+event);
-        	System.exit(0);
         });
         browser.loadURL(getClass().getClassLoader().getResource("view/main.html").toExternalForm());
 		
 		WebConsoleListener.setDefaultListener((WebView webView, String message, int lineNumber, String sourceId) -> {
 			logger.info(message + " [" + sourceId + ":" + lineNumber + "] ");
 		});
-//		webView.setContextMenuEnabled(false);
 		
 		setTopAnchor(browserView, 0.0);
 		setRightAnchor(browserView, 0.0);
 		setBottomAnchor(browserView, 0.0);
 		setLeftAnchor(browserView, 0.0);
 		getChildren().add(browserView);
-	}
-	
-	public static JSValue executeScript(String javaScript) {
-		return browser.executeJavaScriptAndReturnValue(javaScript);
-	}
-	
-	public static void debug() {
-		Browser debugBrowser = new Browser();
-        BrowserView debugBrowserview = new BrowserView(debugBrowser);
-        debugBrowser.loadURL(browser.getRemoteDebuggingURL());
-        
-		Scene scene = new Scene(debugBrowserview);
-		Stage stage = new Stage();
-		stage.setTitle("调试");
-		stage.setResizable(true);
-		stage.setIconified(false);
-		stage.setScene(scene);
-		stage.show();
-		stage.setOnCloseRequest(e -> {
+		
+		viewStage = new Stage();
+		Scene scene = new Scene(this);
+		viewStage.setTitle("调试");
+		viewStage.setResizable(true);
+		viewStage.setIconified(false);
+		viewStage.setScene(scene);
+		viewStage.setOnCloseRequest(e -> {
 			new Thread(() -> {
-				System.out.println("debugView is disposed = " + debugBrowser.dispose(true));
+				System.out.println("wxbotView is disposed = " + browser.dispose(true));
 			}).start();
+			if(close !=null)
+				close.handle(e);
 		});
+		scene.setOnKeyPressed(e -> {
+			if(e.getCode() == KeyCode.F12) {
+				debug();
+			}
+		});
+		viewStage.show();
+	}
+	
+	public void debug() {
+		if(this.debug) {
+			debugBrowser = new Browser();
+		    debugBrowserview = new BrowserView(debugBrowser);
+	        debugBrowser.loadURL(browser.getRemoteDebuggingURL());
+	        debugStage = new Stage();
+			Scene scene = new Scene(debugBrowserview);
+			debugStage.setTitle("调试");
+			debugStage.setResizable(true);
+			debugStage.setIconified(false);
+			debugStage.setScene(scene);
+			debugStage.show();
+			debugStage.setOnCloseRequest(e -> {
+				new Thread(() -> {
+					System.out.println("debugView is disposed = " + debugBrowser.dispose(true));
+				}).start();
+			});
+		}
+	}
+	
+	public void close() {
+		if(viewStage != null)
+			viewStage.close();
+		if(viewStage != null)
+			viewStage.close();
+	}
+	
+	public void onClose(EventHandler<Event> event) {
+		close = event;
+	}
+	
+	public JSValue executeScript(String javaScript) {
+		return browser.executeJavaScriptAndReturnValue(javaScript);
 	}
 }
