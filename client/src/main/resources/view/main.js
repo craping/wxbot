@@ -6,6 +6,7 @@ $script.ready(["vue", "iview", "jquery", "common"], function () {
     new Vue({
         el: '#app',
         data: {
+            skin:"light",
             data1: [
                 {
                     title: 'parent 1',
