@@ -45,8 +45,7 @@ public class UserServerImpl implements UserServer {
 
 	@Override
 	public User getUser(String userName, String userPwd) {
-		// TODO Auto-generated method stub
-		return null;
+		return userDao.findOne(new Query().addCriteria(Criteria.where("userInfo.userName").is(userName).and("userInfo.userPwd").is(userPwd)));
 	}
 
 }
