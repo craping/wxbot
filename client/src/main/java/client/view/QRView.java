@@ -32,6 +32,7 @@ public class QRView extends AnchorPane {
 		QR_STAGE.setIconified(false);
 		QR_STAGE.setScene(scene);
 		QR_STAGE.setTitle("微信登录二维码");
+		QR_STAGE.setResizable(false);
 		QR_STAGE.setOnCloseRequest(e -> {
 			QR_STAGE.close();
 			System.exit(0);

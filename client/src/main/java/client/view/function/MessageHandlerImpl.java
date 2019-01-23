@@ -41,7 +41,6 @@ public class MessageHandlerImpl implements MessageHandler {
 				e.printStackTrace();
 			}
 		});
-		logger.info("获取登录二维码");
 	}
 	
 	@Override
