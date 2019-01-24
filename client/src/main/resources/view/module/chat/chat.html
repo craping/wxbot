@@ -1,3 +1,10 @@
-<card :title="Chat.title" dis-hover="true">
-    
+<card :title="Chat.title" style="height: inherit" dis-hover="true" class="p-0">
+    <div>
+
+    </div>
+    <i-form>
+        <Form-Item>
+            <i-Input type="textarea" :autosize="{minRows: 3,maxRows: 3}"></Input>
+        </Form-Item>
+    </i-form>
 </card>

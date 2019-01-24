@@ -9,9 +9,13 @@
     overflow: hidden;
 }
 .content{
-    height: 400px;
+    height: 450px;
 }
 .content > .ivu-row,
 .content > .ivu-row > .ivu-col {
     height: inherit;
+}
+
+.ivu-card.p-0 .ivu-card-body{
+    padding: 0px;
 }
