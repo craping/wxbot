@@ -18,12 +18,13 @@ import com.cherry.jeeves.service.CacheService;
 import com.cherry.jeeves.service.MessageHandler;
 import com.cherry.jeeves.service.WechatHttpService;
 import com.cherry.jeeves.utils.MessageUtils;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import client.controller.LoginController;
 import client.view.QRView;
 import client.view.WxbotView;
 import javafx.application.Platform;
-import net.sf.json.JSONObject;
 import netscape.javascript.JSObject;
 
 @Component
@@ -34,6 +35,9 @@ public class MessageHandlerImpl implements MessageHandler {
 	private WechatHttpService wechatHttpService;
 	@Autowired
 	private CacheService cacheService;
+	
+	private ObjectMapper jasonMapper = new ObjectMapper();
+	
 	private QRView qrView;
 
 	@Override
@@ -70,7 +74,7 @@ public class MessageHandlerImpl implements MessageHandler {
 		logger.info("确认登录");
 		Platform.runLater(() -> {
 			qrView.close();
-			WxbotView wxbotView = new WxbotView(true);
+			WxbotView wxbotView = WxbotView.getInstance();
 			wxbotView.onClose(e -> {
 				LoginController.LOGIN_STAGE.show();
 			});
@@ -85,21 +89,16 @@ public class MessageHandlerImpl implements MessageHandler {
 		logger.info("用ID：" + member.getUserName());
 		logger.info("用户名：" + member.getNickName());
 		
-		logger.info("individuals：" );
-		Set<Contact> i = cacheService.getIndividuals();
-		for (Contact str : i) {  
-			  System.out.println(JSONObject.fromObject(str));  
-		}  
-		logger.info("mediaPlatforms：");
-		Set<Contact> m = cacheService.getMediaPlatforms();
-		for (Contact str : m) {  
-			  System.out.println(JSONObject.fromObject(str));  
-		}  
-		logger.info("chatRooms：");
-		Set<Contact> c = cacheService.getChatRooms();
-		for (Contact str : c) {  
-		      System.out.println(JSONObject.fromObject(str));  
-		}  
+		try {
+			logger.info("individuals：" );
+			System.out.println(jasonMapper.writeValueAsString(cacheService.getIndividuals()));
+			logger.info("mediaPlatforms：");
+			System.out.println(jasonMapper.writeValueAsString(cacheService.getMediaPlatforms()));
+			logger.info("chatRooms：");
+			System.out.println(jasonMapper.writeValueAsString(cacheService.getChatRooms()));
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
