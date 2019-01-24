@@ -6,13 +6,14 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.controller.LoginController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.controller.LoginController">
    <children>
-      <Button fx:id="loginBtn" layoutX="193.0" layoutY="236.0" mnemonicParsing="false" onAction="#login" text=" 登 录 " />
-      <Button fx:id="registerBtn" layoutX="300.0" layoutY="236.0" mnemonicParsing="false" text=" 注 册 " onAction="#register"/>
-      <Label layoutX="121.0" layoutY="114.0" text=" 用 户 名 " />
-      <Label layoutX="120.0" layoutY="184.0" text=" 密      码 " />
-      <TextField fx:id="loginNameText" layoutX="193.0" layoutY="110.0" />
-      <PasswordField fx:id="loginPwdText" layoutX="193.0" layoutY="180.0" />
+   	  <TextField fx:id="loginNameText" layoutX="134.0" layoutY="60.0" prefHeight="23.0" prefWidth="150.0" />
+   	  <PasswordField fx:id="loginPwdText" layoutX="134.0" layoutY="113.0" prefHeight="23.0" prefWidth="150.0" />
+      <Button fx:id="loginBtn" layoutX="117.0" layoutY="169.0" mnemonicParsing="false" onAction="#login" text=" 登 录 " />
+      <Button fx:id="registerBtn" layoutX="200.0" layoutY="169.0" mnemonicParsing="false" onAction="#register" text=" 注 册 " />
+      <Label layoutX="73.0" layoutY="64.0" text=" 用 户 名 " />
+      <Label layoutX="73.0" layoutY="117.0" text=" 密      码 " />
+      <Label layoutX="71.0" layoutY="246.0" text="Copyright©2018深圳xx科技有限公司 版权所有" />
    </children>
 </AnchorPane>

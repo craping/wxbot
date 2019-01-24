@@ -9,6 +9,13 @@ import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
+
+/**
+ * 注册窗口
+ * 
+ * @author wr
+ *
+ */
 public class RegisterView extends AnchorPane {
 
 	public Stage REGISTER_STAGE;
@@ -23,7 +30,7 @@ public class RegisterView extends AnchorPane {
 
 		Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("Register.fxml"));
 		Scene scene = new Scene(root);
-		//scene.getStylesheets().add(getClass().getClassLoader().getResource("application.css").toExternalForm());
+		scene.getStylesheets().add(getClass().getClassLoader().getResource("application.css").toExternalForm());
 		REGISTER_STAGE.setIconified(false);
 		REGISTER_STAGE.setScene(scene);
 		REGISTER_STAGE.setTitle("用户注册");

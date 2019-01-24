@@ -13,7 +13,6 @@ import client.alert.AlertUtil;
 import client.errors.Errors;
 import client.utils.HttpUtil;
 import client.utils.Tools;
-import client.view.QRView;
 import client.view.RegisterView;
 import client.view.WxbotView;
 import client.view.function.Wxbot;
@@ -37,12 +36,13 @@ public class LoginController implements Initializable {
 	private PasswordField loginPwdText;
 	@FXML
 	private Button registerBtn;
+	private Wxbot wxbot;
 	
 	private Map<String, Object> result = new HashMap<String, Object>();
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-
+		wxbot = Launch.context.getBean(Wxbot.class);
 	}
 
 	public void login(ActionEvent event) throws IOException {
@@ -72,9 +72,8 @@ public class LoginController implements Initializable {
 			return;
 		}
 		
-		Wxbot bot = Launch.context.getBean(Wxbot.class);
-		bot.start();
-		
+		// 开启微信机器人
+		wxbot.start();
 	}
 	
 	public void register() {

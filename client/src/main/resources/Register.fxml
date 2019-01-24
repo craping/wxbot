@@ -6,17 +6,19 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="250.0" prefWidth="367.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="250.0" prefWidth="367.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.controller.RegisterController">
    <children>
-   	  <TextField fx:id="phoneNumTxt" focusTraversable="true" layoutX="120.0" layoutY="37.0" prefHeight="23.0" prefWidth="116.0" />
-      <PasswordField fx:id="pwdTxt" layoutX="120.0" layoutY="81.0" prefHeight="23.0" prefWidth="116.0" />
-      <PasswordField fx:id="confirmPwdTxt" layoutX="120.0" layoutY="122.0" prefHeight="23.0" prefWidth="116.0" />
-      <Label layoutX="50.0" layoutY="41.0" text="手机号码" />
-      <Label layoutX="50.0" layoutY="85.0" text="登录密码" />
-      <Label layoutX="50.0" layoutY="126.0" text="确认密码" />
+   	  <TextField fx:id="phoneNumTxt" focusTraversable="true" layoutX="120.0" layoutY="37.0" prefHeight="23.0" prefWidth="130.0" />
+      <PasswordField fx:id="pwdTxt" layoutX="120.0" layoutY="113.0" prefHeight="23.0" prefWidth="130.0" />
+      <PasswordField fx:id="confirmPwdTxt" layoutX="120.0" layoutY="154.0" prefHeight="23.0" prefWidth="130.0" />
+      <Label layoutX="40.0" layoutY="41.0" text="手 机 号 码" />
+      <Label layoutX="40.0" layoutY="117.0" text="登 录 密 码" />
+      <Label layoutX="41.0" layoutY="158.0" text="确 认 密 码" />
       
-      <Button fx:id="okBtn" layoutX="88.0" layoutY="171.0" mnemonicParsing="false" text="确认注册" />
-      <Button fx:id="cancelBtn" layoutX="174.0" layoutY="171.0" mnemonicParsing="false" text="  取  消  " />
-      <Button fx:id="sendCodeBtn" layoutX="258.0" layoutY="37.0" mnemonicParsing="false" text="发送验证码" />
+      <Button fx:id="okBtn" layoutX="100.0" layoutY="203.0" mnemonicParsing="false" onAction="#register" text="确认注册" />
+      <Button fx:id="cancelBtn" layoutX="188.0" layoutY="203.0" mnemonicParsing="false" onAction="#cancel" text="  取  消  " />
+      <Button fx:id="sendCodeBtn" layoutX="258.0" layoutY="37.0" mnemonicParsing="false" onAction="#sendCode" text="发送验证码" />
+      <Label layoutX="41.0" layoutY="78.0" text="验   证   码" />
+      <TextField fx:id="codeTxt" focusTraversable="true" layoutX="120.0" layoutY="74.0" prefHeight="23.0" prefWidth="130.0" />
    </children>
 </AnchorPane>

@@ -29,49 +29,57 @@ public class MessageHandlerImpl implements MessageHandler {
 	@Autowired
 	private WechatHttpService wechatHttpService;
 	@Autowired
-    private CacheService cacheService;
-	
+	private CacheService cacheService;
+	private QRView qrView;
+
 	@Override
 	public void onQR(byte[] qrData) {
 		logger.info("获取登录二维码");
 		Platform.runLater(() -> {
 			try {
-				new QRView().open(qrData);
+				if (qrView == null) {
+					qrView = new QRView();
+				}
+				qrView.open(qrData);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		});
 	}
-	
+
 	@Override
 	public void onScanning(String headImgBase64) {
 		logger.info("用户已扫码");
-		logger.info("头像："+headImgBase64);
+		logger.info("头像：" + headImgBase64);
 	}
 
 	@Override
 	public void onExpired() {
 		logger.info("二维码过期");
+		Platform.runLater(() -> {
+			qrView.expired();
+		});
 	}
-	
+
 	@Override
 	public void onConfirmation() {
 		logger.info("确认登录");
 	}
+
 	@Override
 	public void onLogin(Member member) {
 		logger.info("用户登录");
-		logger.info("用ID："+member.getUserName());
-		logger.info("用户名："+member.getNickName());
+		logger.info("用ID：" + member.getUserName());
+		logger.info("用户名：" + member.getNickName());
 	}
 
 	@Override
 	public void onLogout(Member member) {
 		logger.info("用户退出");
-		logger.info("用ID："+member.getUserName());
-		logger.info("用户名："+member.getNickName());
+		logger.info("用ID：" + member.getUserName());
+		logger.info("用户名：" + member.getNickName());
 	}
-	
+
 	@Override
 	public void onReceivingChatRoomTextMessage(Message message) {
 		logger.info("群聊文本消息");
@@ -135,10 +143,10 @@ public class MessageHandlerImpl implements MessageHandler {
 		logger.info("from: " + message.getFromUserName());
 		logger.info("to: " + message.getToUserName());
 		logger.info("content:" + message.getContent());
-		
-		if(message.getFromUserName().equals(cacheService.getOwner().getUserName()))
+
+		if (message.getFromUserName().equals(cacheService.getOwner().getUserName()))
 			return;
-		//将原文回复给对方
+		// 将原文回复给对方
 		try {
 			wechatHttpService.sendText(message.getFromUserName(), message.getContent());
 		} catch (IOException e) {
@@ -151,10 +159,10 @@ public class MessageHandlerImpl implements MessageHandler {
 		logger.info("私聊图片消息");
 		logger.info("thumbImageUrl:" + thumbImageUrl);
 		logger.info("fullImageUrl:" + fullImageUrl);
-		
-		if(message.getFromUserName().equals(cacheService.getOwner().getUserName()))
+
+		if (message.getFromUserName().equals(cacheService.getOwner().getUserName()))
 			return;
-		//将原文回复给对方
+		// 将原文回复给对方
 		try {
 			wechatHttpService.forwardMsg(message.getFromUserName(), message);
 		} catch (IOException e) {
@@ -166,10 +174,10 @@ public class MessageHandlerImpl implements MessageHandler {
 	public void onReceivingPrivateEmoticonMessage(Message message, String emoticonUrl) {
 		logger.info("私聊表情消息");
 		logger.info("emoticonUrl:" + emoticonUrl);
-		
-		if(message.getFromUserName().equals(cacheService.getOwner().getUserName()))
+
+		if (message.getFromUserName().equals(cacheService.getOwner().getUserName()))
 			return;
-		//将原文回复给对方
+		// 将原文回复给对方
 		try {
 			wechatHttpService.forwardMsg(message.getFromUserName(), message);
 		} catch (IOException e) {
@@ -181,10 +189,10 @@ public class MessageHandlerImpl implements MessageHandler {
 	public void onReceivingPrivateVoiceMessage(Message message, String voiceUrl) {
 		logger.info("私聊语音消息");
 		logger.info("voiceUrl:" + voiceUrl);
-		
-		if(message.getFromUserName().equals(cacheService.getOwner().getUserName()))
+
+		if (message.getFromUserName().equals(cacheService.getOwner().getUserName()))
 			return;
-		//将原文回复给对方
+		// 将原文回复给对方
 		try {
 			wechatHttpService.forwardMsg(message.getFromUserName(), message);
 		} catch (IOException e) {
@@ -196,10 +204,10 @@ public class MessageHandlerImpl implements MessageHandler {
 	public void onReceivingPrivateVideoMessage(Message message, String thumbImageUrl, String videoUrl) {
 		logger.info("私聊视频消息");
 		logger.info("videoUrl:" + videoUrl);
-		
-		if(message.getFromUserName().equals(cacheService.getOwner().getUserName()))
+
+		if (message.getFromUserName().equals(cacheService.getOwner().getUserName()))
 			return;
-		//将原文回复给对方
+		// 将原文回复给对方
 		try {
 			wechatHttpService.forwardMsg(message.getFromUserName(), message);
 		} catch (IOException e) {
@@ -211,10 +219,10 @@ public class MessageHandlerImpl implements MessageHandler {
 	public void onReceivingPrivateMediaMessage(Message message, String mediaUrl) {
 		logger.info("私聊多媒体消息");
 		logger.info("mediaUrl:" + mediaUrl);
-		
-		if(message.getFromUserName().equals(cacheService.getOwner().getUserName()))
+
+		if (message.getFromUserName().equals(cacheService.getOwner().getUserName()))
 			return;
-		//将原文回复给对方
+		// 将原文回复给对方
 		try {
 			wechatHttpService.forwardMsg(message.getFromUserName(), message);
 		} catch (IOException e) {
@@ -241,7 +249,8 @@ public class MessageHandlerImpl implements MessageHandler {
 	}
 
 	@Override
-	public void onChatRoomMembersChanged(Contact chatRoom, Set<ChatRoomMember> membersJoined, Set<ChatRoomMember> membersLeft) {
+	public void onChatRoomMembersChanged(Contact chatRoom, Set<ChatRoomMember> membersJoined,
+			Set<ChatRoomMember> membersLeft) {
 		logger.info("群成员变动消息");
 		logger.info("群ID:" + chatRoom.getUserName());
 		if (membersJoined != null && membersJoined.size() > 0) {

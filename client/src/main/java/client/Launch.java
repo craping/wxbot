@@ -24,7 +24,7 @@ public class Launch extends Application {
 	public void start(Stage primaryStage) {
 		try {
 			Scene scene = new Scene(FXMLLoader.load(getClass().getClassLoader().getResource("Login.fxml")));
-			//scene.getStylesheets().add(getClass().getClassLoader().getResource("application.css").toExternalForm());
+			scene.getStylesheets().add(getClass().getClassLoader().getResource("application.css").toExternalForm());
 			primaryStage.setIconified(false);
 			primaryStage.setScene(scene);
 			primaryStage.setTitle("微信机器人");
