@@ -40,6 +40,10 @@ public class QRView extends AnchorPane {
 		// 获取机器人实例
 		wxbot = Launch.context.getBean(Wxbot.class);
 	}
+	
+	public void close() {
+		QR_STAGE.hide();
+	}
 
 	public void open(byte[] qrData) throws IOException {
 		if (QR_STAGE.isShowing()) {

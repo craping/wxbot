@@ -1,6 +1,7 @@
 package wxrobot.server.pump;
 
 import java.net.InetSocketAddress;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -69,7 +70,6 @@ public class UserPump extends DataPump<JSONObject, FullHttpRequest, Channel> {
 	@Pipe("login")
 	@BarScreen(
 		desc="用户登录",
-		//security=true,
 		params= {
 			@Parameter(value="login_name",  desc="登录名"),
 			@Parameter(value="login_pwd",  desc="密码"),
@@ -87,32 +87,21 @@ public class UserPump extends DataPump<JSONObject, FullHttpRequest, Channel> {
 		// 生成新的用户token 并持久化
 		String new_token = StringUtil.uuid(); 	
 		user.setToken(new_token);
-		int result = 1;//userServer.updateUser(user);
-		if (result == 1) {
-			// 插入登录日志 
-			InetSocketAddress insocket = (InetSocketAddress) getResponse().remoteAddress();
-			System.out.println("IP:"+insocket.getAddress().getHostAddress());
-			//userServer.insertLoginLog(user.getId(), insocket.getAddress().getHostAddress());
-			/*// 缓存用户配置信息
-			List<LotteryUserSetting> settings = settingServer.getSettings(user.getId());
-			settings.forEach((setting) -> 
-				userMap.put("setting" + setting.getId() + "_" + Coder.encryptMD5(setting.getName()), JSONObject.fromObject(setting).toString())
-			);*/
-			Map<Object, Object> userMap = new HashMap<Object, Object>();
-			userMap.put("id", user.getId().toString());
-			/*
-			 * userMap.put("locked", user.getLocked().toString()); userMap.put("userName",
-			 * user.getUserName()); userMap.put("regTime",
-			 * String.valueOf(user.getRegTime().getTime())); userMap.put("serverStart",
-			 * String.valueOf(user.getServerStart().getTime())); userMap.put("serverEnd",
-			 * String.valueOf(user.getServerEnd().getTime()));
-			 */
-			userMap.put("token", new_token);
-			redisTemplate.opsForHash().putAll("user_" + new_token, userMap);
-		} else {
-			return new Result(CustomErrors.USER_LOGIN_ERR_EX);
-		}
-		//user.setUserPwd(null);
+		if(userServer.updateToken(user) != 1)
+			return new Result(CustomErrors.USER_LOGIN_UPDATE_TOKEN_EX);
+		
+		// 插入登录日志 
+		InetSocketAddress insocket = (InetSocketAddress) getResponse().remoteAddress();
+		System.out.println("IP:"+insocket.getAddress().getHostAddress());
+		
+		user.getUserInfo().setUserPwd(null);
+		Map<Object, Object> userMap = new HashMap<Object, Object>();
+		userMap.put("uid", user.getId());
+		userMap.put("userInfo", JSONObject.fromObject(user.getUserInfo()));
+		userMap.put("token", new_token);
+		userMap.put("loginTime", String.valueOf(new Date().getTime()));
+		redisTemplate.opsForHash().putAll("user_" + new_token, userMap);
+		
 		return new DataResult(Errors.OK, new Data(user));
 	}
 }

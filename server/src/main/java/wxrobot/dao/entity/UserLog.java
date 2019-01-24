@@ -1,28 +1,33 @@
 package wxrobot.dao.entity;
 
+import java.util.Date;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import lombok.Data;
-import wxrobot.dao.entity.field.UserInfo;
 
 /**
- * 用户
+ * 用户操作日志
  * 
  * @author wr
  *
  */
 @Data
-@Document(collection = "robot_user")
-public class User {
+@Document(collection = "robot_user_log")
+public class UserLog {
 
 	@Id
 	@Field(value = "_id")
-	private String id;
+	public String id;
 	@Field
-	private UserInfo userInfo;
-	/** 用户token */
+	public String uid;
 	@Field
-	private String token;
+	public Date createTime = new Date();
+	@Field
+	public int type;
+	@Field
+	public String msg;
+
 }

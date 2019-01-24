@@ -6,6 +6,12 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import lombok.Data;
 
+/**
+ * 管理员
+ * 
+ * @author
+ *
+ */
 @Data
 @Document(collection = "robot_admin")
 public class AdminUser {

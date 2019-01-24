@@ -19,8 +19,12 @@ import com.cherry.jeeves.service.MessageHandler;
 import com.cherry.jeeves.service.WechatHttpService;
 import com.cherry.jeeves.utils.MessageUtils;
 
+import client.controller.LoginController;
 import client.view.QRView;
+import client.view.WxbotView;
 import javafx.application.Platform;
+import net.sf.json.JSONObject;
+import netscape.javascript.JSObject;
 
 @Component
 public class MessageHandlerImpl implements MessageHandler {
@@ -64,6 +68,15 @@ public class MessageHandlerImpl implements MessageHandler {
 	@Override
 	public void onConfirmation() {
 		logger.info("确认登录");
+		Platform.runLater(() -> {
+			qrView.close();
+			WxbotView wxbotView = new WxbotView(true);
+			wxbotView.onClose(e -> {
+				LoginController.LOGIN_STAGE.show();
+			});
+			wxbotView.load();
+		});
+		
 	}
 
 	@Override
@@ -71,6 +84,22 @@ public class MessageHandlerImpl implements MessageHandler {
 		logger.info("用户登录");
 		logger.info("用ID：" + member.getUserName());
 		logger.info("用户名：" + member.getNickName());
+		
+		logger.info("individuals：" );
+		Set<Contact> i = cacheService.getIndividuals();
+		for (Contact str : i) {  
+			  System.out.println(JSONObject.fromObject(str));  
+		}  
+		logger.info("mediaPlatforms：");
+		Set<Contact> m = cacheService.getMediaPlatforms();
+		for (Contact str : m) {  
+			  System.out.println(JSONObject.fromObject(str));  
+		}  
+		logger.info("chatRooms：");
+		Set<Contact> c = cacheService.getChatRooms();
+		for (Contact str : c) {  
+		      System.out.println(JSONObject.fromObject(str));  
+		}  
 	}
 
 	@Override

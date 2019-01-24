@@ -48,4 +48,13 @@ public class UserServerImpl implements UserServer {
 		return userDao.findOne(new Query().addCriteria(Criteria.where("userInfo.userName").is(userName).and("userInfo.userPwd").is(userPwd)));
 	}
 
+	@Override
+	public int updateToken(User user) {
+		try {
+			return (int)userDao.update(user);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
 }

@@ -85,14 +85,4 @@ public class LoginController implements Initializable {
 			}
 		});
 	}
-
-	public void testWxbotView() {
-		LOGIN_STAGE.hide();
-		WxbotView wxbotView = new WxbotView(true);
-		wxbotView.onClose(e -> {
-			LOGIN_STAGE.show();
-		});
-		wxbotView.load();
-	}
-
 }
