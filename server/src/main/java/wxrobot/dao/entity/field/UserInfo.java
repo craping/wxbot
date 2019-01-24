@@ -1,8 +1,7 @@
 package wxrobot.dao.entity.field;
 
-import java.util.Date;
-
 import lombok.Data;
+import wxrobot.server.utils.Tools;
 
 /**
  * 用户基本信息
@@ -27,9 +26,9 @@ public class UserInfo {
 	private String userPwd;
 	/** 昵称 */
 	private String nickName;
-	private Date regTime = new Date();
+	private String regTime = Tools.getTimestamp();
 	/** 软件到期时间 */
-	private Date serverEnd=new Date();
+	private String serverEnd=Tools.getTimestamp();
 	/** 软件服务状态 */
 	private Boolean serverState;
 	private String phoneNum;

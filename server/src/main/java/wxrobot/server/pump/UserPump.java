@@ -32,6 +32,7 @@ import wxrobot.dao.entity.field.UserInfo;
 import wxrobot.server.enums.CustomErrors;
 import wxrobot.server.param.MobileParam;
 import wxrobot.server.param.UserNameParam;
+import wxrobot.server.utils.Tools;
 
 @Pump("user")
 @Component
@@ -82,6 +83,9 @@ public class UserPump extends DataPump<JSONObject, FullHttpRequest, Channel> {
 		if (user == null) //判断用户是否存在
 			return new Result(CustomErrors.USER_ACC_ERR);
 		
+		if (Tools.isStrEmpty(user.getToken())) {
+			
+		}
 		redisTemplate.delete("user_" + user.getToken()); //  删除当前缓存
 		
 		// 生成新的用户token 并持久化
@@ -93,13 +97,15 @@ public class UserPump extends DataPump<JSONObject, FullHttpRequest, Channel> {
 		// 插入登录日志 
 		InetSocketAddress insocket = (InetSocketAddress) getResponse().remoteAddress();
 		System.out.println("IP:"+insocket.getAddress().getHostAddress());
+		String ip = insocket.getAddress().getHostAddress();
 		
 		user.getUserInfo().setUserPwd(null);
 		Map<Object, Object> userMap = new HashMap<Object, Object>();
 		userMap.put("uid", user.getId());
-		userMap.put("userInfo", JSONObject.fromObject(user.getUserInfo()));
+		userMap.put("userInfo", JSONObject.fromObject(user.getUserInfo()).toString());
 		userMap.put("token", new_token);
 		userMap.put("loginTime", String.valueOf(new Date().getTime()));
+		userMap.put("loginIP", ip);
 		redisTemplate.opsForHash().putAll("user_" + new_token, userMap);
 		
 		return new DataResult(Errors.OK, new Data(user));

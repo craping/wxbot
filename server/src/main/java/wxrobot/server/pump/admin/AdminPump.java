@@ -1,5 +1,6 @@
 package wxrobot.server.pump.admin;
 
+import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -28,6 +29,7 @@ import net.sf.json.JSONObject;
 import wxrobot.admin.server.AdminServer;
 import wxrobot.dao.entity.AdminUser;
 import wxrobot.server.enums.CustomErrors;
+import wxrobot.server.utils.Tools;
 
 @Pump("admin")
 @Component
@@ -61,11 +63,13 @@ public class AdminPump extends DataPump<JSONObject, FullHttpRequest, Channel> {
 		Set<String> keys = redisTemplate.keys(flag + "*");
 		redisTemplate.delete(keys); 
 		
+		String token = StringUtil.uuid(); 	// 生成新的用户token
 		Map<Object, Object> userMap = new HashMap<Object, Object>();
 		userMap.put("uid", user.getId());
 		userMap.put("userName", user.getUserName());
-		
-		String token = StringUtil.uuid(); 	// 生成新的用户token
+		userMap.put("token", token);
+		userMap.put("loginTime", Tools.getTimestamp());
+		userMap.put("loginIP", ((InetSocketAddress) getResponse().remoteAddress()).getAddress().getHostAddress());
 		redisTemplate.opsForHash().putAll(flag+token, userMap);
 		
 		user.setToken(token);

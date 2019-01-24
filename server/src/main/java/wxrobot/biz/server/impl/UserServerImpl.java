@@ -2,9 +2,11 @@ package wxrobot.biz.server.impl;
 
 import org.crap.jrain.core.ErrcodeException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.BasicQuery;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import com.mongodb.BasicDBObject;
@@ -19,6 +21,8 @@ public class UserServerImpl implements UserServer {
 
 	@Autowired
 	private UserDao userDao;
+	@Autowired
+	private MongoTemplate mongoTemplate;
 
 	@Override
 	public User insert(User user) throws ErrcodeException {
@@ -49,9 +53,12 @@ public class UserServerImpl implements UserServer {
 	}
 
 	@Override
-	public int updateToken(User user) {
+	public int updateToken(User user) {		
 		try {
-			return (int)userDao.update(user);
+			Query query = new Query();
+			query.addCriteria(Criteria.where("id").is(user.getId()));
+			Update update = Update.update("token", user.getToken());
+			return userDao.update(query, update);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

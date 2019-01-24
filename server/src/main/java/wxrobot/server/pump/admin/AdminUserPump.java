@@ -10,7 +10,6 @@ import org.crap.jrain.core.bean.result.Errcode;
 import org.crap.jrain.core.bean.result.criteria.Data;
 import org.crap.jrain.core.bean.result.criteria.DataResult;
 import org.crap.jrain.core.error.support.Errors;
-import org.crap.jrain.core.util.DateUtil;
 import org.crap.jrain.core.validate.annotation.BarScreen;
 import org.crap.jrain.core.validate.annotation.Parameter;
 import org.crap.jrain.core.validate.security.component.Coder;
@@ -24,6 +23,7 @@ import wxrobot.admin.server.AdminServer;
 import wxrobot.biz.server.UserServer;
 import wxrobot.dao.entity.User;
 import wxrobot.dao.entity.field.UserInfo;
+import wxrobot.server.utils.Tools;
 
 @Pump("admin_user")
 @Component
@@ -59,7 +59,7 @@ public class AdminUserPump extends DataPump<JSONObject, FullHttpRequest, Channel
 		UserInfo info = new UserInfo();
 		info.setUserName(params.optString("user_name"));
 		info.setUserPwd(Coder.encryptMD5(params.getString("user_pwd")));
-		info.setServerEnd(DateUtil.parseDate(params.getString("server_end"), "yyyy-MM-dd HH:mm:ss"));
+		info.setServerEnd(Tools.dateToStamp(params.getString("server_end")));
 		info.setServerState(true);
 		user.setUserInfo(info);
 		userServer.insert(user);
