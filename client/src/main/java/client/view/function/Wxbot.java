@@ -2,6 +2,7 @@ package client.view.function;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Set;
 
 import javax.swing.filechooser.FileSystemView;
 
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.cherry.jeeves.Jeeves;
+import com.cherry.jeeves.domain.shared.Contact;
 import com.cherry.jeeves.service.CacheService;
 import com.cherry.jeeves.service.WechatHttpService;
 
@@ -58,7 +60,11 @@ public class Wxbot {
 			wxbotThread.interrupt();
     }
 	
-	public void sendApp() {
+	public Set<Contact> getContact() {
+		return cacheService.getIndividuals();
+	}
+	
+	public void sendApp(String userName) {
 		Platform.runLater(() -> {
 			if(lastSendFile != null && lastSendFile.isFile())
 				sendChooser.setInitialDirectory(lastSendFile.getParentFile());
@@ -69,11 +75,20 @@ public class Wxbot {
 			System.out.println(lastSendFile.getAbsolutePath());
 			
 			try {
-				wechatService.sendApp(cacheService.getOwner().getUserName(), lastSendFile.getAbsolutePath());
+				wechatService.sendApp(userName == null?cacheService.getOwner().getUserName():userName, lastSendFile.getAbsolutePath());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		});
-		
+	}
+	
+	public void sendText(String userName, String text) {
+		Platform.runLater(() -> {
+			try {
+				wechatService.sendText(userName == null?cacheService.getOwner().getUserName():userName, text);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		});
 	}
 }

@@ -123,9 +123,9 @@ public class WxbotView extends AnchorPane  {
 		getChildren().add(browserView);
 		
 		viewStage = new Stage();
-		Scene scene = new Scene(this);
+		Scene scene = new Scene(this, 900, 662);
 		viewStage.setTitle("微信机器人");
-		viewStage.setResizable(true);
+		viewStage.setResizable(false);
 		viewStage.setIconified(false);
 		viewStage.setScene(scene);
 		viewStage.setOnCloseRequest(e -> {
@@ -149,7 +149,7 @@ public class WxbotView extends AnchorPane  {
 		    debugBrowserview = new BrowserView(debugBrowser);
 	        debugBrowser.loadURL(browser.getRemoteDebuggingURL());
 	        debugStage = new Stage();
-			Scene scene = new Scene(debugBrowserview);
+			Scene scene = new Scene(debugBrowserview, 790, 790);
 			debugStage.setTitle("调试");
 			debugStage.setResizable(true);
 			debugStage.setIconified(false);

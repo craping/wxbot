@@ -223,3 +223,129 @@
 	JSONObject cannot be resolved
 	JSONObject cannot be resolved
 
+2019-01-24 22:27:54.589 INFO  client.utils.HttpUtil.sendRequest(HttpUtil.java:60) - 开始处理HTTP请求：http://127.0.0.1:9527/user/login?format=json
+2019-01-24 22:29:23.079 INFO  client.utils.HttpUtil.sendRequest(HttpUtil.java:60) - 开始处理HTTP请求：http://127.0.0.1:9527/user/login?format=json
+2019-01-24 22:29:23.182 INFO  client.utils.HttpUtil.sendRequest(HttpUtil.java:79) - HTTP请求返回结果：{"result":1,"errcode":501,"msg":"用户名或密码错误"}
+2019-01-24 22:32:53.775 INFO  client.utils.HttpUtil.sendRequest(HttpUtil.java:60) - 开始处理HTTP请求：http://127.0.0.1:9527/user/login?format=json
+2019-01-24 22:32:54.303 INFO  client.utils.HttpUtil.sendRequest(HttpUtil.java:79) - HTTP请求返回结果：{"result":1,"errcode":501,"msg":"用户名或密码错误"}
+2019-01-24 22:33:02.080 INFO  client.utils.HttpUtil.sendRequest(HttpUtil.java:60) - 开始处理HTTP请求：http://127.0.0.1:9527/user/login?format=json
+2019-01-24 22:33:02.115 INFO  client.utils.HttpUtil.sendRequest(HttpUtil.java:79) - HTTP请求返回结果：{"result":1,"errcode":501,"msg":"用户名或密码错误"}
+2019-01-24 22:33:04.840 INFO  client.utils.HttpUtil.sendRequest(HttpUtil.java:60) - 开始处理HTTP请求：http://127.0.0.1:9527/user/login?format=json
+2019-01-24 22:33:04.871 INFO  client.utils.HttpUtil.sendRequest(HttpUtil.java:79) - HTTP请求返回结果：{"result":1,"errcode":501,"msg":"用户名或密码错误"}
+2019-01-24 22:43:00.706 INFO  com.cherry.jeeves.Jeeves.start(Jeeves.java:22) - Jeeves starts
+2019-01-24 22:43:00.708 INFO  com.cherry.jeeves.Jeeves.start(Jeeves.java:23) - Jeeves id = jeeves
+2019-01-24 22:43:01.203 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:50) - [0] entry completed
+2019-01-24 22:43:01.411 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:54) - [1] uuid completed
+2019-01-24 22:43:01.544 INFO  client.view.function.MessageHandlerImpl.onQR(MessageHandlerImpl.java:45) - 获取登录二维码
+2019-01-24 22:43:01.544 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:58) - [2] qrcode completed
+2019-01-24 22:43:01.659 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:61) - [3] statReport completed
+2019-01-24 22:43:16.563 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:87) - [*] login status = AWAIT_CONFIRMATION
+2019-01-24 22:43:16.563 INFO  client.view.function.MessageHandlerImpl.onScanning(MessageHandlerImpl.java:60) - 用户已扫码
+2019-01-24 22:43:16.563 INFO  client.view.function.MessageHandlerImpl.onScanning(MessageHandlerImpl.java:61) - 头像：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
+2019-01-24 22:43:20.309 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:98) - [4] login completed
+2019-01-24 22:43:20.309 INFO  client.view.function.MessageHandlerImpl.onConfirmation(MessageHandlerImpl.java:74) - 确认登录
+2019-01-24 22:43:20.869 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:115) - [5] redirect login completed
+2019-01-24 22:43:20.939 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:118) - [6] redirect completed
+2019-01-24 22:43:22.108 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:124) - [7] init completed
+2019-01-24 22:43:22.214 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:130) - [8] status notify completed
+2019-01-24 22:43:27.181 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:136) - [*] getContactResponse seq = 0
+2019-01-24 22:43:27.182 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:137) - [*] getContactResponse memberCount = 372
+2019-01-24 22:43:27.184 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:142) - [9] get contact completed
+2019-01-24 22:43:28.727 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:155) - [*] batchGetContactResponse count = 6
+2019-01-24 22:43:28.727 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:158) - [10] batch get contact completed
+2019-01-24 22:43:28.728 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:160) - [*] login process completed
+2019-01-24 22:43:28.728 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:161) - [*] start listening
+2019-01-24 22:43:28.728 INFO  client.view.function.MessageHandlerImpl.onLogin(MessageHandlerImpl.java:88) - 用户登录
+2019-01-24 22:43:28.728 INFO  client.view.function.MessageHandlerImpl.onLogin(MessageHandlerImpl.java:89) - 用ID：@148c658a609719c0d3fb94417edc2cb8
+2019-01-24 22:43:28.729 INFO  client.view.function.MessageHandlerImpl.onLogin(MessageHandlerImpl.java:90) - 用户名：Crap
+2019-01-24 22:43:28.729 INFO  client.view.function.MessageHandlerImpl.onLogin(MessageHandlerImpl.java:93) - individuals：
+2019-01-24 22:43:28.822 INFO  client.view.function.MessageHandlerImpl.onLogin(MessageHandlerImpl.java:95) - mediaPlatforms：
+2019-01-24 22:43:29.928 INFO  client.view.function.MessageHandlerImpl.onLogin(MessageHandlerImpl.java:97) - chatRooms：
+2019-01-24 22:43:35.484 INFO  com.cherry.jeeves.service.SyncServie.listen(SyncServie.java:68) - [SYNCCHECK] retcode = 0, selector = 2
+2019-01-24 22:43:36.081 INFO  com.cherry.jeeves.service.SyncServie.listen(SyncServie.java:68) - [SYNCCHECK] retcode = 0, selector = 2
+2019-01-24 22:43:42.994 INFO  com.cherry.jeeves.service.SyncServie.listen(SyncServie.java:68) - [SYNCCHECK] retcode = 0, selector = 2
+2019-01-24 22:43:52.158 INFO  com.cherry.jeeves.service.SyncServie.listen(SyncServie.java:68) - [SYNCCHECK] retcode = 0, selector = 2
+2019-01-24 22:43:58.199 INFO  com.cherry.jeeves.service.SyncServie.listen(SyncServie.java:68) - [SYNCCHECK] retcode = 1101, selector = 0
+2019-01-24 22:43:58.199 INFO  client.view.function.MessageHandlerImpl.onLogout(MessageHandlerImpl.java:106) - 用户退出
+2019-01-24 22:43:58.199 INFO  client.view.function.MessageHandlerImpl.onLogout(MessageHandlerImpl.java:107) - 用ID：@148c658a609719c0d3fb94417edc2cb8
+2019-01-24 22:43:58.200 INFO  client.view.function.MessageHandlerImpl.onLogout(MessageHandlerImpl.java:108) - 用户名：Crap
+2019-01-24 22:43:58.200 INFO  com.cherry.jeeves.service.SyncServie.listen(SyncServie.java:81) - [Logout] syncCheckResponse ret =  1101
+2019-01-24 22:43:58.200 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:171) - [*] exit bye
+2019-01-25 04:12:09.980 INFO  com.cherry.jeeves.Jeeves.start(Jeeves.java:22) - Jeeves starts
+2019-01-25 04:12:09.983 INFO  com.cherry.jeeves.Jeeves.start(Jeeves.java:23) - Jeeves id = jeeves
+2019-01-25 04:12:10.434 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:50) - [0] entry completed
+2019-01-25 04:12:10.631 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:54) - [1] uuid completed
+2019-01-25 04:12:10.755 INFO  client.view.function.MessageHandlerImpl.onQR(MessageHandlerImpl.java:45) - 获取登录二维码
+2019-01-25 04:12:10.755 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:58) - [2] qrcode completed
+2019-01-25 04:12:10.898 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:61) - [3] statReport completed
+2019-01-25 04:12:17.212 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:87) - [*] login status = AWAIT_CONFIRMATION
+2019-01-25 04:12:17.212 INFO  client.view.function.MessageHandlerImpl.onScanning(MessageHandlerImpl.java:60) - 用户已扫码
+2019-01-25 04:12:17.212 INFO  client.view.function.MessageHandlerImpl.onScanning(MessageHandlerImpl.java:61) - 头像：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
+2019-01-25 04:12:19.069 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:98) - [4] login completed
+2019-01-25 04:12:19.069 INFO  client.view.function.MessageHandlerImpl.onConfirmation(MessageHandlerImpl.java:74) - 确认登录
+2019-01-25 04:12:19.779 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:115) - [5] redirect login completed
+2019-01-25 04:12:19.836 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:118) - [6] redirect completed
+2019-01-25 04:12:20.972 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:124) - [7] init completed
+2019-01-25 04:12:21.085 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:130) - [8] status notify completed
+2019-01-25 04:12:25.943 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:136) - [*] getContactResponse seq = 0
+2019-01-25 04:12:25.944 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:137) - [*] getContactResponse memberCount = 373
+2019-01-25 04:12:25.946 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:142) - [9] get contact completed
+2019-01-25 04:12:27.040 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:155) - [*] batchGetContactResponse count = 2
+2019-01-25 04:12:27.040 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:158) - [10] batch get contact completed
+2019-01-25 04:12:27.041 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:160) - [*] login process completed
+2019-01-25 04:12:27.041 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:161) - [*] start listening
+2019-01-25 04:12:27.041 INFO  client.view.function.MessageHandlerImpl.onLogin(MessageHandlerImpl.java:88) - 用户登录
+2019-01-25 04:12:27.042 INFO  client.view.function.MessageHandlerImpl.onLogin(MessageHandlerImpl.java:89) - 用ID：@86efdea3f8dca6a3169d889ec308ed8f
+2019-01-25 04:12:27.042 INFO  client.view.function.MessageHandlerImpl.onLogin(MessageHandlerImpl.java:90) - 用户名：Crap
+2019-01-25 04:12:27.042 INFO  client.view.function.MessageHandlerImpl.onLogin(MessageHandlerImpl.java:93) - individuals：
+2019-01-25 04:12:27.147 INFO  client.view.function.MessageHandlerImpl.onLogin(MessageHandlerImpl.java:95) - mediaPlatforms：
+2019-01-25 04:12:28.217 INFO  client.view.function.MessageHandlerImpl.onLogin(MessageHandlerImpl.java:97) - chatRooms：
+2019-01-25 04:12:30.837 INFO  com.cherry.jeeves.service.SyncServie.listen(SyncServie.java:68) - [SYNCCHECK] retcode = 0, selector = 2
+2019-01-25 04:12:56.036 INFO  com.cherry.jeeves.service.SyncServie.listen(SyncServie.java:68) - [SYNCCHECK] retcode = 0, selector = 0
+2019-01-25 04:13:21.066 INFO  com.cherry.jeeves.service.SyncServie.listen(SyncServie.java:68) - [SYNCCHECK] retcode = 0, selector = 0
+2019-01-25 04:13:21.095 INFO  com.cherry.jeeves.service.SyncServie.listen(SyncServie.java:68) - [SYNCCHECK] retcode = 1101, selector = 0
+2019-01-25 04:13:21.095 INFO  client.view.function.MessageHandlerImpl.onLogout(MessageHandlerImpl.java:106) - 用户退出
+2019-01-25 04:13:21.095 INFO  client.view.function.MessageHandlerImpl.onLogout(MessageHandlerImpl.java:107) - 用ID：@86efdea3f8dca6a3169d889ec308ed8f
+2019-01-25 04:13:21.095 INFO  client.view.function.MessageHandlerImpl.onLogout(MessageHandlerImpl.java:108) - 用户名：Crap
+2019-01-25 04:13:21.095 INFO  com.cherry.jeeves.service.SyncServie.listen(SyncServie.java:81) - [Logout] syncCheckResponse ret =  1101
+2019-01-25 04:13:21.096 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:171) - [*] exit bye
+2019-01-25 04:14:03.753 INFO  com.cherry.jeeves.Jeeves.start(Jeeves.java:22) - Jeeves starts
+2019-01-25 04:14:03.755 INFO  com.cherry.jeeves.Jeeves.start(Jeeves.java:23) - Jeeves id = jeeves
+2019-01-25 04:14:04.199 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:50) - [0] entry completed
+2019-01-25 04:14:04.388 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:54) - [1] uuid completed
+2019-01-25 04:14:04.520 INFO  client.view.function.MessageHandlerImpl.onQR(MessageHandlerImpl.java:45) - 获取登录二维码
+2019-01-25 04:14:04.520 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:58) - [2] qrcode completed
+2019-01-25 04:14:04.686 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:61) - [3] statReport completed
+2019-01-25 04:14:13.909 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:87) - [*] login status = AWAIT_CONFIRMATION
+2019-01-25 04:14:13.909 INFO  client.view.function.MessageHandlerImpl.onScanning(MessageHandlerImpl.java:60) - 用户已扫码
+2019-01-25 04:14:13.909 INFO  client.view.function.MessageHandlerImpl.onScanning(MessageHandlerImpl.java:61) - 头像：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
+2019-01-25 04:14:15.091 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:98) - [4] login completed
+2019-01-25 04:14:15.091 INFO  client.view.function.MessageHandlerImpl.onConfirmation(MessageHandlerImpl.java:74) - 确认登录
+2019-01-25 04:14:15.409 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:115) - [5] redirect login completed
+2019-01-25 04:14:15.495 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:118) - [6] redirect completed
+2019-01-25 04:14:16.038 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:124) - [7] init completed
+2019-01-25 04:14:16.125 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:130) - [8] status notify completed
+2019-01-25 04:14:17.793 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:136) - [*] getContactResponse seq = 0
+2019-01-25 04:14:17.794 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:137) - [*] getContactResponse memberCount = 303
+2019-01-25 04:14:17.828 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:142) - [9] get contact completed
+2019-01-25 04:14:18.104 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:155) - [*] batchGetContactResponse count = 1
+2019-01-25 04:14:18.104 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:158) - [10] batch get contact completed
+2019-01-25 04:14:18.104 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:160) - [*] login process completed
+2019-01-25 04:14:18.104 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:161) - [*] start listening
+2019-01-25 04:14:18.105 INFO  client.view.function.MessageHandlerImpl.onLogin(MessageHandlerImpl.java:88) - 用户登录
+2019-01-25 04:14:18.105 INFO  client.view.function.MessageHandlerImpl.onLogin(MessageHandlerImpl.java:89) - 用ID：@724d30d2cb8233d0fc435add9635263b
+2019-01-25 04:14:18.105 INFO  client.view.function.MessageHandlerImpl.onLogin(MessageHandlerImpl.java:90) - 用户名：韩寒
+2019-01-25 04:14:18.105 INFO  client.view.function.MessageHandlerImpl.onLogin(MessageHandlerImpl.java:93) - individuals：
+2019-01-25 04:14:18.158 INFO  client.view.function.MessageHandlerImpl.onLogin(MessageHandlerImpl.java:95) - mediaPlatforms：
+2019-01-25 04:14:18.200 INFO  client.view.function.MessageHandlerImpl.onLogin(MessageHandlerImpl.java:97) - chatRooms：
+2019-01-25 04:14:18.377 INFO  com.cherry.jeeves.service.SyncServie.listen(SyncServie.java:68) - [SYNCCHECK] retcode = 0, selector = 2
+2019-01-25 04:14:18.792 INFO  client.view.function.MessageHandlerImpl.onNewChatRoomsFound(MessageHandlerImpl.java:296) - 发现新群消息
+2019-01-25 04:14:18.792 INFO  client.view.function.MessageHandlerImpl.lambda$6(MessageHandlerImpl.java:297) - @@56e3e967f510d9c448c194b18b8d922fbf98db60902d9b625c7529432f549910
+2019-01-25 04:14:21.871 INFO  com.cherry.jeeves.service.SyncServie.listen(SyncServie.java:68) - [SYNCCHECK] retcode = 0, selector = 2
+2019-01-25 04:14:47.000 INFO  com.cherry.jeeves.service.SyncServie.listen(SyncServie.java:68) - [SYNCCHECK] retcode = 0, selector = 0
+2019-01-25 04:15:11.979 INFO  com.cherry.jeeves.service.SyncServie.listen(SyncServie.java:68) - [SYNCCHECK] retcode = 1101, selector = 0
+2019-01-25 04:15:11.979 INFO  client.view.function.MessageHandlerImpl.onLogout(MessageHandlerImpl.java:106) - 用户退出
+2019-01-25 04:15:11.979 INFO  client.view.function.MessageHandlerImpl.onLogout(MessageHandlerImpl.java:107) - 用ID：@724d30d2cb8233d0fc435add9635263b
+2019-01-25 04:15:11.979 INFO  client.view.function.MessageHandlerImpl.onLogout(MessageHandlerImpl.java:108) - 用户名：韩寒
+2019-01-25 04:15:11.980 INFO  com.cherry.jeeves.service.SyncServie.listen(SyncServie.java:81) - [Logout] syncCheckResponse ret =  1101
+2019-01-25 04:15:11.980 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:171) - [*] exit bye

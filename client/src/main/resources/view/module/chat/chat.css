@@ -1,0 +1,51 @@
+.talk_content fieldset{
+	position: relative;
+	margin: 25px 82px 14px;
+	display: block;
+	padding: 0px;
+}
+.talk_content fieldset legend{
+	border:none;
+	position: absolute;
+	top: -9px;
+	text-align: center;
+	font-weight: normal;
+	color: #808080;
+	text-decoration: none;
+	padding: 0 5px;
+	font-size: 12px;
+}
+.msg-conversation {
+    position: relative;
+}
+.msg-conversation .user-img {
+    width: 50px;
+    height: 50px;
+    display: inline-block;
+}
+.msg-conversation .arrow::before {
+    border-left-color:transparent;
+    border-right-color:transparent;
+}
+.msg-conversation .bs-popover-left .arrow{
+    right: calc((.4rem + 1px) * -1);
+}
+.msg-conversation .bs-popover-right .arrow{
+    left: calc((.4rem + 1px) * -1);
+} 
+.msg-conversation .popover.self{
+    background-color: #b2e281;
+    border:1px solid #b2e281;
+}
+.msg-conversation .self .arrow::after, 
+.msg-conversation .self .bs-popover-left .arrow::after {
+    border-left-color: #b2e281;
+}
+.msg-conversation .popover.contact{
+    background-color: #fff;
+    border:1px solid #fff;
+}
+.msg-conversation .contact .arrow::after, 
+.msg-conversation .contact .bs-popover-right .arrow::after {
+    border-right-color: #fff;
+}

@@ -46,6 +46,7 @@ public class LoginController implements Initializable {
 	}
 
 	public void login(ActionEvent event) throws IOException {
+		wxbot.start();
 		String userName = loginNameText.getText().trim();
 		String userPwd = loginPwdText.getText().trim();
 		if (Tools.isStrEmpty(userName)) {
@@ -77,6 +78,7 @@ public class LoginController implements Initializable {
 	}
 	
 	public void register() {
+		WxbotView.getInstance().load();
 		Platform.runLater(() -> {
 			try {
 				new RegisterView().open();
