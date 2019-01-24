@@ -1,9 +1,20 @@
 package client.view.function;
 
+import java.io.File;
+import java.io.IOException;
+
+import javax.swing.filechooser.FileSystemView;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.cherry.jeeves.Jeeves;
+import com.cherry.jeeves.service.CacheService;
+import com.cherry.jeeves.service.WechatHttpService;
+
+import client.view.WxbotView;
+import javafx.application.Platform;
+import javafx.stage.FileChooser;
 
 @Component
 public class Wxbot {
@@ -11,7 +22,22 @@ public class Wxbot {
 	@Autowired
 	private Jeeves jeeves;
 	
+	@Autowired
+	private WechatHttpService wechatService;
+	
+	@Autowired
+	private CacheService cacheService;
+	
+	public final FileChooser sendChooser = new FileChooser();
+	
+	private File lastSendFile;
+	
 	public static Thread wxbotThread;
+	
+	public Wxbot() {
+		sendChooser.setTitle("选择文件");
+		sendChooser.setInitialDirectory(FileSystemView.getFileSystemView().getHomeDirectory());
+	}
 	
 	public void start() {
 		wxbotThread = new Thread(() -> {
@@ -31,4 +57,23 @@ public class Wxbot {
 		if(wxbotThread != null)
 			wxbotThread.interrupt();
     }
+	
+	public void sendApp() {
+		Platform.runLater(() -> {
+			if(lastSendFile != null && lastSendFile.isFile())
+				sendChooser.setInitialDirectory(lastSendFile.getParentFile());
+			
+			lastSendFile = sendChooser.showOpenDialog(WxbotView.getInstance().getViewStage());
+			if(lastSendFile == null)
+				return;
+			System.out.println(lastSendFile.getAbsolutePath());
+			
+			try {
+				wechatService.sendApp(cacheService.getOwner().getUserName(), lastSendFile.getAbsolutePath());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		});
+		
+	}
 }

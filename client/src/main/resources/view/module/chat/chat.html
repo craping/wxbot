@@ -1,10 +1,13 @@
-<card :title="Chat.title" style="height: inherit" dis-hover="true" class="p-0">
+<card :title="chat.title" style="height: inherit" dis-hover="true" class="p-0">
     <div>
 
     </div>
     <i-form>
-        <Form-Item>
-            <i-Input type="textarea" :autosize="{minRows: 3,maxRows: 3}"></Input>
-        </Form-Item>
+        <div>
+            <i-button type="info" size="small" icon="ios-folder" ghost @click="sendApp()"></i-button>
+        </div>
+        <form-item>
+            <i-input type="textarea" :autosize="{minRows: 3,maxRows: 3}"></i-input>
+        </form-item>
     </i-form>
 </card>

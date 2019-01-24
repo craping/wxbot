@@ -41,6 +41,8 @@ public class WxbotView extends AnchorPane  {
 	
 	private static final Logger logger = LogManager.getLogger(WxbotView.class);
 	
+	private static WxbotView INSTANCE;
+	
 	private Browser browser;
 	
 	private BrowserView browserView;
@@ -76,11 +78,17 @@ public class WxbotView extends AnchorPane  {
 	    BrowserPreferences.setChromiumSwitches("--disable-web-security", "--user-data-dir", "--allow-file-access-from-files", "--remote-debugging-port=9222");
 	}
 	
-	public WxbotView() {
+	public static WxbotView getInstance() {
+		if(INSTANCE == null)
+			INSTANCE = new WxbotView(true);
+		return INSTANCE;
+	}
+	
+	private WxbotView() {
 		this(false);
 	}
 	
-	public WxbotView(boolean debug) {
+	private WxbotView(boolean debug) {
 		this.debug = debug;
 	}
 	
@@ -116,7 +124,7 @@ public class WxbotView extends AnchorPane  {
 		
 		viewStage = new Stage();
 		Scene scene = new Scene(this);
-		viewStage.setTitle("调试");
+		viewStage.setTitle("微信机器人");
 		viewStage.setResizable(true);
 		viewStage.setIconified(false);
 		viewStage.setScene(scene);
@@ -235,4 +243,60 @@ public class WxbotView extends AnchorPane  {
             contextMenu.show(pane, screenLocation.getX(), screenLocation.getY());
         }
     }
+
+	public Browser getBrowser() {
+		return browser;
+	}
+
+	public void setBrowser(Browser browser) {
+		this.browser = browser;
+	}
+
+	public BrowserView getBrowserView() {
+		return browserView;
+	}
+
+	public void setBrowserView(BrowserView browserView) {
+		this.browserView = browserView;
+	}
+
+	public Stage getViewStage() {
+		return viewStage;
+	}
+
+	public void setViewStage(Stage viewStage) {
+		this.viewStage = viewStage;
+	}
+
+	public Browser getDebugBrowser() {
+		return debugBrowser;
+	}
+
+	public void setDebugBrowser(Browser debugBrowser) {
+		this.debugBrowser = debugBrowser;
+	}
+
+	public BrowserView getDebugBrowserview() {
+		return debugBrowserview;
+	}
+
+	public void setDebugBrowserview(BrowserView debugBrowserview) {
+		this.debugBrowserview = debugBrowserview;
+	}
+
+	public Stage getDebugStage() {
+		return debugStage;
+	}
+
+	public void setDebugStage(Stage debugStage) {
+		this.debugStage = debugStage;
+	}
+
+	public boolean isDebug() {
+		return debug;
+	}
+
+	public void setDebug(boolean debug) {
+		this.debug = debug;
+	}
 }

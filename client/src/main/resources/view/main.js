@@ -18,20 +18,16 @@ $script.ready(["vue", "iview", "jquery", "common"], function () {
 })
 
 $script.ready(["setting", "contacts", "chat", "keywords"], function () {
+    let methods = Object.assign({}, Setting.methods, Contacts.methods, Chat.methods, Keywords.methods);
     new Vue({
         el: "#app",
         data: {
             skin: "dark",
-            Setting: Setting.data,
-            Contacts: Contacts.data,
-            Chat: Chat.data,
-            Keywords: Keywords.data
+            setting: Setting.data,
+            contacts: Contacts.data,
+            chat: Chat.data,
+            keywords: Keywords.data
         },
-        methods: {
-            Setting: Setting.methods,
-            Contacts: Contacts.methods,
-            Chat: Chat.methods,
-            Keywords: Keywords.methods
-        }
+        methods: methods
     });
 })
