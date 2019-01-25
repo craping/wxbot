@@ -12,7 +12,8 @@ Chat = {
         },
         sendText(){
             // wxbot.sendText(null, this.chat.text);
-            console.log(wxbot.test())
+            console.log(wxbot.test());
+            console.log(wxbot.getContact());
             this.chat.text = "";
         }
     }

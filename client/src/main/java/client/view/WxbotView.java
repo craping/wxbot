@@ -5,10 +5,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.math.BigInteger;
 
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.sun.javafx.webkit.WebConsoleListener;
 import com.teamdev.jxbrowser.chromium.Browser;
 import com.teamdev.jxbrowser.chromium.BrowserPreferences;
 import com.teamdev.jxbrowser.chromium.ContextMenuHandler;
@@ -33,11 +33,18 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 
-@SuppressWarnings("restriction")
-public class WxbotView extends AnchorPane  {
+  
+/**  
+* @ClassName: WxbotView  
+* @Description: Chromium外壳窗口类，单例模式
+* @author Crap  
+* @date 2019年1月26日  
+*    
+*/  
+    
+public final class WxbotView extends AnchorPane  {
 	
 	private static final Logger logger = LogManager.getLogger(WxbotView.class);
 	
@@ -48,6 +55,9 @@ public class WxbotView extends AnchorPane  {
 	private BrowserView browserView;
 	
 	private Stage viewStage;
+	
+	private Scene viewScene;
+	
     
 	private Browser debugBrowser;
 	
@@ -90,8 +100,23 @@ public class WxbotView extends AnchorPane  {
 	
 	private WxbotView(boolean debug) {
 		this.debug = debug;
+		viewScene = new Scene(this, 900, 652);
+		viewScene.setOnKeyPressed(e -> {
+			if(e.getCode() == KeyCode.F12) {
+				debug();
+			}
+		});
 	}
 	
+	  
+	/**  
+	* @Title: load  
+	* @Description: 启动网页主界面视图
+	* @param     参数  
+	* @return void    返回类型  
+	* @throws  
+	*/  
+	    
 	public void load() {
 		getChildren().remove(browserView);
 		browser = new Browser();
@@ -112,9 +137,11 @@ public class WxbotView extends AnchorPane  {
         	System.out.println("disposed event = "+event);
         });
         browser.loadURL(getClass().getClassLoader().getResource("view/main.html").toExternalForm());
-		WebConsoleListener.setDefaultListener((WebView webView, String message, int lineNumber, String sourceId) -> {
-			logger.info(message + " [" + sourceId + ":" + lineNumber + "] ");
-		});
+        browser.addConsoleListener(e -> {
+        	String level = e.getLevel().name();
+        	level = level.equalsIgnoreCase("log")?"trace":level;
+            logger.log(Level.toLevel(level), e.getMessage() + " [" + e.getSource() + ":" + e.getLineNumber() + "] ");
+        });
 		
 		setTopAnchor(browserView, 0.0);
 		setRightAnchor(browserView, 0.0);
@@ -123,11 +150,10 @@ public class WxbotView extends AnchorPane  {
 		getChildren().add(browserView);
 		
 		viewStage = new Stage();
-		Scene scene = new Scene(this, 900, 662);
 		viewStage.setTitle("微信机器人");
 		viewStage.setResizable(false);
 		viewStage.setIconified(false);
-		viewStage.setScene(scene);
+		viewStage.setScene(viewScene);
 		viewStage.setOnCloseRequest(e -> {
 			new Thread(() -> {
 				System.out.println("wxbotView is disposed = " + browser.dispose(true));
@@ -135,25 +161,29 @@ public class WxbotView extends AnchorPane  {
 			if(close !=null)
 				close.handle(e);
 		});
-		scene.setOnKeyPressed(e -> {
-			if(e.getCode() == KeyCode.F12) {
-				debug();
-			}
-		});
 		viewStage.show();
 	}
 	
+	  
+	/**  
+	* @Title: debug  
+	* @Description: 打开调试窗口 
+	* @param     参数  
+	* @return void    返回类型  
+	* @throws  
+	*/  
+	    
 	public void debug() {
 		if(this.debug) {
 			debugBrowser = new Browser();
 		    debugBrowserview = new BrowserView(debugBrowser);
 	        debugBrowser.loadURL(browser.getRemoteDebuggingURL());
+	        Scene debugScene = new Scene(debugBrowserview, 790, 790);
 	        debugStage = new Stage();
-			Scene scene = new Scene(debugBrowserview, 790, 790);
 			debugStage.setTitle("调试");
 			debugStage.setResizable(true);
 			debugStage.setIconified(false);
-			debugStage.setScene(scene);
+			debugStage.setScene(debugScene);
 			debugStage.show();
 			debugStage.setOnCloseRequest(e -> {
 				new Thread(() -> {
@@ -163,6 +193,15 @@ public class WxbotView extends AnchorPane  {
 		}
 	}
 	
+	  
+	/**  
+	* @Title: close  
+	* @Description: 关闭视图
+	* @param     参数  
+	* @return void    返回类型  
+	* @throws  
+	*/  
+	    
 	public void close() {
 		if(viewStage != null)
 			viewStage.close();
@@ -170,10 +209,29 @@ public class WxbotView extends AnchorPane  {
 			viewStage.close();
 	}
 	
+	  
+	/**  
+	* @Title: onClose  
+	* @Description: 关闭事件处理
+	* @param @param event    
+	* @return void    返回类型  
+	* @throws  
+	*/  
+	    
 	public void onClose(EventHandler<Event> event) {
 		close = event;
 	}
 	
+	  
+	/**  
+	* @Title: executeScript  
+	* @Description: 执行javascript
+	* @param @param javaScript
+	* @param @return    参数  
+	* @return JSValue    返回类型  
+	* @throws  
+	*/  
+	    
 	public JSValue executeScript(String javaScript) {
 		return browser.executeJavaScriptAndReturnValue(javaScript);
 	}

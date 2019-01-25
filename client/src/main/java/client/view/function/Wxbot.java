@@ -2,9 +2,7 @@ package client.view.function;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.swing.filechooser.FileSystemView;
@@ -18,14 +16,21 @@ import com.cherry.jeeves.service.CacheService;
 import com.cherry.jeeves.service.WechatHttpService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.teamdev.jxbrowser.chromium.JSArray;
 import com.teamdev.jxbrowser.chromium.JSONString;
-import com.teamdev.jxbrowser.chromium.JSValue;
 
 import client.view.WxbotView;
 import javafx.application.Platform;
 import javafx.stage.FileChooser;
 
+  
+/**  
+* @ClassName: Wxbot  
+* @Description: Java与Chromium交互函数类
+* @author Crap  
+* @date 2019年1月26日  
+*    
+*/  
+    
 @Component
 public class Wxbot {
 	
@@ -51,6 +56,16 @@ public class Wxbot {
 		sendChooser.setInitialDirectory(FileSystemView.getFileSystemView().getHomeDirectory());
 	}
 	
+	
+	  
+	/**  
+	* @Title: start  
+	* @Description: 启动Jeeves机器人线程
+	* @param     参数  
+	* @return void    返回类型  
+	* @throws  
+	*/  
+	    
 	public void start() {
 		wxbotThread = new Thread(() -> {
         	try {
@@ -64,14 +79,73 @@ public class Wxbot {
     	
 	}
 	
+	  
+	/**  
+	* @Title: stop  
+	* @Description: 停止Jeeves机器人线程，
+	* @param     参数  
+	* @return void    返回类型  
+	* @throws  
+	*/  
+	    
 	public void stop() {
 		jeeves.stop();
 		if(wxbotThread != null)
 			wxbotThread.interrupt();
     }
 	
-	public Set<Contact> getContact() {
-		return cacheService.getIndividuals();
+	  
+	/**  
+	* @Title: getIndividuals  
+	* @Description: 获取联系人列表
+	* @param @return    参数  
+	* @return JSONString    返回类型  
+	* @throws  
+	*/  
+	    
+	public JSONString getIndividuals() {
+		try {
+			return new JSONString(jsonMapper.writeValueAsString(cacheService.getIndividuals()));
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+		return new JSONString("{}");
+	}
+	
+	  
+	/**  
+	* @Title: getChatRooms  
+	* @Description: 获取群列表
+	* @param @return    参数  
+	* @return JSONString    返回类型  
+	* @throws  
+	*/  
+	    
+	public JSONString getChatRooms() {
+		try {
+			return new JSONString(jsonMapper.writeValueAsString(cacheService.getChatRooms()));
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+		return new JSONString("{}");
+	}
+	
+	  
+	/**  
+	* @Title: getMediaPlatforms  
+	* @Description: 获取公众号列表
+	* @param @return    参数  
+	* @return JSONString    返回类型  
+	* @throws  
+	*/  
+	    
+	public JSONString getMediaPlatforms() {
+		try {
+			return new JSONString(jsonMapper.writeValueAsString(cacheService.getMediaPlatforms()));
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+		return new JSONString("{}");
 	}
 	
 	public JSONString test() {
@@ -80,7 +154,7 @@ public class Wxbot {
 		c.setUserName("123");
 		sets.add(c);
 		Contact c1 = new Contact();
-		c1.setUserName("123");
+		c1.setUserName("123456");
 		sets.add(c1);
 		try {
 			return new JSONString(jsonMapper.writeValueAsString(sets));
@@ -90,6 +164,16 @@ public class Wxbot {
 		return new JSONString("{}");
 	}
 	
+	  
+	/**  
+	* @Title: sendApp  
+	* @Description: 发送文件消息
+	* 调用后会打开文件选择器 可以选择任何类型文件
+	* @param @param userName    用户ID
+	* @return void    返回类型  
+	* @throws  
+	*/  
+	    
 	public void sendApp(String userName) {
 		Platform.runLater(() -> {
 			if(lastSendFile != null && lastSendFile.isFile())
@@ -108,6 +192,16 @@ public class Wxbot {
 		});
 	}
 	
+	  
+	/**  
+	* @Title: sendText  
+	* @Description: 发送文本消息
+	* @param @param userName
+	* @param @param text    参数  
+	* @return void    返回类型  
+	* @throws  
+	*/  
+	    
 	public void sendText(String userName, String text) {
 		try {
 			wechatService.sendText(userName == null?cacheService.getOwner().getUserName():userName, text);
