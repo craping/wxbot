@@ -31,3 +31,7 @@ $script.ready(["setting", "contacts", "chat", "keywords"], function () {
         methods: methods
     });
 })
+
+function text(){
+    return {a:1,b:2};
+}

@@ -12,7 +12,7 @@ Chat = {
         },
         sendText(){
             // wxbot.sendText(null, this.chat.text);
-            console.log(wxbot.getContact())
+            console.log(wxbot.test())
             this.chat.text = "";
         }
     }

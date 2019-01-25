@@ -349,3 +349,17 @@
 2019-01-25 04:15:11.979 INFO  client.view.function.MessageHandlerImpl.onLogout(MessageHandlerImpl.java:108) - 用户名：韩寒
 2019-01-25 04:15:11.980 INFO  com.cherry.jeeves.service.SyncServie.listen(SyncServie.java:81) - [Logout] syncCheckResponse ret =  1101
 2019-01-25 04:15:11.980 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:171) - [*] exit bye
+2019-01-25 06:11:08.478 INFO  com.cherry.jeeves.Jeeves.start(Jeeves.java:22) - Jeeves starts
+2019-01-25 06:11:08.480 INFO  com.cherry.jeeves.Jeeves.start(Jeeves.java:23) - Jeeves id = jeeves
+2019-01-25 06:11:08.874 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:50) - [0] entry completed
+2019-01-25 06:11:09.084 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:54) - [1] uuid completed
+2019-01-25 06:11:09.210 INFO  client.view.function.MessageHandlerImpl.onQR(MessageHandlerImpl.java:45) - 获取登录二维码
+2019-01-25 06:11:09.211 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:58) - [2] qrcode completed
+2019-01-25 06:11:09.329 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:61) - [3] statReport completed
+2019-01-25 06:14:17.690 INFO  com.cherry.jeeves.Jeeves.start(Jeeves.java:22) - Jeeves starts
+2019-01-25 06:14:17.693 INFO  com.cherry.jeeves.Jeeves.start(Jeeves.java:23) - Jeeves id = jeeves
+2019-01-25 06:14:18.076 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:50) - [0] entry completed
+2019-01-25 06:14:18.250 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:54) - [1] uuid completed
+2019-01-25 06:14:18.371 INFO  client.view.function.MessageHandlerImpl.onQR(MessageHandlerImpl.java:45) - 获取登录二维码
+2019-01-25 06:14:18.372 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:58) - [2] qrcode completed
+2019-01-25 06:14:18.514 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:61) - [3] statReport completed
