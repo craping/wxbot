@@ -32,22 +32,14 @@ import javafx.stage.FileChooser;
 */  
     
 @Component
-public class Wxbot {
+public class Wxbot extends KeywordFunction {
 	
 	@Autowired
 	private Jeeves jeeves;
 	
-	@Autowired
-	private WechatHttpService wechatService;
-	
-	@Autowired
-	private CacheService cacheService;
-	
 	public final FileChooser sendChooser = new FileChooser();
 	
 	private File lastSendFile;
-	
-	private ObjectMapper jsonMapper = new ObjectMapper();
 	
 	public Thread wxbotThread;
 	
@@ -94,59 +86,6 @@ public class Wxbot {
 			wxbotThread.interrupt();
     }
 	
-	  
-	/**  
-	* @Title: getIndividuals  
-	* @Description: 获取联系人列表
-	* @param @return    参数  
-	* @return JSONString    返回类型  
-	* @throws  
-	*/  
-	    
-	public JSONString getIndividuals() {
-		try {
-			return new JSONString(jsonMapper.writeValueAsString(cacheService.getIndividuals()));
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-		}
-		return new JSONString("{}");
-	}
-	
-	  
-	/**  
-	* @Title: getChatRooms  
-	* @Description: 获取群列表
-	* @param @return    参数  
-	* @return JSONString    返回类型  
-	* @throws  
-	*/  
-	    
-	public JSONString getChatRooms() {
-		try {
-			return new JSONString(jsonMapper.writeValueAsString(cacheService.getChatRooms()));
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-		}
-		return new JSONString("{}");
-	}
-	
-	  
-	/**  
-	* @Title: getMediaPlatforms  
-	* @Description: 获取公众号列表
-	* @param @return    参数  
-	* @return JSONString    返回类型  
-	* @throws  
-	*/  
-	    
-	public JSONString getMediaPlatforms() {
-		try {
-			return new JSONString(jsonMapper.writeValueAsString(cacheService.getMediaPlatforms()));
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-		}
-		return new JSONString("{}");
-	}
 	
 	public JSONString test() {
 		Set<Contact> sets = new HashSet<>();

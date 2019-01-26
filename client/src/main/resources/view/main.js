@@ -12,13 +12,13 @@ $script.ready(["vue", "iview", "jquery", "common"], function () {
     $("#chat").load("module/chat/chat.html", {}, function () {
         $script("module/chat/chat.js", "chat");
     });
-    $("#keywords").load("module/keywords/keywords.html", {}, function () {
-        $script("module/keywords/keywords.js", "keywords");
+    $("#keyword").load("module/keyword/keyword.html", {}, function () {
+        $script("module/keyword/keyword.js", "keyword");
     });
 })
 
-$script.ready(["setting", "contacts", "chat", "keywords"], function () {
-    let methods = Object.assign({}, Setting.methods, Contacts.methods, Chat.methods, Keywords.methods);
+$script.ready(["setting", "contacts", "chat", "keyword"], function () {
+    let methods = Object.assign({}, Setting.methods, Contacts.methods, Chat.methods, Keyword.methods);
     new Vue({
         el: "#app",
         data: {
@@ -26,7 +26,7 @@ $script.ready(["setting", "contacts", "chat", "keywords"], function () {
             setting: Setting.data,
             contacts: Contacts.data,
             chat: Chat.data,
-            keywords: Keywords.data
+            keyword: Keyword.data
         },
         methods: methods
     });
