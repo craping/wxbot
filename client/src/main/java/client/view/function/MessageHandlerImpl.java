@@ -18,6 +18,7 @@ import com.cherry.jeeves.service.MessageHandler;
 import com.cherry.jeeves.service.WechatHttpService;
 import com.cherry.jeeves.utils.MessageUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import client.controller.LoginController;
@@ -34,8 +35,10 @@ public class MessageHandlerImpl implements MessageHandler {
 	@Autowired
 	private CacheService cacheService;
 	
-	private ObjectMapper jasonMapper = new ObjectMapper();
-	
+	private ObjectMapper jsonMapper = new ObjectMapper();
+	{
+		jsonMapper.configure(MapperFeature.AUTO_DETECT_GETTERS, false);
+	}
 	private QRView qrView;
 
 	@Override
@@ -89,11 +92,11 @@ public class MessageHandlerImpl implements MessageHandler {
 		
 		try {
 			logger.info("individuals：" );
-			System.out.println(jasonMapper.writeValueAsString(cacheService.getIndividuals()));
+			System.out.println(jsonMapper.writeValueAsString(cacheService.getIndividuals()));
 			logger.info("mediaPlatforms：");
-			System.out.println(jasonMapper.writeValueAsString(cacheService.getMediaPlatforms()));
+			System.out.println(jsonMapper.writeValueAsString(cacheService.getMediaPlatforms()));
 			logger.info("chatRooms：");
-			System.out.println(jasonMapper.writeValueAsString(cacheService.getChatRooms()));
+			System.out.println(jsonMapper.writeValueAsString(cacheService.getChatRooms()));
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}

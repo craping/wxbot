@@ -3943,3 +3943,4 @@
 2019-01-28 03:22:52.561 INFO  client.view.function.MessageHandlerImpl.onLogout(MessageHandlerImpl.java:106) - 用户名：Crap
 2019-01-28 03:22:52.561 INFO  com.cherry.jeeves.service.SyncServie.listen(SyncServie.java:84) - [Logout] syncCheckResponse ret =  1101
 2019-01-28 03:22:52.561 INFO  com.cherry.jeeves.service.LoginService.login(LoginService.java:194) - [*] exit bye
+2019-01-28 05:34:01.734 INFO  client.utils.HttpUtil.sendRequest(HttpUtil.java:60) - 开始处理HTTP请求：http://127.0.0.1:9527/user/login?format=json
