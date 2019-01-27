@@ -12,10 +12,7 @@ import org.springframework.stereotype.Component;
 
 import com.cherry.jeeves.Jeeves;
 import com.cherry.jeeves.domain.shared.Contact;
-import com.cherry.jeeves.service.CacheService;
-import com.cherry.jeeves.service.WechatHttpService;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.teamdev.jxbrowser.chromium.JSONString;
 
 import client.utils.Tools;
@@ -44,7 +41,7 @@ public class Wxbot extends KeywordFunction {
 	
 	public Thread wxbotThread;
 	
-	public static String userToken;
+	public String userToken;
 	
 	public Wxbot() {
 		sendChooser.setTitle("选择文件");

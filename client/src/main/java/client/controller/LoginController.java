@@ -87,7 +87,7 @@ public class LoginController implements Initializable {
 	public void logout(String token) {
 		// 组织请求参数
 		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("token", Wxbot.userToken);
+		params.put("token", wxbot.userToken);
 		result = HttpUtil.sendRequest(LOGOUT_URL, params);
 	}
 	
