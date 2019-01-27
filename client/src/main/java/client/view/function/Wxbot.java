@@ -18,6 +18,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.teamdev.jxbrowser.chromium.JSONString;
 
+import client.utils.Tools;
 import client.view.WxbotView;
 import javafx.application.Platform;
 import javafx.stage.FileChooser;
@@ -43,6 +44,8 @@ public class Wxbot extends KeywordFunction {
 	
 	public Thread wxbotThread;
 	
+	public static String userToken;
+	
 	public Wxbot() {
 		sendChooser.setTitle("选择文件");
 		sendChooser.setInitialDirectory(FileSystemView.getFileSystemView().getHomeDirectory());
@@ -58,7 +61,10 @@ public class Wxbot extends KeywordFunction {
 	* @throws  
 	*/  
 	    
-	public void start() {
+	public void start(String token) {
+		if (Tools.isStrEmpty(userToken)) {
+			userToken = token;
+		}
 		wxbotThread = new Thread(() -> {
         	try {
         		jeeves.start();

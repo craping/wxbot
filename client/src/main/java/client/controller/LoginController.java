@@ -28,6 +28,7 @@ import javafx.stage.Stage;
 public class LoginController implements Initializable {
 
 	private final String LOGIN_URL = "http://127.0.0.1:9527/user/login?format=json";
+	private final String LOGOUT_URL = "http://127.0.0.1:9527/user/logout?format=json";
 
 	public static Stage LOGIN_STAGE;
 	@FXML
@@ -46,7 +47,6 @@ public class LoginController implements Initializable {
 	}
 
 	public void login(ActionEvent event) throws IOException {
-		wxbot.start();
 		String userName = loginNameText.getText().trim();
 		String userPwd = loginPwdText.getText().trim();
 		if (Tools.isStrEmpty(userName)) {
@@ -73,8 +73,22 @@ public class LoginController implements Initializable {
 			return;
 		}
 		
+		// 用户token
+		String token = (((Map<?, ?>)((Map<?, ?>)result.get("data")).get("info")).get("token")).toString();
+		
 		// 开启微信机器人
-		wxbot.start();
+		wxbot.start(token);
+	}
+	
+	/**
+	 * 退出登录 清空缓存
+	 * @param token
+	 */
+	public void logout(String token) {
+		// 组织请求参数
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("token", Wxbot.userToken);
+		result = HttpUtil.sendRequest(LOGOUT_URL, params);
 	}
 	
 	public void register() {

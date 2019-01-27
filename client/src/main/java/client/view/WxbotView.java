@@ -13,6 +13,7 @@ import com.teamdev.jxbrowser.chromium.Browser;
 import com.teamdev.jxbrowser.chromium.BrowserPreferences;
 import com.teamdev.jxbrowser.chromium.ContextMenuHandler;
 import com.teamdev.jxbrowser.chromium.ContextMenuParams;
+import com.teamdev.jxbrowser.chromium.CookieStorage;
 import com.teamdev.jxbrowser.chromium.JSValue;
 import com.teamdev.jxbrowser.chromium.bb;
 import com.teamdev.jxbrowser.chromium.events.FinishLoadingEvent;
@@ -148,6 +149,14 @@ public final class WxbotView extends AnchorPane  {
 		setBottomAnchor(browserView, 0.0);
 		setLeftAnchor(browserView, 0.0);
 		getChildren().add(browserView);
+		
+		// 设置用户token 到 cookie；expirationTimeInMicroseconds 过期时间
+		final int oneHourInMilliseconds = 36000000;
+		final int microsecondsOffset = 1000;
+		long expirationTimeInMicroseconds = (System.currentTimeMillis() +  oneHourInMilliseconds) * microsecondsOffset; 
+		CookieStorage cookieStorage = browser.getCookieStorage();
+		cookieStorage.setCookie("http://www.google.com", "user_token", Wxbot.userToken, ".google.com", "/", expirationTimeInMicroseconds, false, false);
+		cookieStorage.save();
 		
 		viewStage = new Stage();
 		viewStage.setTitle("微信机器人");
