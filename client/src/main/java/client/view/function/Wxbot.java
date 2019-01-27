@@ -1,11 +1,7 @@
 package client.view.function;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
-
-import javax.swing.filechooser.FileSystemView;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -16,9 +12,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.teamdev.jxbrowser.chromium.JSONString;
 
 import client.utils.Tools;
-import client.view.WxbotView;
-import javafx.application.Platform;
-import javafx.stage.FileChooser;
 
   
 /**  
