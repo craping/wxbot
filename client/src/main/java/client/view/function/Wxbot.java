@@ -12,12 +12,10 @@ import org.springframework.stereotype.Component;
 
 import com.cherry.jeeves.Jeeves;
 import com.cherry.jeeves.domain.shared.Contact;
-import com.cherry.jeeves.service.CacheService;
-import com.cherry.jeeves.service.WechatHttpService;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.teamdev.jxbrowser.chromium.JSONString;
 
+import client.utils.Tools;
 import client.view.WxbotView;
 import javafx.application.Platform;
 import javafx.stage.FileChooser;
@@ -37,15 +35,14 @@ public class Wxbot extends KeywordFunction {
 	@Autowired
 	private Jeeves jeeves;
 	
-	public final FileChooser sendChooser = new FileChooser();
 	
-	private File lastSendFile;
 	
 	public Thread wxbotThread;
 	
+	public String userToken;
+	
 	public Wxbot() {
-		sendChooser.setTitle("选择文件");
-		sendChooser.setInitialDirectory(FileSystemView.getFileSystemView().getHomeDirectory());
+		super();
 	}
 	
 	
@@ -58,7 +55,10 @@ public class Wxbot extends KeywordFunction {
 	* @throws  
 	*/  
 	    
-	public void start() {
+	public void start(String token) {
+		if (Tools.isStrEmpty(userToken)) {
+			userToken = token;
+		}
 		wxbotThread = new Thread(() -> {
         	try {
         		jeeves.start();
@@ -102,50 +102,5 @@ public class Wxbot extends KeywordFunction {
 		}
 		return new JSONString("{}");
 	}
-	
-	  
-	/**  
-	* @Title: sendApp  
-	* @Description: 发送文件消息
-	* 调用后会打开文件选择器 可以选择任何类型文件
-	* @param @param userName    用户ID
-	* @return void    返回类型  
-	* @throws  
-	*/  
-	    
-	public void sendApp(String userName) {
-		Platform.runLater(() -> {
-			if(lastSendFile != null && lastSendFile.isFile())
-				sendChooser.setInitialDirectory(lastSendFile.getParentFile());
-			
-			lastSendFile = sendChooser.showOpenDialog(WxbotView.getInstance().getViewStage());
-			if(lastSendFile == null)
-				return;
-			System.out.println(lastSendFile.getAbsolutePath());
-			
-			try {
-				wechatService.sendApp(userName == null?cacheService.getOwner().getUserName():userName, lastSendFile.getAbsolutePath());
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		});
-	}
-	
-	  
-	/**  
-	* @Title: sendText  
-	* @Description: 发送文本消息
-	* @param @param userName
-	* @param @param text    参数  
-	* @return void    返回类型  
-	* @throws  
-	*/  
-	    
-	public void sendText(String userName, String text) {
-		try {
-			wechatService.sendText(userName == null?cacheService.getOwner().getUserName():userName, text);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+
 }
