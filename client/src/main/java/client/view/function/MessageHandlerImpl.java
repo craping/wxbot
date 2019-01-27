@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.cherry.jeeves.domain.shared.ChatRoomMember;
 import com.cherry.jeeves.domain.shared.Contact;
 import com.cherry.jeeves.domain.shared.Member;
 import com.cherry.jeeves.domain.shared.Message;
@@ -25,7 +24,6 @@ import client.controller.LoginController;
 import client.view.QRView;
 import client.view.WxbotView;
 import javafx.application.Platform;
-import netscape.javascript.JSObject;
 
 @Component
 public class MessageHandlerImpl implements MessageHandler {
@@ -277,17 +275,16 @@ public class MessageHandlerImpl implements MessageHandler {
 	}
 
 	@Override
-	public void onChatRoomMembersChanged(Contact chatRoom, Set<ChatRoomMember> membersJoined,
-			Set<ChatRoomMember> membersLeft) {
+	public void onChatRoomMembersChanged(Contact chatRoom, Set<Contact> membersJoined, Set<Contact> membersLeft) {
 		logger.info("群成员变动消息");
 		logger.info("群ID:" + chatRoom.getUserName());
 		if (membersJoined != null && membersJoined.size() > 0) {
 			logger.info("新加入成员:" + String.join(",",
-					membersJoined.stream().map(ChatRoomMember::getNickName).collect(Collectors.toList())));
+					membersJoined.stream().map(Contact::getNickName).collect(Collectors.toList())));
 		}
 		if (membersLeft != null && membersLeft.size() > 0) {
 			logger.info("离开成员:" + String.join(",",
-					membersLeft.stream().map(ChatRoomMember::getNickName).collect(Collectors.toList())));
+					membersLeft.stream().map(Contact::getNickName).collect(Collectors.toList())));
 		}
 	}
 
@@ -337,5 +334,35 @@ public class MessageHandlerImpl implements MessageHandler {
 		if (contact != null) {
 			logger.info("红包来自： " + contact.getNickName());
 		}
+	}
+
+	@Override
+	public void onStatusNotifyReaded(Message message) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onStatusNotifyEnterSession(Message message) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onStatusNotifyInited(Message message) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onStatusNotifyQuitSession(Message message) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onStatusNotifySyncConv(Message message) {
+		// TODO Auto-generated method stub
+		
 	}
 }
