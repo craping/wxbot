@@ -110,4 +110,14 @@ public class UserPump extends DataPump<JSONObject, FullHttpRequest, Channel> {
 		
 		return new DataResult(Errors.OK, new Data(user));
 	}
+	
+	@Pipe("logout")
+	@BarScreen(
+		desc="用户退出"
+	)
+	public Errcode logout (JSONObject params) {
+		String key = "user_" + params.getString("token");
+		redisTemplate.delete(key); // 删除缓存
+		return new DataResult(Errors.OK);
+	}
 }

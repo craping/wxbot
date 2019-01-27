@@ -100,7 +100,7 @@ public class QRView extends AnchorPane {
 				pi.setVisible(true);
 				pi.setProgress(0.3f);
 
-				wxbot.start();
+				wxbot.start(null);
 				eventFlag = false;
 			}
 		});
