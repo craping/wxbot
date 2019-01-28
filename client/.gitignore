@@ -1,6 +1,7 @@
 /target/
 /logs/
 /resource/
-/.classpath
-/.project
 /.settings/
+/src/test/
+.classpath
+.project
