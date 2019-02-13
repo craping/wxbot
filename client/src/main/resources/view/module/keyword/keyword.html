@@ -1,10 +1,19 @@
 <card dis-hover="true" class="p-0 bg-gray">
-    <tabs value="key" :animated="false">
-        <tab-pane label="关键词" name="key">
-
+    <tabs value="keyword" :animated="false" class="keyword">
+        <tab-pane label="关键词" name="keyword">
+            <tree :data="keyword.keywordTree" :render="renderContent"></tree>
         </tab-pane>
         <tab-pane label="联系人信息" name="info">
 
         </tab-pane>
     </tabs>
 </card>
+<modal v-model="keyword.modal" title="关键词" width="400" :mask-closable="false" @on-ok="editKeywordOk" @on-cancel="editKeywordCancel">
+    <div>
+        <i-input placeholder="关键词..." clearable/>
+    </div>
+    <br>
+    <div>
+        <i-input type="textarea" :autosize="{maxRows: 4, minRows: 4}" placeholder="回复内容..." />
+    </div>
+</modal>

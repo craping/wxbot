@@ -19,9 +19,17 @@
     position: relative;
 }
 .msg-conversation .user-img {
-    width: 50px;
-    height: 50px;
+    width: 35px;
+    height: 35px;
     display: inline-block;
+}
+.msg-conversation .user-img img{
+    width: 100%;
+    height: 100%;
+}
+
+.msg-conversation .popover{
+    z-index: inherit;
 }
 .msg-conversation .arrow::before {
     border-left-color:transparent;
