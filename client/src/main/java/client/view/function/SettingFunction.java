@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
-public class SeetingFunction {
+public class SettingFunction {
 	
 	@Autowired
 	protected WechatHttpService wechatService;

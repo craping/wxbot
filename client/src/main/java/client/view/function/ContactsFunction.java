@@ -12,7 +12,7 @@ import com.teamdev.jxbrowser.chromium.JSONString;
 import client.view.WxbotView;
 
 @Component
-public class ContactsFunction extends SeetingFunction {
+public class ContactsFunction extends SettingFunction {
 	
 	public ContactsFunction() {
 		super();
