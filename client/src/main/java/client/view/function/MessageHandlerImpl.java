@@ -1,6 +1,7 @@
 package client.view.function;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -20,6 +21,7 @@ import com.cherry.jeeves.utils.MessageUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.teamdev.jxbrowser.chromium.CookieStorage;
 
 import client.controller.LoginController;
 import client.view.QRView;
@@ -80,6 +82,12 @@ public class MessageHandlerImpl implements MessageHandler {
 				LoginController.LOGIN_STAGE.show();
 			});
 			wxbotView.load();
+			CookieStorage cookieStorage = wxbotView.getBrowser().getCookieStorage();
+			wechatHttpService.getCookies().forEach((k, v) -> {
+				cookieStorage.setSessionCookie("https://wx2.qq.com", k, v, ".qq.com", "/", false, false);
+				cookieStorage.setSessionCookie("https://wx.qq.com", k, v, ".qq.com", "/", false, false);
+			});
+			cookieStorage.save();
 		});
 		
 	}
@@ -89,7 +97,6 @@ public class MessageHandlerImpl implements MessageHandler {
 		logger.info("用户登录");
 		logger.info("用ID：" + member.getUserName());
 		logger.info("用户名：" + member.getNickName());
-		
 		try {
 			logger.info("individuals：" );
 			System.out.println(jsonMapper.writeValueAsString(cacheService.getIndividuals()));
@@ -260,6 +267,14 @@ public class MessageHandlerImpl implements MessageHandler {
 	}
 
 	@Override
+	public void onMembersSeqChanged(Map<String, String> seqMap) {
+		logger.info("收到联系人seq变动消息");
+		System.out.println(seqMap);
+	}
+	
+	
+	
+	@Override
 	public boolean onReceivingFriendInvitation(RecommendInfo info) {
 		logger.info("收到好友请求消息");
 		logger.info("recommendinfo content:" + info.getContent());
@@ -290,7 +305,7 @@ public class MessageHandlerImpl implements MessageHandler {
 					membersLeft.stream().map(Contact::getNickName).collect(Collectors.toList())));
 		}
 	}
-
+	
 	@Override
 	public void onNewChatRoomsFound(Set<Contact> chatRooms) {
 		logger.info("发现新群消息");
