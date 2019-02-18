@@ -1,7 +1,20 @@
 <card dis-hover="true" class="p-0 bg-gray">
-    <tabs value="cntact" :animated="false">
-        <tab-pane label="联系人" icon="ios-person" name="cntact">
-
+    <tabs value="contact" :animated="false">
+        <tab-pane label="联系人" icon="ios-person" name="contact">
+            <ul>
+                <li v-for="(item, index) in contacts.temp">
+                    <div class="contact_item" @click="startChat(contacts.temp[index].NickName)">
+                        <div class="avatar">
+                            <Badge dot>
+                                <Avatar shape="square" icon="ios-person" src="" />
+                            </Badge>
+                        </div>
+                        <div class="info">
+                            <h4 class="nickname">{{contacts.temp[index].NickName}}</h>
+                        </div>
+                    </div>
+                </li>
+            </ul>
         </tab-pane>
         <tab-pane label="群聊" icon="ios-people" name="chatroom">
 

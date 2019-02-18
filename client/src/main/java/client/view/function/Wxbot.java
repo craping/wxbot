@@ -28,8 +28,6 @@ public class Wxbot extends KeywordFunction {
 	@Autowired
 	private Jeeves jeeves;
 	
-	
-	
 	public Thread wxbotThread;
 	
 	public String userToken;
@@ -37,9 +35,7 @@ public class Wxbot extends KeywordFunction {
 	public Wxbot() {
 		super();
 	}
-	
-	
-	  
+	 
 	/**  
 	* @Title: start  
 	* @Description: 启动Jeeves机器人线程
