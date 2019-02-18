@@ -1,0 +1,31 @@
+.contact_item {
+    overflow: hidden;
+    padding: 10px 18px 9px;
+    border-bottom: 1px solid #292c33;
+    cursor: pointer;
+}
+.avatar {
+    float: left;
+    margin-right: 10px;
+}
+.info {
+    overflow: hidden;
+    line-height: 30px;
+}
+.info .nickname {
+    color: #292c33;
+    font-weight: 400;
+    font-size: 13px;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    word-wrap: normal;
+}
+h4 {
+    display: block;
+    margin-block-start: 1.33em;
+    margin-block-end: 1.33em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+}

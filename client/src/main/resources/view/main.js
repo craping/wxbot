@@ -28,6 +28,9 @@ $script.ready(["setting", "contacts", "chat", "keyword"], function () {
             chat: Chat.data,
             keyword: Keyword.data
         },
+        mounted() {
+            methods.loadIndividuals(); // 加载联系人列表
+        },
         methods: methods
     });
 })
