@@ -58,7 +58,6 @@ public final class WxbotView extends AnchorPane  {
 	
 	private Scene viewScene;
 	
-    
 	private Browser debugBrowser;
 	
 	private BrowserView debugBrowserview;
@@ -115,8 +114,7 @@ public final class WxbotView extends AnchorPane  {
 	* @param     参数  
 	* @return void    返回类型  
 	* @throws  
-	*/  
-	    
+	*/   
 	public void load() {
 		getChildren().remove(browserView);
 		browser = new Browser();
@@ -172,7 +170,6 @@ public final class WxbotView extends AnchorPane  {
 	* @return void    返回类型  
 	* @throws  
 	*/  
-	    
 	public void debug() {
 		if(this.debug) {
 			debugBrowser = new Browser();
@@ -201,7 +198,6 @@ public final class WxbotView extends AnchorPane  {
 	* @return void    返回类型  
 	* @throws  
 	*/  
-	    
 	public void close() {
 		if(viewStage != null)
 			viewStage.close();
@@ -217,7 +213,6 @@ public final class WxbotView extends AnchorPane  {
 	* @return void    返回类型  
 	* @throws  
 	*/  
-	    
 	public void onClose(EventHandler<Event> event) {
 		close = event;
 	}
@@ -231,7 +226,6 @@ public final class WxbotView extends AnchorPane  {
 	* @return JSValue    返回类型  
 	* @throws  
 	*/  
-	    
 	public JSValue executeScript(String javaScript) {
 		return browser.executeJavaScriptAndReturnValue(javaScript);
 	}
