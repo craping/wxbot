@@ -1,14 +1,7 @@
 package client.utils;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.lang.Character.UnicodeBlock;
-import java.net.URL;
-import java.net.URLConnection;
-import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Base64;
@@ -26,17 +19,16 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
  * 描述：基础操作函数集合
  */
-@SuppressWarnings({ "rawtypes"})
+@SuppressWarnings({ "rawtypes" })
 public class Tools {
-	
-	//private final Logger logger = LoggerFactory.getLogger(getClass());
-	
+
+	// private final Logger logger = LoggerFactory.getLogger(getClass());
+
 	/**
 	 * 排序 获得 Aa-Zz akey=avalue&bkey=bvalue
 	 * 
@@ -53,7 +45,7 @@ public class Tools {
 		}
 		return params;
 	}
-	
+
 	/**
 	 * 排序 获得 Aa-Zz akey=avalue&bkey=bvalue
 	 * 
@@ -70,26 +62,27 @@ public class Tools {
 		}
 		return params;
 	}
-	
+
 	/**
 	 * HashMap按值进行排序
+	 * 
 	 * @param map
 	 * @return
 	 */
-	public static <K, V extends Comparable<? super V>> Map<K, V>  sortByValue( Map<K, V> map ){  
-	    List<Map.Entry<K, V>> list = new LinkedList<Map.Entry<K, V>>( map.entrySet() );  
-	    Collections.sort( list, new Comparator<Map.Entry<K, V>>() {
-	        public int compare( Map.Entry<K, V> o1, Map.Entry<K, V> o2 ) {  
-	            return (o1.getValue()).compareTo( o2.getValue() );  
-	        }  
-	    });  
-	
-	    Map<K, V> result = new LinkedHashMap<K, V>();  
-	    for (Map.Entry<K, V> entry : list) {  
-	        result.put( entry.getKey(), entry.getValue() );  
-	    }  
-	    return result;  
-	}  
+	public static <K, V extends Comparable<? super V>> Map<K, V> sortByValue(Map<K, V> map) {
+		List<Map.Entry<K, V>> list = new LinkedList<Map.Entry<K, V>>(map.entrySet());
+		Collections.sort(list, new Comparator<Map.Entry<K, V>>() {
+			public int compare(Map.Entry<K, V> o1, Map.Entry<K, V> o2) {
+				return (o1.getValue()).compareTo(o2.getValue());
+			}
+		});
+
+		Map<K, V> result = new LinkedHashMap<K, V>();
+		for (Map.Entry<K, V> entry : list) {
+			result.put(entry.getKey(), entry.getValue());
+		}
+		return result;
+	}
 
 	/**
 	 * 检查字符串是否为空；如果字符串为null,或空串，或全为空格，返回true;否则返回false
@@ -104,7 +97,7 @@ public class Tools {
 			return true;
 		}
 	}
-	
+
 	/**
 	 * @param str 1:a,2:b,3:c
 	 * @return
@@ -117,114 +110,6 @@ public class Tools {
 			result.put(second[0], second[1]);
 		}
 		return result;
-	}
-
-	/**
-	 * 去除字符串的前后空格；如果字符串为null,返回空串;
-	 * 
-	 * @param str 输入字符串
-	 * @return 处理的后字符串
-	 */
-	public static String ruleStr(String str) {
-		if (str == null) {
-			return "";
-		} else {
-			return str.trim();
-		}
-	}
-
-	/**
-	 * 字符串转码，把GBK转ISO-8859-1
-	 * 
-	 * @param str GBK编码的字符串
-	 * @return ISO-8859-1编码的字符串
-	 */
-	public static String GBK2Unicode(String str) {
-		try {
-			str = new String(str.getBytes("GBK"), "ISO-8859-1");
-		} catch (java.io.UnsupportedEncodingException e) {
-		}
-		;
-		return str;
-	}
-	
-	/**
-	 * 字符串转码，把UTF-8转unicode
-	 * 
-	 * @param str utf-8编码的字符串
-	 * @return unicode编码的字符串
-	 */
-	public static String UTF82Unicode(String str) {
-		char[] myBuffer = str.toCharArray();
-        StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < str.length(); i++) {
-         UnicodeBlock ub = UnicodeBlock.of(myBuffer[i]);
-            if(ub == UnicodeBlock.BASIC_LATIN){
-	             //英文及数字等
-	             sb.append(myBuffer[i]);
-            } else if (ub == UnicodeBlock.HALFWIDTH_AND_FULLWIDTH_FORMS) {
-            	//全角半角字符
-            	int j = (int) myBuffer[i] - 65248;
-            	sb.append((char)j);
-            } else {
-            	//汉字
-            	short s = (short) myBuffer[i];
-                String hexS = Integer.toHexString(s);
-                String unicode = "\\u"+hexS;
-                sb.append(unicode.toLowerCase());
-            }
-        }
-        return sb.toString();
-	}
-	
-	/**
-     * 解码 Unicode \\uXXXX
-     * @param str
-     * @return
-     */
-    public static String decodeUnicode(String str) {
-        Charset set = Charset.forName("UTF-16");
-        Pattern p = Pattern.compile("\\\\u([0-9a-fA-F]{4})");
-        Matcher m = p.matcher( str );
-        int start = 0 ;
-        int start2 = 0 ;
-        StringBuffer sb = new StringBuffer();
-        while( m.find( start ) ) {
-            start2 = m.start() ;
-            if( start2 > start ){
-                String seg = str.substring(start, start2) ;
-                sb.append( seg );
-            }
-            String code = m.group( 1 );
-            int i = Integer.valueOf( code , 16 );
-            byte[] bb = new byte[ 4 ] ;
-            bb[ 0 ] = (byte) ((i >> 8) & 0xFF );
-            bb[ 1 ] = (byte) ( i & 0xFF ) ;
-            ByteBuffer b = ByteBuffer.wrap(bb);
-            sb.append( String.valueOf( set.decode(b) ).trim() );
-            start = m.end() ;
-        }
-        start2 = str.length() ;
-        if( start2 > start ){
-            String seg = str.substring(start, start2) ;
-            sb.append( seg );
-        }
-        return sb.toString() ;
-    }
-
-	/**
-	 * 字符串转码，把GBK转ISO-8859-1
-	 * 
-	 * @param str ISO-8859-1编码的字符串
-	 * @return GBK编码的字符串
-	 */
-	public static String Unicode2GBK(String str) {
-		try {
-			str = new String(str.getBytes("ISO-8859-1"), "GBK");
-		} catch (java.io.UnsupportedEncodingException e) {
-		}
-		;
-		return str;
 	}
 
 	/**
@@ -269,7 +154,7 @@ public class Tools {
 	/**
 	 * 判断字符串是否是有效的日期字符
 	 * 
-	 * @param d 需要判断的日期字符串
+	 * @param d      需要判断的日期字符串
 	 * @param format java日期格式
 	 * @return true:有效日期 false：无效日期
 	 */
@@ -287,7 +172,7 @@ public class Tools {
 	/**
 	 * 判断字符串的日期是否已经超过当前系统时间
 	 * 
-	 * @param d 需要判断的日期字符串
+	 * @param d      需要判断的日期字符串
 	 * @param format java日期格式
 	 * @return true:已过期 false：未过期
 	 */
@@ -306,12 +191,12 @@ public class Tools {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * 校验时间是否过期
 	 * 
 	 * @param verifyTime 时间戳：IOS 安卓 10位
-	 * @param limit 超时单位：分钟
+	 * @param limit      超时单位：分钟
 	 * @return
 	 */
 	public static boolean isOverTime(Long verifyTime, int limit) {
@@ -327,9 +212,9 @@ public class Tools {
 	/**
 	 * 判断字符串的日期与当前系统时间是否已经超过指定的时间差
 	 * 
-	 * @param d 需要判断的日期字符串
+	 * @param d      需要判断的日期字符串
 	 * @param format java日期格式
-	 * @param limit 时间差 秒
+	 * @param limit  时间差 秒
 	 * @return true:已过期 false：未过期
 	 */
 	public static boolean isOverTimeLimit(String d, String format, long limit) {
@@ -395,84 +280,7 @@ public class Tools {
 		if ((month == 2) && (day == 30)) {
 			return false;
 		}
-
 		return true;
-	}
-
-	/**
-	 * 把字符串转成UTF8的WAP码；用于手机显示；通过iso-8859-1进行编码的转换，所以对输入字符串的编码没有要求
-	 * 
-	 * @param gbStr 原字符串
-	 * @return 转码后的字符串
-	 */
-	public static String convertUTF8(String gbStr) {
-		try {
-			byte b[] = gbStr.getBytes("iso-8859-1");
-			String sg = new String(b, "gbk");
-			String s = GB2UTF8(sg);
-			return s;
-		} catch (Exception e) {
-			return "";
-		}
-	}
-
-	/**
-	 * 把gb2312编码的字符串转utf8的wap编码,用于手机显示
-	 * 
-	 * @param gbString gb2312编码的原字符串
-	 * @return String 转码后的字符串
-	 */
-	public static String GB2UTF8(final String gbString) {
-		if (gbString == null) {
-			return "";
-		}
-		char[] utfBytes = gbString.toCharArray();
-		String unicodeBytes = "";
-		for (int byteIndex = 0; byteIndex < utfBytes.length; byteIndex++) {
-			if (utfBytes[byteIndex] >= '!' && utfBytes[byteIndex] <= '~') {
-				unicodeBytes += utfBytes[byteIndex];
-			} else {
-				String hexB = Integer.toHexString(utfBytes[byteIndex]);
-				if (hexB.length() <= 2) {
-					hexB = "00" + hexB;
-				}
-				unicodeBytes = unicodeBytes + "&#x" + hexB + ";";
-			}
-		}
-		return unicodeBytes;
-	}
-
-	/**
-	 * UTF-8的String串转换成GBK
-	 * 
-	 * @param strValue 原字符串
-	 * @return 转码后的字符串
-	 */
-	public static String UTF82GB(String strValue) {
-		if (strValue == null || strValue.trim().length() == 0)
-			return "";
-
-		StringBuffer strbuf = new StringBuffer();
-		int pos = 0;
-		String[] strarr = strValue.split(";");
-
-		for (int i = 0; i < strarr.length; i++) {
-			pos = strarr[i].toLowerCase().indexOf("&#x");
-			if (pos >= 0) {
-				String pre = strarr[i].substring(0, pos);
-				strbuf.append(pre);
-				String tmp = strarr[i].substring(pos + 3);
-				if (tmp.startsWith("00")) {
-					tmp = tmp.substring(2);
-				}
-				int l = Integer.valueOf(tmp, 16).intValue();
-				strbuf.append((char) l);
-			} else {
-				strbuf.append(strarr[i]);
-			}
-		}
-
-		return strbuf.toString();
 	}
 
 	/**
@@ -493,22 +301,12 @@ public class Tools {
 	/**
 	 * base64编码
 	 * 
-	 * @param ss
-	 *            String 原字符串
+	 * @param ss String 原字符串
 	 * @return String base64编码后的字符串
 	 */
 	public static String base64Encoder(final String ss) {
 		Encoder encoder = Base64.getEncoder(); // base64编码
 		return encoder.encodeToString(ss.getBytes());
-	}
-
-	/**
-	 * 取得系统时间，为了提高效率，所以未将时间格式化。目前用于DEBUG类中。
-	 * 
-	 * @return Date 日期-时间
-	 */
-	public static Date getSystemDate() {
-		return new Date();
 	}
 
 	/**
@@ -545,12 +343,13 @@ public class Tools {
 			return (now + "");
 		}
 	}
-	
+
 	/**
 	 * 获取全局唯一标识符
+	 * 
 	 * @return
 	 */
-	public static String getUuid(){
+	public static String getUuid() {
 		UUID uuid = UUID.randomUUID();
 		return uuid.toString();
 	}
@@ -599,7 +398,7 @@ public class Tools {
 	/**
 	 * 检查数字串格式，使用于检查金额，费率等
 	 * 
-	 * @param data 要检查的数据
+	 * @param data    要检查的数据
 	 * @param iDotPos 允许小数位，0为没有小数点
 	 * @param b0isErr 值为0时返回错
 	 * @return ： 0－格式正确， 其他－格式错误
@@ -679,187 +478,109 @@ public class Tools {
 		checkExpressions = "^[1][358]\\d{9}$";
 		return Pattern.matches(checkExpressions, mobileNo);
 	}
-	
-	/**
-     * 根据 timestamp 生成各类时间状态串
-     * 
-     * @param timestamp 距1970 00:00:00 GMT的秒数
-     * @return 时间状态串(如：刚刚5分钟前)
-     */
-    public static String getTimeState(String timestamp) {
-        if (timestamp == null || "".equals(timestamp)) {
-            return "";
-        }
-        try {
-            long _timestamp = Long.parseLong(timestamp); 
-            if (System.currentTimeMillis() - _timestamp < 1 * 60 * 1000) {
-                return "刚刚";
-            } else if (System.currentTimeMillis() - _timestamp < 30 * 60 * 1000) {
-                return ((System.currentTimeMillis() - _timestamp) / 1000 / 60) + "分钟前";
-            } else {
-                Calendar now = Calendar.getInstance();
-                Calendar c = Calendar.getInstance();
-                c.setTimeInMillis(_timestamp);
-                if (c.get(Calendar.YEAR) == now.get(Calendar.YEAR) && c.get(Calendar.MONTH) == now.get(Calendar.MONTH) && c.get(Calendar.DATE) == now.get(Calendar.DATE)) {
-                    SimpleDateFormat sdf = new SimpleDateFormat("今天 HH:mm");
-                    return sdf.format(c.getTime());
-                }
-                if (c.get(Calendar.YEAR) == now.get(Calendar.YEAR) && c.get(Calendar.MONTH) == now.get(Calendar.MONTH) && c.get(Calendar.DATE) == now.get(Calendar.DATE) - 1) {
-                    SimpleDateFormat sdf = new SimpleDateFormat("昨天 HH:mm");
-                    return sdf.format(c.getTime());
-                } else if (c.get(Calendar.YEAR) == now.get(Calendar.YEAR)) {
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss");
-                    return sdf.format(c.getTime());
-                } else {
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy年M月d日 HH:mm:ss");
-                    return sdf.format(c.getTime());
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "";
-        }
-    }
-    
-    /**
-     *  获取四位随机数 小写 数字+字母
-     * @return
-     */
-    public static String generateWord() {  
-        String[] beforeShuffle = new String[] { "2", "3", "4", "5", "6", "7",  
-                "8", "9", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J",  
-                "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V",  
-                "W", "X", "Y", "Z" };  
-        List list = Arrays.asList(beforeShuffle);  
-        Collections.shuffle(list);  
-        StringBuilder sb = new StringBuilder();  
-        for (int i = 0; i < list.size(); i++) {  
-            sb.append(list.get(i));  
-        }  
-        String afterShuffle = sb.toString();  
-        String result = afterShuffle.substring(5, 9);  
-        return result.toLowerCase();  
-    }
-
-	public static void main(String args[]) throws Exception {
-		/*String a = "/uploadfile/NV156FHM-N48/NV156FHM-N48.doc";
-		String as[] = a.split("/");
-		//System.out.println(a.split("/").length);
-		for (int i = 0; i < as.length; i++) {
-			System.out.println(as[i]);
-		}*/
-		Integer a = null;
-		System.out.println(a);
-	}
 
 	/**
-	 * 功能：检查输入字符串是否为邮箱地址 检查规则:'@'之前全部为可见字符，'@'与'.'之间要有数字或字线或下划线， '.'之后至少有一个可见字符
+	 * 根据 timestamp 生成各类时间状态串
 	 * 
-	 * @param email
-	 * @return
+	 * @param timestamp 距1970 00:00:00 GMT的秒数
+	 * @return 时间状态串(如：刚刚5分钟前)
 	 */
-	public static boolean isEmailAdd(String email) {
-		if (email == null) {
-			return false;
+	public static String getTimeState(String timestamp) {
+		if (timestamp == null || "".equals(timestamp)) {
+			return "";
 		}
-		String checkExpressions;
-		checkExpressions = "^\\S+@\\w+\\.\\S+$";
-		return Pattern.matches(checkExpressions, email);
-	}
-
-
-	/**
-	 * 获取请求http结果
-	 * 
-	 * @param url 请求地址
-	 * @param body 请求参数体
-	 * @return
-	 */
-	public static String getHttpRequestResult(String url, String body){
-		String result = "";
 		try {
-			OutputStreamWriter out = null;
-			BufferedReader in = null;
-			URL realUrl = new URL(url);
-			URLConnection conn = realUrl.openConnection();
-
-			// 设置连接参数
-			conn.setDoOutput(true);
-			conn.setDoInput(true);
-			conn.setConnectTimeout(5000);
-			conn.setReadTimeout(20000);
-
-			// 提交数据
-			out = new OutputStreamWriter(conn.getOutputStream(), "UTF-8");
-			out.write(body);
-			out.flush();
-
-			// 读取返回数据
-			in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
-			String line = "";
-			boolean firstLine = true; // 读第一行不加换行符
-			while ((line = in.readLine()) != null) {
-				if (firstLine) {
-					firstLine = false;
-				} else {
-					result += System.lineSeparator();
+			long _timestamp = Long.parseLong(timestamp);
+			if (System.currentTimeMillis() - _timestamp < 1 * 60 * 1000) {
+				return "刚刚";
+			} else if (System.currentTimeMillis() - _timestamp < 30 * 60 * 1000) {
+				return ((System.currentTimeMillis() - _timestamp) / 1000 / 60) + "分钟前";
+			} else {
+				Calendar now = Calendar.getInstance();
+				Calendar c = Calendar.getInstance();
+				c.setTimeInMillis(_timestamp);
+				if (c.get(Calendar.YEAR) == now.get(Calendar.YEAR) && c.get(Calendar.MONTH) == now.get(Calendar.MONTH)
+						&& c.get(Calendar.DATE) == now.get(Calendar.DATE)) {
+					SimpleDateFormat sdf = new SimpleDateFormat("今天 HH:mm");
+					return sdf.format(c.getTime());
 				}
-				result += line;
+				if (c.get(Calendar.YEAR) == now.get(Calendar.YEAR) && c.get(Calendar.MONTH) == now.get(Calendar.MONTH)
+						&& c.get(Calendar.DATE) == now.get(Calendar.DATE) - 1) {
+					SimpleDateFormat sdf = new SimpleDateFormat("昨天 HH:mm");
+					return sdf.format(c.getTime());
+				} else if (c.get(Calendar.YEAR) == now.get(Calendar.YEAR)) {
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss");
+					return sdf.format(c.getTime());
+				} else {
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy年M月d日 HH:mm:ss");
+					return sdf.format(c.getTime());
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			return "";
 		}
-		System.out.println("result:" + System.lineSeparator() + result);
-		return result;
 	}
-	
-	/**
-	 * 把分转换为元
-	 * 
-	 * @param price
-	 * @return
+
+	/*
+	 * 将时间转换为时间戳
 	 */
-	public static String getPrice(String price) {
-		if (price != null && !price.equals("")) {
-			float f = Float.parseFloat(price);
-			if (f > 0) {
-				price = (f / 100) + "";
-			}
-		} else {
-			price = "0";
+	public static String dateToStamp(String s) {
+		String res;
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Date date = new Date();
+		try {
+			date = simpleDateFormat.parse(s);
+		} catch (ParseException e) {
+			e.printStackTrace();
 		}
-		return price;
+		long ts = date.getTime();
+		res = String.valueOf(ts);
+		return res;
 	}
-	
-	/**
-	 * 把元转换为分
-	 * 
-	 * @return
+
+	/*
+	 * 将时间戳转换为时间
 	 */
-	public static String yuanToCent(String price) {
-		if (price != null && !price.equals("")) {
-			float f = Float.parseFloat(price);
-			if (f > 0) {
-				price = (f * 100) + "";
-				price = price.split("\\.")[0];
-			}
-		}
-		return price;
+	public static String stampToDate(String s) {
+		String res;
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		long lt = new Long(s);
+		Date date = new Date(lt);
+		res = simpleDateFormat.format(date);
+		return res;
 	}
 
 	/**
-	 * 把元转换为分
+	 * 获取当前时间 时间戳
+	 */
+	public static String getTimestamp() {
+		return String.valueOf(new Date().getTime());
+	}
+
+	/**
+	 * 获取四位随机数 小写 数字+字母
 	 * 
 	 * @return
 	 */
-	public static String yuanToCent2(String price) {
-		if (price != null && !price.equals("")) {
-			float f = Float.parseFloat(price);
-			if (f > 0) {
-				DecimalFormat df = new DecimalFormat(".00");
-				price = df.format(f).replaceAll("\\.", "");
-			}
+	public static String generateWord() {
+		String[] beforeShuffle = new String[] { "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F",
+				"G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" };
+		List list = Arrays.asList(beforeShuffle);
+		Collections.shuffle(list);
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < list.size(); i++) {
+			sb.append(list.get(i));
 		}
-		return price;
+		String afterShuffle = sb.toString();
+		String result = afterShuffle.substring(5, 9);
+		return result.toLowerCase();
+	}
+
+	public static void main(String args[]) throws Exception {
+		System.out.println(stampToDate("1548357603937"));
+		System.out.println(dateToStamp("2019-01-25 03:20:03"));
+		System.out.println(getTimestamp());
+		System.out.println(stampToDate("1548878771000"));
 	}
 }

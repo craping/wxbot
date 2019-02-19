@@ -28,10 +28,21 @@ public class ContactsFunction extends SettingFunction {
 		return new JSONString("{}");
 	}
 	
+	/**
+	 * 获取域名路径
+	 * @return qq.wx.com、qq2.wx.com
+	 */
 	public String getHostUrl() {
 		return cacheService.getHostUrl();
 	}
 	
+	/**
+	 * 获取当前机器人用户头像地址
+	 * @return
+	 */
+	public String getOwnerHeadImgUrl() {
+		return getHostUrl() + cacheService.getOwner().getHeadImgUrl();
+	}
 	  
 	/**  
 	* @Title: getChatRooms  

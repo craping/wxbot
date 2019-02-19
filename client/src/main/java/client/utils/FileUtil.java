@@ -7,9 +7,87 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import client.view.AppView;
 
 public class FileUtil {
-	public static void writeHtml(String html, String path, String fileName) {
+
+	private static final Logger logger = LogManager.getLogger(FileUtil.class);
+
+	public static void main(String args[]) throws IOException {
+		String sep = File.separator;
+		String path = "d:" + sep + "chat1" + sep + "20190218";
+		String fileName = "/2.txt";
+		String content = "{1111}{2222}";
+		// write(content, path, fileName);
+		String realPath = path + fileName;
+		//System.out.println(readFile(realPath).size());
+		//System.out.println(readFile(realPath).get(0));
+	}
+
+	/**
+	 * 文件夹重命名
+	 * 
+	 * @param oldPath
+	 * @param newPath
+	 * @return
+	 */
+	public static boolean renameFile(String oldPath, String newPath) {
+		File file = new File(oldPath);
+		if (file.exists()) {
+			logger.error("目录[" + oldPath + "]不存在");
+			return false;
+		}
+		return file.renameTo(new File(newPath));
+	}
+
+	/**
+	 * 读取一个文本 一行一行读取
+	 *
+	 * @param path
+	 * @return
+	 * @throws IOException
+	 */
+	public static List<String> readFile(String path) throws IOException {
+		// 使用一个字符串集合来存储文本中的路径 ，也可用String []数组
+		List<String> list = new ArrayList<String>();
+		
+		// 目录是否存在
+		if (!(new File(path)).exists()) {
+			logger.error("目录[" + path + "]不存在");
+			return list;
+		}
+		
+		FileInputStream fis = new FileInputStream(path);
+		// 防止路径乱码 如果utf-8 乱码 改GBK eclipse里创建的txt 用UTF-8，在电脑上自己创建的txt 用GBK
+		InputStreamReader isr = new InputStreamReader(fis, "UTF-8");
+		BufferedReader br = new BufferedReader(isr);
+		String line = "";
+		while ((line = br.readLine()) != null) {
+			// 如果 t x t文件里的路径 不包含---字符串 这里是对里面的内容进行一个筛选
+			if (line.lastIndexOf("---") < 0) {
+				list.add(line);
+			}
+		}
+		br.close();
+		isr.close();
+		fis.close();
+		return list;
+	}
+
+	/**
+	 * 写入文件，一行一行
+	 * 
+	 * @param path
+	 * @param fileName
+	 * @param content
+	 */
+	public static void writeFile(String path, String fileName, String content) {
 		FileOutputStream fos = null;
 		OutputStreamWriter osw = null;
 		try {
@@ -18,9 +96,9 @@ public class FileUtil {
 				file.mkdirs();
 			}
 
-			fos = new FileOutputStream(new File(path + fileName));
+			fos = new FileOutputStream(new File(path + File.separator + fileName), true);
 			osw = new OutputStreamWriter(fos, "UTF-8");
-			osw.write(html);
+			osw.write(content + System.getProperty("line.separator"));
 			osw.flush();
 
 		} catch (Exception e) {
@@ -42,7 +120,6 @@ public class FileUtil {
 		BufferedReader br = null;
 		try {
 			br = new BufferedReader(new InputStreamReader(new FileInputStream(xmlfile), "utf-8"));
-
 			String line = null;
 			while ((line = br.readLine()) != null) {
 				if (!line.trim().equals("")) {
@@ -60,7 +137,6 @@ public class FileUtil {
 				e.printStackTrace();
 			}
 		}
-
 		return sb.toString();
 	}
 
@@ -111,13 +187,26 @@ public class FileUtil {
 			e.printStackTrace();
 		}
 		return s;
+	}
 
-		/*
-		 * File file = new File(name); Long filelength = file.length(); //获取文件长度 byte[]
-		 * filecontent = new byte[filelength.intValue()]; try { FileInputStream in = new
-		 * FileInputStream(file); in.read(filecontent); in.close(); } catch
-		 * (FileNotFoundException e) { e.printStackTrace(); } catch (IOException e) {
-		 * e.printStackTrace(); } return new String(filecontent);//返回文件内容,默认编码
-		 */ }
-
+	/**
+	 * 查询文件夹
+	 * 
+	 * @param path 目录
+	 * @param mk   是否创建 true创建
+	 */
+	public static boolean mkdirs(String path, boolean mk) {
+		try {
+			File file = new File(path);
+			if (!file.exists())
+				return false;
+			if (mk) {
+				file.mkdir();
+				return true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return mk;
+	}
 }
