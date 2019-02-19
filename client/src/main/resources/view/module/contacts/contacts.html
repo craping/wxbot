@@ -3,14 +3,14 @@
         <tab-pane label="联系人" icon="ios-person" name="contact">
             <ul>
                 <li v-for="(item, index) in contacts.temp">
-                    <div class="contact_item" @click="startChat(contacts.temp[index].NickName)">
+                    <div class="contact_item" @click="startChat(item.seq,item.NickName,item.UserName,item.HeadImgUrl)">
                         <div class="avatar">
                             <Badge dot>
-                                <Avatar shape="square" icon="ios-person" src="" />
+                                <Avatar shape="square" icon="ios-person" :src="hostUrl() + item.HeadImgUrl" />
                             </Badge>
                         </div>
                         <div class="info">
-                            <h4 class="nickname">{{contacts.temp[index].NickName}}</h>
+                            <h4 class="nickname">{{item.NickName}}</h>
                         </div>
                     </div>
                 </li>
