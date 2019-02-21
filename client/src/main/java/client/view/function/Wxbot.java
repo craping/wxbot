@@ -1,6 +1,8 @@
 package client.view.function;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +12,11 @@ import com.cherry.jeeves.Jeeves;
 import com.cherry.jeeves.domain.shared.Contact;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.teamdev.jxbrowser.chromium.JSONString;
+import com.teamdev.jxbrowser.chromium.JSObject;
+import com.teamdev.jxbrowser.chromium.JSValue;
 
 import client.utils.Tools;
+import client.view.WxbotView;
 
   
 /**  
@@ -60,6 +65,9 @@ public class Wxbot extends KeywordFunction {
     	
 	}
 	
+	public String getToken() {
+		return userToken;
+	}
 	  
 	/**  
 	* @Title: stop  
@@ -90,6 +98,19 @@ public class Wxbot extends KeywordFunction {
 			e.printStackTrace();
 		}
 		return new JSONString("{}");
+	}
+	
+	public void execute(){
+		Map<String, String> seqMap = new HashMap<>();
+		seqMap.put("123", "321");
+		WxbotView wxbotView = WxbotView.getInstance();
+		JSObject app = wxbotView.getBrowser().executeJavaScriptAndReturnValue("app").asObject();
+		JSValue onMembersSeqChanged = app.getProperty("onMembersSeqChanged");
+		try {
+			onMembersSeqChanged.asFunction().invoke(app, new JSONString(jsonMapper.writeValueAsString(seqMap)));
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
 	}
 
 }
