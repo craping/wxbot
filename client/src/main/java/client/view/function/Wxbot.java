@@ -60,6 +60,9 @@ public class Wxbot extends KeywordFunction {
     	
 	}
 	
+	public String getToken() {
+		return userToken;
+	}
 	  
 	/**  
 	* @Title: stop  
