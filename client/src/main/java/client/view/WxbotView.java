@@ -134,8 +134,7 @@ public final class WxbotView extends AnchorPane  {
         browser.addDisposeListener(event -> {
         	System.out.println("disposed event = "+event);
         });
-//        browser.loadURL(getClass().getClassLoader().getResource("view/main.html").toExternalForm());
-        browser.loadURL("http://www.quirksmode.org/html5/tests/video.html");
+        browser.loadURL(getClass().getClassLoader().getResource("view/main.html").toExternalForm());
         
         browser.addConsoleListener(e -> {
         	String level = e.getLevel().name();
