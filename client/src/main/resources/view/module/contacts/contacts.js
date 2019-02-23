@@ -12,6 +12,7 @@ Contacts = {
             // 拼接头像url
             //console.log(wxbot.getHostUrl());
             //console.log(param);
+            // return "";
             return wxbot.getHostUrl();
         },
         startChat(seq, nickName, userName, headImgUrl) {

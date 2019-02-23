@@ -22,8 +22,17 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.teamdev.jxbrowser.chromium.CookieStorage;
+import com.teamdev.jxbrowser.chromium.JSONString;
+import com.teamdev.jxbrowser.chromium.JSObject;
+import com.teamdev.jxbrowser.chromium.JSValue;
 
 import client.controller.LoginController;
+import client.pojo.KeywordMap;
+import client.enums.Direction;
+import client.pojo.WxMessage;
+import client.pojo.WxMessageBody;
+import client.utils.FileUtil;
+import client.utils.Tools;
 import client.view.QRView;
 import client.view.WxbotView;
 import javafx.application.Platform;
@@ -118,11 +127,45 @@ public class MessageHandlerImpl implements MessageHandler {
 
 	@Override
 	public void onReceivingChatRoomTextMessage(Message message) {
+		String content = MessageUtils.getChatRoomTextMessageContent(message.getContent());
 		logger.info("群聊文本消息");
 		logger.info("from chatroom: " + message.getFromUserName());
 		logger.info("from person: " + MessageUtils.getSenderOfChatRoomTextMessage(message.getContent()));
 		logger.info("to: " + message.getToUserName());
-		logger.info("content:" + MessageUtils.getChatRoomTextMessageContent(message.getContent()));
+		logger.info("content:" + content);
+		
+		Contact chatRoom = cacheService.getChatRooms().stream().filter(x -> message.getFromUserName().equals(x.getUserName())).findFirst().orElse(null);
+		if(chatRoom != null){
+			//全域关键词自动回复
+			KeywordMap keyMap = KeywordFunction.keyMaps.stream().filter(x -> x.getSeq().equals(KeywordFunction.GLOBA_SEQ)).findFirst().orElse(null);
+			if(keyMap != null){
+				for (Map.Entry<String, String> entry : keyMap.getKeyMap().entrySet()) {
+					if(content.contains(entry.getKey())){
+						try {
+							wechatHttpService.sendText(message.getFromUserName(), entry.getValue());
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+						break;
+					}
+				}
+			}
+			
+			//分群关键词自动回复
+			keyMap = KeywordFunction.keyMaps.stream().filter(x -> x.getSeq().equals(chatRoom.getSeq())).findFirst().orElse(null);
+			if(keyMap != null){
+				for (Map.Entry<String, String> entry : keyMap.getKeyMap().entrySet()) {
+					if(content.contains(entry.getKey())){
+						try {
+							wechatHttpService.sendText(message.getFromUserName(), entry.getValue());
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+						break;
+					}
+				}
+			}
+		}
 	}
 
 	@Override
@@ -179,15 +222,27 @@ public class MessageHandlerImpl implements MessageHandler {
 		logger.info("from: " + message.getFromUserName());
 		logger.info("to: " + message.getToUserName());
 		logger.info("content:" + message.getContent());
+		
+		Contact sender = cacheService.getIndividuals().stream().filter(individual -> message.getFromUserName().equals(individual.getUserName())).findFirst().orElse(null);
+		String seq = sender.getSeq();
 
-		if (message.getFromUserName().equals(cacheService.getOwner().getUserName()))
-			return;
-		// 将原文回复给对方
+		WxMessage msg = new WxMessage();
+		String timestamp = Tools.getTimestamp();
+		msg.setTimestamp(timestamp);
+		msg.setTo(cacheService.getOwner().getNickName());
+		msg.setFrom(sender.getNickName());
+		msg.setDirection(Direction.RECEIVE.getCode());
+		msg.setMsgType(MessageType.TEXT.getCode());
+		msg.setBody(new WxMessageBody(message.getContent()));
+		String jsonStr = "";
 		try {
-			wechatHttpService.sendText(message.getFromUserName(), message.getContent());
-		} catch (IOException e) {
+			jsonStr = jsonMapper.writeValueAsString(msg);
+		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
+		String path = "d:/chat/" + seq;
+		FileUtil.writeFile(path, Tools.getSysDate() + ".txt", jsonStr);
+		Wxbot.avatarBadge(seq);
 	}
 
 	@Override
@@ -195,13 +250,11 @@ public class MessageHandlerImpl implements MessageHandler {
 		logger.info("私聊图片消息");
 		logger.info("thumbImageUrl:" + thumbImageUrl);
 		logger.info("fullImageUrl:" + fullImageUrl);
-
-		if (message.getFromUserName().equals(cacheService.getOwner().getUserName()))
-			return;
-		// 将原文回复给对方
+		
 		try {
-			wechatHttpService.forwardMsg(message.getFromUserName(), message);
-		} catch (IOException e) {
+			System.out.println(jsonMapper.writeValueAsString(message));
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -210,13 +263,11 @@ public class MessageHandlerImpl implements MessageHandler {
 	public void onReceivingPrivateEmoticonMessage(Message message, String emoticonUrl) {
 		logger.info("私聊表情消息");
 		logger.info("emoticonUrl:" + emoticonUrl);
-
-		if (message.getFromUserName().equals(cacheService.getOwner().getUserName()))
-			return;
-		// 将原文回复给对方
+		
 		try {
-			wechatHttpService.forwardMsg(message.getFromUserName(), message);
-		} catch (IOException e) {
+			System.out.println(jsonMapper.writeValueAsString(message));
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -225,13 +276,11 @@ public class MessageHandlerImpl implements MessageHandler {
 	public void onReceivingPrivateVoiceMessage(Message message, String voiceUrl) {
 		logger.info("私聊语音消息");
 		logger.info("voiceUrl:" + voiceUrl);
-
-		if (message.getFromUserName().equals(cacheService.getOwner().getUserName()))
-			return;
-		// 将原文回复给对方
+		
 		try {
-			wechatHttpService.forwardMsg(message.getFromUserName(), message);
-		} catch (IOException e) {
+			System.out.println(jsonMapper.writeValueAsString(message));
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -239,29 +288,44 @@ public class MessageHandlerImpl implements MessageHandler {
 	@Override
 	public void onReceivingPrivateVideoMessage(Message message, String thumbImageUrl, String videoUrl) {
 		logger.info("私聊视频消息");
+		logger.info("thumbImageUrl:" + thumbImageUrl);
 		logger.info("videoUrl:" + videoUrl);
+		
+		// 下载视频文件、缩略图文件 到本地
+		videoUrl = wechatHttpService.download(videoUrl, message.getMsgId()+".mp4", MessageType.VIDEO);
+		thumbImageUrl = wechatHttpService.download(thumbImageUrl, message.getMsgId()+".jpg", MessageType.VIDEO);
+		
+		Contact sender = cacheService.getIndividuals().stream().filter(individual -> message.getFromUserName().equals(individual.getUserName())).findFirst().orElse(null);
+		String seq = sender.getSeq();
 
-		if (message.getFromUserName().equals(cacheService.getOwner().getUserName()))
-			return;
-		// 将原文回复给对方
+		WxMessage msg = new WxMessage();
+		String timestamp = Tools.getTimestamp();
+		msg.setTimestamp(timestamp);
+		msg.setTo(cacheService.getOwner().getNickName());
+		msg.setFrom(sender.getNickName());
+		msg.setDirection(Direction.RECEIVE.getCode());
+		msg.setMsgType(MessageType.VIDEO.getCode());
+		msg.setBody(new WxMessageBody(MessageType.VIDEO, videoUrl, thumbImageUrl, null, null));
+		String content = "";
 		try {
-			wechatHttpService.forwardMsg(message.getFromUserName(), message);
-		} catch (IOException e) {
+			content = jsonMapper.writeValueAsString(msg);
+		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
+		String path = "d:/chat/" + seq;
+		FileUtil.writeFile(path, Tools.getSysDate() + ".txt", content);
+		Wxbot.avatarBadge(seq);
 	}
 
 	@Override
 	public void onReceivingPrivateMediaMessage(Message message, String mediaUrl) {
 		logger.info("私聊多媒体消息");
 		logger.info("mediaUrl:" + mediaUrl);
-
-		if (message.getFromUserName().equals(cacheService.getOwner().getUserName()))
-			return;
-		// 将原文回复给对方
+		
 		try {
-			wechatHttpService.forwardMsg(message.getFromUserName(), message);
-		} catch (IOException e) {
+			System.out.println(jsonMapper.writeValueAsString(message));
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -270,6 +334,16 @@ public class MessageHandlerImpl implements MessageHandler {
 	public void onMembersSeqChanged(Map<String, String> seqMap) {
 		logger.info("收到联系人seq变动消息");
 		System.out.println(seqMap);
+		Platform.runLater(() -> {
+			WxbotView wxbotView = WxbotView.getInstance();
+			JSObject app = wxbotView.getBrowser().executeJavaScriptAndReturnValue("app").asObject();
+			JSValue onMembersSeqChanged = app.getProperty("onMembersSeqChanged");
+			try {
+				onMembersSeqChanged.asFunction().invoke(app, new JSONString(jsonMapper.writeValueAsString(seqMap)));
+			} catch (JsonProcessingException e) {
+				e.printStackTrace();
+			}
+		});
 	}
 	
 	
