@@ -265,12 +265,29 @@ public class MessageHandlerImpl implements MessageHandler {
 		logger.info("私聊表情消息");
 		logger.info("emoticonUrl:" + emoticonUrl);
 		
+		// 下载表情文件 到本地
+		emoticonUrl = wechatHttpService.download(emoticonUrl, message.getMsgId()+".gif", MessageType.EMOTICON);
+		
+		Contact sender = cacheService.getIndividuals().stream().filter(individual -> message.getFromUserName().equals(individual.getUserName())).findFirst().orElse(null);
+		String seq = sender.getSeq();
+
+		WxMessage msg = new WxMessage();
+		String timestamp = Tools.getTimestamp();
+		msg.setTimestamp(timestamp);
+		msg.setTo(cacheService.getOwner().getNickName());
+		msg.setFrom(sender.getNickName());
+		msg.setDirection(Direction.RECEIVE.getCode());
+		msg.setMsgType(MessageType.EMOTICON.getCode());
+		msg.setBody(new WxMessageBody(emoticonUrl, message.getImgHeight(), message.getImgWidth()));
+		String content = "";
 		try {
-			System.out.println(jsonMapper.writeValueAsString(message));
+			content = jsonMapper.writeValueAsString(msg);
 		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		String path = "d:/chat/" + seq;
+		FileUtil.writeFile(path, Tools.getSysDate() + ".txt", content);
+		Wxbot.avatarBadge(seq);
 	}
 
 	@Override
@@ -278,6 +295,30 @@ public class MessageHandlerImpl implements MessageHandler {
 		logger.info("私聊语音消息");
 		logger.info("voiceUrl:" + voiceUrl);
 		
+		// 下载语音文件 到本地
+		voiceUrl = wechatHttpService.download(voiceUrl, message.getMsgId()+".mp3", MessageType.VOICE);
+		
+		Contact sender = cacheService.getIndividuals().stream().filter(individual -> message.getFromUserName().equals(individual.getUserName())).findFirst().orElse(null);
+		String seq = sender.getSeq();
+
+		WxMessage msg = new WxMessage();
+		String timestamp = Tools.getTimestamp();
+		msg.setTimestamp(timestamp);
+		msg.setTo(cacheService.getOwner().getNickName());
+		msg.setFrom(sender.getNickName());
+		msg.setDirection(Direction.RECEIVE.getCode());
+		msg.setMsgType(MessageType.VOICE.getCode());
+		msg.setBody(new WxMessageBody(voiceUrl, message.getVoiceLength()));
+		String content = "";
+		try {
+			content = jsonMapper.writeValueAsString(msg);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+		String path = "d:/chat/" + seq;
+		FileUtil.writeFile(path, Tools.getSysDate() + ".txt", content);
+		Wxbot.avatarBadge(seq);
+		Wxbot.newVoiceMessage(timestamp);
 		try {
 			System.out.println(jsonMapper.writeValueAsString(message));
 		} catch (JsonProcessingException e) {
@@ -306,7 +347,7 @@ public class MessageHandlerImpl implements MessageHandler {
 		msg.setFrom(sender.getNickName());
 		msg.setDirection(Direction.RECEIVE.getCode());
 		msg.setMsgType(MessageType.VIDEO.getCode());
-		msg.setBody(new WxMessageBody(MessageType.VIDEO, videoUrl, thumbImageUrl, null, null));
+		msg.setBody(new WxMessageBody(videoUrl, thumbImageUrl));
 		String content = "";
 		try {
 			content = jsonMapper.writeValueAsString(msg);

@@ -82,6 +82,16 @@ public class Wxbot extends KeywordFunction {
 		String script = "Chat.methods.newMessage(" + seq + ")";
 		wxbotView.executeScript(script);
 	}
+	
+	/**
+	 * 处理新语音消息，未读提醒
+	 * @param timestamp
+	 */
+	public static void newVoiceMessage(String timestamp) {
+		WxbotView wxbotView = WxbotView.getInstance();
+		String script = "Chat.methods.newVoiceMessage(" + timestamp + ")";
+		wxbotView.executeScript(script);
+	}
 	  
 	/**  
 	* @Title: stop  

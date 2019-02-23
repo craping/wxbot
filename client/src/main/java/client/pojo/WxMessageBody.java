@@ -1,7 +1,6 @@
 package client.pojo;
 
-import com.cherry.jeeves.enums.MessageType;
-
+import client.utils.Arith;
 import lombok.Data;
 
 /**
@@ -20,8 +19,8 @@ public class WxMessageBody {
 	public String thumbImageUrl = "";
 
 	/** 图片长宽 -> 图片、表情 */
-	public String imgHeight = "";
-	public String imgWidth = "";
+	public int imgHeight;
+	public int imgWidth;
 
 	/** 图片消息 */
 	public String fullImageUrl = "";
@@ -31,6 +30,7 @@ public class WxMessageBody {
 
 	/** 语音消息 */
 	public String voiceUrl = "";
+	public int voiceLength = 1;
 
 	/** 视频消息 */
 	public String videoUrl = "";
@@ -41,33 +41,62 @@ public class WxMessageBody {
 	public WxMessageBody() {
 	};
 
+	/**
+	 * 文本消息
+	 * 
+	 * @param content
+	 */
 	public WxMessageBody(String content) {
 		this.content = content;
 	}
 
-	public WxMessageBody(MessageType type, String param, String param2, String imgHeight, String imgWidth) {
-		switch (type) {
-		case IMAGE:
-			this.fullImageUrl = param;
-			this.thumbImageUrl = param2;
-			this.imgHeight = imgHeight;
-			this.imgWidth = imgWidth;
-			break;
-		case EMOTICON:
-			this.emoticonUrl = param;
-			this.imgHeight = imgHeight;
-			this.imgWidth = imgWidth;
-			break;
-		case VOICE:
-			this.voiceUrl = param;
-			break;
-		case VIDEO:
-			this.videoUrl = param;
-			this.thumbImageUrl = param2;
-			break;
-		default:
-			this.content = param;
-			break;
-		}
+	/**
+	 * 语音消息
+	 * 
+	 * @param voiceUrl
+	 * @param voiceLength
+	 */
+	public WxMessageBody(String voiceUrl, long voiceLength) {
+		this.voiceUrl = voiceUrl;
+		this.voiceLength = Arith.ceilInt(Arith.div(voiceLength, 1000, 2));
+	}
+
+	/**
+	 * 视频消息
+	 * 
+	 * @param videoUrl
+	 * @param thumbImageUrl
+	 */
+	public WxMessageBody(String videoUrl, String thumbImageUrl) {
+		this.videoUrl = videoUrl;
+		this.thumbImageUrl = thumbImageUrl;
+	}
+
+	/**
+	 * 表情消息
+	 * 
+	 * @param emoticonUrl
+	 * @param imgHeight
+	 * @param imgWidth
+	 */
+	public WxMessageBody(String emoticonUrl, int imgHeight, int imgWidth) {
+		this.emoticonUrl = emoticonUrl;
+		this.imgHeight = imgHeight;
+		this.imgWidth = imgWidth;
+	}
+
+	/**
+	 * 图片消息
+	 * 
+	 * @param fullImageUrl
+	 * @param thumbImageUrl
+	 * @param imgHeight
+	 * @param imgWidth
+	 */
+	public WxMessageBody(String fullImageUrl, String thumbImageUrl, int imgHeight, int imgWidth) {
+		this.fullImageUrl = fullImageUrl;
+		this.thumbImageUrl = thumbImageUrl;
+		this.imgHeight = imgHeight;
+		this.imgWidth = imgWidth;
 	}
 }

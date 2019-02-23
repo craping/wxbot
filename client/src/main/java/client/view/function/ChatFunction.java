@@ -28,6 +28,8 @@ import client.utils.FileUtil;
 import client.utils.Tools;
 import client.view.WxbotView;
 import javafx.application.Platform;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.stage.FileChooser;
 
 @Component
@@ -134,6 +136,27 @@ public abstract class ChatFunction extends ContactsFunction {
 		}
 		return file.getAbsolutePath().replace("\\", "/");
 	}
+	
+	/**
+	 * 切割图片高度、宽度
+	 * @param width
+	 * @param height
+	 * @param type
+	 * @return
+	 */
+	public int cutImg(int width, int height, String type) {
+		// 如果宽度大于最大宽度，则实际高度=原始高度/（原始宽度/最大宽度）
+		if (width > Config.MAX_IMG_WIDTH) {
+			double mult = Arith.div(width, Config.MAX_IMG_WIDTH, 2);
+			height = Arith.getInt(Arith.div(height, mult));
+			width = Config.MAX_IMG_WIDTH;
+		}
+		if ("width".equals(type) || "width" == type) {
+			return width;
+		} else {
+			return height;
+		}
+	}
 
 	/**
 	 * 获取图片高度、宽度
@@ -152,17 +175,7 @@ public abstract class ChatFunction extends ContactsFunction {
 		BufferedImage sourceImg = ImageIO.read(new FileInputStream(picture));
 		int width = sourceImg.getWidth(); // 源图宽度
 		int height = sourceImg.getHeight(); // 源图高度
-		// 如果宽度大于最大宽度，则实际高度=原始高度/（原始宽度/最大宽度）
-		if (width > Config.MAX_IMG_WIDTH) {
-			double mult = Arith.div(width, Config.MAX_IMG_WIDTH, 2);
-			height = Arith.getInt(Arith.div(height, mult));
-			width = Config.MAX_IMG_WIDTH;
-		}
-		if ("width".equals(type) || "width" == type) {
-			return width;
-		} else {
-			return height;
-		}
+		return cutImg(width, height, type);
 	}
 
 	/**
@@ -177,5 +190,20 @@ public abstract class ChatFunction extends ContactsFunction {
 			return;
 		}
 		Tools.openFileByOs(file.toURI().toString());
+	}
+	
+	/**
+	 * 语音播放
+	 * @param path
+	 */
+	public void voicePlay(String path) {
+		File file = new File(path);
+		if (!file.exists()) {
+			logger.error("目录[" + path + "]不存在");
+			return;
+		}
+		Media media = new Media(file.toURI().toString());
+		MediaPlayer mplayer = new MediaPlayer(media);
+		mplayer.play();
 	}
 }

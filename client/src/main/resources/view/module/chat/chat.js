@@ -37,13 +37,28 @@ Chat = {
                 $('#avatar_' + seq).html(_html);
             }
         },
+        // 渲染新语音消息
+        newVoiceMessage(param) {
+            var _html = $('#popover_' + param).html();
+            _html = _html + "<sup class='ivu-badge-dot'></sup>";
+            $('#popover_' + param).html(_html);
+        },
         // 获取图片高、宽
         imgHeightOrWidth(path, type) {
             return wxbot.getImgHeightOrWidth(path, type);
         },
+        // 切割图片，获取最佳宽高
+        cutImg(width, height, type) {
+            return wxbot.cutImg(width, height, type);
+        },
         // 播放视频
         mediaPlay(path) {
             wxbot.mediaPlay(path);
+        },
+        //播放语音
+        voicePlay(path, param) {
+            wxbot.voicePlay(path);
+            $('#popover_'+param+" sup.ivu-badge-dot").remove();
         },
         // 获取文件绝对路径
         realUrl(path) {
