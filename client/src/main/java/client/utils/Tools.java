@@ -21,6 +21,8 @@ import java.util.Random;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
+import client.enums.OsNameEnum;
+
 /**
  * 描述：基础操作函数集合
  */
@@ -575,6 +577,40 @@ public class Tools {
 		String afterShuffle = sb.toString();
 		String result = afterShuffle.substring(5, 9);
 		return result.toLowerCase();
+	}
+	
+	/**
+	 * 操作系统打开文件
+	 * 
+	 * @param qrPath
+	 * @return
+	 */
+	public static boolean openFileByOs(String path) {
+		switch (Config.getOsNameEnum()) {
+		case WINDOWS:
+			if (Config.getOsNameEnum().equals(OsNameEnum.WINDOWS)) {
+				Runtime runtime = Runtime.getRuntime();
+				try {
+					runtime.exec("cmd /c start " + path);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			break;
+		case MAC:
+			if (Config.getOsNameEnum().equals(OsNameEnum.MAC)) {
+				Runtime runtime = Runtime.getRuntime();
+				try {
+					runtime.exec("open " + path);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			break;
+		default:
+			break;
+		}
+		return true;
 	}
 
 	public static void main(String args[]) throws Exception {

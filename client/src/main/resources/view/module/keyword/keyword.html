@@ -1,19 +1,45 @@
 <card dis-hover="true" class="p-0 bg-gray">
     <tabs value="keyword" :animated="false" class="keyword">
         <tab-pane label="关键词" name="keyword">
-            <tree :data="keyword.keywordTree" :render="renderContent"></tree>
+            <i-form inline @submit.native.prevent>
+                <form-item class="mb-0">
+                    <i-input v-model="keyword.form.filterKey" clearable size="small" placeholder="搜索..." prefix="ios-search"/>
+                </form-item>
+                <form-item class="mb-0">
+                    <i-button icon="ios-add" size="small" type="primary" @click="keyword.form.modal=true"></i-button>
+                    <i-button icon="ios-alert" size="small" type="primary" @click="function(){wxbot.execute()}"></i-button>
+                </form-item>
+            </i-form>
+            <div>
+                <i-table :show-header="false" :columns="keyword.columns" :data="keyMap" :loading="keyword.chatroomKeyMapLoading" :height="515"></i-table>
+            </div>
+        </tab-pane>
+        <tab-pane label="定时消息" name="timer">
+
         </tab-pane>
         <tab-pane label="联系人信息" name="info">
 
         </tab-pane>
     </tabs>
 </card>
-<modal v-model="keyword.modal" title="关键词" width="400" :mask-closable="false" @on-ok="editKeywordOk" @on-cancel="editKeywordCancel">
+<modal v-model="keyword.form.modal" title="关键词" width="400" :mask-closable="false" :loading="keyword.form.confirmLoading" @on-ok="editKeyMapOk" @on-cancel="editKeyMapCancel">
     <div>
-        <i-input placeholder="关键词..." clearable/>
+        <i-input placeholder="关键词..." clearable v-model="keyword.form.key"/>
     </div>
     <br>
     <div>
-        <i-input type="textarea" :autosize="{maxRows: 4, minRows: 4}" placeholder="回复内容..." />
+        <i-input type="textarea" :autosize="{maxRows: 4, minRows: 4}" placeholder="回复内容..." v-model="keyword.form.value"/>
+    </div>
+</modal>
+<modal v-model="keyword.form.confirm" width="360" :mask-closable="false">
+    <p slot="header" class="text-center" style="color:#f60;">
+        <icon type="ios-information-circle"></icon>
+        <span>删除确认</span>
+    </p>
+    <div style="text-align:center">
+        <p>是否继续删除关键词 [{{keyword.form.delKey}}]？</p>
+    </div>
+    <div slot="footer">
+        <i-button type="error" size="large" long :loading="keyword.form.confirmLoading" @click="delKeyMap">删除</i-button>
     </div>
 </modal>

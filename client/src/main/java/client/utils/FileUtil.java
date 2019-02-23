@@ -13,19 +13,17 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import client.view.AppView;
-
 public class FileUtil {
 
 	private static final Logger logger = LogManager.getLogger(FileUtil.class);
 
 	public static void main(String args[]) throws IOException {
-		String sep = File.separator;
-		String path = "d:" + sep + "chat1" + sep + "20190218";
-		String fileName = "/2.txt";
-		String content = "{1111}{2222}";
+		//String sep = File.separator;
+		//String path = "d:" + sep + "chat1" + sep + "20190218";
+		//String fileName = "/2.txt";
+		//String content = "{1111}{2222}";
 		// write(content, path, fileName);
-		String realPath = path + fileName;
+		//String realPath = path + fileName;
 		//System.out.println(readFile(realPath).size());
 		//System.out.println(readFile(realPath).get(0));
 	}

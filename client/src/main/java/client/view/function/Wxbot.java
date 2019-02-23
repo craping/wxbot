@@ -65,8 +65,22 @@ public class Wxbot extends KeywordFunction {
     	
 	}
 	
+	/**
+	 * 获取用户token
+	 * @return
+	 */
 	public String getToken() {
 		return userToken;
+	}
+	
+	/**
+	 * 处理新消息，头像加消息提醒
+	 * @param seq
+	 */
+	public static void avatarBadge(String seq) {
+		WxbotView wxbotView = WxbotView.getInstance();
+		String script = "Chat.methods.newMessage(" + seq + ")";
+		wxbotView.executeScript(script);
 	}
 	  
 	/**  

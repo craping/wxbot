@@ -57,3 +57,42 @@
 .msg-conversation .contact .bs-popover-right .arrow::after {
     border-right-color: #fff;
 }
+.playPause.ui-icon {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: 0;
+    display: block;
+    width: auto;
+    bottom: 56px;
+}
+.ui-icon {
+    font-size: 20px;
+    vertical-align: middle;
+    width: 20px;
+    margin-right: 10px;
+    cursor: pointer;
+}
+.playPause.ui-icon:before {
+    font-size: 20px;
+    line-height: 80px;
+    color:#FFFFFF;
+    z-index: 2;
+    top: 50%;
+    left: 50%;
+    margin: -40px 0 0 -14px;
+}
+.playPause.ui-icon:after {
+    content: '';
+    width: 40px;
+    height: 40px;
+    margin: -20px 0 0 -28px;
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 10px;
+}
+.playPause.ui-icon:before, 
+.playPause.ui-icon:after {
+    position: absolute;
+    top: 65%;
+    left: 50%;
+}
