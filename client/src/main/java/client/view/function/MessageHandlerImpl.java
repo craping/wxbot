@@ -14,6 +14,7 @@ import com.cherry.jeeves.domain.shared.Contact;
 import com.cherry.jeeves.domain.shared.Member;
 import com.cherry.jeeves.domain.shared.Message;
 import com.cherry.jeeves.domain.shared.RecommendInfo;
+import com.cherry.jeeves.enums.MessageType;
 import com.cherry.jeeves.service.CacheService;
 import com.cherry.jeeves.service.MessageHandler;
 import com.cherry.jeeves.service.WechatHttpService;
@@ -45,13 +46,13 @@ public class MessageHandlerImpl implements MessageHandler {
 	private WechatHttpService wechatHttpService;
 	@Autowired
 	private CacheService cacheService;
-	
+
 	private ObjectMapper jsonMapper = new ObjectMapper();
 	{
 		jsonMapper.configure(MapperFeature.AUTO_DETECT_GETTERS, false);
 	}
 	private QRView qrView;
-
+	
 	@Override
 	public void onQR(byte[] qrData) {
 		logger.info("获取登录二维码");
@@ -98,7 +99,7 @@ public class MessageHandlerImpl implements MessageHandler {
 			});
 			cookieStorage.save();
 		});
-		
+
 	}
 
 	@Override
@@ -107,7 +108,7 @@ public class MessageHandlerImpl implements MessageHandler {
 		logger.info("用ID：" + member.getUserName());
 		logger.info("用户名：" + member.getNickName());
 		try {
-			logger.info("individuals：" );
+			logger.info("individuals：");
 			System.out.println(jsonMapper.writeValueAsString(cacheService.getIndividuals()));
 			logger.info("mediaPlatforms：");
 			System.out.println(jsonMapper.writeValueAsString(cacheService.getMediaPlatforms()));
@@ -345,9 +346,7 @@ public class MessageHandlerImpl implements MessageHandler {
 			}
 		});
 	}
-	
-	
-	
+
 	@Override
 	public boolean onReceivingFriendInvitation(RecommendInfo info) {
 		logger.info("收到好友请求消息");
@@ -371,15 +370,15 @@ public class MessageHandlerImpl implements MessageHandler {
 		logger.info("群成员变动消息");
 		logger.info("群ID:" + chatRoom.getUserName());
 		if (membersJoined != null && membersJoined.size() > 0) {
-			logger.info("新加入成员:" + String.join(",",
-					membersJoined.stream().map(Contact::getNickName).collect(Collectors.toList())));
+			logger.info("新加入成员:"
+					+ String.join(",", membersJoined.stream().map(Contact::getNickName).collect(Collectors.toList())));
 		}
 		if (membersLeft != null && membersLeft.size() > 0) {
-			logger.info("离开成员:" + String.join(",",
-					membersLeft.stream().map(Contact::getNickName).collect(Collectors.toList())));
+			logger.info("离开成员:"
+					+ String.join(",", membersLeft.stream().map(Contact::getNickName).collect(Collectors.toList())));
 		}
 	}
-	
+
 	@Override
 	public void onNewChatRoomsFound(Set<Contact> chatRooms) {
 		logger.info("发现新群消息");
@@ -431,30 +430,30 @@ public class MessageHandlerImpl implements MessageHandler {
 	@Override
 	public void onStatusNotifyReaded(Message message) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onStatusNotifyEnterSession(Message message) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onStatusNotifyInited(Message message) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onStatusNotifyQuitSession(Message message) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onStatusNotifySyncConv(Message message) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }
