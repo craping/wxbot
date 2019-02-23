@@ -14,6 +14,7 @@ import com.cherry.jeeves.domain.shared.Contact;
 import com.cherry.jeeves.domain.shared.Member;
 import com.cherry.jeeves.domain.shared.Message;
 import com.cherry.jeeves.domain.shared.RecommendInfo;
+import com.cherry.jeeves.enums.MessageType;
 import com.cherry.jeeves.service.CacheService;
 import com.cherry.jeeves.service.MessageHandler;
 import com.cherry.jeeves.service.WechatHttpService;
@@ -24,6 +25,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.teamdev.jxbrowser.chromium.CookieStorage;
 
 import client.controller.LoginController;
+import client.enums.Direction;
+import client.pojo.WxMessage;
+import client.pojo.WxMessageBody;
+import client.utils.FileUtil;
+import client.utils.Tools;
 import client.view.QRView;
 import client.view.WxbotView;
 import javafx.application.Platform;
@@ -36,12 +42,22 @@ public class MessageHandlerImpl implements MessageHandler {
 	private WechatHttpService wechatHttpService;
 	@Autowired
 	private CacheService cacheService;
-	
+
 	private ObjectMapper jsonMapper = new ObjectMapper();
 	{
 		jsonMapper.configure(MapperFeature.AUTO_DETECT_GETTERS, false);
 	}
 	private QRView qrView;
+	
+	/**
+	 * 处理新消息，头像加消息提醒
+	 * @param seq
+	 */
+	public void avatarBadge(String seq) {
+		WxbotView wxbotView = WxbotView.getInstance();
+		String script = "Chat.methods.newMessage(" + seq + ")";
+		wxbotView.executeScript(script);
+	}
 
 	@Override
 	public void onQR(byte[] qrData) {
@@ -89,7 +105,7 @@ public class MessageHandlerImpl implements MessageHandler {
 			});
 			cookieStorage.save();
 		});
-		
+
 	}
 
 	@Override
@@ -98,7 +114,7 @@ public class MessageHandlerImpl implements MessageHandler {
 		logger.info("用ID：" + member.getUserName());
 		logger.info("用户名：" + member.getNickName());
 		try {
-			logger.info("individuals：" );
+			logger.info("individuals：");
 			System.out.println(jsonMapper.writeValueAsString(cacheService.getIndividuals()));
 			logger.info("mediaPlatforms：");
 			System.out.println(jsonMapper.writeValueAsString(cacheService.getMediaPlatforms()));
@@ -179,15 +195,27 @@ public class MessageHandlerImpl implements MessageHandler {
 		logger.info("from: " + message.getFromUserName());
 		logger.info("to: " + message.getToUserName());
 		logger.info("content:" + message.getContent());
+		
+		Contact sender = cacheService.getIndividuals().stream().filter(individual -> message.getFromUserName().equals(individual.getUserName())).findFirst().orElse(null);
+		String seq = sender.getSeq();
 
-		if (message.getFromUserName().equals(cacheService.getOwner().getUserName()))
-			return;
-		// 将原文回复给对方
+		WxMessage msg = new WxMessage();
+		String timestamp = Tools.getTimestamp();
+		msg.setTimestamp(timestamp);
+		msg.setTo(cacheService.getOwner().getNickName());
+		msg.setFrom(sender.getNickName());
+		msg.setDirection(Direction.RECEIVE.getCode());
+		msg.setMsgType(MessageType.TEXT.getCode());
+		msg.setBody(new WxMessageBody(message.getContent()));
+		String jsonStr = "";
 		try {
-			wechatHttpService.sendText(message.getFromUserName(), message.getContent());
-		} catch (IOException e) {
+			jsonStr = jsonMapper.writeValueAsString(msg);
+		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
+		String path = "d:/chat/" + seq;
+		FileUtil.writeFile(path, Tools.getSysDate() + ".txt", jsonStr);
+		avatarBadge(seq);
 	}
 
 	@Override
@@ -195,13 +223,11 @@ public class MessageHandlerImpl implements MessageHandler {
 		logger.info("私聊图片消息");
 		logger.info("thumbImageUrl:" + thumbImageUrl);
 		logger.info("fullImageUrl:" + fullImageUrl);
-
-		if (message.getFromUserName().equals(cacheService.getOwner().getUserName()))
-			return;
-		// 将原文回复给对方
+		
 		try {
-			wechatHttpService.forwardMsg(message.getFromUserName(), message);
-		} catch (IOException e) {
+			System.out.println(jsonMapper.writeValueAsString(message));
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -210,13 +236,11 @@ public class MessageHandlerImpl implements MessageHandler {
 	public void onReceivingPrivateEmoticonMessage(Message message, String emoticonUrl) {
 		logger.info("私聊表情消息");
 		logger.info("emoticonUrl:" + emoticonUrl);
-
-		if (message.getFromUserName().equals(cacheService.getOwner().getUserName()))
-			return;
-		// 将原文回复给对方
+		
 		try {
-			wechatHttpService.forwardMsg(message.getFromUserName(), message);
-		} catch (IOException e) {
+			System.out.println(jsonMapper.writeValueAsString(message));
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -225,13 +249,11 @@ public class MessageHandlerImpl implements MessageHandler {
 	public void onReceivingPrivateVoiceMessage(Message message, String voiceUrl) {
 		logger.info("私聊语音消息");
 		logger.info("voiceUrl:" + voiceUrl);
-
-		if (message.getFromUserName().equals(cacheService.getOwner().getUserName()))
-			return;
-		// 将原文回复给对方
+		
 		try {
-			wechatHttpService.forwardMsg(message.getFromUserName(), message);
-		} catch (IOException e) {
+			System.out.println(jsonMapper.writeValueAsString(message));
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -239,29 +261,44 @@ public class MessageHandlerImpl implements MessageHandler {
 	@Override
 	public void onReceivingPrivateVideoMessage(Message message, String thumbImageUrl, String videoUrl) {
 		logger.info("私聊视频消息");
+		logger.info("thumbImageUrl:" + thumbImageUrl);
 		logger.info("videoUrl:" + videoUrl);
+		
+		// 下载视频文件、缩略图文件 到本地
+		videoUrl = wechatHttpService.download(videoUrl, message.getMsgId()+".mp4", MessageType.VIDEO);
+		thumbImageUrl = wechatHttpService.download(thumbImageUrl, message.getMsgId()+".jpg", MessageType.VIDEO);
+		
+		Contact sender = cacheService.getIndividuals().stream().filter(individual -> message.getFromUserName().equals(individual.getUserName())).findFirst().orElse(null);
+		String seq = sender.getSeq();
 
-		if (message.getFromUserName().equals(cacheService.getOwner().getUserName()))
-			return;
-		// 将原文回复给对方
+		WxMessage msg = new WxMessage();
+		String timestamp = Tools.getTimestamp();
+		msg.setTimestamp(timestamp);
+		msg.setTo(cacheService.getOwner().getNickName());
+		msg.setFrom(sender.getNickName());
+		msg.setDirection(Direction.RECEIVE.getCode());
+		msg.setMsgType(MessageType.VIDEO.getCode());
+		msg.setBody(new WxMessageBody(MessageType.VIDEO, videoUrl, thumbImageUrl, null, null));
+		String content = "";
 		try {
-			wechatHttpService.forwardMsg(message.getFromUserName(), message);
-		} catch (IOException e) {
+			content = jsonMapper.writeValueAsString(msg);
+		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
+		String path = "d:/chat/" + seq;
+		FileUtil.writeFile(path, Tools.getSysDate() + ".txt", content);
+		avatarBadge(seq);
 	}
 
 	@Override
 	public void onReceivingPrivateMediaMessage(Message message, String mediaUrl) {
 		logger.info("私聊多媒体消息");
 		logger.info("mediaUrl:" + mediaUrl);
-
-		if (message.getFromUserName().equals(cacheService.getOwner().getUserName()))
-			return;
-		// 将原文回复给对方
+		
 		try {
-			wechatHttpService.forwardMsg(message.getFromUserName(), message);
-		} catch (IOException e) {
+			System.out.println(jsonMapper.writeValueAsString(message));
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -271,9 +308,7 @@ public class MessageHandlerImpl implements MessageHandler {
 		logger.info("收到联系人seq变动消息");
 		System.out.println(seqMap);
 	}
-	
-	
-	
+
 	@Override
 	public boolean onReceivingFriendInvitation(RecommendInfo info) {
 		logger.info("收到好友请求消息");
@@ -297,15 +332,15 @@ public class MessageHandlerImpl implements MessageHandler {
 		logger.info("群成员变动消息");
 		logger.info("群ID:" + chatRoom.getUserName());
 		if (membersJoined != null && membersJoined.size() > 0) {
-			logger.info("新加入成员:" + String.join(",",
-					membersJoined.stream().map(Contact::getNickName).collect(Collectors.toList())));
+			logger.info("新加入成员:"
+					+ String.join(",", membersJoined.stream().map(Contact::getNickName).collect(Collectors.toList())));
 		}
 		if (membersLeft != null && membersLeft.size() > 0) {
-			logger.info("离开成员:" + String.join(",",
-					membersLeft.stream().map(Contact::getNickName).collect(Collectors.toList())));
+			logger.info("离开成员:"
+					+ String.join(",", membersLeft.stream().map(Contact::getNickName).collect(Collectors.toList())));
 		}
 	}
-	
+
 	@Override
 	public void onNewChatRoomsFound(Set<Contact> chatRooms) {
 		logger.info("发现新群消息");
@@ -357,30 +392,30 @@ public class MessageHandlerImpl implements MessageHandler {
 	@Override
 	public void onStatusNotifyReaded(Message message) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onStatusNotifyEnterSession(Message message) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onStatusNotifyInited(Message message) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onStatusNotifyQuitSession(Message message) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onStatusNotifySyncConv(Message message) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

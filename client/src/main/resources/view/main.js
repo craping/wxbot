@@ -31,10 +31,13 @@ $script.ready(["setting", "contacts", "chat", "keyword"], function () {
         mounted() {
             methods.loadIndividuals(); // 加载联系人列表
         },
+        updated: function () {
+            methods.scrollToBottom();
+        },
         methods: methods
     });
 })
 
-function text(){
-    return {a:1,b:2};
+function text() {
+    return { a: 1, b: 2 };
 }
