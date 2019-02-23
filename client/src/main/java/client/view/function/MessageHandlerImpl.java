@@ -49,16 +49,6 @@ public class MessageHandlerImpl implements MessageHandler {
 	}
 	private QRView qrView;
 	
-	/**
-	 * 处理新消息，头像加消息提醒
-	 * @param seq
-	 */
-	public void avatarBadge(String seq) {
-		WxbotView wxbotView = WxbotView.getInstance();
-		String script = "Chat.methods.newMessage(" + seq + ")";
-		wxbotView.executeScript(script);
-	}
-
 	@Override
 	public void onQR(byte[] qrData) {
 		logger.info("获取登录二维码");
@@ -215,7 +205,7 @@ public class MessageHandlerImpl implements MessageHandler {
 		}
 		String path = "d:/chat/" + seq;
 		FileUtil.writeFile(path, Tools.getSysDate() + ".txt", jsonStr);
-		avatarBadge(seq);
+		Wxbot.avatarBadge(seq);
 	}
 
 	@Override
@@ -287,7 +277,7 @@ public class MessageHandlerImpl implements MessageHandler {
 		}
 		String path = "d:/chat/" + seq;
 		FileUtil.writeFile(path, Tools.getSysDate() + ".txt", content);
-		avatarBadge(seq);
+		Wxbot.avatarBadge(seq);
 	}
 
 	@Override
