@@ -1,4 +1,4 @@
-<card :title="chat.title" style="height: inherit;" dis-hover="true" class="p-0 bg-gray h-100">
+<card v-if="chat.title !=' '" :title="chat.title" style="height: inherit;" dis-hover="true" class="p-0 bg-gray h-100">
     <div style="height: 410px;" class="overflow-auto" id="chatcontheight">
         <divider style="font-size: 12px"></divider>
         <div class="msg-conversation my-3" v-for="(item, index) in chat.chatRecord">
@@ -11,15 +11,51 @@
 
                 <div class="popover-body" v-if="item.msgType==1">{{item.body.content}}</div>
                 <div class="popover-body" v-if="item.msgType==43" @click="mediaPlay(item.body.videoUrl)">
-                    <video name="media" :height="imgHeightOrWidth(item.body.thumbImageUrl,'height')" 
-                        :width="imgHeightOrWidth(item.body.thumbImageUrl,'width')" v-bind:poster="realUrl(item.body.thumbImageUrl)">
+                    <video name="media" :height="imgHeightOrWidth(item.body.thumbImageUrl,'height')" :width="imgHeightOrWidth(item.body.thumbImageUrl,'width')"
+                        v-bind:poster="realUrl(item.body.thumbImageUrl)">
                         <source v-bind:src="realUrl(item.body.videoUrl)" type="video/mp4">
                     </video>
-                    <!-- <img :src="realUrl(item.body.thumbImageUrl)" :height="imgHeightOrWidth(item.body.thumbImageUrl,0)" 
-                        :width="imgHeightOrWidth(item.body.thumbImageUrl,1)"/> -->
                     <i data-playPause class="playPause fa fa-play ui-icon"><span></span></i>
                 </div>
-                <!--<div class="popover-body" v-else>{{item.body}}</div>-->
+                <div class="popover-body" v-if="item.msgType==47">
+                    <img :src="realUrl(item.body.emoticonUrl)" :height="cutImg(item.body.imgWidth, item.body.imgHeight, 'height')"
+                        :width="cutImg(item.body.imgWidth, item.body.imgHeight, 'width')" />
+                </div>
+                <div class="popover-body" v-if="item.msgType==3" @click="mediaPlay(item.body.fullImageUrl)">
+                    <img :src="realUrl(item.body.thumbImageUrl)" :height="item.body.imgHeight" :width="item.body.imgWidth" />
+                </div>
+                <div class="popover-body" v-if="item.msgType==49">
+                    <div class="attach_bd">
+                        <div class="cover">
+                            <AnchorLink title="点击打开文件">
+                                <i @click="mediaPlay(item.body.mediaUrl)" style="cursor: pointer;" class="web_wechat_file"></i>
+                            </AnchorLink>
+                        </div>
+                        <div class="cont">
+                            <AnchorLink :title="item.body.fileName">
+                                <p>{{item.body.fileName}}</p>
+                            </AnchorLink>
+                            <div class="" style="margin-top: 25px">
+                                <span class="ng-binding">{{item.body.fileSize}}</span>
+                                <span class="">|</span>
+                                <span class="check_span" @click="mediaPlay(item.body.mediaUrl)"> 查看 </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="popover-body" v-if="item.msgType==34" @click="voicePlay(item.body.voiceUrl, item.timestamp)"
+                    :id="'popover_' + item.timestamp">
+                    <span id="audio_area" class="audio_area">
+                        <span class="audio_wrp">
+                            <span class="audio_play_area">
+                                <i class="icon_audio_default"></i>
+                                <i class="icon_audio_playing"></i>
+                            </span>
+                            <span id="audio_length" class="audio_length tips_global">{{item.body.voiceLength}}''</span>
+                        </span>
+                    </span>
+                    <!-- <sup class='ivu-badge-dot'></sup> -->
+                </div>
             </div>
             <div class="clearfix"></div>
         </div>
@@ -36,3 +72,7 @@
         </div>
     </div>
 </card>
+<div v-else class="message_empty">
+    <i class="web_wechat_nomes_icon"></i>
+    <p class="p_blank">未选择聊天</p>
+</div>
