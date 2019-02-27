@@ -12,7 +12,7 @@ import com.teamdev.jxbrowser.chromium.JSArray;
 import client.pojo.KeywordMap;
 
 @Component
-public class KeywordFunction extends ChatFunction {
+public class KeywordFunction extends TimerFunction {
 
 	public static List<KeywordMap> keyMaps;
 	
