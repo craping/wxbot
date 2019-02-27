@@ -6,18 +6,31 @@ Chat = {
         seq: "",        // 用户唯一值
         title: " ",     // 窗口标题
         text: "",       // 聊天文本
-        chatRecord: [{ }],
+        chatRecord: [{
+
+        }],
     },
     methods: {
         sendApp() {
-            wxbot.sendApp(null);
+            if (this.chat.title ==' ') {
+                this.$Message.error('请选择一个聊天好友');
+                return false;
+            }
+            wxbot.sendApp(this.chat.seq, this.chat.title, this.chat.userName);
         },
         // 发送文本消息
         sendText() {
+            var s = "微信机器人需求.xlsx";
+            var s1 = "微信机器人需求报价.xlsx";
+            var s2 = "plan-collect.rar";
+            console.log(s.length);
+            console.log(s1.length);
+            console.log(s2.length);
+
             if (this.chat.text == "")
                 return false;
 
-            wxbot.sendText(this.chat.seq, this.chat.title, this.chat.userName, "chat", this.chat.text);
+            wxbot.sendText(this.chat.seq, this.chat.title, this.chat.userName, this.chat.text);
             Chat.data.text = "";
             Chat.methods.reloadChat(this.chat.seq);
         },
@@ -25,6 +38,7 @@ Chat = {
         reloadChat(seq) {
             console.log(seq);
             Chat.data.chatRecord = wxbot.chatRecord(seq);
+            Chat.methods.scrollToBottom();
         },
         // 渲染 新消息
         newMessage(seq) {
@@ -67,7 +81,10 @@ Chat = {
         // 聊天窗口滚动条自动底部
         scrollToBottom: function () {
             var container = document.getElementById('chatcontheight');
-            container.scrollTop = container.scrollHeight;
+            if (container != null){
+                //console.log(container);
+                container.scrollTop = container.scrollHeight;
+            }
         },
     },
 }

@@ -18,96 +18,83 @@ import com.teamdev.jxbrowser.chromium.JSValue;
 import client.utils.Tools;
 import client.view.WxbotView;
 
-  
-/**  
-* @ClassName: Wxbot  
-* @Description: Java与Chromium交互函数类
-* @author Crap  
-* @date 2019年1月26日  
-*    
-*/  
-    
+/**
+ * @ClassName: Wxbot
+ * @Description: Java与Chromium交互函数类
+ * @author Crap
+ * @date 2019年1月26日
+ * 
+ */
+
 @Component
 public class Wxbot extends KeywordFunction {
-	
+
 	@Autowired
 	private Jeeves jeeves;
-	
+
 	public Thread wxbotThread;
-	
+
 	public String userToken;
-	
+
 	public Wxbot() {
 		super();
 	}
-	 
-	/**  
-	* @Title: start  
-	* @Description: 启动Jeeves机器人线程
-	* @param     参数  
-	* @return void    返回类型  
-	* @throws  
-	*/  
-	    
-	public void start(String token) {
-		if (Tools.isStrEmpty(userToken)) {
-			userToken = token;
-		}
-		wxbotThread = new Thread(() -> {
-        	try {
-        		jeeves.start();
-        	}catch (Exception e) {
-			}
-        	wxbotThread = null;
-        });
-		wxbotThread.setDaemon(true);
-		wxbotThread.start();
-    	
-	}
-	
+
 	/**
 	 * 获取用户token
+	 * 
 	 * @return
 	 */
 	public String getToken() {
 		return userToken;
 	}
-	
+
 	/**
-	 * 处理新消息，头像加消息提醒
-	 * @param seq
+	 * 根据用户名userName 获取用户contact
+	 * 
+	 * @param contacts 微信
+	 * @param userName
+	 * @return
 	 */
-	public static void avatarBadge(String seq) {
-		WxbotView wxbotView = WxbotView.getInstance();
-		String script = "Chat.methods.newMessage(" + seq + ")";
-		wxbotView.executeScript(script);
+	public static Contact getSender(Set<Contact> contacts, String userName) {
+		return contacts.stream().filter(individual -> userName.equals(individual.getUserName())).findFirst().orElse(null);
 	}
-	
+
 	/**
-	 * 处理新语音消息，未读提醒
-	 * @param timestamp
+	 * @Title: start 
+	 * @Description: 启动Jeeves机器人线程 
+	 * @param 参数 
+	 * @return void 返回类型 
+	 * @throws
 	 */
-	public static void newVoiceMessage(String timestamp) {
-		WxbotView wxbotView = WxbotView.getInstance();
-		String script = "Chat.methods.newVoiceMessage(" + timestamp + ")";
-		wxbotView.executeScript(script);
+	public void start(String token) {
+		if (Tools.isStrEmpty(userToken)) {
+			userToken = token;
+		}
+		wxbotThread = new Thread(() -> {
+			try {
+				jeeves.start();
+			} catch (Exception e) {
+			}
+			wxbotThread = null;
+		});
+		wxbotThread.setDaemon(true);
+		wxbotThread.start();
 	}
-	  
-	/**  
-	* @Title: stop  
-	* @Description: 停止Jeeves机器人线程，
-	* @param     参数  
-	* @return void    返回类型  
-	* @throws  
-	*/  
-	    
+
+	/**
+	 * @Title: stop 
+	 * @Description: 停止Jeeves机器人线程， 
+	 * @param 参数 
+	 * @return void 返回类型
+	 *  @throws
+	 */
 	public void stop() {
 		jeeves.stop();
-		if(wxbotThread != null)
+		if (wxbotThread != null)
 			wxbotThread.interrupt();
-    }
-	
-	
+	}
+
 	public JSONString test() {
 		Set<Contact> sets = new HashSet<>();
 		Contact c = new Contact();
@@ -123,8 +110,8 @@ public class Wxbot extends KeywordFunction {
 		}
 		return new JSONString("{}");
 	}
-	
-	public void execute(){
+
+	public void execute() {
 		Map<String, String> seqMap = new HashMap<>();
 		seqMap.put("123", "321");
 		WxbotView wxbotView = WxbotView.getInstance();
@@ -136,5 +123,4 @@ public class Wxbot extends KeywordFunction {
 			e.printStackTrace();
 		}
 	}
-
 }

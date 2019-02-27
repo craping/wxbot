@@ -1,5 +1,7 @@
 package client.pojo;
 
+import com.cherry.jeeves.enums.MessageType;
+
 import client.utils.Arith;
 import lombok.Data;
 
@@ -37,6 +39,11 @@ public class WxMessageBody {
 
 	/** 多媒体消息 */
 	public String mediaUrl = "";
+	
+	/** 文件名 */
+	public String fileName = "";
+	/** 文件大小 */
+	public String fileSize = "";
 
 	public WxMessageBody() {
 	};
@@ -98,5 +105,19 @@ public class WxMessageBody {
 		this.thumbImageUrl = thumbImageUrl;
 		this.imgHeight = imgHeight;
 		this.imgWidth = imgWidth;
+	}
+	
+	/**
+	 * 通用文件
+	 * 
+	 * @param type
+	 * @param param
+	 */
+	public WxMessageBody(MessageType type, String fileUrl, String fileName, String fileSize) {
+		if (type.equals(MessageType.APP)) {
+			this.mediaUrl = fileUrl;
+			this.fileName = fileName;
+			this.fileSize = fileSize;
+		}
 	}
 }

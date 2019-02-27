@@ -1,14 +1,22 @@
 package client.utils;
 
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.math.BigDecimal;
+import java.nio.channels.FileChannel;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.imageio.ImageIO;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,14 +26,14 @@ public class FileUtil {
 	private static final Logger logger = LogManager.getLogger(FileUtil.class);
 
 	public static void main(String args[]) throws IOException {
-		//String sep = File.separator;
-		//String path = "d:" + sep + "chat1" + sep + "20190218";
-		//String fileName = "/2.txt";
-		//String content = "{1111}{2222}";
+		// String sep = File.separator;
+		// String path = "d:" + sep + "chat1" + sep + "20190218";
+		// String fileName = "/2.txt";
+		// String content = "{1111}{2222}";
 		// write(content, path, fileName);
-		//String realPath = path + fileName;
-		//System.out.println(readFile(realPath).size());
-		//System.out.println(readFile(realPath).get(0));
+		// String realPath = path + fileName;
+		// System.out.println(readFile(realPath).size());
+		System.out.println(Files.probeContentType(Paths.get("‪‪‪D:/nginx-1.15.5.zip")));
 	}
 
 	/**
@@ -37,7 +45,7 @@ public class FileUtil {
 	 */
 	public static boolean renameFile(String oldPath, String newPath) {
 		File file = new File(oldPath);
-		if (file.exists()) {
+		if (!file.exists()) {
 			logger.error("目录[" + oldPath + "]不存在");
 			return false;
 		}
@@ -54,13 +62,13 @@ public class FileUtil {
 	public static List<String> readFile(String path) throws IOException {
 		// 使用一个字符串集合来存储文本中的路径 ，也可用String []数组
 		List<String> list = new ArrayList<String>();
-		
+
 		// 目录是否存在
 		if (!(new File(path)).exists()) {
 			logger.error("目录[" + path + "]不存在");
 			return list;
 		}
-		
+
 		FileInputStream fis = new FileInputStream(path);
 		// 防止路径乱码 如果utf-8 乱码 改GBK eclipse里创建的txt 用UTF-8，在电脑上自己创建的txt 用GBK
 		InputStreamReader isr = new InputStreamReader(fis, "UTF-8");
@@ -112,32 +120,13 @@ public class FileUtil {
 		}
 	}
 
-	public static String getXmlString(String flie) {
-		File xmlfile = new File(flie);
-		StringBuffer sb = new StringBuffer();
-		BufferedReader br = null;
-		try {
-			br = new BufferedReader(new InputStreamReader(new FileInputStream(xmlfile), "utf-8"));
-			String line = null;
-			while ((line = br.readLine()) != null) {
-				if (!line.trim().equals("")) {
-					sb.append(line);
-				}
-			}
-		} catch (Exception e) {
-			// Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			try {
-				br.close();
-			} catch (IOException e) {
-				// Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		return sb.toString();
-	}
-
+	/**
+	 * 复制文件夹
+	 * 
+	 * @param fileFrom
+	 * @param fileTo
+	 * @return
+	 */
 	public static boolean copy(String fileFrom, String fileTo) {
 		FileInputStream in = null;
 		FileOutputStream out = null;
@@ -163,6 +152,12 @@ public class FileUtil {
 		}
 	}
 
+	/**
+	 * 获取文件内容
+	 * 
+	 * @param name
+	 * @return
+	 */
 	public static String getString(String name) {
 		String s = "";
 		try {
@@ -206,5 +201,118 @@ public class FileUtil {
 			e.printStackTrace();
 		}
 		return mk;
+	}
+
+	/**
+	 * 获取图片高度
+	 * 
+	 * @throws IOException
+	 * @throws FileNotFoundException
+	 */
+	public static int getImgHeight(String path) {
+		int height = 0;
+		File picture = new File(path);
+		if (!picture.exists()) {
+			logger.error("目录文件[" + path + "]不存在");
+			return height;
+		}
+		try {
+			BufferedImage sourceImg = ImageIO.read(new FileInputStream(picture));
+			height = sourceImg.getHeight(); // 源图高度
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return height;
+	}
+
+	/**
+	 * 获取图片宽度
+	 * 
+	 * @throws IOException
+	 * @throws FileNotFoundException
+	 */
+	public static int getImgWidth(String path) {
+		int width = 0;
+		File picture = new File(path);
+		if (!picture.exists()) {
+			logger.error("getImgWidth 目录文件[" + path + "]不存在");
+			return width;
+		}
+		try {
+			BufferedImage sourceImg = ImageIO.read(new FileInputStream(picture));
+			width = sourceImg.getWidth(); // 源图宽度
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return width;
+	}
+
+	/**
+	 * 计算获取文件大小
+	 * 
+	 * @param size
+	 * @return
+	 */
+	@SuppressWarnings("resource")
+	public static String getFileSize(String path) {
+		String fileSize = "0kb";
+		FileChannel fc = null;
+		try {
+			File file = new File(path);
+			if (!file.exists()) {
+				logger.error("getFileSize 目录文件[" + path + "]不存在");
+				return fileSize;
+			}
+			fc = new FileInputStream(file).getChannel();
+			fileSize = getFileSize(fc.size());
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (null != fc) {
+				try {
+					fc.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return fileSize;
+	}
+
+	/**
+	 * 计算获取文件大小
+	 * 
+	 * @param size
+	 * @return
+	 */
+	public static String getFileSize(long size) {
+		// 如果字节数少于1024，则直接以B为单位，否则先除于1024，后3位因太少无意义
+		double value = (double) size;
+		if (value < 1024) {
+			return String.valueOf(value) + "B";
+		} else {
+			value = new BigDecimal(value / 1024).setScale(2, BigDecimal.ROUND_DOWN).doubleValue();
+		}
+		// 如果原字节数除于1024之后，少于1024，则可以直接以KB作为单位
+		// 因为还没有到达要使用另一个单位的时候
+		// 接下去以此类推
+		if (value < 1024) {
+			return String.valueOf(value) + "KB";
+		} else {
+			value = new BigDecimal(value / 1024).setScale(2, BigDecimal.ROUND_DOWN).doubleValue();
+		}
+		if (value < 1024) {
+			return String.valueOf(value) + "MB";
+		} else {
+			// 否则如果要以GB为单位的，先除于1024再作同样的处理
+			value = new BigDecimal(value / 1024).setScale(2, BigDecimal.ROUND_DOWN).doubleValue();
+			return String.valueOf(value) + "GB";
+		}
 	}
 }
