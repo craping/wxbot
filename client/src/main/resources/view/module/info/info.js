@@ -1,0 +1,7 @@
+Info = {
+    data: {
+    },
+    computed: {
+    },
+    methods: {}
+}

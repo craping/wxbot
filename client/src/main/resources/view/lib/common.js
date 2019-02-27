@@ -25,7 +25,7 @@ var Web = {
 			timeout: 20000,
 			safe: false,
 			data: {
-				token: wxbot.getToken(),
+				token: "f2d862c7f22c4e87827ee99c056324b8",//wxbot.getToken(),
 			},
 			url: Web.serverURL,
 			success: function () { },

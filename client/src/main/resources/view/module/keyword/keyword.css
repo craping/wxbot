@@ -1,8 +1,3 @@
-.keyword .ivu-tabs-content{
-    height: 550px;
-    overflow-y: auto;
-    overflow-x: hidden;
-}
 .keyword .opt > .ivu-table-cell{
     padding-left: 0;
     padding-right: 0;

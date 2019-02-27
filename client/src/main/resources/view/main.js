@@ -16,9 +16,15 @@ $script.ready(["vue", "iview", "jquery", "crypto", "common"], function () {
     $("#keyword").load("module/keyword/keyword.html", {}, function () {
         $script("module/keyword/keyword.js", "keyword");
     });
+    $("#timer").load("module/timer/timer.html", {}, function () {
+        $script("module/timer/timer.js", "timer");
+    });
+    $("#info").load("module/info/info.html", {}, function () {
+        $script("module/info/info.js", "info");
+    });
 })
 var app;
-$script.ready(["setting", "contacts", "chat", "keyword"], function () {
+$script.ready(["setting", "contacts", "chat", "keyword", "timer", "info"], function () {
     let methods = Object.assign({
         filterAll(data, argumentObj) {
             return data.filter(d => {
@@ -45,9 +51,9 @@ $script.ready(["setting", "contacts", "chat", "keyword"], function () {
         onMembersSeqChanged(seqMap){
             app.modKeywords(seqMap);
         }
-    }, Setting.methods, Contacts.methods, Chat.methods, Keyword.methods);
+    }, Setting.methods, Contacts.methods, Chat.methods, Keyword.methods, Timer.methods, Info.methods);
 
-    let computed = Object.assign({}, Setting.computed, Contacts.computed, Chat.computed, Keyword.computed);
+    let computed = Object.assign({}, Setting.computed, Contacts.computed, Chat.computed, Keyword.computed, Timer.computed, Info.computed);
     app = new Vue({
         el: "#app",
         data: {
@@ -55,11 +61,14 @@ $script.ready(["setting", "contacts", "chat", "keyword"], function () {
             setting: Setting.data,
             contacts: Contacts.data,
             chat: Chat.data,
-            keyword: Keyword.data
+            keyword: Keyword.data,
+            timer: Timer.data,
+            info: Info.data
         },
         computed:computed,
         mounted() {
             this.syncKeywords();
+            this.syncTimers();
             methods.loadIndividuals(); // 加载联系人列表
         },
         updated: function () {

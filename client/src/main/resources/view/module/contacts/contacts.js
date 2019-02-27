@@ -14,8 +14,8 @@ Contacts = {
             // 拼接头像url
             //console.log(wxbot.getHostUrl());
             //console.log(param);
-            // return "";
-            return wxbot.getHostUrl();
+            return "";
+            // return wxbot.getHostUrl();
         },
         // 初始化聊天窗口
         startChat(seq, nickName, userName, headImgUrl) {

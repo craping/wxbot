@@ -27,7 +27,15 @@
 				<!-- 聊天模块 -->
 
 				<!-- 关键词设置模块 -->
-				<i-col id="keyword" span="9"></i-col>
+				<i-col id="right" span="9">
+					<card dis-hover="true" class="p-0 bg-gray">
+						<tabs value="keyword" :animated="false" class="right">
+							<tab-pane label="关键词" name="keyword" id="keyword"></tab-pane>
+							<tab-pane label="定时消息" name="timer" id="timer"></tab-pane>
+							<tab-pane label="联系人信息" name="info" id="info"></tab-pane>
+						</tabs>
+					</card>
+				</i-col>
 				<!-- 关键词设置模块 -->
 			</row>
 		</i-content>

@@ -39,6 +39,16 @@ textarea{
 }
 
 
+.right .ivu-tabs-content{
+    height: 562px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+.ivu-tabs-bar{
+    margin-bottom: 0;
+}
+
+
 ::-webkit-scrollbar{
     width:7px;
 }

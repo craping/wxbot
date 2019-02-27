@@ -1,0 +1,47 @@
+<i-form inline @submit.native.prevent>
+    <form-item class="mb-0 ml-2">
+        <i-button icon="ios-add" size="small" type="primary" @click="timer.form.modal=true"></i-button>
+    </form-item>
+</i-form>
+<div>
+    <i-table :columns="timer.columns" :data="timer.msgs" :loading="timer.msgsLoading" :height="530"></i-table>
+</div>
+
+
+
+
+
+
+
+
+
+
+<modal v-model="timer.form.modal" title="添加定时消息" width="400" :mask-closable="false" :loading="timer.form.confirmLoading" @on-ok="editMsgOk" @on-cancel="editMsgCancel">
+    <div>
+        <radio-group v-model="timer.form.type">
+            <radio label="text">文本</radio>
+            <radio label="file">文件</radio>
+        </radio-group>
+    </div>
+    <div>
+        <i-input type="textarea" :autosize="{maxRows: 4, minRows: 4}" placeholder="回复内容..." v-model="timer.form.value"/>
+        <Upload multiple type="drag">
+            <div style="padding: 20px 0">
+                <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
+                <p>点击或拖拽文件至此处上传</p>
+            </div>
+        </Upload>
+    </div>
+</modal>
+<modal v-model="timer.form.confirm" width="360" :mask-closable="false">
+    <p slot="header" class="text-center" style="color:#f60;">
+        <icon type="ios-information-circle"></icon>
+        <span>删除确认</span>
+    </p>
+    <div style="text-align:center">
+        <p>是否继续删除该定时群消息？</p>
+    </div>
+    <div slot="footer">
+        <i-button type="error" size="large" long :loading="timer.form.confirmLoading" @click="delMsg">删除</i-button>
+    </div>
+</modal>

@@ -94,7 +94,7 @@ Keyword = {
                 }
             });
             if(me.keyword.form.seq){
-                me.getKeyword();
+                me.getKeyMap();
             }
         },
         modKeywords(seqMap){
@@ -174,6 +174,7 @@ Keyword = {
                 success: function (data) {
                     console.log(data);
                     me.$delete(me.keyword.chatroomKeyMap, me.keyword.form.delKey);
+                    wxbot.delKeyMap(me.keyword.form.seq, me.keyword.form.delKey);
                     me.keyword.form.confirm = false;
                     me.keyword.form.confirmLoading = false;
                     me.$Message.success("操作成功!");
