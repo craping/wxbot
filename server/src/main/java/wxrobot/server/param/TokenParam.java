@@ -29,14 +29,14 @@ public class TokenParam extends StringParam implements SingleParam {
 			return new Result(CustomErrors.USER_NOT_LOGIN);
 		}
 		
-		if (!(new RedisUtil().hget(key, "locked").equals("0"))) {
-			return new Result(CustomErrors.USER_LOCKED);
-		}
-		
-		long serverEnd = Long.parseLong(new RedisUtil().hget(key, "serverEnd"));
-		if (Tools.isOverTime(serverEnd, 5)) {
-			return new Result(CustomErrors.USER_SERVER_END);
-		}
+//		if (!(new RedisUtil().hget(key, "locked").equals("0"))) {
+//			return new Result(CustomErrors.USER_LOCKED);
+//		}
+//		
+//		long serverEnd = Long.parseLong(new RedisUtil().hget(key, "serverEnd"));
+//		if (Tools.isOverTime(serverEnd, 5)) {
+//			return new Result(CustomErrors.USER_SERVER_END);
+//		}
 		
 		return Errors.OK;
 	}

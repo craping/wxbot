@@ -27,7 +27,6 @@ import io.netty.handler.codec.http.FullHttpRequest;
 import net.sf.json.JSONObject;
 import wxrobot.biz.server.impl.BaseServer;
 import wxrobot.biz.server.impl.KeywordServer;
-import wxrobot.dao.entity.field.KeywordMap;
 import wxrobot.dao.entity.field.UserInfo;
 import wxrobot.server.enums.CustomErrors;
 import wxrobot.server.param.TokenParam;
@@ -43,16 +42,17 @@ public class KeywordPump extends DataPump<JSONObject, FullHttpRequest, Channel> 
 	
 	@Pipe("getKeyword")
 	@BarScreen(
-		desc="获取全部词库",
+		desc="获取词库",
 		params= {
-			@Parameter(type=TokenParam.class)
+			@Parameter(type=TokenParam.class),
+			@Parameter(value="seq", required=false, desc="seq")
 		}
 	)
 	public Errcode getKeyword (JSONObject params) throws ErrcodeException {
 		
 		UserInfo userInfo = keywordServer.getUserInfo(params);
 		
-		List<KeywordMap> keywords = keywordServer.getKeywords(userInfo.getUserName());
+		Map<String, Map<String, String>> keywords = keywordServer.getKeywords(userInfo.getUserName(), params.optString("seq", null));
 		
 		return new DataResult(Errors.OK, new Data(keywords));
 	}
@@ -62,14 +62,14 @@ public class KeywordPump extends DataPump<JSONObject, FullHttpRequest, Channel> 
 		desc="添加词库",
 		params= {
 			@Parameter(type=TokenParam.class),
-			@Parameter(value="name", desc="词库名")
+			@Parameter(value="seq", desc="seq")
 		}
 	)
 	public Errcode addKeyword (JSONObject params) throws ErrcodeException {
 		
 		UserInfo userInfo = keywordServer.getUserInfo(params);
 		
-		long mod = keywordServer.addKeyword(userInfo.getUserName(), params.getString("name"));
+		long mod = keywordServer.addKeyword(userInfo.getUserName(), params.getString("seq"));
 		
 		return new DataResult(mod > 0?Errors.OK:CustomErrors.USER_OPR_ERR);
 	}
@@ -79,15 +79,15 @@ public class KeywordPump extends DataPump<JSONObject, FullHttpRequest, Channel> 
 		desc="修改词库",
 		params= {
 			@Parameter(type=TokenParam.class),
-			@Parameter(value="id", desc="词库ID"),
-			@Parameter(value="name", desc="词库名")
+			@Parameter(value="oldSeq", desc="oldSeq"),
+			@Parameter(value="newSeq", desc="newSeq")
 		}
 	)
 	public Errcode modKeyword (JSONObject params) throws ErrcodeException {
 		
 		UserInfo userInfo = keywordServer.getUserInfo(params);
 		
-		long mod = keywordServer.modKeyword(userInfo.getUserName(), params.getString("id"), params.getString("name"));
+		long mod = keywordServer.modKeyword(userInfo.getUserName(), params.getString("oldSeq"), params.getString("newSeq"));
 		
 		return new DataResult(mod > 0?Errors.OK:CustomErrors.USER_OPR_ERR);
 	}
@@ -97,14 +97,14 @@ public class KeywordPump extends DataPump<JSONObject, FullHttpRequest, Channel> 
 		desc="删除词库",
 		params= {
 			@Parameter(type=TokenParam.class),
-			@Parameter(value="id", desc="词库ID")
+			@Parameter(value="seq", desc="seq")
 		}
 	)
 	public Errcode delKeyword (JSONObject params) throws ErrcodeException {
 		
 		UserInfo userInfo = keywordServer.getUserInfo(params);
 		
-		long mod = keywordServer.delKeyword(userInfo.getUserName(), params.getString("id"));
+		long mod = keywordServer.delKeyword(userInfo.getUserName(), params.getString("seq"));
 		
 		return new DataResult(mod > 0?Errors.OK:CustomErrors.USER_OPR_ERR);
 	}
@@ -130,9 +130,9 @@ public class KeywordPump extends DataPump<JSONObject, FullHttpRequest, Channel> 
 			return new Result(Errors.PARAM_FORMAT_ERROR);
 		}
 		
-		long mod = keywordServer.addOrMod(userInfo.getUserName(), "globa", keyMap);
+		keywordServer.addOrMod(userInfo.getUserName(), "globa", keyMap);
 		
-		return new DataResult(mod > 0?Errors.OK:CustomErrors.USER_OPR_ERR);
+		return new DataResult(Errors.OK);
 	}
 	
 	@Pipe("delGloba")
@@ -165,7 +165,7 @@ public class KeywordPump extends DataPump<JSONObject, FullHttpRequest, Channel> 
 		desc="设置分群关键词",
 		params= {
 			@Parameter(type=TokenParam.class),
-			@Parameter(value="id",  desc="词库ID"),
+			@Parameter(value="seq",  desc="seq"),
 			@Parameter(value="keyMap",  desc="关键词Map 格式：{key:value, ...}")
 		}
 	)
@@ -181,9 +181,9 @@ public class KeywordPump extends DataPump<JSONObject, FullHttpRequest, Channel> 
 			return new Result(Errors.PARAM_FORMAT_ERROR);
 		}
 		
-		long mod = keywordServer.addOrMod(userInfo.getUserName(), params.getString("id"), keyMap);
+		keywordServer.addOrMod(userInfo.getUserName(), params.getString("seq"), keyMap);
 		
-		return new DataResult(mod > 0?Errors.OK:CustomErrors.USER_OPR_ERR);
+		return new DataResult(Errors.OK);
 	}
 	
 	@Pipe("del")
@@ -191,7 +191,7 @@ public class KeywordPump extends DataPump<JSONObject, FullHttpRequest, Channel> 
 		desc="删除分群关键词",
 		params= {
 			@Parameter(type=TokenParam.class),
-			@Parameter(value="id",  desc="词库ID"),
+			@Parameter(value="seq",  desc="seq"),
 			@Parameter(value="keyList",  desc="关键词ID列表 格式：[key,key,...]")
 		}
 	)
@@ -207,7 +207,7 @@ public class KeywordPump extends DataPump<JSONObject, FullHttpRequest, Channel> 
 			return new Result(Errors.PARAM_FORMAT_ERROR);
 		}
 		
-		long mod = keywordServer.del(userInfo.getUserName(), params.getString("id"), keyList);
+		long mod = keywordServer.del(userInfo.getUserName(), params.getString("seq"), keyList);
 		
 		return new DataResult(mod > 0?Errors.OK:CustomErrors.USER_OPR_ERR);
 	}

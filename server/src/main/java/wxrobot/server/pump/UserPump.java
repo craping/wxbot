@@ -32,6 +32,7 @@ import wxrobot.dao.entity.field.UserInfo;
 import wxrobot.server.enums.CustomErrors;
 import wxrobot.server.param.MobileParam;
 import wxrobot.server.param.UserNameParam;
+import wxrobot.server.utils.RedisUtil;
 import wxrobot.server.utils.Tools;
 
 @Pump("user")
@@ -109,6 +110,24 @@ public class UserPump extends DataPump<JSONObject, FullHttpRequest, Channel> {
 		redisTemplate.opsForHash().putAll("user_" + new_token, userMap);
 		
 		return new DataResult(Errors.OK, new Data(user));
+	}
+	
+	@Pipe("getUserInfo")
+	@BarScreen(
+		desc="获取用户信息"
+	)
+	public Errcode getUserInfo (JSONObject params) {
+		if (Tools.isStrEmpty(params.optString("token")))
+			return new Result(CustomErrors.USER_TOKEN_NULL);
+		
+		String key = "user_" + params.getString("token");
+		if (!(new RedisUtil().exists(key))) 
+			return new Result(CustomErrors.USER_NOT_LOGIN);
+		
+		Map<Object, Object> userMap = redisTemplate.opsForHash().entries(key);
+		userMap.put("loginTime", Long.valueOf(userMap.get("loginTime").toString()));
+		userMap.put("userInfo", JSONObject.fromObject(userMap.get("userInfo")));
+		return new DataResult(Errors.OK, new Data(userMap));
 	}
 	
 	@Pipe("logout")

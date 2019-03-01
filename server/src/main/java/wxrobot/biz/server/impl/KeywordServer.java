@@ -1,9 +1,9 @@
 package wxrobot.biz.server.impl;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.crap.jrain.core.util.StringUtil;
 import org.springframework.data.mongodb.core.query.BasicQuery;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Field;
@@ -12,7 +12,6 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import wxrobot.dao.entity.Keyword;
-import wxrobot.dao.entity.field.KeywordMap;
 
   
 /**  
@@ -26,24 +25,31 @@ import wxrobot.dao.entity.field.KeywordMap;
 @Service
 public class KeywordServer extends BaseServer {
 	
+	  
 	/**  
 	* @Title: getKeywords  
-	* @Description: 获取所有词库
+	* @Description: 根据seq获取关键词
 	* @param @param userName
+	* @param @param seq
 	* @param @return    参数  
 	* @return List<KeywordMap>    返回类型  
 	* @throws  
 	*/  
 	    
-	public List<KeywordMap> getKeywords(String userName){
-		Query query = new BasicQuery(
-				Criteria.where("userName").is(userName).getCriteriaObject(),
-				new Field().include("keyMaps").exclude("_id").getFieldsObject()
-			);
+	public Map<String, Map<String, String>> getKeywords(String userName, String seq){
+		Query query = seq == null? 
+		new BasicQuery(
+			Criteria.where("userName").is(userName).getCriteriaObject(),
+			new Field().include("keyMap").exclude("_id").getFieldsObject()
+		):
+		new BasicQuery(
+			Criteria.where("userName").is(userName).and("keyMap."+seq).exists(true).getCriteriaObject(),
+			new Field().include("keyMap."+seq).exclude("_id").getFieldsObject()
+		);
 		Keyword keyword = mongoTemplate.findOne(query, Keyword.class);
 		if(keyword == null)
 			return null;
-		return keyword.getKeyMaps();
+		return keyword.getKeyMap();
 	}
 	
 	  
@@ -57,35 +63,31 @@ public class KeywordServer extends BaseServer {
 	* @throws  
 	*/  
 	    
-	public long addKeyword(String userName, String name){
+	public long addKeyword(String userName, String seq){
 		Query query = new Query(Criteria.where("userName").is(userName));
 		
 		Update update = new Update();
-		KeywordMap kwMap = new KeywordMap();
-		kwMap.setId(StringUtil.uuid());
-		kwMap.setName(name);
-		update.push("keyMaps", kwMap);
+		update.addToSet("keyMap."+seq, new HashMap<>());
 		
 		return mongoTemplate.updateFirst(query, update, Keyword.class).getModifiedCount();
 	}
 	
 	
-	  
 	/**  
 	* @Title: modKeyword  
-	* @Description: 修改词库
+	* @Description: 修改词库seq
 	* @param @param userName
-	* @param @param id
-	* @param @param name
+	* @param @param oldSeq
+	* @param @param newSeq
 	* @param @return    参数  
-	* @return long    影响条数 
+	* @return long    返回类型  
 	* @throws  
 	*/  
 	    
-	public long modKeyword(String userName, String oldId, String newId){
-		Query query = new Query(Criteria.where("userName").is(userName).and("keyMaps.id").is(oldId));
+	public long modKeyword(String userName, String oldSeq, String newSeq){
+		Query query = new Query(Criteria.where("userName").is(userName));
 		
-		Update update = Update.update("keyMaps.id", newId);
+		Update update = Update.update("keyMap."+oldSeq, newSeq);
 		
 		return mongoTemplate.updateFirst(query, update, Keyword.class).getModifiedCount();
 	}
@@ -94,42 +96,41 @@ public class KeywordServer extends BaseServer {
 	* @Title: delKeyword  
 	* @Description: 删除词库
 	* @param @param userName
-	* @param @param id
+	* @param @param seq
 	* @param @return    参数  
-	* @return long    影响条数 
+	* @return long    返回类型  
 	* @throws  
 	*/  
 	    
-	public long delKeyword(String userName, String id){
+	public long delKeyword(String userName, String seq){
 		Query query = new Query(Criteria.where("userName").is(userName));
 		
 		Update update = new Update();
-		update.pull("keyMaps", "{'id':'"+id+"'}");
+		update.unset("keyMap."+seq);
 		
 		return mongoTemplate.updateFirst(query, update, Keyword.class).getModifiedCount();
 	}
 	
-	  
 	/**  
 	* @Title: addOrMod  
 	* @Description: 新增或修改关键词
 	* @param @param userName
-	* @param @param keyId
+	* @param @param seq
 	* @param @param keyMap
 	* @param @return    参数  
-	* @return long    影响条数 
+	* @return long    返回类型  
 	* @throws  
 	*/  
 	    
-	public long addOrMod(String userName, String id, Map<String, String> keyMap){
-		Query query = new Query(Criteria.where("userName").is(userName).and("keyMaps.id").is(id));
+	public long addOrMod(String userName, String seq, Map<String, String> keyMap){
+		Query query = new Query(Criteria.where("userName").is(userName));
 		
 		Update update = new Update();
 		keyMap.forEach((k, v) -> {
-			update.set("keyMaps.$.keyMap."+k, v);
+			update.set("keyMap."+seq+"."+k, v);
 		});
 		
-		return mongoTemplate.updateFirst(query, update, Keyword.class).getModifiedCount();
+		return mongoTemplate.upsert(query, update, Keyword.class).getModifiedCount();
 	}
 	
 	  
@@ -137,19 +138,19 @@ public class KeywordServer extends BaseServer {
 	* @Title: del  
 	* @Description: 删除关键词
 	* @param @param userName
-	* @param @param keyId
+	* @param @param seq
 	* @param @param keys
 	* @param @return    参数  
 	* @return long    影响条数 
 	* @throws  
 	*/  
 	    
-	public long del(String userName, String id, List<String> keys){
-		Query query = new Query(Criteria.where("userName").is(userName).and("keyMaps.id").is(id));
+	public long del(String userName, String seq, List<String> keys){
+		Query query = new Query(Criteria.where("userName").is(userName));
 		
 		Update update = new Update();
 		keys.forEach(k -> {
-			update.unset("keyMaps.$.keyMap."+k);
+			update.unset("keyMap."+seq+"."+k);
 		});
 		
 		return mongoTemplate.updateFirst(query, update, Keyword.class).getModifiedCount();
