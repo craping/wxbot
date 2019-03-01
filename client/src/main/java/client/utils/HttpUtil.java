@@ -202,6 +202,10 @@ public class HttpUtil {
 				}
 				in = entity.getContent();
 				File file = new File(savePath);
+				File parentFile = file.getParentFile();
+				if(!parentFile.exists())
+					parentFile.mkdirs();
+				
 				if (!file.exists()) {
 					file.createNewFile();
 				}

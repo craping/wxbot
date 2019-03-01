@@ -1,6 +1,5 @@
 package client.view.function;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -47,6 +46,8 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 	
 	public String userToken = "6dfb108f262845a1bfec3ef6647c28f7";
 
+	private WxUser user;
+
 	public Wxbot() {
 		super();
 	}
@@ -59,9 +60,10 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 	public String getToken() {
 		return userToken;
 	}
-	
+
 	/**
 	 * 获取用户信息
+	 * 
 	 * @param token
 	 * @return
 	 */
@@ -81,9 +83,9 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 	 * @return void 返回类型 
 	 * @throws
 	 */
-	public void start(String token) {
-		if (Tools.isStrEmpty(userToken)) {
-			userToken = token;
+	public void start(WxUser user) {
+		if (this.user == null) {
+			this.user = user;
 		}
 		wxbotThread = new Thread(() -> {
 			try {

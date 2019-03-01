@@ -1,5 +1,6 @@
 package client.view.function;
 
+import java.io.IOException;
 import java.util.Set;
 
 import org.springframework.stereotype.Component;
@@ -8,7 +9,7 @@ import com.cherry.jeeves.domain.shared.Contact;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.teamdev.jxbrowser.chromium.JSONString;
 
-import client.Launch;
+import client.utils.EmojiUtil;
 
 @Component
 public class ContactsFunction extends SettingFunction {
@@ -16,6 +17,11 @@ public class ContactsFunction extends SettingFunction {
 	public ContactsFunction() {
 		super();
 	}
+	
+	public String getEmoji(String str) {
+		return EmojiUtil.getEmoji(str);
+	}
+	
 	/**  
 	* @Title: getIndividuals  
 	* @Description: 获取联系人列表
@@ -26,6 +32,7 @@ public class ContactsFunction extends SettingFunction {
 	    
 	public JSONString getIndividuals() {
 		try {
+			System.out.println(jsonMapper.writeValueAsString(cacheService.getIndividuals()));
 			return new JSONString(jsonMapper.writeValueAsString(cacheService.getIndividuals()));
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
@@ -56,10 +63,14 @@ public class ContactsFunction extends SettingFunction {
 	 * @return
 	 */
 	public String getChatRoomMemberHeadImgUrl(String chatRoomName, String memberUserName) {
-		Wxbot wxbot = Launch.context.getBean(Wxbot.class);
-		Set<Contact> members = wxbot.getChatRoom(cacheService.getChatRooms(), chatRoomName).getMemberList();
-		Contact member = members.stream().filter(x -> memberUserName.equals(x.getNickName())).findFirst().orElse(null);
-		return getHostUrl() + member.getHeadImgUrl();
+		try {
+			Set<Contact> members = wechatService.getChatRoomInfo(chatRoomName).getMemberList();
+			Contact member = members.stream().filter(x -> memberUserName.equals(x.getNickName())).findFirst().orElse(null);
+			return getHostUrl() + member.getHeadImgUrl();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return "";
 	}
 	  
 	/**  
@@ -69,19 +80,34 @@ public class ContactsFunction extends SettingFunction {
 	* @return JSONString    返回类型  
 	* @throws  
 	*/  
-	    
 	public JSONString getChatRooms() {
 		try {
-			
 			System.out.println(jsonMapper.writeValueAsString(cacheService.getChatRooms()));
 			return new JSONString(jsonMapper.writeValueAsString(cacheService.getChatRooms()));
-			
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
 		return new JSONString("{}");
 	}
 	
+	/**
+	 * 获取群成员列表
+	 * @param chatRoomName
+	 * @return
+	 */
+	public JSONString getChatRoomMembers(String chatRoomName) {
+		try {
+			System.out.println(jsonMapper.writeValueAsString(wechatService.getChatRoomInfo(chatRoomName)));
+			Set<Contact> members = wechatService.getChatRoomInfo(chatRoomName).getMemberList();
+			System.out.println(jsonMapper.writeValueAsString(members));
+			return new JSONString(jsonMapper.writeValueAsString(members));
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return new JSONString("{}");
+	}
 	  
 	/**  
 	* @Title: getMediaPlatforms  

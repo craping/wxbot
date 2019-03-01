@@ -6,11 +6,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import org.json.JSONObject;
+
 import com.cherry.jeeves.utils.Coder;
 
 import client.Launch;
 import client.alert.AlertUtil;
 import client.errors.Errors;
+import client.pojo.WxUser;
 import client.utils.Config;
 import client.utils.HttpUtil;
 import client.utils.Tools;
@@ -71,11 +74,10 @@ public class LoginController implements Initializable {
 			return;
 		}
 		
-		// 用户token
-		String token = (((Map<?, ?>)((Map<?, ?>)result.get("data")).get("info")).get("token")).toString();
-		
+		// 解析登录成功返回用户信息
+		WxUser user = new WxUser(new JSONObject((Map<?, ?>)((Map<?, ?>)result.get("data")).get("info")));
 		// 开启微信机器人
-		wxbot.start(token);
+		wxbot.start(user);
 	}
 	
 	/**
@@ -85,7 +87,7 @@ public class LoginController implements Initializable {
 	public void logout(String token) {
 		// 组织请求参数
 		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("token", wxbot.userToken);
+		params.put("token", wxbot.getToken());
 		result = HttpUtil.sendRequest(Config.LOGOUT_URL, params);
 	}
 	
