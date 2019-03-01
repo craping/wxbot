@@ -24,14 +24,14 @@ Timer = {
             key: "schedule",
             width:190,
             render: (h, params) => {
-                const timer = params.row.schedule.split("|");
+                const schedule = params.row.schedule.split("|");
                 const type = timer[0];
-                const schedule = timer[1].split(",");
                 let info = "";
                 if (type == "1") {
-                    info = "定时"+schedule[0] + "月" + schedule[2] + "时" + schedule[3] + "分" + schedule[4] + "秒";
+                    const cron = schedule[1].split(",");
+                    info = "定时"+cron[0] + "月" + cron[2] + "时" + cron[3] + "分" + cron[4] + "秒";
                 } else {
-                    info = "间隔"+parseInt(parseInt(schedule[4])/60/60%60)+"小时"+ parseInt(parseInt(schedule[4])/60%60)+"分钟"+ parseInt(parseInt(schedule[4])%60)+"秒"
+                    info = "间隔"+parseInt(parseInt(schedule[1])/60/60%60)+"小时"+ parseInt(parseInt(schedule[1])/60%60)+"分钟"+ parseInt(parseInt(schedule[1])%60)+"秒"
                 }
                 return h('span', info)
             }
@@ -101,6 +101,8 @@ Timer = {
                     console.log(data)
                     if(data.info)
                         me.timer.msgs = data.info[me.timer.form.seq];
+                    else
+                        me.timer.msgs = [];
                     me.timer.msgsLoading = false;
                 },
                 fail: function (data) {

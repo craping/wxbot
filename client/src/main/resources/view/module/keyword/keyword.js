@@ -131,6 +131,8 @@ Keyword = {
                     console.log(data)
                     if(data.info)
                         me.keyword.chatroomKeyMap = data.info[me.keyword.form.seq];
+                    else
+                        me.keyword.chatroomKeyMap = {};
                     me.keyword.chatroomKeyMapLoading = false;
                 },
                 fail: function (data) {

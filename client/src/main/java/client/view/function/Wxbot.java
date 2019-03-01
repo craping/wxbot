@@ -120,11 +120,11 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 							System.out.println("固定时间消息匹配："+msg.getSchedule());
 							Contact chatRoom = cacheService.getChatRoom(seq);
 							if(chatRoom != null){
-//								if (msg.getType() == 1) {
-//									sendText(seq, chatRoom.getNickName(), chatRoom.getUserName(), msg.getContent());
-//								} else {
-//									sendApp(seq, chatRoom.getNickName(), chatRoom.getUserName(), ATTCH_PATH+msg.getContent());
-//								}
+								if (msg.getType() == 1) {
+									sendText(seq, chatRoom.getNickName(), chatRoom.getUserName(), msg.getContent());
+								} else {
+									sendApp(seq, chatRoom.getNickName(), chatRoom.getUserName(), ATTCH_PATH+msg.getContent());
+								}
 							}
 						}
 					} 
@@ -137,12 +137,11 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 							System.out.println("间隔时间消息匹配："+msg.getSchedule());
 							Contact chatRoom = cacheService.getChatRoom(seq);
 							if(chatRoom != null){
-//								if (msg.getType() == 1) {
-//									sendText(seq, chatRoom.getNickName(), chatRoom.getUserName(), msg.getContent());
-//								} else {
-//									sendApp(seq, chatRoom.getNickName(), chatRoom.getUserName(), ATTCH_PATH+msg.getContent());
-//								}
-								
+								if (msg.getType() == 1) {
+									sendText(seq, chatRoom.getNickName(), chatRoom.getUserName(), msg.getContent());
+								} else {
+									sendApp(seq, chatRoom.getNickName(), chatRoom.getUserName(), ATTCH_PATH+msg.getContent());
+								}
 							}
 							msg.setLastSendTime(now);
 						}

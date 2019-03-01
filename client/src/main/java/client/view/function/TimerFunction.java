@@ -2,6 +2,8 @@ package client.view.function;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,9 +24,9 @@ public class TimerFunction extends ChatFunction {
 	
 	public final static String GLOBA_SEQ = "globa";
 	
-	private final String ATTACH_URL = "http://127.0.0.1:8888/";
+	public final String ATTACH_URL = "http://127.0.0.1:8888/";
 	
-	private final String ATTCH_PATH = "resource/attach/";
+	public final String ATTCH_PATH = "resource/attach/";
 
 	public TimerFunction() {
 		super();
@@ -50,10 +52,15 @@ public class TimerFunction extends ChatFunction {
 	public void addMsg(String seq, JSObject addMsg){
 		try {
 			ScheduleMsg msg = jsonMapper.readValue(addMsg.toJSONString(), ScheduleMsg.class);
-			if(timerMap != null && timerMap.containsKey(seq)){
-				timerMap.get(seq).add(msg);
+			if("2".equals(msg.getSchedule().split("[|]")[0]))
 				downloadAttach(msg.getContent());
+			if(timerMap == null){
+				timerMap = new HashMap<>();
 			}
+			if (!timerMap.containsKey(seq)) {
+				timerMap.put(seq, new ArrayList<>());
+			}
+			timerMap.get(seq).add(msg);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -69,6 +76,7 @@ public class TimerFunction extends ChatFunction {
 		if(!attach.exists()){
 			System.out.printf("文件[%s]不存在 从云端获取...\n", fileName);
 			HttpUtil.download(ATTACH_URL + user.getUserName() + "/" + fileName, attach.getPath());
+			System.out.printf("文件[%s]下载完毕\n", fileName);
 		}
 	}
 }

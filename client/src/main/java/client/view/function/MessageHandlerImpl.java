@@ -84,6 +84,14 @@ public class MessageHandlerImpl implements MessageHandler {
 	@Override
 	public void onConfirmation() {
 		logger.info("确认登录");
+
+	}
+
+	@Override
+	public void onLogin(Member member) {
+		logger.info("用户登录");
+		logger.info("用ID：" + member.getUserName());
+		logger.info("用户名：" + member.getNickName());
 		Platform.runLater(() -> {
 			qrView.close();
 			WxbotView wxbotView = WxbotView.getInstance();
@@ -93,19 +101,12 @@ public class MessageHandlerImpl implements MessageHandler {
 			wxbotView.load();
 			CookieStorage cookieStorage = wxbotView.getBrowser().getCookieStorage();
 			wechatHttpService.getCookies().forEach((k, v) -> {
+				System.out.println(k+"="+v);
 				cookieStorage.setSessionCookie("https://wx2.qq.com", k, v, ".qq.com", "/", false, false);
 				cookieStorage.setSessionCookie("https://wx.qq.com", k, v, ".qq.com", "/", false, false);
 			});
 			cookieStorage.save();
 		});
-
-	}
-
-	@Override
-	public void onLogin(Member member) {
-		logger.info("用户登录");
-		logger.info("用ID：" + member.getUserName());
-		logger.info("用户名：" + member.getNickName());
 		try {
 			logger.info("individuals：");
 			System.out.println(jsonMapper.writeValueAsString(cacheService.getIndividuals()));
@@ -147,20 +148,38 @@ public class MessageHandlerImpl implements MessageHandler {
 			e.printStackTrace();
 		}
 		
-		/*
-		 * if (chatRoom != null) { // 全域关键词自动回复 Map<String, String> keyMap =
-		 * KeywordFunction.keyMap.get(KeywordFunction.GLOBA_SEQ); if (keyMap != null) {
-		 * for (Map.Entry<String, String> entry : keyMap.entrySet()) { if
-		 * (content.contains(entry.getKey())) { try {
-		 * wechatHttpService.sendText(message.getFromUserName(), entry.getValue()); }
-		 * catch (IOException e) { e.printStackTrace(); } break; } } }
-		 * 
-		 * // 分群关键词自动回复 keyMap = KeywordFunction.keyMap.get(chatRoom.getSeq()); if
-		 * (keyMap != null) { for (Map.Entry<String, String> entry : keyMap.entrySet())
-		 * { if (content.contains(entry.getKey())) { try {
-		 * wechatHttpService.sendText(message.getFromUserName(), entry.getValue()); }
-		 * catch (IOException e) { e.printStackTrace(); } break; } } } }
-		 */
+		
+		if (chatRoom != null) {
+			// 全域关键词自动回复
+			Map<String, String> keyMap = KeywordFunction.keyMap.get(KeywordFunction.GLOBA_SEQ);
+			if (keyMap != null) {
+				for (Map.Entry<String, String> entry : keyMap.entrySet()) {
+					if (content.contains(entry.getKey())) {
+						try {
+							wechatHttpService.sendText(message.getFromUserName(), entry.getValue());
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+						break;
+					}
+				}
+			}
+
+			// 分群关键词自动回复
+			keyMap = KeywordFunction.keyMap.get(chatRoom.getSeq());
+			if (keyMap != null) {
+				for (Map.Entry<String, String> entry : keyMap.entrySet()) {
+					if (content.contains(entry.getKey())) {
+						try {
+							wechatHttpService.sendText(message.getFromUserName(), entry.getValue());
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+						break;
+					}
+				}
+			}
+		}
 	}
 
 	@Override
