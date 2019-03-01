@@ -11,6 +11,7 @@ import com.cherry.jeeves.utils.Coder;
 import client.Launch;
 import client.alert.AlertUtil;
 import client.errors.Errors;
+import client.utils.Config;
 import client.utils.HttpUtil;
 import client.utils.Tools;
 import client.view.RegisterView;
@@ -26,9 +27,6 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 public class LoginController implements Initializable {
-
-	private final String LOGIN_URL = "http://127.0.0.1:9527/user/login?format=json";
-	private final String LOGOUT_URL = "http://127.0.0.1:9527/user/logout?format=json";
 
 	public static Stage LOGIN_STAGE;
 	@FXML
@@ -62,7 +60,7 @@ public class LoginController implements Initializable {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("login_name", userName);
 		params.put("login_pwd", Coder.encryptMD5(userPwd));
-		result = HttpUtil.sendRequest(LOGIN_URL, params);
+		result = HttpUtil.sendRequest(Config.LOGIN_URL, params);
 		if (result.isEmpty()) {
 			AlertUtil.errorDialog(LOGIN_STAGE, Errors.HTTP_CONNECT_ERR.getErrMsg(), Errors.getErrCodeMsg(Errors.HTTP_CONNECT_ERR));
 			return;
@@ -88,7 +86,7 @@ public class LoginController implements Initializable {
 		// 组织请求参数
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("token", wxbot.userToken);
-		result = HttpUtil.sendRequest(LOGOUT_URL, params);
+		result = HttpUtil.sendRequest(Config.LOGOUT_URL, params);
 	}
 	
 	public void register() {

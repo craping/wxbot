@@ -11,6 +11,27 @@ Chat = {
         }],
     },
     methods: {
+        // 获取群成员头像
+        memberHeadImg(chatRoomName, memberUserName) {
+            return wxbot.getChatRoomMemberHeadImgUrl(chatRoomName, memberUserName);
+        },
+        // 消息提醒
+        alertUtil(type, msg) {
+            if (type == "SUCCESS") {
+                app.$Message.success(msg);
+                return false;
+            } else if (type == "WARNING") {
+                app.$Message.warning(msg);
+                return false;
+            } else if (type == "ERROR") {
+                app.$Message.error(msg);
+                return false;
+            } else {
+                app.$Message.error('操作错误');
+                return false;
+            }
+        },
+        // 发送文件
         sendApp() {
             if (this.chat.title ==' ') {
                 this.$Message.error('请选择一个聊天好友');
@@ -20,16 +41,10 @@ Chat = {
         },
         // 发送文本消息
         sendText() {
-            var s = "微信机器人需求.xlsx";
-            var s1 = "微信机器人需求报价.xlsx";
-            var s2 = "plan-collect.rar";
-            console.log(s.length);
-            console.log(s1.length);
-            console.log(s2.length);
-
-            if (this.chat.text == "")
+            if (this.chat.text == ""){
+                this.$Message.warning('不能发送空消息');
                 return false;
-
+            }
             wxbot.sendText(this.chat.seq, this.chat.title, this.chat.userName, this.chat.text);
             Chat.data.text = "";
             Chat.methods.reloadChat(this.chat.seq);
@@ -60,10 +75,6 @@ Chat = {
         // 获取图片高、宽
         imgHeightOrWidth(path, type) {
             return wxbot.getImgHeightOrWidth(path, type);
-        },
-        // 切割图片，获取最佳宽高
-        cutImg(width, height, type) {
-            return wxbot.cutImg(width, height, type);
         },
         // 播放视频
         mediaPlay(path) {

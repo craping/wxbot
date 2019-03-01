@@ -1,8 +1,9 @@
 Keyword = {
     data: {
         form:{
-            seq:"",
+            seq:"123",
             modal:false,
+            modalLoading:true,
             confirm:false,
             confirmLoading:false,
             delKey:"",
@@ -128,7 +129,8 @@ Keyword = {
                 },
                 success: function (data) {
                     console.log(data)
-                    me.keyword.chatroomKeyMap = data.info[0].keyMap;
+                    if(data.info)
+                        me.keyword.chatroomKeyMap = data.info[me.keyword.form.seq];
                     me.keyword.chatroomKeyMapLoading = false;
                 },
                 fail: function (data) {
@@ -137,7 +139,6 @@ Keyword = {
         },
         editKeyMapOk(){
             let me = this;
-            me.keyword.form.confirmLoading = true;
             let keyMap = {};
             keyMap[me.keyword.form.key] = me.keyword.form.value;
             Web.ajax("keyword/set", {
@@ -147,14 +148,18 @@ Keyword = {
                 },
                 success: function (data) {
                     me.$set(me.keyword.chatroomKeyMap, me.keyword.form.key, me.keyword.form.value);
+                    wxbot.setKeyMap(me.keyword.form.seq, keyMap);
                     me.keyword.form.key = "";
                     me.keyword.form.value = "";
                     me.keyword.form.modal = false;
-                    me.keyword.form.confirmLoading = false;
+                    me.keyword.form.modalLoading = false;
                     me.$Message.success("操作成功!");
                 },
                 fail: function (data) {
-                    me.keyword.form.confirmLoading = false;
+                    me.keyword.form.modalLoading = false;
+                    me.$nextTick(() => {
+                        me.keyword.form.modalLoading = true;
+                    });
                     me.$Message.error("操作失败："+data.msg);
                 }
             });

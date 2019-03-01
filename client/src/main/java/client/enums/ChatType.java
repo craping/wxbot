@@ -2,15 +2,17 @@ package client.enums;
 
 public enum ChatType {
 	/** 私聊 */
-	CHAT,
+	CHAT(1),
 	/** 群聊 */
-	GROUPCHAT;
+	GROUPCHAT(2);
+	
+	private final int code;
 
-	static ChatType getType(String name) {
-		if (name == "CHAT" || name.equals("CHAT")) {
-			return CHAT;
-		} else {
-			return GROUPCHAT;
-		}
+	ChatType(int code) {
+		this.code = code;
+	}
+
+	public int getCode() {
+		return code;
 	}
 }

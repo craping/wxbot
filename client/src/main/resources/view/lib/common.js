@@ -10,7 +10,10 @@ var Store = Store||{
 		localStorage.removeItem(key);
 	}
 }
-
+// var wxbot = wxbot||{};
+// wxbot.getToken = ()=>{
+// 	return "e7c1cdfcf411481b97bba2ddf6bc4611";
+// }
 var Web = {
 	serverURL: "http://127.0.0.1:9527/",
 	// serverURL: "http://118.89.37.101:9527/",
@@ -25,7 +28,7 @@ var Web = {
 			timeout: 20000,
 			safe: false,
 			data: {
-				token: "f2d862c7f22c4e87827ee99c056324b8",//wxbot.getToken(),
+				token: wxbot.getToken(),
 			},
 			url: Web.serverURL,
 			success: function () { },

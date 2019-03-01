@@ -27,6 +27,7 @@ import com.teamdev.jxbrowser.chromium.JSONString;
 import com.teamdev.jxbrowser.chromium.JSObject;
 import com.teamdev.jxbrowser.chromium.JSValue;
 
+import client.Launch;
 import client.controller.LoginController;
 import client.pojo.WxMessage;
 import client.pojo.WxMessageBody;
@@ -44,6 +45,7 @@ public class MessageHandlerImpl implements MessageHandler {
 	private WechatHttpService wechatHttpService;
 	@Autowired
 	private CacheService cacheService;
+	private Wxbot wxbot;
 
 	private ObjectMapper jsonMapper = new ObjectMapper();
 	{
@@ -84,6 +86,7 @@ public class MessageHandlerImpl implements MessageHandler {
 	public void onConfirmation() {
 		logger.info("确认登录");
 		Platform.runLater(() -> {
+			wxbot = Launch.context.getBean(Wxbot.class);
 			qrView.close();
 			WxbotView wxbotView = WxbotView.getInstance();
 			wxbotView.onClose(e -> {
@@ -134,7 +137,7 @@ public class MessageHandlerImpl implements MessageHandler {
 		logger.info("to: " + message.getToUserName());
 		logger.info("content:" + content);
 
-		Contact chatRoom = cacheService.getChatRooms().stream().filter(x -> message.getFromUserName().equals(x.getUserName())).findFirst().orElse(null);
+		Contact chatRoom = wxbot.getChatRoom(cacheService.getChatRooms(), message.getFromUserName());
 		Contact sender = Wxbot.getSender(chatRoom.getMemberList(), userName);
 		WxMessage msg = new WxMessage(MessageType.TEXT.getCode(), new WxMessageBody(content));
 		WxMessageTool.receiveGroupMessage(chatRoom, sender, msg);
@@ -145,6 +148,7 @@ public class MessageHandlerImpl implements MessageHandler {
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
+		
 		if (chatRoom != null) {
 			// 全域关键词自动回复
 			Map<String, String> keyMap = KeywordFunction.keyMap.get(KeywordFunction.GLOBA_SEQ);

@@ -1,0 +1,7 @@
+.icon-refresh {
+    width: 96px;
+    background: url(../chat/images/icon_x.png) no-repeat;
+    background-position: -150px 0;
+    -webkit-background-size: 487px 462px;
+    background-size: 487px 462px
+}

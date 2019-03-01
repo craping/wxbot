@@ -1,7 +1,6 @@
 package client.utils;
 
 import com.cherry.jeeves.domain.shared.Contact;
-import com.cherry.jeeves.domain.shared.Message;
 import com.cherry.jeeves.domain.shared.Owner;
 import com.cherry.jeeves.enums.MessageType;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -38,7 +37,7 @@ public class WxMessageTool {
 	public static void receiveMessage(Contact sender, Owner owner, WxMessage msg) {
 		String seq = sender.getSeq();
 		String timestamp = Tools.getTimestamp();
-		msg.setChatType(ChatType.CHAT);
+		msg.setChatType(ChatType.CHAT.getCode());
 		msg.setTimestamp(timestamp);
 		msg.setTo(owner.getNickName());
 		msg.setFrom(sender.getNickName());
@@ -69,7 +68,7 @@ public class WxMessageTool {
 	public static void receiveGroupMessage(Contact chatRoom, Contact sender, WxMessage msg) {
 		String seq = chatRoom.getSeq();
 		String timestamp = Tools.getTimestamp();
-		msg.setChatType(ChatType.GROUPCHAT);
+		msg.setChatType(ChatType.GROUPCHAT.getCode());
 		msg.setTimestamp(timestamp);
 		msg.setTo(chatRoom.getNickName());
 		msg.setFrom(sender.getNickName());

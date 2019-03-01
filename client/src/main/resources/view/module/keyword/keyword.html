@@ -20,7 +20,7 @@
 
 
 
-<modal v-model="keyword.form.modal" title="关键词" width="400" :mask-closable="false" :loading="keyword.form.confirmLoading" @on-ok="editKeyMapOk" @on-cancel="editKeyMapCancel">
+<modal v-model="keyword.form.modal" title="关键词" width="400" :mask-closable="false" :loading="keyword.form.modalLoading" @on-ok="editKeyMapOk" @on-cancel="editKeyMapCancel">
     <div>
         <i-input placeholder="关键词..." clearable v-model="keyword.form.key"/>
     </div>

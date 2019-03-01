@@ -1,6 +1,10 @@
 package client.utils;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,10 +12,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -175,5 +181,58 @@ public class HttpUtil {
 			}
 		}
 		return httpStr;
+	}
+	
+	public static void download(String url, String savePath) {
+		CloseableHttpClient httpClient = HttpClients.createDefault();
+		OutputStream out = null;
+		InputStream in = null;
+		try {
+			HttpGet httpGet = new HttpGet(url);
+			httpGet.setConfig(requestConfig);
+			CloseableHttpResponse response = httpClient.execute(httpGet);
+			if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+				return;
+			}
+			HttpEntity entity = response.getEntity();
+			if (entity != null) {
+				long length = entity.getContentLength();
+				if (length <= 0) {
+					return;
+				}
+				in = entity.getContent();
+				File file = new File(savePath);
+				if (!file.exists()) {
+					file.createNewFile();
+				}
+				out = new FileOutputStream(file);
+				byte[] buffer = new byte[4096];
+				int len = -1;
+				while ((len = in.read(buffer)) != -1) {
+					out.write(buffer, 0, len);
+				}
+				out.flush();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (in != null) {
+					in.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			try {
+				if (out != null) {
+					out.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }

@@ -1,20 +1,17 @@
 package client.view.function;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.teamdev.jxbrowser.chromium.JSArray;
-
-import client.pojo.KeywordMap;
+import com.teamdev.jxbrowser.chromium.JSObject;
 
 @Component
 public class KeywordFunction extends TimerFunction {
 
-	public static List<KeywordMap> keyMaps;
+	public static Map<String, Map<String, String>> keyMap;
 	
 	public final static String GLOBA_SEQ = "globa";
 
@@ -23,26 +20,24 @@ public class KeywordFunction extends TimerFunction {
 
 	}
 	
-	public void syncKeywords(JSArray keyMaps) {
-		System.out.println(keyMaps);
+	public void syncKeywords(JSObject keyMap) {
+		System.out.println(keyMap);
 		try {
-			KeywordFunction.keyMaps = jsonMapper.readValue(keyMaps.toJSONString(), new TypeReference<List<KeywordMap>>() {});
-			System.out.println(KeywordFunction.keyMaps);
+			KeywordFunction.keyMap = jsonMapper.readValue(keyMap.toJSONString(), new TypeReference<Map<String, Map<String, String>>>() {});
+			System.out.println(KeywordFunction.keyMap);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 	
 	public void setKeyMap(String seq, Map<String, String> setkeyMap){
-		KeywordMap keyMap = KeywordFunction.keyMaps.stream().filter(x -> x.getSeq().equals(seq)).findFirst().orElse(null);
-		if(keyMap != null)
-			keyMap.getKeyMap().putAll(setkeyMap);
+		if(keyMap != null && keyMap.containsKey(seq))
+			keyMap.get(seq).putAll(setkeyMap);
 	}
 	
 	public void delKeyMap(String seq, String key){
-		KeywordMap keyMap = KeywordFunction.keyMaps.stream().filter(x -> x.getSeq().equals(seq)).findFirst().orElse(null);
-		if(keyMap != null)
-			keyMap.getKeyMap().remove(key);
+		if(keyMap != null && keyMap.containsKey(seq))
+			keyMap.get(seq).remove(key);
 	}
 
 }
