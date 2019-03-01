@@ -75,7 +75,7 @@ public abstract class ChatFunction extends ContactsFunction {
 	* @throws  
 	*/  
 	    
-	public void openAppFile(String seq, String nickName, String userName, int chatType){
+	public void openAppFile(String seq, String nickName, String userName){
 		Platform.runLater(() -> {
 			if (lastSendFile != null && lastSendFile.isFile())
 				sendChooser.setInitialDirectory(lastSendFile.getParentFile());
@@ -88,7 +88,7 @@ public abstract class ChatFunction extends ContactsFunction {
 			String fileUrl = lastSendFile.getAbsolutePath();
 			// 获取文件Content-Type(Mime-Type)
 			System.out.println(fileUrl);
-			sendApp(seq, nickName, userName, fileUrl, chatType);
+			sendApp(seq, nickName, userName, fileUrl);
 		});
 	}
 	/**
@@ -99,7 +99,7 @@ public abstract class ChatFunction extends ContactsFunction {
 	 * @throws
 	 */
 
-	public void sendApp(String seq, String nickName, String userName, String fileUrl, int chatType) {
+	public void sendApp(String seq, String nickName, String userName, String fileUrl) {
         String contentType = null;  
         try {  
             contentType = Files.probeContentType(new File(fileUrl).toPath());
@@ -161,7 +161,7 @@ public abstract class ChatFunction extends ContactsFunction {
 			message.setTo(nickName);
 			message.setFrom(cacheService.getOwner().getNickName());
 			message.setDirection(Direction.SEND.getCode());
-			message.setChatType(chatType);
+			message.setChatType(userName.startsWith("@@")?2:1);
 			String str = jsonMapper.writeValueAsString(message);
 			String filePath = Config.CHAT_RECORD_PATH + seq;
 			FileUtil.writeFile(filePath, Tools.getSysDate() + ".txt", str);
@@ -209,7 +209,7 @@ public abstract class ChatFunction extends ContactsFunction {
 	 * @throws
 	 */
 
-	public void sendText(String seq, String nickName, String userName, String content, int chatType) {
+	public void sendText(String seq, String nickName, String userName, String content) {
 		try {
 			WxMessage message = new WxMessage();
 			String timestamp = Tools.getTimestamp();
@@ -218,7 +218,7 @@ public abstract class ChatFunction extends ContactsFunction {
 			message.setFrom(cacheService.getOwner().getNickName());
 			message.setDirection(Direction.SEND.getCode());
 			message.setMsgType(MessageType.TEXT.getCode());
-			message.setChatType(chatType);
+			message.setChatType(userName.startsWith("@@")?2:1);
 			message.setBody(new WxMessageBody(content));
 			String str = jsonMapper.writeValueAsString(message);
 			String path = Config.CHAT_RECORD_PATH + seq;

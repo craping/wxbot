@@ -1,6 +1,5 @@
 Chat = {
     data: {
-        chatType:1,     // 聊天类型 1私聊 2群聊
         userHeadImg: "", //接受者头像
         ownerHeadImg: "", // 当前用户头像
         userName: "",   // 接受者
@@ -38,7 +37,7 @@ Chat = {
                 this.$Message.error('请选择一个聊天好友');
                 return false;
             }
-            wxbot.openAppFile(this.chat.seq, this.chat.title, this.chat.userName, this.chat.chatType);
+            wxbot.openAppFile(this.chat.seq, this.chat.title, this.chat.userName);
         },
         // 发送文本消息
         sendText() {
@@ -46,7 +45,7 @@ Chat = {
                 this.$Message.warning('不能发送空消息');
                 return false;
             }
-            wxbot.sendText(this.chat.seq, this.chat.title, this.chat.userName, this.chat.text, this.chat.chatType);
+            wxbot.sendText(this.chat.seq, this.chat.title, this.chat.userName, this.chat.text);
             Chat.data.text = "";
             Chat.methods.reloadChat(this.chat.seq);
         },
