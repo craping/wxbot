@@ -182,7 +182,7 @@ Timer = {
         editMsgCancel(){
             this.timer.form.text = null;
             this.timer.form.file = null;
-            me.timer.form.scheduleType = 1;
+            this.timer.form.scheduleType = 1;
             this.timer.form.schedule = {
                 MM:null,
                 dd:null,

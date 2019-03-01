@@ -44,6 +44,8 @@ Contacts = {
             Info.data.members = wxbot.getChatRoomMembers(userName);
             console.log(Info.data.members);
             $('#avatar_' + seq + " sup.ivu-badge-dot").remove();
+            this.loadKeyMap(seq);
+            this.loadMsgs(seq);
         }
     }
 }

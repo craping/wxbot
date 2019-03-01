@@ -21,7 +21,7 @@
 			<url>http://maven.teamdev.com/repository/products</url>
 		</repository>
 	</repositories>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>com.cherry</groupId>
@@ -51,6 +51,20 @@
 			<type>pom</type>
 			<version>6.22.2</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.18.4</version>
+			<scope>provided</scope>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.vdurmont/emoji-java -->
+		<dependency>
+			<groupId>com.vdurmont</groupId>
+			<artifactId>emoji-java</artifactId>
+			<version>4.0.0</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>

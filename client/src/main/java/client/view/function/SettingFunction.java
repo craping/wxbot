@@ -22,8 +22,6 @@ public class SettingFunction {
 
 	protected SimpleDateFormat dateFormat = new SimpleDateFormat("M,d,H,m,s");
 	
-	public String userToken = "6dfb108f262845a1bfec3ef6647c28f7";
-
 	protected WxUser user;
 	
 	@Autowired
