@@ -10,6 +10,8 @@
 	<link rel="stylesheet" href="module/chat/chat.css">
 	<link rel="stylesheet" href="module/contacts/contacts.css">
 	<link rel="stylesheet" href="module/keyword/keyword.css">
+	<link rel="stylesheet" href="module/timer/timer.css">
+	<link rel="stylesheet" href="module/info/info.css">
 	<link rel="stylesheet" href="main.css">
 </head>
 
@@ -29,10 +31,10 @@
 				<!-- 关键词设置模块 -->
 				<i-col id="right" span="9">
 					<card dis-hover="true" class="p-0 bg-gray">
-						<tabs value="keyword" :animated="false" class="right">
-							<tab-pane label="关键词" name="keyword" id="keyword"></tab-pane>
-							<tab-pane label="定时消息" name="timer" id="timer"></tab-pane>
-							<tab-pane label="联系人信息" name="info" id="info"></tab-pane>
+						<tabs value="timer" :animated="false" class="right">
+							<tab-pane label="关键词" name="keyword" id="keyword" class="keyword"></tab-pane>
+							<tab-pane label="定时消息" name="timer" id="timer" class="timer"></tab-pane>
+							<tab-pane label="联系人信息" name="info" id="info" class="info"></tab-pane>
 						</tabs>
 					</card>
 				</i-col>

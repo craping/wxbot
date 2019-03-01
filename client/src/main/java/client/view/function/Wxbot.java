@@ -1,11 +1,20 @@
 package client.view.function;
 
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.scheduling.annotation.SchedulingConfigurer;
+import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.stereotype.Component;
 
 import com.cherry.jeeves.Jeeves;
@@ -15,6 +24,8 @@ import com.teamdev.jxbrowser.chromium.JSONString;
 import com.teamdev.jxbrowser.chromium.JSObject;
 import com.teamdev.jxbrowser.chromium.JSValue;
 
+import client.utils.Config;
+import client.utils.HttpUtil;
 import client.utils.Tools;
 import client.view.WxbotView;
 
@@ -27,14 +38,16 @@ import client.view.WxbotView;
  */
 
 @Component
-public class Wxbot extends KeywordFunction {
+public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 
 	@Autowired
 	private Jeeves jeeves;
 
 	public Thread wxbotThread;
 
-	public String userToken;
+	private SimpleDateFormat dateFormat = new SimpleDateFormat("M,d,H,m,s");
+	
+	public String userToken = "e7c1cdfcf411481b97bba2ddf6bc4611";
 
 	public Wxbot() {
 		super();
@@ -48,6 +61,25 @@ public class Wxbot extends KeywordFunction {
 	public String getToken() {
 		return userToken;
 	}
+	
+	/**
+	 * 获取用户信息
+	 * @param token
+	 * @return
+	 */
+	public JSONString getUserInfo() {
+		// 组织请求参数
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("token", userToken);
+		Map<String, Object> result = HttpUtil.sendRequest(Config.USERINFO_URL, params);
+		try {
+			System.out.println(result);
+			return new JSONString(jsonMapper.writeValueAsString(result));
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+		return new JSONString("{}");
+	}
 
 	/**
 	 * 根据用户名userName 获取用户contact
@@ -58,6 +90,23 @@ public class Wxbot extends KeywordFunction {
 	 */
 	public static Contact getSender(Set<Contact> contacts, String userName) {
 		return contacts.stream().filter(individual -> userName.equals(individual.getUserName())).findFirst().orElse(null);
+	}
+	
+	/**
+	 * 获取群聊详情
+	 * @param chatRooms
+	 * @param chatRoomName
+	 * @return
+	 */
+	public Contact getChatRoom(Set<Contact> chatRooms, String chatRoomName) {
+		Contact chatRoom = chatRooms.stream().filter(x -> chatRoomName.equals(x.getUserName())).findFirst().orElse(null);
+		try {
+			// 再次获取群详情，并获取群成员详情
+			chatRoom = wechatService.getChatRoomInfo(chatRoom.getUserName());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return chatRoom;
 	}
 
 	/**
@@ -95,6 +144,37 @@ public class Wxbot extends KeywordFunction {
 			wxbotThread.interrupt();
 	}
 
+	@Scheduled(fixedRate=1000)
+    private void work() {
+		if(timerMap != null && timerMap.size() > 0){
+			String[] dateTime = dateFormat.format(new Date()).split(",");
+			timerMap.forEach((k, v) -> {
+				v.forEach(s -> {
+					String[] schedule = s.getSchedule().split(",");
+					if("*".equals(schedule[0]) || dateTime[0].equals(schedule[0]) 
+						&& "*".equals(schedule[1]) || dateTime[1].equals(schedule[1])
+						&& "*".equals(schedule[2]) || dateTime[2].equals(schedule[2])
+						&& "*".equals(schedule[3]) || dateTime[3].equals(schedule[3])
+						&& "*".equals(schedule[4]) || dateTime[4].equals(schedule[4])
+					){
+						System.out.println("定时消息匹配："+s.getSchedule());
+					}
+				});
+			});
+		}
+    }
+	
+	
+	@Override
+	public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
+		taskRegistrar.setScheduler(taskExecutor());
+	}
+	
+	@Bean(destroyMethod="shutdown")
+	private Executor taskExecutor() {
+        return Executors.newScheduledThreadPool(60);
+    }
+	
 	public JSONString test() {
 		Set<Contact> sets = new HashSet<>();
 		Contact c = new Contact();

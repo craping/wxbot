@@ -28,7 +28,6 @@ import com.teamdev.jxbrowser.chromium.JSObject;
 import com.teamdev.jxbrowser.chromium.JSValue;
 
 import client.controller.LoginController;
-import client.pojo.KeywordMap;
 import client.pojo.WxMessage;
 import client.pojo.WxMessageBody;
 import client.utils.FileUtil;
@@ -148,9 +147,9 @@ public class MessageHandlerImpl implements MessageHandler {
 		}
 		if (chatRoom != null) {
 			// 全域关键词自动回复
-			KeywordMap keyMap = KeywordFunction.keyMaps.stream().filter(x -> x.getSeq().equals(KeywordFunction.GLOBA_SEQ)).findFirst().orElse(null);
+			Map<String, String> keyMap = KeywordFunction.keyMap.get(KeywordFunction.GLOBA_SEQ);
 			if (keyMap != null) {
-				for (Map.Entry<String, String> entry : keyMap.getKeyMap().entrySet()) {
+				for (Map.Entry<String, String> entry : keyMap.entrySet()) {
 					if (content.contains(entry.getKey())) {
 						try {
 							wechatHttpService.sendText(message.getFromUserName(), entry.getValue());
@@ -163,9 +162,9 @@ public class MessageHandlerImpl implements MessageHandler {
 			}
 
 			// 分群关键词自动回复
-			keyMap = KeywordFunction.keyMaps.stream().filter(x -> x.getSeq().equals(chatRoom.getSeq())).findFirst().orElse(null);
+			keyMap = KeywordFunction.keyMap.get(chatRoom.getSeq());
 			if (keyMap != null) {
-				for (Map.Entry<String, String> entry : keyMap.getKeyMap().entrySet()) {
+				for (Map.Entry<String, String> entry : keyMap.entrySet()) {
 					if (content.contains(entry.getKey())) {
 						try {
 							wechatHttpService.sendText(message.getFromUserName(), entry.getValue());
@@ -306,12 +305,12 @@ public class MessageHandlerImpl implements MessageHandler {
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
-
-		// 下载文件 到本地
+		
+		// 下载文件
 		mediaUrl = wechatHttpService.download(mediaUrl, message.getMsgId() + "_" + message.getFileName(), MessageType.APP);
-
+		
 		Contact sender = Wxbot.getSender(cacheService.getIndividuals(), message.getFromUserName());
-		WxMessage msg = new WxMessage(MessageType.APP.getCode(), new WxMessageBody(MessageType.APP, mediaUrl, message.getFileName(), FileUtil.getFileSize(Long.valueOf(message.getFileSize()))));
+		WxMessage msg = new WxMessage(MessageType.APP.getCode(), new WxMessageBody(MessageType.APP, mediaUrl, message.getFileName(), FileUtil.getFileSizeString(Long.valueOf(message.getFileSize()))));
 		WxMessageTool.receiveMessage(sender, cacheService.getOwner(), msg);
 	}
 

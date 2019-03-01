@@ -7,6 +7,7 @@ Contacts = {
         // 初始化联系人列表
         loadIndividuals() {
             //console.log(wxbot.getIndividuals());
+            console.log(wxbot.getUserInfo());
             Contacts.data.temp = wxbot.getIndividuals();
             //console.log(Contacts.data.temp[0].NickName);
         },
@@ -20,8 +21,8 @@ Contacts = {
             // 拼接头像url
             //console.log(wxbot.getHostUrl());
             //console.log(param);
-            // return "";
-            return wxbot.getHostUrl();
+            return "";
+            // return wxbot.getHostUrl();
         },
         // 初始化聊天窗口
         startChat(seq, nickName, userName, headImgUrl) {

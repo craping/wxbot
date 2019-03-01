@@ -70,6 +70,7 @@ $script.ready(["setting", "contacts", "chat", "keyword", "timer", "info"], funct
             this.syncKeywords();
             this.syncTimers();
             methods.loadIndividuals(); // 加载联系人列表
+            methods.loadChatRooms(); // 加载联系人列表
         },
         updated: function () {
             methods.scrollToBottom();
