@@ -1,20 +1,21 @@
 package wxrobot.dao.entity.field;
 
-import java.util.Map;
-
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import lombok.Data;
 
 @Data
-public class KeywordMap {
-	
-	@Field(value = "id")
-	private String id;
+public class ScheduleMsg {
 	
 	@Field
-	private String name;
+	private String uuid;
 	
 	@Field
-	private Map<String, String> keyMap;
+	private Integer type;
+	
+	@Field
+	private String content;
+	
+	@Field
+	private String schedule;
 }

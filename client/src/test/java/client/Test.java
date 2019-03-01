@@ -1,6 +1,8 @@
 package client;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.stream.Stream;
 
 import javax.activation.MimetypesFileTypeMap;
@@ -29,5 +31,12 @@ public class Test {
 			return description;
 		}).toArray(ChatRoomDescription[]::new);
 		System.out.println(a.length);
+		
+		while(true){
+			String[] dateTime = new SimpleDateFormat("M,d,H,m,s").format(new Date()).split(",");
+			System.out.println(String.join(",",dateTime));
+			Thread.sleep(1000);
+		}
+		
 	}
 }
