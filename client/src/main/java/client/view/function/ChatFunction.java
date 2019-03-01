@@ -163,7 +163,7 @@ public abstract class ChatFunction extends ContactsFunction {
 			message.setFrom(cacheService.getOwner().getNickName());
 			message.setDirection(Direction.SEND.getCode());
 			String str = jsonMapper.writeValueAsString(message);
-			String filePath = "d:/chat/" + seq;
+			String filePath = Config.CHAT_RECORD_PATH + seq;
 			FileUtil.writeFile(filePath, Tools.getSysDate() + ".txt", str);
 			WxMessageTool.avatarBadge(seq);
 		} catch (JsonProcessingException e) {
@@ -175,7 +175,7 @@ public abstract class ChatFunction extends ContactsFunction {
 
 	public JSONString chatRecord(String seq) {
 		try {
-			String path = "d:/chat/" + seq + "/" + Tools.getSysDate() + ".txt";
+			String path = Config.CHAT_RECORD_PATH + seq + "/" + Tools.getSysDate() + ".txt";
 			List<String> l = FileUtil.readFile(path);
 			List<WxMessage> records = new ArrayList<WxMessage>();
 			if (l.size() > 0 && l != null) {
@@ -213,7 +213,7 @@ public abstract class ChatFunction extends ContactsFunction {
 			message.setMsgType(MessageType.TEXT.getCode());
 			message.setBody(new WxMessageBody(content));
 			String str = jsonMapper.writeValueAsString(message);
-			String path = "d:/chat/" + seq;
+			String path = Config.CHAT_RECORD_PATH + seq;
 			FileUtil.writeFile(path, Tools.getSysDate() + ".txt", str);
 			wechatService.sendText(userName == null ? cacheService.getOwner().getUserName() : userName, content);
 		} catch (IOException e) {

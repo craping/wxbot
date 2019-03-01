@@ -33,8 +33,6 @@ public class FileUtil {
 		// System.out.println(readFile(realPath).size());
 	}
 
-	
-	
 	/**
 	 * 文件夹重命名
 	 * 

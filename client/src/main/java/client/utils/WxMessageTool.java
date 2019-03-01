@@ -20,7 +20,7 @@ import client.view.WxbotView;
  *
  */
 public class WxMessageTool {
-
+	
 	private static ObjectMapper jsonMapper = new ObjectMapper();
 	{
 		jsonMapper.configure(MapperFeature.AUTO_DETECT_GETTERS, false);
@@ -48,7 +48,7 @@ public class WxMessageTool {
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
-		String path = "d:/chat/" + seq;
+		String path = Config.CHAT_RECORD_PATH + seq;
 		FileUtil.writeFile(path, Tools.getSysDate() + ".txt", jsonStr);
 		avatarBadge(seq);
 		// 处理语音消息
@@ -79,7 +79,7 @@ public class WxMessageTool {
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
-		String path = "d:/chat/" + seq;
+		String path = Config.CHAT_RECORD_PATH + seq;
 		FileUtil.writeFile(path, Tools.getSysDate() + ".txt", jsonStr);
 		avatarBadge(seq);
 		// 处理语音消息

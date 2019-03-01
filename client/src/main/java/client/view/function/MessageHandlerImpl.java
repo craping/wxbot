@@ -30,6 +30,7 @@ import com.teamdev.jxbrowser.chromium.JSValue;
 import client.controller.LoginController;
 import client.pojo.WxMessage;
 import client.pojo.WxMessageBody;
+import client.utils.Config;
 import client.utils.FileUtil;
 import client.utils.WxMessageTool;
 import client.view.QRView;
@@ -310,8 +311,8 @@ public class MessageHandlerImpl implements MessageHandler {
 				onMembersSeqChanged.asFunction().invoke(app, new JSONString(jsonMapper.writeValueAsString(seqMap)));
 				// seq变动，重命名聊天记录文件夹
 				seqMap.forEach((k, v) -> {
-					String oldPath = "d:/chat/" + k;
-					String newPath = "d:/chat/" + v;
+					String oldPath = Config.CHAT_RECORD_PATH + k;
+					String newPath = Config.CHAT_RECORD_PATH + v;
 					FileUtil.renameFile(oldPath, newPath);
 				});
 			} catch (JsonProcessingException e) {

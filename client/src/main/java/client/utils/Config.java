@@ -13,6 +13,7 @@ public class Config {
 	
 	// 图片显示最大宽度
 	public static final int MAX_IMG_WIDTH = 200;
+	public static final String CHAT_RECORD_PATH = "/chat/";
 	public static final String USERINFO_URL = "http://127.0.0.1:9527/user/getUserInfo?format=json";
 	public static final String REGISTER_URL = "http://127.0.0.1:9527/user/register?format=json";
 	public static final String LOGIN_URL = "http://127.0.0.1:9527/user/login?format=json";
