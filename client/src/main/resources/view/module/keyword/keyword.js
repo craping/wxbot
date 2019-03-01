@@ -1,7 +1,7 @@
 Keyword = {
     data: {
         form:{
-            seq:"123",
+            seq:"",
             modal:false,
             modalLoading:true,
             confirm:false,
