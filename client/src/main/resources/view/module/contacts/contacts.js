@@ -28,7 +28,7 @@ Contacts = {
             Chat.data.userHeadImg = wxbot.getHostUrl() + headImgUrl;
             Chat.data.ownerHeadImg = wxbot.getOwnerHeadImgUrl();
             Chat.data.chatRecord = wxbot.chatRecord(seq);
-            $('#avatar_' + seq + " sup.ivu-badge-dot").remove();
+            $('#avatar_' + seq + " sup.ivu-badge-count").remove();
         },
         // 初始化群聊窗口、群成员列表
         startGroupChat(seq, nickName, userName) {
@@ -39,7 +39,7 @@ Contacts = {
             Chat.data.chatRecord = wxbot.chatRecord(seq);
             Info.data.members = wxbot.getChatRoomMembers(userName);
             //console.log(Info.data.members);
-            $('#avatar_' + seq + " sup.ivu-badge-dot").remove();
+            $('#avatar_' + seq + " sup.ivu-badge-count").remove();
             this.loadKeyMap(seq);
             this.loadMsgs(seq);
         }

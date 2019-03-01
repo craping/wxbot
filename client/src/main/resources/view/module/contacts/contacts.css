@@ -1,7 +1,6 @@
 .contact_item {
     overflow: hidden;
-    padding: 10px 18px 9px;
-    border-bottom: 1px solid #292c33;
+    padding: 5px 15px;
     cursor: pointer;
 }
 .avatar {
@@ -11,6 +10,7 @@
 .info {
     overflow: hidden;
     line-height: 30px;
+    padding: 5px;
 }
 .info .nickname {
     color: #292c33;
@@ -29,3 +29,27 @@ h4 {
     margin-inline-start: 0px;
     margin-inline-end: 0px;
 }
+.ivu-badge-count {
+    font-family: Monospaced Number;
+    line-height: 1;
+    vertical-align: middle;
+    position: absolute;
+    -webkit-transform: translateX(50%);
+    transform: translateX(50%);
+    top: -4px;
+    right: 0;
+    height: 18px;
+    border-radius: 10px;
+    min-width: 20px;
+    background: #ed4014;
+    border: 1px solid transparent;
+    color: #fff;
+    line-height: 16px;
+    text-align: center;
+    padding: 0 2px;
+    font-size: 12px;
+    white-space: nowrap;
+    -webkit-transform-origin: -10% center;
+    transform-origin: -10% center;
+    z-index: 10;
+    box-shadow: 0 0 0 1px #fff;

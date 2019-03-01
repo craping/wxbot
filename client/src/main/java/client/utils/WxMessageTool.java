@@ -1,5 +1,8 @@
 package client.utils;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.cherry.jeeves.domain.shared.Contact;
 import com.cherry.jeeves.domain.shared.Owner;
 import com.cherry.jeeves.enums.MessageType;
@@ -25,6 +28,8 @@ public class WxMessageTool {
 	{
 		jsonMapper.configure(MapperFeature.AUTO_DETECT_GETTERS, false);
 	}
+	
+	private static Map<String, Integer> noRead = new HashMap<String, Integer>();
 
 	/**
 	 * 处理私聊消息
@@ -87,6 +92,14 @@ public class WxMessageTool {
 			newVoiceMessage(timestamp);
 		}
 	}
+	
+	/**
+	 * 处理已读消息，
+	 * @param seq
+	 */
+	public static void haveRead(String seq) {
+		noRead.remove(seq);
+	}
 
 	/**
 	 * 处理新消息，头像加消息提醒
@@ -94,8 +107,18 @@ public class WxMessageTool {
 	 * @param seq
 	 */
 	public static void avatarBadge(String seq) {
+		int noReadCount = 1;
+		if (noRead.get(seq) == null) {
+			noRead.put(seq, noReadCount);
+		} else {
+			noReadCount = noRead.get(seq) + 1;
+			noRead.put(seq, noReadCount);
+		}
 		WxbotView wxbotView = WxbotView.getInstance();
-		String script = "Chat.methods.newMessage(" + seq + ")";
+		String script = "Chat.methods.newMessage(" + seq + ", " + noReadCount + ")";
+		if (noReadCount > 100) {
+			script = "Chat.methods.newMessage(" + seq + ", '99+')";
+		}
 		wxbotView.executeScript(script);
 	}
 

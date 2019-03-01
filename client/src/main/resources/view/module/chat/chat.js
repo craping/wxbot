@@ -55,12 +55,12 @@ Chat = {
             Chat.methods.scrollToBottom();
         },
         // 渲染 新消息
-        newMessage(seq) {
+        newMessage(seq, noReadCount) {
             if (seq == Chat.data.seq) {
                 Chat.methods.reloadChat(String(seq));
             } else {
                 var _html = $('#avatar_' + seq).html();
-                _html = _html + "<sup class='ivu-badge-dot'></sup>";
+                _html = _html + "<sup class='ivu-badge-count'>" + noReadCount + "</sup>";
                 $('#avatar_' + seq).html(_html);
             }
         },

@@ -22,7 +22,6 @@ import com.cherry.jeeves.enums.MessageType;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.teamdev.jxbrowser.chromium.JSONString;
 
-import client.enums.AlertType;
 import client.enums.Direction;
 import client.pojo.WxMessage;
 import client.pojo.WxMessageBody;
@@ -147,7 +146,7 @@ public abstract class ChatFunction extends ContactsFunction {
 				if (FileUtil.getFileSize(fileUrl) > MAX_FILE_SIZE) {
 					WxbotView wxbotView = WxbotView.getInstance();
 					String msg = "发送的文件不能大于100M";
-					String script = "Chat.methods.alertUtil(" + AlertType.WARNING + ",'" + msg + "')";
+					String script = "Chat.methods.alertUtil('WARNING','" + msg + "')";
 					wxbotView.executeScript(script);
 					return;
 				}
@@ -173,6 +172,11 @@ public abstract class ChatFunction extends ContactsFunction {
 		}
 	}
 
+	/**
+	 * 获取聊天记录
+	 * @param seq
+	 * @return
+	 */
 	public JSONString chatRecord(String seq) {
 		try {
 			String path = Config.CHAT_RECORD_PATH + seq + "/" + Tools.getSysDate() + ".txt";
@@ -184,6 +188,8 @@ public abstract class ChatFunction extends ContactsFunction {
 					records.add(msg);
 				}
 			}
+			// 全部设置已读消息
+			WxMessageTool.haveRead(seq);
 			return new JSONString(jsonMapper.writeValueAsString(records));
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();

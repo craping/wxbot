@@ -1,32 +1,33 @@
 <card dis-hover="true" class="p-0 bg-gray">
     <tabs value="contact" :animated="false">
         <tab-pane label="联系人" icon="ios-person" name="contact">
-            <ul>
+            <ul style="padding-top: 10px;">
                 <li v-for="(item, index) in contacts.temp">
                     <div class="contact_item" @click="startChat(item.seq,item.NickName,item.UserName,item.HeadImgUrl)">
                         <div class="avatar">
-                            <Badge :id="'avatar_' + item.seq">
-                                <Avatar shape="square" icon="ios-person" :src="hostUrl() + item.HeadImgUrl" />
+                            <Badge :id="'avatar_' + item.seq" overflow-count="99">
+                                <img class="avatar2" :src="hostUrl() + item.HeadImgUrl" mm-src="" alt="" title="">
+                                <!-- <Avatar shape="square" icon="ios-person" :src="hostUrl() + item.HeadImgUrl" /> -->
                             </Badge>
                         </div>
                         <div class="info">
-                            <h4 class="nickname" >{{emojiFormatter(item.NickName)}}</h>
+                            <h4 class="nickname">{{emojiFormatter(item.NickName)}}</h>
                         </div>
                     </div>
                 </li>
             </ul>
         </tab-pane>
         <tab-pane label="群聊" icon="ios-people" name="chatroom">
-            <ul>
+            <ul style="padding-top: 10px;">
                 <li v-for="(item, index) in contacts.chatRooms">
                     <div class="contact_item" @click="startGroupChat(item.seq,item.NickName,item.UserName)">
                         <div class="avatar">
-                            <Badge :id="'avatar_' + item.seq">
-                                <Avatar shape="square" icon="ios-person" :src="hostUrl() + item.HeadImgUrl" />
+                            <Badge :id="'avatar_' + item.seq" overflow-count="999">
+                                <img class="avatar2" :src="hostUrl() + item.HeadImgUrl" mm-src="" alt="" title="">
                             </Badge>
                         </div>
                         <div class="info">
-                            <h4 class="nickname">{{item.NickName}}</h>
+                            <h4 class="nickname">{{emojiFormatter(item.NickName)}}</h>
                         </div>
                     </div>
                 </li>

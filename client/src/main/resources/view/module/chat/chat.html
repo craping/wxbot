@@ -1,4 +1,4 @@
-<card v-if="chat.title !=' '" :title="chat.title" style="height: inherit;" dis-hover="true" class="p-0 bg-gray h-100">
+<card v-if="chat.title !=' '" :title="emojiFormatter(chat.title)" style="height: inherit;" dis-hover="true" class="p-0 bg-gray h-100">
     <div style="height: 410px;" class="overflow-auto" id="chatcontheight">
         <divider style="font-size: 12px"></divider>
         <div class="msg-conversation my-3" v-for="(item, index) in chat.chatRecord">
