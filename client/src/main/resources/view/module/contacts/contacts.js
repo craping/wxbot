@@ -22,6 +22,7 @@ Contacts = {
         },
         // 初始化聊天窗口
         startChat(seq, nickName, userName, headImgUrl) {
+            Chat.data.chatType = 1;
             Chat.data.seq = seq;
             Chat.data.title = nickName;
             Chat.data.userName = userName;
@@ -32,6 +33,7 @@ Contacts = {
         },
         // 初始化群聊窗口、群成员列表
         startGroupChat(seq, nickName, userName) {
+            Chat.data.chatType = 2;
             Chat.data.seq = seq;
             Chat.data.title = nickName;
             Chat.data.userName = userName;

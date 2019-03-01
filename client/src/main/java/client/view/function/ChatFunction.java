@@ -75,7 +75,7 @@ public abstract class ChatFunction extends ContactsFunction {
 	* @throws  
 	*/  
 	    
-	public void openAppFile(String seq, String nickName, String userName){
+	public void openAppFile(String seq, String nickName, String userName, int chatType){
 		Platform.runLater(() -> {
 			if (lastSendFile != null && lastSendFile.isFile())
 				sendChooser.setInitialDirectory(lastSendFile.getParentFile());
@@ -88,7 +88,7 @@ public abstract class ChatFunction extends ContactsFunction {
 			String fileUrl = lastSendFile.getAbsolutePath();
 			// 获取文件Content-Type(Mime-Type)
 			System.out.println(fileUrl);
-			sendApp(seq, nickName, userName, fileUrl);
+			sendApp(seq, nickName, userName, fileUrl, chatType);
 		});
 	}
 	/**
@@ -99,7 +99,7 @@ public abstract class ChatFunction extends ContactsFunction {
 	 * @throws
 	 */
 
-	public void sendApp(String seq, String nickName, String userName, String fileUrl) {
+	public void sendApp(String seq, String nickName, String userName, String fileUrl, int chatType) {
         String contentType = null;  
         try {  
             contentType = Files.probeContentType(new File(fileUrl).toPath());
@@ -161,6 +161,7 @@ public abstract class ChatFunction extends ContactsFunction {
 			message.setTo(nickName);
 			message.setFrom(cacheService.getOwner().getNickName());
 			message.setDirection(Direction.SEND.getCode());
+			message.setChatType(chatType);
 			String str = jsonMapper.writeValueAsString(message);
 			String filePath = Config.CHAT_RECORD_PATH + seq;
 			FileUtil.writeFile(filePath, Tools.getSysDate() + ".txt", str);
@@ -208,7 +209,7 @@ public abstract class ChatFunction extends ContactsFunction {
 	 * @throws
 	 */
 
-	public void sendText(String seq, String nickName, String userName, String content) {
+	public void sendText(String seq, String nickName, String userName, String content, int chatType) {
 		try {
 			WxMessage message = new WxMessage();
 			String timestamp = Tools.getTimestamp();
@@ -217,6 +218,7 @@ public abstract class ChatFunction extends ContactsFunction {
 			message.setFrom(cacheService.getOwner().getNickName());
 			message.setDirection(Direction.SEND.getCode());
 			message.setMsgType(MessageType.TEXT.getCode());
+			message.setChatType(chatType);
 			message.setBody(new WxMessageBody(content));
 			String str = jsonMapper.writeValueAsString(message);
 			String path = Config.CHAT_RECORD_PATH + seq;
