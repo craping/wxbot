@@ -68,7 +68,7 @@ public class TimerFunction extends ChatFunction {
 		File attach = new File(ATTCH_PATH+fileName);
 		if(!attach.exists()){
 			System.out.printf("文件[%s]不存在 从云端获取...\n", fileName);
-			HttpUtil.download(ATTACH_URL+"crap123/"+fileName, attach.getPath());
+			HttpUtil.download(ATTACH_URL + user.getUserName() + "/" + fileName, attach.getPath());
 		}
 	}
 }

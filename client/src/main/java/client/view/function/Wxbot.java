@@ -1,6 +1,5 @@
 package client.view.function;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,14 +8,12 @@ import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.stereotype.Component;
 
-import com.cherry.jeeves.Jeeves;
 import com.cherry.jeeves.domain.shared.Contact;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.teamdev.jxbrowser.chromium.JSONString;
@@ -36,17 +33,6 @@ import client.view.WxbotView;
 
 @Component
 public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
-
-	@Autowired
-	private Jeeves jeeves;
-
-	public Thread wxbotThread;
-
-	private SimpleDateFormat dateFormat = new SimpleDateFormat("M,d,H,m,s");
-	
-	public String userToken = "6dfb108f262845a1bfec3ef6647c28f7";
-
-	private WxUser user;
 
 	public Wxbot() {
 		super();
