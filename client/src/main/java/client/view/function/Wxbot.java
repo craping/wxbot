@@ -24,9 +24,7 @@ import com.teamdev.jxbrowser.chromium.JSONString;
 import com.teamdev.jxbrowser.chromium.JSObject;
 import com.teamdev.jxbrowser.chromium.JSValue;
 
-import client.utils.Config;
-import client.utils.HttpUtil;
-import client.utils.Tools;
+import client.pojo.WxUser;
 import client.view.WxbotView;
 
 /**
@@ -47,7 +45,7 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 
 	private SimpleDateFormat dateFormat = new SimpleDateFormat("M,d,H,m,s");
 	
-	public String userToken = "e7c1cdfcf411481b97bba2ddf6bc4611";
+	public String userToken = "6dfb108f262845a1bfec3ef6647c28f7";
 
 	public Wxbot() {
 		super();
@@ -68,34 +66,12 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 	 * @return
 	 */
 	public JSONString getUserInfo() {
-		// 组织请求参数
-		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("token", userToken);
-		Map<String, Object> result = HttpUtil.sendRequest(Config.USERINFO_URL, params);
 		try {
-			System.out.println(result);
-			return new JSONString(jsonMapper.writeValueAsString(result));
+			return new JSONString(jsonMapper.writeValueAsString(user));
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
 		return new JSONString("{}");
-	}
-	
-	/**
-	 * 获取群聊详情
-	 * @param chatRooms
-	 * @param chatRoomName
-	 * @return
-	 */
-	public Contact getChatRoom(Set<Contact> chatRooms, String chatRoomName) {
-		Contact chatRoom = chatRooms.stream().filter(x -> chatRoomName.equals(x.getUserName())).findFirst().orElse(null);
-		try {
-			// 再次获取群详情，并获取群成员详情
-			chatRoom = wechatService.getChatRoomInfo(chatRoom.getUserName());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return chatRoom;
 	}
 
 	/**
@@ -122,10 +98,10 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 
 	/**
 	 * @Title: stop 
-	 * @Description: 停止Jeeves机器人线程， 
-	 * @param 参数 
-	 * @return void 返回类型
-	 *  @throws
+	 * @Description: 停止Jeeves机器人线程，
+	 * @param 参数
+	 * @return void 返回类型 
+	 * @throws
 	 */
 	public void stop() {
 		jeeves.stop();
@@ -135,18 +111,53 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 
 	@Scheduled(fixedRate=1000)
     private void work() {
+		Date now = new Date();
 		if(timerMap != null && timerMap.size() > 0){
-			String[] dateTime = dateFormat.format(new Date()).split(",");
-			timerMap.forEach((k, v) -> {
-				v.forEach(s -> {
-					String[] schedule = s.getSchedule().split(",");
-					if("*".equals(schedule[0]) || dateTime[0].equals(schedule[0]) 
-						&& "*".equals(schedule[1]) || dateTime[1].equals(schedule[1])
-						&& "*".equals(schedule[2]) || dateTime[2].equals(schedule[2])
-						&& "*".equals(schedule[3]) || dateTime[3].equals(schedule[3])
-						&& "*".equals(schedule[4]) || dateTime[4].equals(schedule[4])
-					){
-						System.out.println("定时消息匹配："+s.getSchedule());
+			
+			timerMap.forEach((seq, msgs) -> {
+				msgs.forEach(msg -> {
+					String[] schedule = msg.getSchedule().split("[|]");
+					String scheduleType = schedule[0];
+					
+					//固定时间发送
+					if ("1".equals(scheduleType)) {
+						String[] cron = schedule[0].split(",");
+						String[] dateTime = dateFormat.format(now).split(",");
+						if(("*".equals(cron[0]) || dateTime[0].equals(cron[0]))
+							&& ("*".equals(cron[1]) || dateTime[1].equals(cron[1]))
+							&& ("*".equals(cron[2]) || dateTime[2].equals(cron[2]))
+							&& ("*".equals(cron[3]) || dateTime[3].equals(cron[3]))
+							&& ("*".equals(cron[4]) || dateTime[4].equals(cron[4]))
+						){
+							System.out.println("固定时间消息匹配："+msg.getSchedule());
+							Contact chatRoom = cacheService.getChatRoom(seq);
+							if(chatRoom != null){
+//								if (msg.getType() == 1) {
+//									sendText(seq, chatRoom.getNickName(), chatRoom.getUserName(), msg.getContent());
+//								} else {
+//									sendApp(seq, chatRoom.getNickName(), chatRoom.getUserName(), ATTCH_PATH+msg.getContent());
+//								}
+							}
+						}
+					} 
+					//间隔时间发送
+					else {
+						long interval = Long.parseLong(schedule[1])*1000;
+						msg.setLastSendTime(msg.getLastSendTime() == null?new Date():msg.getLastSendTime());
+						if(now.getTime() - msg.getLastSendTime().getTime() >= interval){
+							
+							System.out.println("间隔时间消息匹配："+msg.getSchedule());
+							Contact chatRoom = cacheService.getChatRoom(seq);
+							if(chatRoom != null){
+//								if (msg.getType() == 1) {
+//									sendText(seq, chatRoom.getNickName(), chatRoom.getUserName(), msg.getContent());
+//								} else {
+//									sendApp(seq, chatRoom.getNickName(), chatRoom.getUserName(), ATTCH_PATH+msg.getContent());
+//								}
+								
+							}
+							msg.setLastSendTime(now);
+						}
 					}
 				});
 			});
