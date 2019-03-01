@@ -28,12 +28,12 @@ Timer = {
                 const type = timer[0];
                 const schedule = timer[1].split(",");
                 let info = "";
-                info += schedule[0] +(type == "1"?"月":"个月");
-                info += schedule[1] +(type == "1"?"日":"天");
-                info += schedule[2] +(type == "1"?"时":"小时");
-                info += schedule[3] +(type == "1"?"分":"分钟");
-                info += schedule[4] +"秒";
-                return h('span', (type == "1"?"定时":"间隔") + info)
+                if (type == "1") {
+                    info = "定时"+schedule[0] + "月" + schedule[2] + "时" + schedule[3] + "分" + schedule[4] + "秒";
+                } else {
+                    info = "间隔"+parseInt(parseInt(schedule[4])/60/60%60)+"小时"+ parseInt(parseInt(schedule[4])/60%60)+"分钟"+ parseInt(parseInt(schedule[4])%60)+"秒"
+                }
+                return h('span', info)
             }
         },{
             title: "内容",
@@ -114,19 +114,33 @@ Timer = {
             form.append("seq", me.timer.form.seq);
             form.append("content", me.timer.form.type=="text"?me.timer.form.text:me.timer.form.file);
             let schedule = [];
-            Object.keys(me.timer.form.schedule).forEach(key => {
-                schedule.push(me.timer.form.schedule[key]);
-            });
-            schedule = me.timer.form.scheduleType+"|"+schedule.join(",");
-            console.log(schedule);
-            if(schedule.indexOf(",,") != -1){
-                me.$Message.error("时间信息不完整");
-                me.timer.form.modalLoading = false;
-                me.$nextTick(() => {
-                    me.timer.form.modalLoading = true;
+
+            if(me.timer.form.scheduleType == 1){
+                Object.keys(me.timer.form.schedule).forEach(key => {
+                    schedule.push(me.timer.form.schedule[key]);
                 });
-                return;
+                schedule = me.timer.form.scheduleType+"|"+schedule.join(",");
+                console.log(schedule);
+                if(schedule.indexOf(",,") != -1){
+                    me.$Message.error("时间信息不完整");
+                    me.timer.form.modalLoading = false;
+                    me.$nextTick(() => {
+                        me.timer.form.modalLoading = true;
+                    });
+                    return;
+                }
+            } else {
+                if(me.timer.form.schedule.ss == null){
+                    me.$Message.error("时间信息不完整");
+                    me.timer.form.modalLoading = false;
+                    me.$nextTick(() => {
+                        me.timer.form.modalLoading = true;
+                    });
+                    return;
+                }
+                schedule = me.timer.form.scheduleType+"|"+me.timer.form.schedule.ss;
             }
+            
             form.append("schedule", schedule);
 
             $.ajax({

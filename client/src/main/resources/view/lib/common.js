@@ -12,7 +12,7 @@ var Store = Store||{
 }
 // var wxbot = wxbot||{};
 // wxbot.getToken = ()=>{
-// 	return "e7c1cdfcf411481b97bba2ddf6bc4611";
+// 	return "6dfb108f262845a1bfec3ef6647c28f7";
 // }
 var Web = {
 	serverURL: "http://127.0.0.1:9527/",

@@ -1,6 +1,6 @@
-<!-- <card dis-hover="true" class="p-0 bg-gray">
+<card dis-hover="true" class="p-0 bg-gray">
     <ul>
-        <li v-for="(item, index) in contacts.temp">
+        <li v-for="(item, index) in info.members">
             <div class="contact_item" @click="startChat(item.seq,item.NickName,item.UserName,item.HeadImgUrl)">
                 <div class="avatar">
                     <Badge :id="'avatar_' + item.seq">
@@ -13,7 +13,7 @@
             </div>
         </li>
     </ul>
-</card> -->
+</card>
 <div class="message_empty">
     <p class="p_blank">未选择群聊</p>
 </div>

@@ -20,46 +20,60 @@
     <i-form @submit.native.prevent>
         <form-item label="时间类型" class="mb-0">
             <radio-group v-model="timer.form.scheduleType">
-                <radio :label="1">定时发送</radio>
-                <radio :label="2">间隔发送</radio>
+                <radio :label="1">固定时间</radio>
+                <radio :label="2">间隔时间</radio>
             </radio-group>
         </form-item>
         <div class="mb-0">
-            <i-select style="width:50px" placeholder="" v-model="timer.form.schedule.MM">
-                <i-option v-if="timer.form.scheduleType == 1" value="*" key="*" class="text-center">*</i-option>
-                <i-option v-if="timer.form.scheduleType == 1" v-for="n in 12" :value="n" :key="n" class="text-center">{{ n<10?"0"+n:n }}</i-option>
-                <i-option v-if="timer.form.scheduleType == 2" v-for="n in 13" :value="n-1" :key="n-1" class="text-center">{{ (n-1)<10?"0"+(n-1):(n-1) }}</i-option></10>
-            </i-select> 月
-            <i-select style="width:50px" placeholder="" v-model="timer.form.schedule.dd">
-                <i-option v-if="timer.form.scheduleType == 1" value="*" key="*" class="text-center">*</i-option>
-                <i-option v-if="timer.form.scheduleType == 1" v-for="n in 31" :value="n" :key="n" class="text-center">{{ n<10?"0"+n:n }}</i-option>
-                <i-option v-if="timer.form.scheduleType == 2" v-for="n in 32" :value="n-1" :key="n-1" class="text-center">{{ (n-1)<10?"0"+(n-1):(n-1) }}</i-option></10>
-            </i-select> 日
-            <i-select style="width:50px" placeholder="" v-model="timer.form.schedule.HH">
-                <i-option v-if="timer.form.scheduleType == 1" value="*" key="*" class="text-center">*</i-option>
-                <i-option v-for="n in 24" :value="n-1" :key="n-1" class="text-center">{{ (n-1)<10?"0"+(n-1):(n-1) }}</i-option>
-            </i-select> 时
-            <i-select style="width:50px" placeholder="" v-model="timer.form.schedule.mm">
-                <i-option v-if="timer.form.scheduleType == 1" value="*" key="*" class="text-center">*</i-option>
-                <i-option v-for="n in 60" :value="n-1" :key="n-1" class="text-center">{{ (n-1)<10?"0"+(n-1):(n-1) }}</i-option>
-            </i-select> 分
-            <i-select style="width:50px" placeholder="" v-model="timer.form.schedule.ss">
-                <i-option v-if="timer.form.scheduleType == 1" value="*" key="*" class="text-center">*</i-option>
-                <i-option v-for="n in 60" :value="n-1" :key="n-1" class="text-center">{{ (n-1)<10?"0"+(n-1):(n-1) }}</i-option>
-            </i-select> 秒
-            <div>
-                <small class="text-danger">
-                    {{timer.form.scheduleType == 1?"每当时间到达：":"频率每隔"}} [
-                    <span v-show="timer.form.schedule.MM != null">{{timer.form.schedule.MM}}{{timer.form.scheduleType == 1?"月":"个月"}}</span>
-                    <span v-show="timer.form.schedule.dd != null">{{timer.form.schedule.dd}}{{timer.form.scheduleType == 1?"日":"天"}}</span>
-                    <span v-show="timer.form.schedule.HH != null">{{timer.form.schedule.HH}}{{timer.form.scheduleType == 1?"时":"小时"}}</span>
-                    <span v-show="timer.form.schedule.mm != null">{{timer.form.schedule.mm}}{{timer.form.scheduleType == 1?"分":"分钟"}}</span>
+            <div v-if="timer.form.scheduleType == 1">
+                <i-select style="width:50px" placeholder="" v-model="timer.form.schedule.MM">
+                    <i-option v-if="timer.form.scheduleType == 1" value="*" key="*" class="text-center">*</i-option>
+                    <i-option v-if="timer.form.scheduleType == 1" v-for="n in 12" :value="n" :key="n" class="text-center">{{ n<10?"0"+n:n }}</i-option>
+                    <i-option v-if="timer.form.scheduleType == 2" v-for="n in 13" :value="n-1" :key="n-1" class="text-center">{{ (n-1)<10?"0"+(n-1):(n-1) }}</i-option></10>
+                </i-select> 月
+                <i-select style="width:50px" placeholder="" v-model="timer.form.schedule.dd">
+                    <i-option v-if="timer.form.scheduleType == 1" value="*" key="*" class="text-center">*</i-option>
+                    <i-option v-if="timer.form.scheduleType == 1" v-for="n in 31" :value="n" :key="n" class="text-center">{{ n<10?"0"+n:n }}</i-option>
+                    <i-option v-if="timer.form.scheduleType == 2" v-for="n in 32" :value="n-1" :key="n-1" class="text-center">{{ (n-1)<10?"0"+(n-1):(n-1) }}</i-option></10>
+                </i-select> 日
+                <i-select style="width:50px" placeholder="" v-model="timer.form.schedule.HH">
+                    <i-option v-if="timer.form.scheduleType == 1" value="*" key="*" class="text-center">*</i-option>
+                    <i-option v-for="n in 24" :value="n-1" :key="n-1" class="text-center">{{ (n-1)<10?"0"+(n-1):(n-1) }}</i-option>
+                </i-select> 时
+                <i-select style="width:50px" placeholder="" v-model="timer.form.schedule.mm">
+                    <i-option v-if="timer.form.scheduleType == 1" value="*" key="*" class="text-center">*</i-option>
+                    <i-option v-for="n in 60" :value="n-1" :key="n-1" class="text-center">{{ (n-1)<10?"0"+(n-1):(n-1) }}</i-option>
+                </i-select> 分
+                <i-select style="width:50px" placeholder="" v-model="timer.form.schedule.ss">
+                    <i-option v-if="timer.form.scheduleType == 1" value="*" key="*" class="text-center">*</i-option>
+                    <i-option v-for="n in 60" :value="n-1" :key="n-1" class="text-center">{{ (n-1)<10?"0"+(n-1):(n-1) }}</i-option>
+                </i-select> 秒
+            </div>
+            <div v-else>
+                <input-number style="width:150px" :min="1" :step="1" v-model="timer.form.schedule.ss"></input-number> 秒
+            </div>
+            <div class="text-danger">
+                <span v-if="timer.form.scheduleType == 1">
+                        每当时间到达：[
+                    <span v-show="timer.form.schedule.MM != null">{{timer.form.schedule.MM}}月</span>
+                    <span v-show="timer.form.schedule.dd != null">{{timer.form.schedule.dd}}日</span>
+                    <span v-show="timer.form.schedule.HH != null">{{timer.form.schedule.HH}}时</span>
+                    <span v-show="timer.form.schedule.mm != null">{{timer.form.schedule.mm}}分</span>
                     <span v-show="timer.form.schedule.ss != null">{{timer.form.schedule.ss}}秒</span>
-                    ] 发送一次
-                </small>
-                <div v-show="timer.form.scheduleType == 1" class="text-info">
-                    "*" 号为该区域内所有时间段，例："14时5分*秒" 在下午2点5分 每秒发送一次
-                </div>
+                </span>
+                <span v-else>
+                    频率每隔：[
+                    <span v-show="timer.form.schedule.ss != null">{{
+                        parseInt(timer.form.schedule.ss/60/60%60)+"小时"+
+                        parseInt(timer.form.schedule.ss/60%60)+"分钟"+
+                        parseInt(timer.form.schedule.ss%60)+"秒"
+                    }}</span>
+                </span>
+                
+                ] 发送一次
+            </div>
+            <div v-show="timer.form.scheduleType == 1" class="text-info">
+                "*" 号为该区域内所有时间段，例："14时5分*秒" 在下午2点5分 每秒发送一次
             </div>
         </div>
 
