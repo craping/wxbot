@@ -1,5 +1,6 @@
 package client.view.function;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -15,6 +16,8 @@ import com.teamdev.jxbrowser.chromium.JSONString;
 import com.teamdev.jxbrowser.chromium.JSObject;
 import com.teamdev.jxbrowser.chromium.JSValue;
 
+import client.utils.Config;
+import client.utils.HttpUtil;
 import client.utils.Tools;
 import client.view.WxbotView;
 
@@ -48,6 +51,25 @@ public class Wxbot extends KeywordFunction {
 	public String getToken() {
 		return userToken;
 	}
+	
+	/**
+	 * 获取用户信息
+	 * @param token
+	 * @return
+	 */
+	public JSONString getUserInfo() {
+		// 组织请求参数
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("token", userToken);
+		Map<String, Object> result = HttpUtil.sendRequest(Config.USERINFO_URL, params);
+		try {
+			System.out.println(result);
+			return new JSONString(jsonMapper.writeValueAsString(result));
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+		return new JSONString("{}");
+	}
 
 	/**
 	 * 根据用户名userName 获取用户contact
@@ -58,6 +80,23 @@ public class Wxbot extends KeywordFunction {
 	 */
 	public static Contact getSender(Set<Contact> contacts, String userName) {
 		return contacts.stream().filter(individual -> userName.equals(individual.getUserName())).findFirst().orElse(null);
+	}
+	
+	/**
+	 * 获取群聊详情
+	 * @param chatRooms
+	 * @param chatRoomName
+	 * @return
+	 */
+	public Contact getChatRoom(Set<Contact> chatRooms, String chatRoomName) {
+		Contact chatRoom = chatRooms.stream().filter(x -> chatRoomName.equals(x.getUserName())).findFirst().orElse(null);
+		try {
+			// 再次获取群详情，并获取群成员详情
+			chatRoom = wechatService.getChatRoomInfo(chatRoom.getUserName());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return chatRoom;
 	}
 
 	/**

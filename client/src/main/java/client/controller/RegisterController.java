@@ -16,8 +16,6 @@ import javafx.util.Duration;
 
 public class RegisterController implements Initializable {
 
-	private final String REGISTER_URL = "http://127.0.0.1:9527/user/register?format=json";
-
 	public static Stage REGISTER_STAGE;
 	@FXML
 	private TextField phoneNumTxt;

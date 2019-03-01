@@ -27,6 +27,7 @@ import com.teamdev.jxbrowser.chromium.JSONString;
 import com.teamdev.jxbrowser.chromium.JSObject;
 import com.teamdev.jxbrowser.chromium.JSValue;
 
+import client.Launch;
 import client.controller.LoginController;
 import client.pojo.KeywordMap;
 import client.pojo.WxMessage;
@@ -45,6 +46,7 @@ public class MessageHandlerImpl implements MessageHandler {
 	private WechatHttpService wechatHttpService;
 	@Autowired
 	private CacheService cacheService;
+	private Wxbot wxbot;
 
 	private ObjectMapper jsonMapper = new ObjectMapper();
 	{
@@ -85,6 +87,7 @@ public class MessageHandlerImpl implements MessageHandler {
 	public void onConfirmation() {
 		logger.info("确认登录");
 		Platform.runLater(() -> {
+			wxbot = Launch.context.getBean(Wxbot.class);
 			qrView.close();
 			WxbotView wxbotView = WxbotView.getInstance();
 			wxbotView.onClose(e -> {
@@ -135,7 +138,7 @@ public class MessageHandlerImpl implements MessageHandler {
 		logger.info("to: " + message.getToUserName());
 		logger.info("content:" + content);
 
-		Contact chatRoom = cacheService.getChatRooms().stream().filter(x -> message.getFromUserName().equals(x.getUserName())).findFirst().orElse(null);
+		Contact chatRoom = wxbot.getChatRoom(cacheService.getChatRooms(), message.getFromUserName());
 		Contact sender = Wxbot.getSender(chatRoom.getMemberList(), userName);
 		WxMessage msg = new WxMessage(MessageType.TEXT.getCode(), new WxMessageBody(content));
 		WxMessageTool.receiveGroupMessage(chatRoom, sender, msg);
@@ -146,7 +149,9 @@ public class MessageHandlerImpl implements MessageHandler {
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
+		
 		if (chatRoom != null) {
+			String seq = chatRoom.getSeq();
 			// 全域关键词自动回复
 			KeywordMap keyMap = KeywordFunction.keyMaps.stream().filter(x -> x.getSeq().equals(KeywordFunction.GLOBA_SEQ)).findFirst().orElse(null);
 			if (keyMap != null) {
@@ -163,7 +168,7 @@ public class MessageHandlerImpl implements MessageHandler {
 			}
 
 			// 分群关键词自动回复
-			keyMap = KeywordFunction.keyMaps.stream().filter(x -> x.getSeq().equals(chatRoom.getSeq())).findFirst().orElse(null);
+			keyMap = KeywordFunction.keyMaps.stream().filter(x -> x.getSeq().equals(seq)).findFirst().orElse(null);
 			if (keyMap != null) {
 				for (Map.Entry<String, String> entry : keyMap.getKeyMap().entrySet()) {
 					if (content.contains(entry.getKey())) {
@@ -306,12 +311,12 @@ public class MessageHandlerImpl implements MessageHandler {
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
-
-		// 下载文件 到本地
+		
+		// 下载文件
 		mediaUrl = wechatHttpService.download(mediaUrl, message.getMsgId() + "_" + message.getFileName(), MessageType.APP);
-
+		
 		Contact sender = Wxbot.getSender(cacheService.getIndividuals(), message.getFromUserName());
-		WxMessage msg = new WxMessage(MessageType.APP.getCode(), new WxMessageBody(MessageType.APP, mediaUrl, message.getFileName(), FileUtil.getFileSize(Long.valueOf(message.getFileSize()))));
+		WxMessage msg = new WxMessage(MessageType.APP.getCode(), new WxMessageBody(MessageType.APP, mediaUrl, message.getFileName(), FileUtil.getFileSizeString(Long.valueOf(message.getFileSize()))));
 		WxMessageTool.receiveMessage(sender, cacheService.getOwner(), msg);
 	}
 

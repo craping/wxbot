@@ -6,8 +6,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +22,7 @@ import com.cherry.jeeves.enums.MessageType;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.teamdev.jxbrowser.chromium.JSONString;
 
+import client.enums.AlertType;
 import client.enums.Direction;
 import client.pojo.WxMessage;
 import client.pojo.WxMessageBody;
@@ -58,6 +57,8 @@ public abstract class ChatFunction extends ContactsFunction {
 	private final static String PREFIX_IMG = "image/";
 	private final static String PREFIX_VIDEO = "video/";
 	private final static String PREFIX_GIF = "image/gif";
+	private final static long MAX_FILE_SIZE = 104857600;
+	private final static long MAX_VIDEO_SIZE = 26214400;
 
 	public ChatFunction() {
 		super();
@@ -86,6 +87,7 @@ public abstract class ChatFunction extends ContactsFunction {
 			String fileUrl = lastSendFile.getAbsolutePath();
 			// 获取文件Content-Type(Mime-Type)
 			System.out.println(fileUrl);
+			
 	        String contentType = null;  
 	        try {  
 	            contentType = Files.probeContentType(new File(fileUrl).toPath());
@@ -111,6 +113,15 @@ public abstract class ChatFunction extends ContactsFunction {
 		        }
 		        // 发送视频
 		        else if (contentType != null && contentType.contains(PREFIX_VIDEO)) {
+		        	// 文件超限 25MB
+					if (FileUtil.getFileSize(fileUrl) > MAX_VIDEO_SIZE) {
+						WxbotView wxbotView = WxbotView.getInstance();
+						String msg = "发送的视频文件不能大于25M";
+						String script = "Chat.methods.alertUtil('WARNING','" + msg + "')";
+						wxbotView.executeScript(script);
+						return;
+					}
+		        	
 		        	SendMsgResponse response = wechatService.sendVideo(userName == null ? cacheService.getOwner().getUserName() : userName, fileUrl);
 		        	// 下载发送视频 缩略图
 	        		String thumbImageUrl = String.format(WECHAT_URL_GET_MSG_IMG, cacheService.getHostUrl(), response.getMsgID(), cacheService.getsKey()) + "&type=slave";
@@ -119,9 +130,18 @@ public abstract class ChatFunction extends ContactsFunction {
 		        	message.setMsgType(MessageType.VIDEO.getCode());
 		        	message.setBody(new WxMessageBody(fileUrl, thumbImageUrl));
 		        } else {
+		        	// 文件超限 100MB
+					if (FileUtil.getFileSize(fileUrl) > MAX_FILE_SIZE) {
+						WxbotView wxbotView = WxbotView.getInstance();
+						String msg = "发送的文件不能大于100M";
+						String script = "Chat.methods.alertUtil(" + AlertType.WARNING + ",'" + msg + "')";
+						wxbotView.executeScript(script);
+						return;
+					}
+					
 		        	wechatService.sendApp(userName == null ? cacheService.getOwner().getUserName() : userName, fileUrl);
 		        	message.setMsgType(MessageType.APP.getCode());
-		        	message.setBody(new WxMessageBody(MessageType.APP, fileUrl, lastSendFile.getName(), FileUtil.getFileSize(fileUrl)));
+		        	message.setBody(new WxMessageBody(MessageType.APP, fileUrl, lastSendFile.getName(), FileUtil.getFileSizeString(fileUrl)));
 		        }
 	
 				String timestamp = Tools.getTimestamp();

@@ -7,6 +7,7 @@ Contacts = {
         // 初始化联系人列表
         loadIndividuals() {
             //console.log(wxbot.getIndividuals());
+            console.log(wxbot.getUserInfo());
             Contacts.data.temp = wxbot.getIndividuals();
             //console.log(Contacts.data.temp[0].NickName);
         },
