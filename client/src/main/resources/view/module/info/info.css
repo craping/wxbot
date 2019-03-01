@@ -1,7 +1,26 @@
-.icon-refresh {
-    width: 96px;
-    background: url(../chat/images/icon_x.png) no-repeat;
-    background-position: -150px 0;
-    -webkit-background-size: 487px 462px;
-    background-size: 487px 462px
+.member {
+    float: left;
+    position: relative;
+    height: 70px;
+    margin-left: 9px;
+    padding-top: 10px;
+}
+.member_nickname {
+    color: #888;
+    width: 55px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    word-wrap: normal;
+    font-size: 12px;
+    margin-left: -8px;
+    vertical-align: middle;
+    text-align: center;
+}
+.avatar2 {
+    display: block;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    background-color: #ccc;
 }

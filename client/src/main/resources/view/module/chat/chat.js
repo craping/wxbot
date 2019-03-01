@@ -51,13 +51,11 @@ Chat = {
         },
         // 重新加载聊天信息窗口
         reloadChat(seq) {
-            console.log(seq);
             Chat.data.chatRecord = wxbot.chatRecord(seq);
             Chat.methods.scrollToBottom();
         },
         // 渲染 新消息
         newMessage(seq) {
-            console.log(seq);
             if (seq == Chat.data.seq) {
                 Chat.methods.reloadChat(String(seq));
             } else {

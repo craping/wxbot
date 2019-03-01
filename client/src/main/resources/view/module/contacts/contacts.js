@@ -6,22 +6,14 @@ Contacts = {
     methods: {
         // 初始化联系人列表
         loadIndividuals() {
-            //console.log(wxbot.getIndividuals());
-            //console.log(wxbot.getUserInfo());
             Contacts.data.temp = wxbot.getIndividuals();
-            //console.log(Contacts.data.temp[0].NickName);
         },
         // 初始化群聊列表
         loadChatRooms() {
-            console.log(wxbot.getChatRooms());
             Contacts.data.chatRooms = wxbot.getChatRooms();
         },
         // 获取host url
         hostUrl() {
-            // 拼接头像url
-            //console.log(wxbot.getHostUrl());
-            //console.log(param);
-            // return "";
             return wxbot.getHostUrl();
         },
         // 初始化聊天窗口
@@ -42,7 +34,7 @@ Contacts = {
             Chat.data.ownerHeadImg = wxbot.getOwnerHeadImgUrl();
             Chat.data.chatRecord = wxbot.chatRecord(seq);
             Info.data.members = wxbot.getChatRoomMembers(userName);
-            console.log(Info.data.members);
+            //console.log(Info.data.members);
             $('#avatar_' + seq + " sup.ivu-badge-dot").remove();
             this.loadKeyMap(seq);
             this.loadMsgs(seq);
