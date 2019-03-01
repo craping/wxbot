@@ -7,7 +7,7 @@ Contacts = {
         // 初始化联系人列表
         loadIndividuals() {
             //console.log(wxbot.getIndividuals());
-            console.log(wxbot.getUserInfo());
+            //console.log(wxbot.getUserInfo());
             Contacts.data.temp = wxbot.getIndividuals();
             //console.log(Contacts.data.temp[0].NickName);
         },
@@ -21,8 +21,8 @@ Contacts = {
             // 拼接头像url
             //console.log(wxbot.getHostUrl());
             //console.log(param);
-            return "";
-            // return wxbot.getHostUrl();
+            // return "";
+            return wxbot.getHostUrl();
         },
         // 初始化聊天窗口
         startChat(seq, nickName, userName, headImgUrl) {
@@ -32,6 +32,17 @@ Contacts = {
             Chat.data.userHeadImg = wxbot.getHostUrl() + headImgUrl;
             Chat.data.ownerHeadImg = wxbot.getOwnerHeadImgUrl();
             Chat.data.chatRecord = wxbot.chatRecord(seq);
+            $('#avatar_' + seq + " sup.ivu-badge-dot").remove();
+        },
+        // 初始化群聊窗口、群成员列表
+        startGroupChat(seq, nickName, userName) {
+            Chat.data.seq = seq;
+            Chat.data.title = nickName;
+            Chat.data.userName = userName;
+            Chat.data.ownerHeadImg = wxbot.getOwnerHeadImgUrl();
+            Chat.data.chatRecord = wxbot.chatRecord(seq);
+            Info.data.members = wxbot.getChatRoomMembers(userName);
+            console.log(Info.data.members);
             $('#avatar_' + seq + " sup.ivu-badge-dot").remove();
         }
     }

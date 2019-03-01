@@ -1,5 +1,6 @@
 Info = {
     data: {
+        members: [{}],
     },
     computed: {
     },

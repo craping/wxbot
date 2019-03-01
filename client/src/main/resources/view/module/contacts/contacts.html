@@ -19,7 +19,7 @@
         <tab-pane label="群聊" icon="ios-people" name="chatroom">
             <ul>
                 <li v-for="(item, index) in contacts.chatRooms">
-                    <div class="contact_item" @click="startChat(item.seq,item.NickName,item.UserName,item.HeadImgUrl)">
+                    <div class="contact_item" @click="startGroupChat(item.seq,item.NickName,item.UserName)">
                         <div class="avatar">
                             <Badge :id="'avatar_' + item.seq">
                                 <Avatar shape="square" icon="ios-person" :src="hostUrl() + item.HeadImgUrl" />

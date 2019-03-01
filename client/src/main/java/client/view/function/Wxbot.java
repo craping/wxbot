@@ -1,6 +1,5 @@
 package client.view.function;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -79,23 +78,6 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 			e.printStackTrace();
 		}
 		return new JSONString("{}");
-	}
-	
-	/**
-	 * 获取群聊详情
-	 * @param chatRooms
-	 * @param chatRoomName
-	 * @return
-	 */
-	public Contact getChatRoom(Set<Contact> chatRooms, String chatRoomName) {
-		Contact chatRoom = chatRooms.stream().filter(x -> chatRoomName.equals(x.getUserName())).findFirst().orElse(null);
-		try {
-			// 再次获取群详情，并获取群成员详情
-			chatRoom = wechatService.getChatRoomInfo(chatRoom.getUserName());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return chatRoom;
 	}
 
 	/**

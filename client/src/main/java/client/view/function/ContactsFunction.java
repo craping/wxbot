@@ -8,8 +8,6 @@ import com.cherry.jeeves.domain.shared.Contact;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.teamdev.jxbrowser.chromium.JSONString;
 
-import client.Launch;
-
 @Component
 public class ContactsFunction extends SettingFunction {
 	
@@ -56,8 +54,7 @@ public class ContactsFunction extends SettingFunction {
 	 * @return
 	 */
 	public String getChatRoomMemberHeadImgUrl(String chatRoomName, String memberUserName) {
-		Wxbot wxbot = Launch.context.getBean(Wxbot.class);
-		Set<Contact> members = wxbot.getChatRoom(cacheService.getChatRooms(), chatRoomName).getMemberList();
+		Set<Contact> members = cacheService.getChatRoom(chatRoomName).getMemberList();
 		Contact member = members.stream().filter(x -> memberUserName.equals(x.getNickName())).findFirst().orElse(null);
 		return getHostUrl() + member.getHeadImgUrl();
 	}
@@ -69,19 +66,31 @@ public class ContactsFunction extends SettingFunction {
 	* @return JSONString    返回类型  
 	* @throws  
 	*/  
-	    
 	public JSONString getChatRooms() {
 		try {
-			
 			System.out.println(jsonMapper.writeValueAsString(cacheService.getChatRooms()));
 			return new JSONString(jsonMapper.writeValueAsString(cacheService.getChatRooms()));
-			
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
 		return new JSONString("{}");
 	}
 	
+	/**
+	 * 获取群成员列表
+	 * @param chatRoomName
+	 * @return
+	 */
+	public JSONString getChatRoomMembers(String chatRoomName) {
+		try {
+			Set<Contact> members = cacheService.getChatRoom(chatRoomName).getMemberList();
+			System.out.println(jsonMapper.writeValueAsString(members));
+			return new JSONString(jsonMapper.writeValueAsString(members));
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+		return new JSONString("{}");
+	}
 	  
 	/**  
 	* @Title: getMediaPlatforms  
