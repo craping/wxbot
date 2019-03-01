@@ -134,8 +134,8 @@ public class MessageHandlerImpl implements MessageHandler {
 		logger.info("to: " + message.getToUserName());
 		logger.info("content:" + content);
 
-		Contact chatRoom = cacheService.getChatRooms().stream().filter(x -> message.getFromUserName().equals(x.getUserName())).findFirst().orElse(null);
-		Contact sender = Wxbot.getSender(chatRoom.getMemberList(), userName);
+		Contact chatRoom = cacheService.getChatRoom(message.getFromUserName());
+		Contact sender = cacheService.searchContact(chatRoom.getMemberList(), userName);
 		WxMessage msg = new WxMessage(MessageType.TEXT.getCode(), new WxMessageBody(content));
 		WxMessageTool.receiveGroupMessage(chatRoom, sender, msg);
 		
@@ -234,7 +234,7 @@ public class MessageHandlerImpl implements MessageHandler {
 		logger.info("to: " + message.getToUserName());
 		logger.info("content:" + message.getContent());
 
-		Contact sender = Wxbot.getSender(cacheService.getIndividuals(), message.getFromUserName());
+		Contact sender = cacheService.getContact(message.getFromUserName());
 		WxMessage msg = new WxMessage(MessageType.TEXT.getCode(), new WxMessageBody(message.getContent()));
 		WxMessageTool.receiveMessage(sender, cacheService.getOwner(), msg);
 	}
@@ -250,7 +250,7 @@ public class MessageHandlerImpl implements MessageHandler {
 		thumbImageUrl = wechatHttpService.download(thumbImageUrl, message.getMsgId() + "_thumb.jpg", MessageType.IMAGE);
 
 		// 处理消息
-		Contact sender = Wxbot.getSender(cacheService.getIndividuals(), message.getFromUserName());
+		Contact sender = cacheService.getContact(message.getFromUserName());
 		WxMessage msg = new WxMessage(MessageType.IMAGE.getCode(), new WxMessageBody(fullImageUrl, thumbImageUrl, message.getImgHeight(), message.getImgWidth()));
 		WxMessageTool.receiveMessage(sender, cacheService.getOwner(), msg);
 	}
@@ -263,7 +263,7 @@ public class MessageHandlerImpl implements MessageHandler {
 		// 下载表情文件 到本地
 		emoticonUrl = wechatHttpService.download(emoticonUrl, message.getMsgId() + ".gif", MessageType.EMOTICON);
 		// 处理消息
-		Contact sender = Wxbot.getSender(cacheService.getIndividuals(), message.getFromUserName());
+		Contact sender = cacheService.getContact(message.getFromUserName());
 		WxMessage msg = new WxMessage(MessageType.EMOTICON.getCode(), new WxMessageBody(emoticonUrl, message.getImgHeight(), message.getImgWidth()));
 		WxMessageTool.receiveMessage(sender, cacheService.getOwner(), msg);
 	}
@@ -276,7 +276,7 @@ public class MessageHandlerImpl implements MessageHandler {
 		// 下载语音文件 到本地
 		voiceUrl = wechatHttpService.download(voiceUrl, message.getMsgId() + ".mp3", MessageType.VOICE);
 
-		Contact sender = Wxbot.getSender(cacheService.getIndividuals(), message.getFromUserName());
+		Contact sender = cacheService.getContact(message.getFromUserName());
 		WxMessage msg = new WxMessage(MessageType.VOICE.getCode(), new WxMessageBody(voiceUrl, message.getVoiceLength()));
 		WxMessageTool.receiveMessage(sender, cacheService.getOwner(), msg);
 	}
@@ -291,7 +291,7 @@ public class MessageHandlerImpl implements MessageHandler {
 		videoUrl = wechatHttpService.download(videoUrl, message.getMsgId() + ".mp4", MessageType.VIDEO);
 		thumbImageUrl = wechatHttpService.download(thumbImageUrl, message.getMsgId() + ".jpg", MessageType.VIDEO);
 
-		Contact sender = Wxbot.getSender(cacheService.getIndividuals(), message.getFromUserName());
+		Contact sender = cacheService.getContact(message.getFromUserName());
 		WxMessage msg = new WxMessage(MessageType.VIDEO.getCode(), new WxMessageBody(videoUrl, thumbImageUrl));
 		WxMessageTool.receiveMessage(sender, cacheService.getOwner(), msg);
 	}
@@ -310,7 +310,7 @@ public class MessageHandlerImpl implements MessageHandler {
 		// 下载文件
 		mediaUrl = wechatHttpService.download(mediaUrl, message.getMsgId() + "_" + message.getFileName(), MessageType.APP);
 		
-		Contact sender = Wxbot.getSender(cacheService.getIndividuals(), message.getFromUserName());
+		Contact sender = cacheService.getContact(message.getFromUserName());
 		WxMessage msg = new WxMessage(MessageType.APP.getCode(), new WxMessageBody(MessageType.APP, mediaUrl, message.getFileName(), FileUtil.getFileSizeString(Long.valueOf(message.getFileSize()))));
 		WxMessageTool.receiveMessage(sender, cacheService.getOwner(), msg);
 	}

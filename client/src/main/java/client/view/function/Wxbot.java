@@ -80,17 +80,6 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 		}
 		return new JSONString("{}");
 	}
-
-	/**
-	 * 根据用户名userName 获取用户contact
-	 * 
-	 * @param contacts 微信
-	 * @param userName
-	 * @return
-	 */
-	public static Contact getSender(Set<Contact> contacts, String userName) {
-		return contacts.stream().filter(individual -> userName.equals(individual.getUserName())).findFirst().orElse(null);
-	}
 	
 	/**
 	 * 获取群聊详情
