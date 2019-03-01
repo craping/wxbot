@@ -148,7 +148,7 @@ Keyword = {
                 },
                 success: function (data) {
                     me.$set(me.keyword.chatroomKeyMap, me.keyword.form.key, me.keyword.form.value);
-                    wxbot.setKeyMap(me.keyword.form.seq, keyMap);
+                    wxbot.setKeyMap(me.keyword.form.seq, me.keyword.form.key, me.keyword.form.value);
                     me.keyword.form.key = "";
                     me.keyword.form.value = "";
                     me.keyword.form.modal = false;

@@ -44,7 +44,7 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 	 * @return
 	 */
 	public String getToken() {
-		return userToken;
+		return user.getToken();
 	}
 
 	/**

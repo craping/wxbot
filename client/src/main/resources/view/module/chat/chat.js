@@ -37,7 +37,7 @@ Chat = {
                 this.$Message.error('请选择一个聊天好友');
                 return false;
             }
-            wxbot.sendApp(this.chat.seq, this.chat.title, this.chat.userName);
+            wxbot.openAppFile(this.chat.seq, this.chat.title, this.chat.userName);
         },
         // 发送文本消息
         sendText() {

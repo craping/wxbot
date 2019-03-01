@@ -30,9 +30,9 @@ public class KeywordFunction extends TimerFunction {
 		}
 	}
 	
-	public void setKeyMap(String seq, Map<String, String> setkeyMap){
+	public void setKeyMap(String seq, String key, String value){
 		if(keyMap != null && keyMap.containsKey(seq))
-			keyMap.get(seq).putAll(setkeyMap);
+			keyMap.get(seq).put(key, value);
 	}
 	
 	public void delKeyMap(String seq, String key){
