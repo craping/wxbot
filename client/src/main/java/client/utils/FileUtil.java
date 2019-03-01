@@ -11,8 +11,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.math.BigDecimal;
 import java.nio.channels.FileChannel;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,9 +31,10 @@ public class FileUtil {
 		// write(content, path, fileName);
 		// String realPath = path + fileName;
 		// System.out.println(readFile(realPath).size());
-		System.out.println(Files.probeContentType(Paths.get("‪‪‪D:/nginx-1.15.5.zip")));
 	}
 
+	
+	
 	/**
 	 * 文件夹重命名
 	 * 

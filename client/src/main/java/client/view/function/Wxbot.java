@@ -23,9 +23,7 @@ import com.teamdev.jxbrowser.chromium.JSONString;
 import com.teamdev.jxbrowser.chromium.JSObject;
 import com.teamdev.jxbrowser.chromium.JSValue;
 
-import client.utils.Config;
-import client.utils.HttpUtil;
-import client.utils.Tools;
+import client.pojo.WxUser;
 import client.view.WxbotView;
 
 /**
@@ -45,8 +43,8 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 	public Thread wxbotThread;
 
 	private SimpleDateFormat dateFormat = new SimpleDateFormat("M,d,H,m,s");
-	
-	public String userToken = "e7c1cdfcf411481b97bba2ddf6bc4611";
+
+	private WxUser user;
 
 	public Wxbot() {
 		super();
@@ -58,22 +56,19 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 	 * @return
 	 */
 	public String getToken() {
-		return userToken;
+		// return user.getToken();
+		return "e7c1cdfcf411481b97bba2ddf6bc4611";
 	}
-	
+
 	/**
 	 * 获取用户信息
+	 * 
 	 * @param token
 	 * @return
 	 */
 	public JSONString getUserInfo() {
-		// 组织请求参数
-		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("token", userToken);
-		Map<String, Object> result = HttpUtil.sendRequest(Config.USERINFO_URL, params);
 		try {
-			System.out.println(result);
-			return new JSONString(jsonMapper.writeValueAsString(result));
+			return new JSONString(jsonMapper.writeValueAsString(user));
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
@@ -87,9 +82,9 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 	 * @return void 返回类型 
 	 * @throws
 	 */
-	public void start(String token) {
-		if (Tools.isStrEmpty(userToken)) {
-			userToken = token;
+	public void start(WxUser user) {
+		if (this.user == null) {
+			this.user = user;
 		}
 		wxbotThread = new Thread(() -> {
 			try {
@@ -104,10 +99,10 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 
 	/**
 	 * @Title: stop 
-	 * @Description: 停止Jeeves机器人线程， 
-	 * @param 参数 
-	 * @return void 返回类型
-	 *  @throws
+	 * @Description: 停止Jeeves机器人线程，
+	 * @param 参数
+	 * @return void 返回类型 
+	 * @throws
 	 */
 	public void stop() {
 		jeeves.stop();
@@ -115,37 +110,35 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 			wxbotThread.interrupt();
 	}
 
-	@Scheduled(fixedRate=1000)
-    private void work() {
-		if(timerMap != null && timerMap.size() > 0){
+	@Scheduled(fixedRate = 1000)
+	private void work() {
+		if (timerMap != null && timerMap.size() > 0) {
 			String[] dateTime = dateFormat.format(new Date()).split(",");
 			timerMap.forEach((k, v) -> {
 				v.forEach(s -> {
 					String[] schedule = s.getSchedule().split(",");
-					if("*".equals(schedule[0]) || dateTime[0].equals(schedule[0]) 
-						&& "*".equals(schedule[1]) || dateTime[1].equals(schedule[1])
-						&& "*".equals(schedule[2]) || dateTime[2].equals(schedule[2])
-						&& "*".equals(schedule[3]) || dateTime[3].equals(schedule[3])
-						&& "*".equals(schedule[4]) || dateTime[4].equals(schedule[4])
-					){
-						System.out.println("定时消息匹配："+s.getSchedule());
+					if ("*".equals(schedule[0]) || dateTime[0].equals(schedule[0]) && "*".equals(schedule[1])
+							|| dateTime[1].equals(schedule[1]) && "*".equals(schedule[2])
+							|| dateTime[2].equals(schedule[2]) && "*".equals(schedule[3])
+							|| dateTime[3].equals(schedule[3]) && "*".equals(schedule[4])
+							|| dateTime[4].equals(schedule[4])) {
+						System.out.println("定时消息匹配：" + s.getSchedule());
 					}
 				});
 			});
 		}
-    }
-	
-	
+	}
+
 	@Override
 	public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
 		taskRegistrar.setScheduler(taskExecutor());
 	}
-	
-	@Bean(destroyMethod="shutdown")
+
+	@Bean(destroyMethod = "shutdown")
 	private Executor taskExecutor() {
-        return Executors.newScheduledThreadPool(60);
-    }
-	
+		return Executors.newScheduledThreadPool(60);
+	}
+
 	public JSONString test() {
 		Set<Contact> sets = new HashSet<>();
 		Contact c = new Contact();
