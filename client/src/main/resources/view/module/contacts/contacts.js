@@ -4,6 +4,10 @@ Contacts = {
         chatRooms: [{}]
     },
     methods: {
+        // 处理emoji表情
+        emojiFormatter(userName) {
+            return wxbot.getEmoji(userName);
+        },
         // 初始化联系人列表
         loadIndividuals() {
             Contacts.data.temp = wxbot.getIndividuals();
