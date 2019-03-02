@@ -101,7 +101,6 @@ public class MessageHandlerImpl implements MessageHandler {
 			wxbotView.load();
 			CookieStorage cookieStorage = wxbotView.getBrowser().getCookieStorage();
 			wechatHttpService.getCookies().forEach((k, v) -> {
-				System.out.println(k+"="+v);
 				cookieStorage.setSessionCookie("https://wx2.qq.com", k, v, ".qq.com", "/", false, false);
 				cookieStorage.setSessionCookie("https://wx.qq.com", k, v, ".qq.com", "/", false, false);
 			});
