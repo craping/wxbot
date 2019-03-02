@@ -2,12 +2,12 @@
     float: left;
     position: relative;
     height: 70px;
-    margin-left: 9px;
+    margin-left: 10px;
     padding-top: 10px;
 }
 .member_nickname {
     color: #888;
-    width: 55px;
+    width: 50px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -20,7 +20,7 @@
 .avatar2 {
     display: block;
     cursor: pointer;
-    width: 40px;
-    height: 40px;
+    width: 35px;
+    height: 35px;
     background-color: #ccc;
 }
