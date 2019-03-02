@@ -186,6 +186,16 @@ public class MessageHandlerImpl implements MessageHandler {
 		logger.info("群聊图片消息");
 		logger.info("thumbImageUrl:" + thumbImageUrl);
 		logger.info("fullImageUrl:" + fullImageUrl);
+		
+		// 下载图片文件 到本地
+		fullImageUrl = wechatHttpService.download(fullImageUrl, message.getMsgId() + ".jpg", MessageType.IMAGE);
+		thumbImageUrl = wechatHttpService.download(thumbImageUrl, message.getMsgId() + "_thumb.jpg", MessageType.IMAGE);
+
+		// 处理消息
+		Contact chatRoom = cacheService.getChatRoom(message.getFromUserName());
+		Contact sender = cacheService.searchContact(chatRoom.getMemberList(), MessageUtils.getSenderOfChatRoomTextMessage(message.getContent()));
+		WxMessage msg = new WxMessage(MessageType.IMAGE.getCode(), new WxMessageBody(fullImageUrl, thumbImageUrl, message.getImgHeight(), message.getImgWidth())); 
+		WxMessageTool.receiveGroupMessage(chatRoom, sender, msg);
 	}
 
 	@Override
@@ -196,6 +206,14 @@ public class MessageHandlerImpl implements MessageHandler {
 		logger.info("to: " + message.getToUserName());
 		logger.info("content:" + MessageUtils.getChatRoomTextMessageContent(message.getContent()));
 		logger.info("emoticonUrl:" + emoticonUrl);
+		
+		// 下载表情文件 到本地
+		emoticonUrl = wechatHttpService.download(emoticonUrl, message.getMsgId() + ".gif", MessageType.EMOTICON);
+		// 处理消息
+		Contact chatRoom = cacheService.getChatRoom(message.getFromUserName());
+		Contact sender = cacheService.searchContact(chatRoom.getMemberList(), MessageUtils.getSenderOfChatRoomTextMessage(message.getContent()));
+		WxMessage msg = new WxMessage(MessageType.EMOTICON.getCode(), new WxMessageBody(emoticonUrl, message.getImgHeight(), message.getImgWidth()));
+		WxMessageTool.receiveGroupMessage(chatRoom, sender, msg);
 	}
 
 	@Override
@@ -206,6 +224,14 @@ public class MessageHandlerImpl implements MessageHandler {
 		logger.info("to: " + message.getToUserName());
 		logger.info("content:" + MessageUtils.getChatRoomTextMessageContent(message.getContent()));
 		logger.info("voiceUrl:" + voiceUrl);
+		
+		// 下载语音文件 到本地
+		voiceUrl = wechatHttpService.download(voiceUrl, message.getMsgId() + ".mp3", MessageType.VOICE);
+
+		Contact chatRoom = cacheService.getChatRoom(message.getFromUserName());
+		Contact sender = cacheService.searchContact(chatRoom.getMemberList(), MessageUtils.getSenderOfChatRoomTextMessage(message.getContent()));
+		WxMessage msg = new WxMessage(MessageType.VOICE.getCode(), new WxMessageBody(voiceUrl, message.getVoiceLength()));
+		WxMessageTool.receiveGroupMessage(chatRoom, sender, msg);
 	}
 
 	@Override
@@ -217,6 +243,15 @@ public class MessageHandlerImpl implements MessageHandler {
 		logger.info("content:" + MessageUtils.getChatRoomTextMessageContent(message.getContent()));
 		logger.info("url:" + thumbImageUrl);
 		logger.info("videoUrl" + videoUrl);
+		
+		// 下载视频文件、缩略图文件 到本地
+		videoUrl = wechatHttpService.download(videoUrl, message.getMsgId() + ".mp4", MessageType.VIDEO);
+		thumbImageUrl = wechatHttpService.download(thumbImageUrl, message.getMsgId() + ".jpg", MessageType.VIDEO);
+
+		Contact chatRoom = cacheService.getChatRoom(message.getFromUserName());
+		Contact sender = cacheService.searchContact(chatRoom.getMemberList(), MessageUtils.getSenderOfChatRoomTextMessage(message.getContent()));
+		WxMessage msg = new WxMessage(MessageType.VIDEO.getCode(), new WxMessageBody(videoUrl, thumbImageUrl));
+		WxMessageTool.receiveGroupMessage(chatRoom, sender, msg);
 	}
 
 	@Override
@@ -227,6 +262,20 @@ public class MessageHandlerImpl implements MessageHandler {
 		logger.info("to: " + message.getToUserName());
 		logger.info("content:" + MessageUtils.getChatRoomTextMessageContent(message.getContent()));
 		logger.info("mediaUrl:" + mediaUrl);
+		
+		try {
+			System.out.println(jsonMapper.writeValueAsString(message));
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+		
+		// 下载文件
+		mediaUrl = wechatHttpService.download(mediaUrl, message.getMsgId() + "_" + message.getFileName(), MessageType.APP);
+		
+		Contact chatRoom = cacheService.getChatRoom(message.getFromUserName());
+		Contact sender = cacheService.searchContact(chatRoom.getMemberList(), MessageUtils.getSenderOfChatRoomTextMessage(message.getContent()));
+		WxMessage msg = new WxMessage(MessageType.APP.getCode(), new WxMessageBody(MessageType.APP, mediaUrl, message.getFileName(), FileUtil.getFileSizeString(Long.valueOf(message.getFileSize()))));
+		WxMessageTool.receiveGroupMessage(chatRoom, sender, msg);
 	}
 
 	@Override
