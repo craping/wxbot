@@ -1,11 +1,18 @@
 package wxrobot.biz.server.impl;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
+import org.crap.jrain.core.bean.result.criteria.Data;
+import org.crap.jrain.core.bean.result.criteria.DataResult;
+import org.crap.jrain.core.bean.result.criteria.Page;
+import org.crap.jrain.core.error.support.Errors;
 import org.crap.jrain.core.validate.exception.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -51,5 +58,22 @@ public class BaseServer {
 			e.printStackTrace();
 			throw new ValidationException(CustomErrors.USER_NOT_LOGIN);
 		}
+	}
+	
+	public DataResult findPage(Page page, Query query, Class<?> clazz) {
+		DataResult dataResult = new DataResult(Errors.EXCEPTION_UNKNOW);
+		query = query == null ? new Query(Criteria.where("_id").exists(true)) : query;
+		long count = mongoTemplate.count(query, clazz);
+		page.setTotalnum((int) count);
+		
+		int currentPage = page.getPage();
+		int pageSize = page.getNum();
+		
+		query.skip((currentPage - 1) * pageSize).limit(pageSize);
+		List<?> rows = mongoTemplate.find(query, clazz);
+		
+		dataResult.setErrcode(Errors.OK);
+		dataResult.setData(new Data(rows, page));
+		return dataResult;
 	}
 }

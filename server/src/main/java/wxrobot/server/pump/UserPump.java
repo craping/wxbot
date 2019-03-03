@@ -139,4 +139,14 @@ public class UserPump extends DataPump<JSONObject, FullHttpRequest, Channel> {
 		redisTemplate.delete(key); // 删除缓存
 		return new DataResult(Errors.OK);
 	}
+	
+	@Pipe("logout")
+	@BarScreen(
+		desc="用户退出"
+	)
+	public Errcode syncContact (JSONObject params) {
+		String key = "user_" + params.getString("token");
+		redisTemplate.delete(key); // 删除缓存
+		return new DataResult(Errors.OK);
+	}
 }
