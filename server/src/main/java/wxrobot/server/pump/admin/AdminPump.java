@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.FullHttpRequest;
 import net.sf.json.JSONObject;
-import wxrobot.admin.server.AdminServer;
+import wxrobot.biz.server.impl.AdminServer;
 import wxrobot.dao.entity.AdminUser;
 import wxrobot.server.enums.CustomErrors;
 import wxrobot.server.utils.Tools;

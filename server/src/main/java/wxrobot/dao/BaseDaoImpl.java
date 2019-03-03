@@ -1,4 +1,4 @@
-package wxrobot.dao.support;
+package wxrobot.dao;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
