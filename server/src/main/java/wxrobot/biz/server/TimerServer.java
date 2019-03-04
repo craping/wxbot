@@ -1,4 +1,4 @@
-package wxrobot.biz.server.impl;
+package wxrobot.biz.server;
 
 import java.util.ArrayList;
 import java.util.List;

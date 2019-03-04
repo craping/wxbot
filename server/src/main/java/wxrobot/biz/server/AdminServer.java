@@ -1,4 +1,4 @@
-package wxrobot.biz.server.impl;
+package wxrobot.biz.server;
 
 import org.crap.jrain.core.bean.result.criteria.DataResult;
 import org.crap.jrain.core.bean.result.criteria.Page;

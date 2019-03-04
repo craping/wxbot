@@ -22,7 +22,7 @@ public class TokenParam extends StringParam implements SingleParam {
 	protected Errcode validateValue(Object param) throws ValidationException {
 		String token = param.toString();
 		if (Tools.isStrEmpty(token))
-			return new Result(CustomErrors.USER_TOKEN_NULL);
+			return new Result(CustomErrors.USER_PARAM_NULL.setArgs("token"));
 		
 		String key = "user_" + token;
 		if (!(new RedisUtil().exists(key))) {

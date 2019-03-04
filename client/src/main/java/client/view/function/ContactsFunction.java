@@ -32,7 +32,6 @@ public class ContactsFunction extends SettingFunction {
 	    
 	public JSONString getIndividuals() {
 		try {
-			System.out.println(jsonMapper.writeValueAsString(cacheService.getIndividuals()));
 			return new JSONString(jsonMapper.writeValueAsString(cacheService.getIndividuals()));
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
@@ -82,7 +81,6 @@ public class ContactsFunction extends SettingFunction {
 	*/  
 	public JSONString getChatRooms() {
 		try {
-			System.out.println(jsonMapper.writeValueAsString(cacheService.getChatRooms()));
 			return new JSONString(jsonMapper.writeValueAsString(cacheService.getChatRooms()));
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
@@ -97,9 +95,7 @@ public class ContactsFunction extends SettingFunction {
 	 */
 	public JSONString getChatRoomMembers(String chatRoomName) {
 		try {
-			System.out.println(jsonMapper.writeValueAsString(wechatService.getChatRoomInfo(chatRoomName)));
 			Set<Contact> members = wechatService.getChatRoomInfo(chatRoomName).getMemberList();
-			System.out.println(jsonMapper.writeValueAsString(members));
 			return new JSONString(jsonMapper.writeValueAsString(members));
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();

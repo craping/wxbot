@@ -2,11 +2,11 @@
     <tabs value="contact" :animated="false">
         <tab-pane label="联系人" icon="ios-person" name="contact">
             <ul style="padding-top: 10px;">
-                <li v-for="(item, index) in contacts.temp">
+                <li v-for="(item, index) in contacts.individuals">
                     <div class="contact_item" @click="startChat(item.seq,item.NickName,item.UserName,item.HeadImgUrl)">
                         <div class="avatar">
                             <Badge :id="'avatar_' + item.seq" overflow-count="99">
-                                <img class="avatar2" :src="hostUrl() + item.HeadImgUrl" mm-src="" alt="" title="">
+                                <img class="avatar2" :src="hostUrl() + item.HeadImgUrl">
                                 <!-- <Avatar shape="square" icon="ios-person" :src="hostUrl() + item.HeadImgUrl" /> -->
                             </Badge>
                         </div>
@@ -23,7 +23,7 @@
                     <div class="contact_item" @click="startGroupChat(item.seq,item.NickName,item.UserName)">
                         <div class="avatar">
                             <Badge :id="'avatar_' + item.seq" overflow-count="999">
-                                <img class="avatar2" :src="hostUrl() + item.HeadImgUrl" mm-src="" alt="" title="">
+                                <img class="avatar2" :src="hostUrl() + item.HeadImgUrl">
                             </Badge>
                         </div>
                         <div class="info">

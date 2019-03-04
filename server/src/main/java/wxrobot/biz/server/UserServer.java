@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import com.mongodb.BasicDBObject;
 
-import wxrobot.biz.server.impl.BaseServer;
 import wxrobot.dao.entity.User;
 import wxrobot.server.enums.CustomErrors;
 
@@ -25,8 +24,7 @@ public class UserServer extends BaseServer{
 	public User insert(User user) throws ErrcodeException {
 		String userName = user.getUserInfo().getUserName();
 		// 判断用户名是否已存在
-		Query query = new Query();
-		query.addCriteria(Criteria.where("userInfo.userName").is(userName));
+		Query query = new Query(Criteria.where("userInfo.userName").is(userName));
 		if (mongoTemplate.count(query, User.class) > 0)
 			throw new ErrcodeException(CustomErrors.USER_EXIST_ERR.setArgs(userName));
 		return mongoTemplate.insert(user);
@@ -68,8 +66,7 @@ public class UserServer extends BaseServer{
 	 */
 	public int updateToken(User user) {		
 		try {
-			Query query = new Query();
-			query.addCriteria(Criteria.where("id").is(user.getId()));
+			Query query = new Query(Criteria.where("id").is(user.getId()));
 			Update update = Update.update("token", user.getToken());
 			return (int) mongoTemplate.updateFirst(query, update, User.class).getModifiedCount();
 		} catch (Exception e) {
