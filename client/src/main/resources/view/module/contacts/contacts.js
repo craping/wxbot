@@ -1,7 +1,7 @@
 Contacts = {
     data: {
-        temp: [{}],
-        chatRooms: [{}]
+        temp: [],
+        chatRooms: []
     },
     methods: {
         // 处理emoji表情

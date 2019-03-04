@@ -6,9 +6,7 @@ Chat = {
         seq: "",        // 用户唯一值
         title: " ",     // 窗口标题
         text: "",       // 聊天文本
-        chatRecord: [{
-
-        }],
+        chatRecord: [],
     },
     methods: {
         // 获取群成员头像

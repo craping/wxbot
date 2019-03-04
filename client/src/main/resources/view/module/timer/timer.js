@@ -25,11 +25,11 @@ Timer = {
             width:190,
             render: (h, params) => {
                 const schedule = params.row.schedule.split("|");
-                const type = timer[0];
+                const type = schedule[0];
                 let info = "";
                 if (type == "1") {
                     const cron = schedule[1].split(",");
-                    info = "定时"+cron[0] + "月" + cron[2] + "时" + cron[3] + "分" + cron[4] + "秒";
+                    info = "定时"+cron[0] + "月" + cron[1] + "日"+ cron[2] + "点" + cron[3] + "分" + cron[4] + "秒";
                 } else {
                     info = "间隔"+parseInt(parseInt(schedule[1])/60/60%60)+"小时"+ parseInt(parseInt(schedule[1])/60%60)+"分钟"+ parseInt(parseInt(schedule[1])%60)+"秒"
                 }

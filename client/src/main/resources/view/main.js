@@ -4,8 +4,8 @@ $script("lib/jquery/jquery-3.3.1.min.js", "jquery");
 $script("lib/crypto.min.js", "crypto");
 $script("lib/common.js", "common");
 $script.ready(["vue", "iview", "jquery", "crypto", "common"], function () {
-    $("#setting").load("module/setting/setting.html", {}, function () {
-        $script("module/setting/setting.js", "setting");
+    $("#header").load("module/header/header.html", {}, function () {
+        $script("module/header/header.js", "header");
     });
     $("#contacts").load("module/contacts/contacts.html", {}, function () {
         $script("module/contacts/contacts.js", "contacts");
@@ -24,7 +24,7 @@ $script.ready(["vue", "iview", "jquery", "crypto", "common"], function () {
     });
 })
 var app;
-$script.ready(["setting", "contacts", "chat", "keyword", "timer", "info"], function () {
+$script.ready(["header", "contacts", "chat", "keyword", "timer", "info"], function () {
     let methods = Object.assign({
         filterAll(data, argumentObj) {
             return data.filter(d => {
@@ -51,14 +51,14 @@ $script.ready(["setting", "contacts", "chat", "keyword", "timer", "info"], funct
         onMembersSeqChanged(seqMap){
             app.modKeywords(seqMap);
         }
-    }, Setting.methods, Contacts.methods, Chat.methods, Keyword.methods, Timer.methods, Info.methods);
+    }, Header.methods, Contacts.methods, Chat.methods, Keyword.methods, Timer.methods, Info.methods);
 
-    let computed = Object.assign({}, Setting.computed, Contacts.computed, Chat.computed, Keyword.computed, Timer.computed, Info.computed);
+    let computed = Object.assign({}, Header.computed, Contacts.computed, Chat.computed, Keyword.computed, Timer.computed, Info.computed);
     app = new Vue({
         el: "#app",
         data: {
             skin: "dark",
-            setting: Setting.data,
+            header: Header.data,
             contacts: Contacts.data,
             chat: Chat.data,
             keyword: Keyword.data,

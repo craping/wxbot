@@ -1,0 +1,4 @@
+.right.ivu-menu-horizontal .ivu-menu-item,
+.right.ivu-menu-horizontal .ivu-menu-submenu{
+    float:right;
+}

@@ -10,10 +10,23 @@ var Store = Store||{
 		localStorage.removeItem(key);
 	}
 }
-// var wxbot = wxbot||{};
-// wxbot.getToken = ()=>{
-// 	return "6dfb108f262845a1bfec3ef6647c28f7";
-// }
+var wxbot = {
+	getToken(){
+		return "6dfb108f262845a1bfec3ef6647c28f7";
+	},
+	getHostUrl(){
+		return "";
+	},
+	getEmoji(){
+		return "";
+	},
+	getIndividuals(){
+		return [];
+	},
+	getChatRooms(){
+		return [];
+	}
+}
 var Web = {
 	serverURL: "http://127.0.0.1:9527/",
 	// serverURL: "http://118.89.37.101:9527/",
@@ -117,7 +130,7 @@ function notify(title, properties, timeout) {
             return notification;
         }
         //如果没权限，则请求权限
-        else if (Notification.permission !== 'denied') {
+        else {
             Notification.requestPermission(function(permission) {
                 // Whatever the user answers, we make sure we store the
                 // information
