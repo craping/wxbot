@@ -6,6 +6,9 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
+import com.teamdev.jxbrowser.chromium.BrowserCore;
+import com.teamdev.jxbrowser.chromium.internal.Environment;
+
 import client.controller.LoginController;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -19,6 +22,14 @@ import javafx.stage.Stage;
 public class Launch extends Application {
 	
 	public static ApplicationContext context = new AnnotationConfigApplicationContext(Launch.class);
+	
+	@Override
+    public void init() throws Exception {
+        // On Mac OS X Chromium engine must be initialized in non-UI thread.
+        if (Environment.isMac()) {
+            BrowserCore.initialize();
+        }
+    }
 	
 	@Override
 	public void start(Stage primaryStage) {

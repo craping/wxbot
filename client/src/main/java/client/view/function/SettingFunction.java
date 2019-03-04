@@ -12,6 +12,8 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import client.pojo.WxUser;
+import client.view.WxbotView;
+import javafx.application.Platform;
 
 @Component
 public class SettingFunction {
@@ -33,5 +35,11 @@ public class SettingFunction {
 	protected ObjectMapper jsonMapper = new ObjectMapper();
 	{
 		jsonMapper.configure(MapperFeature.AUTO_DETECT_GETTERS, false);
+	}
+	
+	public void openSetting(){
+		Platform.runLater(() -> {
+			WxbotView.getInstance().setting();
+		});
 	}
 }

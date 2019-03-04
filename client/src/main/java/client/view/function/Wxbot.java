@@ -109,7 +109,7 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 					
 					//固定时间发送
 					if ("1".equals(scheduleType)) {
-						String[] cron = schedule[0].split(",");
+						String[] cron = schedule[1].split(",");
 						String[] dateTime = dateFormat.format(now).split(",");
 						if(("*".equals(cron[0]) || dateTime[0].equals(cron[0]))
 							&& ("*".equals(cron[1]) || dateTime[1].equals(cron[1]))

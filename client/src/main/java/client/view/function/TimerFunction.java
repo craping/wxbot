@@ -52,7 +52,7 @@ public class TimerFunction extends ChatFunction {
 	public void addMsg(String seq, JSObject addMsg){
 		try {
 			ScheduleMsg msg = jsonMapper.readValue(addMsg.toJSONString(), ScheduleMsg.class);
-			if("2".equals(msg.getSchedule().split("[|]")[0]))
+			if(msg.getType() == 2)
 				downloadAttach(msg.getContent());
 			if(timerMap == null){
 				timerMap = new HashMap<>();
