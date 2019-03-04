@@ -1,6 +1,6 @@
 Contacts = {
     data: {
-        temp: [],
+        individuals: [],
         chatRooms: []
     },
     methods: {
@@ -9,12 +9,75 @@ Contacts = {
             return wxbot.getEmoji(userName);
         },
         // 初始化联系人列表
-        loadIndividuals() {
-            Contacts.data.temp = wxbot.getIndividuals();
-        },
-        // 初始化群聊列表
-        loadChatRooms() {
+        loadContacts() {
             Contacts.data.chatRooms = wxbot.getChatRooms();
+            Contacts.data.individuals = wxbot.getIndividuals();
+            console.log(Contacts.data.individuals);
+            //console.log($('#avatar_683740735').html());
+            this.$nextTick(() => {
+                Contacts.methods.syncContacts();
+            });
+        },
+        // 图片 base64
+        getBase64Image(imgSrc) {
+            var image = new Image();
+            image.crossOrigin = '';
+            image.src = imgSrc;
+            var deferred = $.Deferred();
+            image.onload = function () {
+                var canvas = document.createElement("canvas");
+                canvas.width = 35;
+                canvas.height = 35;
+                var ctx = canvas.getContext("2d");
+                ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+                deferred.resolve(canvas.toDataURL("image/jpeg"));//将base64传给done上传处理
+            }
+            return deferred.promise();//问题要让onload完成后再return;
+        },
+        // 同步联系人、群聊到服务端
+        syncContacts() {
+            let idis = []; // 联系人
+            let crs = [];  // 群聊
+            let promises = [];
+            Contacts.data.individuals.forEach(e => {
+                promises.push(Promise.resolve(e).then(c => {
+                    const imgSrc = $("#avatar_" + c.seq + " img").attr("src");
+                    return Contacts.methods.getBase64Image(imgSrc).then(base64 => {
+                        idis.push({
+                            seq: c.seq,
+                            headImgUrl: base64,
+                            nickName: c.NickName
+                        });
+                    })
+                }));
+            });
+
+            Contacts.data.chatRooms.forEach(e => {
+                promises.push(Promise.resolve(e).then(c => {
+                    const imgSrc = $("#avatar_" + c.seq + " img").attr("src");
+                    return Contacts.methods.getBase64Image(imgSrc).then(base64 => {
+                        crs.push({
+                            seq: c.seq,
+                            headImgUrl: base64,
+                            nickName: c.NickName
+                        });
+                    })
+                }));
+            });
+
+            // Promise.all(promises).then(() => {
+            //     Web.ajax("contact/syncContacts", {
+            //         data: {
+            //             idis: idis,
+            //             crs: crs
+            //         },
+            //         success: function (data) {
+            //             console.log(data);
+            //         },
+            //         fail: function (data) {
+            //         }
+            //     });
+            // });
         },
         // 获取host url
         hostUrl() {
@@ -38,7 +101,6 @@ Contacts = {
             Chat.data.ownerHeadImg = wxbot.getOwnerHeadImgUrl();
             Chat.data.chatRecord = wxbot.chatRecord(seq);
             Info.data.members = wxbot.getChatRoomMembers(userName);
-            //console.log(Info.data.members);
             $('#avatar_' + seq + " sup.ivu-badge-count").remove();
             this.loadKeyMap(seq);
             this.loadMsgs(seq);

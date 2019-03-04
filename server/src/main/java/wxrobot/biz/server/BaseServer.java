@@ -1,4 +1,4 @@
-package wxrobot.biz.server.impl;
+package wxrobot.biz.server;
 
 import java.io.IOException;
 import java.util.List;
@@ -48,7 +48,7 @@ public class BaseServer {
 	
 	public UserInfo getUserInfo(Map<?, ?> params) throws ValidationException{
 		if(!params.containsKey(new TokenParam().getValue()))
-			throw new ValidationException(CustomErrors.USER_TOKEN_NULL);
+			throw new ValidationException(CustomErrors.USER_PARAM_NULL.setArgs("token"));
 		String key = "user_"+params.get("token").toString();
 		String userInfoJson = redisUtil.hget(key, "userInfo");
 		

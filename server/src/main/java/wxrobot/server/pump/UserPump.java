@@ -84,10 +84,9 @@ public class UserPump extends DataPump<JSONObject, FullHttpRequest, Channel> {
 		if (user == null) //判断用户是否存在
 			return new Result(CustomErrors.USER_ACC_ERR);
 		
-		if (Tools.isStrEmpty(user.getToken())) {
-			
+		if (!Tools.isStrEmpty(user.getToken())) {
+			redisTemplate.delete("user_" + user.getToken()); //  删除当前缓存
 		}
-		redisTemplate.delete("user_" + user.getToken()); //  删除当前缓存
 		
 		// 生成新的用户token 并持久化
 		String new_token = StringUtil.uuid(); 	
@@ -118,7 +117,7 @@ public class UserPump extends DataPump<JSONObject, FullHttpRequest, Channel> {
 	)
 	public Errcode getUserInfo (JSONObject params) {
 		if (Tools.isStrEmpty(params.optString("token")))
-			return new Result(CustomErrors.USER_TOKEN_NULL);
+			return new Result(CustomErrors.USER_PARAM_NULL.setArgs("token"));
 		
 		String key = "user_" + params.getString("token");
 		if (!(new RedisUtil().exists(key))) 
@@ -135,16 +134,6 @@ public class UserPump extends DataPump<JSONObject, FullHttpRequest, Channel> {
 		desc="用户退出"
 	)
 	public Errcode logout (JSONObject params) {
-		String key = "user_" + params.getString("token");
-		redisTemplate.delete(key); // 删除缓存
-		return new DataResult(Errors.OK);
-	}
-	
-	@Pipe("logout")
-	@BarScreen(
-		desc="用户退出"
-	)
-	public Errcode syncContact (JSONObject params) {
 		String key = "user_" + params.getString("token");
 		redisTemplate.delete(key); // 删除缓存
 		return new DataResult(Errors.OK);

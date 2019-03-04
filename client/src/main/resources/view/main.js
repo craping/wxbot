@@ -69,8 +69,7 @@ $script.ready(["header", "contacts", "chat", "keyword", "timer", "info"], functi
         mounted() {
             this.syncKeywords();
             this.syncTimers();
-            methods.loadIndividuals(); // 加载联系人列表
-            methods.loadChatRooms(); // 加载联系人列表
+            this.loadContacts();
         },
         updated: function () {
             methods.scrollToBottom();

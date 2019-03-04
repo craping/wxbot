@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.FullHttpRequest;
 import net.sf.json.JSONObject;
-import wxrobot.biz.server.impl.TimerServer;
+import wxrobot.biz.server.TimerServer;
 import wxrobot.dao.entity.field.ScheduleMsg;
 import wxrobot.dao.entity.field.UserInfo;
 import wxrobot.server.enums.CustomErrors;
