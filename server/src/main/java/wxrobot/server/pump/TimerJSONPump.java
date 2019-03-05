@@ -105,7 +105,7 @@ public class TimerJSONPump extends DataPump<JSONObject, FullHttpRequest, Channel
 		return new DataResult(mod > 0?Errors.OK:CustomErrors.USER_OPR_ERR);
 	}
 	
-	@Pipe("delGlobaMsg")
+	@Pipe("delGlobalMsg")
 	@BarScreen(
 		desc="删除全局群定时消息",
 		params= {
@@ -113,11 +113,11 @@ public class TimerJSONPump extends DataPump<JSONObject, FullHttpRequest, Channel
 			@Parameter(value="uuid",  desc="定时消息uuid")
 		}
 	)
-	public Errcode delGlobaMsg (JSONObject params) throws ErrcodeException {
+	public Errcode delGlobalMsg (JSONObject params) throws ErrcodeException {
 		
 		UserInfo userInfo = timerServer.getUserInfo(params);
 		
-		long mod = timerServer.delMsg(userInfo.getUserName(), "globa", params.getString("uuid"));
+		long mod = timerServer.delMsg(userInfo.getUserName(), "global", params.getString("uuid"));
 		
 		return new DataResult(mod > 0?Errors.OK:CustomErrors.USER_OPR_ERR);
 	}

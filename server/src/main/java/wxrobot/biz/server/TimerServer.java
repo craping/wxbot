@@ -16,8 +16,8 @@ import wxrobot.dao.entity.field.ScheduleMsg;
 
   
 /**  
-* @ClassName: KeywordServer  
-* @Description: 词库关键词Mongodb Server
+* @ClassName: TimerServer  
+* @Description: 定时消息Mongodb Server
 * @author Crap  
 * @date 2019年1月29日  
 *    

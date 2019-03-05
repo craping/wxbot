@@ -40,7 +40,7 @@ public class KeywordPump extends DataPump<JSONObject, FullHttpRequest, Channel> 
 	@Autowired
 	private KeywordServer keywordServer;
 	
-	@Pipe("getKeyword")
+	@Pipe("getKeywords")
 	@BarScreen(
 		desc="获取词库",
 		params= {
@@ -48,7 +48,7 @@ public class KeywordPump extends DataPump<JSONObject, FullHttpRequest, Channel> 
 			@Parameter(value="seq", required=false, desc="seq")
 		}
 	)
-	public Errcode getKeyword (JSONObject params) throws ErrcodeException {
+	public Errcode getKeywords (JSONObject params) throws ErrcodeException {
 		
 		UserInfo userInfo = keywordServer.getUserInfo(params);
 		
@@ -110,7 +110,7 @@ public class KeywordPump extends DataPump<JSONObject, FullHttpRequest, Channel> 
 	}
 	
 	
-	@Pipe("setGloba")
+	@Pipe("setGlobal")
 	@BarScreen(
 		desc="设置全局群关键词",
 		params= {
@@ -118,7 +118,7 @@ public class KeywordPump extends DataPump<JSONObject, FullHttpRequest, Channel> 
 			@Parameter(value="keyMap",  desc="关键词Map 格式：{key:value, ...}")
 		}
 	)
-	public Errcode setGloba (JSONObject params) throws ErrcodeException {
+	public Errcode setGlobal (JSONObject params) throws ErrcodeException {
 		
 		UserInfo userInfo = keywordServer.getUserInfo(params);
 		
@@ -130,12 +130,12 @@ public class KeywordPump extends DataPump<JSONObject, FullHttpRequest, Channel> 
 			return new Result(Errors.PARAM_FORMAT_ERROR);
 		}
 		
-		keywordServer.addOrMod(userInfo.getUserName(), "globa", keyMap);
+		keywordServer.addOrMod(userInfo.getUserName(), "global", keyMap);
 		
 		return new DataResult(Errors.OK);
 	}
 	
-	@Pipe("delGloba")
+	@Pipe("delGlobal")
 	@BarScreen(
 		desc="删除全局群关键词",
 		params= {
@@ -143,7 +143,7 @@ public class KeywordPump extends DataPump<JSONObject, FullHttpRequest, Channel> 
 			@Parameter(value="keyList",  desc="关键词ID列表 格式：[key,key,...]")
 		}
 	)
-	public Errcode delGloba (JSONObject params) throws ErrcodeException {
+	public Errcode delGlobal (JSONObject params) throws ErrcodeException {
 		
 		UserInfo userInfo = keywordServer.getUserInfo(params);
 		
@@ -155,7 +155,7 @@ public class KeywordPump extends DataPump<JSONObject, FullHttpRequest, Channel> 
 			return new Result(Errors.PARAM_FORMAT_ERROR);
 		}
 		
-		long mod = keywordServer.del(userInfo.getUserName(), "globa", keyList);
+		long mod = keywordServer.del(userInfo.getUserName(), "global", keyList);
 		
 		return new DataResult(mod > 0?Errors.OK:CustomErrors.USER_OPR_ERR);
 	}

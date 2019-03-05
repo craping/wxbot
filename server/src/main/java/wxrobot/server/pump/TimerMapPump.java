@@ -39,7 +39,7 @@ public class TimerMapPump extends DataPump<Map<?, ?>, FullHttpRequest, Channel> 
 	@Autowired
 	private TimerServer timerServer;
 	
-	@Pipe("addGlobaMsg")
+	@Pipe("addGlobalMsg")
 	@BarScreen(
 		desc="添加全局群定时消息",
 		params= {
@@ -48,7 +48,7 @@ public class TimerMapPump extends DataPump<Map<?, ?>, FullHttpRequest, Channel> 
 			@Parameter(value="schedule", desc="计划方案")
 		}
 	)
-	public Errcode addGlobaMsg (Map<?, ?> params) throws ErrcodeException {
+	public Errcode addGlobalMsg (Map<?, ?> params) throws ErrcodeException {
 		
 		UserInfo userInfo = timerServer.getUserInfo(params);
 		String uuid = StringUtil.uuid();
@@ -85,7 +85,7 @@ public class TimerMapPump extends DataPump<Map<?, ?>, FullHttpRequest, Channel> 
 			msg.setContent(content.toString());
 			msg.setType(1);
 		}
-		timerServer.addMsg(userInfo.getUserName(), "globa", msg);
+		timerServer.addMsg(userInfo.getUserName(), "global", msg);
 		
 		return new DataResult(Errors.OK, new Data(msg));
 	}
