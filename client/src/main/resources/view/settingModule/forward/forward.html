@@ -1,1 +1,34 @@
-123456
+<i-input v-model="forward.form.filterKey" clearable size="small" placeholder="搜索..." prefix="ios-search" />
+<!-- <i-table size="small" :height="400" :columns="forward.columns" :data="forwards">
+    <template slot-scope="{row, index}" slot="status">
+        <badge :text="row.status?'已开启':'未开启'" :type="row.status?'success':'normal'"> </badge>
+    </template>
+    <template slot-scope="{row, index}" slot="opt">
+        <i-button v-show="!row.status" type="success" size="small" style="margin-right: 5px" @click="console.log(row)">开启</i-button>
+    </template>
+</i-table> -->
+<table class="table table-hover border fixed">
+    <thead>
+        <tr>
+            <th width="70">群ID</th>
+            <th>群名称</th>
+            <th width="80">状态</th>
+            <th width="70">操作</th>
+        </tr>
+    </thead>
+    <tbody style="height: 350px;">
+        <tr v-for="e in forwards">
+            <td width="70">{{e.seq}}</td>
+            <td>{{e.NickName}}</td>
+            <td width="80">
+                <!-- <span class="ivu-badge">
+                    <sup class="ivu-badge-count ivu-badge-count-alone" :class="[e.status?'ivu-badge-count-success':'ivu-badge-count-normal']">{{e.status?'已开启':'未开启'}}</sup>
+                </span> -->
+                <badge :text="e.status?'已开启':'未开启'" :type="e.status?'success':'normal'"> </badge>
+            </td>
+            <td width="70">
+                <i-button v-show="!e.status" type="success" size="small" @click="console.log(e)">开启</i-button>
+            </td>
+        </tr>
+    </tbody>
+</table>

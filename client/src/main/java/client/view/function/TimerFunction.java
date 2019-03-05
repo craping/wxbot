@@ -22,7 +22,7 @@ public class TimerFunction extends ChatFunction {
 
 	public static Map<String, List<ScheduleMsg>> timerMap;
 	
-	public final static String GLOBA_SEQ = "globa";
+	public final static String GLOBA_SEQ = "global";
 	
 	public final String ATTACH_URL = "http://127.0.0.1:8888/";
 	

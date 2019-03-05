@@ -13,7 +13,7 @@ public class KeywordFunction extends TimerFunction {
 
 	public static Map<String, Map<String, String>> keyMap;
 	
-	public final static String GLOBA_SEQ = "globa";
+	public final static String GLOBA_SEQ = "global";
 
 	public KeywordFunction() {
 		super();

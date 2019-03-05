@@ -86,7 +86,7 @@ Keyword = {
     methods: {
         syncKeywords(){
             let me = this;
-            Web.ajax("keyword/getKeyword", {
+            Web.ajax("keyword/getKeywords", {
                 success: function (data) {
                     console.log(data.info)
                     wxbot.syncKeywords(data.info);
@@ -123,7 +123,7 @@ Keyword = {
         getKeyMap(){
             let me = this;
             me.keyword.chatroomKeyMapLoading = true;
-            Web.ajax("keyword/getKeyword", {
+            Web.ajax("keyword/getKeywords", {
                 data:{
                     seq:me.keyword.form.seq
                 },

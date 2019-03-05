@@ -55,17 +55,56 @@ const constant = {
     }
 };
 $script.ready(["user", "general", "forward", "timer", "keyword", "tips"], function () {
+    let chatRooms = [];
+    for (let i = 0; i < 250; i++) {
+        chatRooms.push({
+            seq:"65535",
+            NickName:"上帝群 明天香港采购🇭🇰",
+            status:1
+        },{
+            seq:"65536",
+            NickName:"华强电脑 古城便民服务（一）群",
+            status:1
+        });
+    }
     let data = Object.assign({
-        header:{}
+        header:{},
+        chatRooms:Object.freeze(chatRooms)
     }, {user:User.data}, {general:General.data}, {forward:Forward.data}, {timer:Timer.data}, {keyword:Keyword.data}, {tips:Tips.data});
-    let methods = Object.assign({}, User.methods, General.methods, Forward.methods, Timer.methods, Keyword.methods, Tips.methods);
+    let methods = Object.assign({
+        filterAll(data, argumentObj) {
+            return data.filter(d => {
+                for (let argu in argumentObj) {
+                    if (d[argu].indexOf(argumentObj[argu]) > -1)
+                        return true;
+                }
+                return false;
+            });
+        },
+        filter(data, argumentObj) {
+            let res = data;
+            let dataClone = data;
+            for (let argu in argumentObj) {
+                if (argumentObj[argu].length > 0) {
+                    res = dataClone.filter(d => {
+                        return d[argu].indexOf(argumentObj[argu]) > -1;
+                    });
+                    dataClone = res;
+                }
+            }
+            return res;
+        },
+        onMembersSeqChanged(seqMap){
+            app.modKeywords(seqMap);
+        }
+    }, User.methods, General.methods, Forward.methods, Timer.methods, Keyword.methods, Tips.methods);
     let computed = Object.assign({}, User.computed, General.computed, Forward.computed, Timer.computed, Keyword.computed, Tips.computed);
     app = new Vue({
         el: "#app",
         data: data,
         computed:computed,
         mounted() {
-
+            
         },
         methods: methods
     });
