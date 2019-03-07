@@ -25,6 +25,19 @@ public class EmojiUtil {
 		return matcher;
 	}
 
+	public static String rmEmoji(String emojiStr) {
+		String result = emojiStr.replaceAll("\\<span class=\"emoji emoji(.{1,10})\"></span>", "");
+		if (Tools.isStrEmpty(result)) {
+			result = emojiStr.replaceAll("\\<span class=\"emoji emoji(.{1,10})\"></span>", "[表情]");
+		}
+		return result;
+	}
+	
+	/**
+	 * 处理得到emoji表情
+	 * @param emojiStr
+	 * @return
+	 */
 	public static String getEmoji(String emojiStr) {
 		Matcher matcher = getMatcher("<span class=\"emoji emoji(.{1,10})\"></span>", emojiStr);
 		StringBuilder sb = new StringBuilder();
@@ -45,11 +58,13 @@ public class EmojiUtil {
 		if (lastStart < emojiStr.length()) {
 			sb.append(emojiStr.substring(lastStart));
 		}
-		return EmojiParser.parseToUnicode(sb.toString());
+		
+		// 无法解析的全部替换 
+		String result = EmojiParser.parseToUnicode(sb.toString());
+		return result.replaceAll("\\<span class=\"emoji emoji(.{1,10})\"></span>", "");
 	}
 
 	public static void main(String args[]) {
-		String s = "RIP<span class=\"emoji emoji1f60a\"></span><span class=\"emoji emoji1f639\"></span>";
-		System.out.println(getEmoji(s));
+		
 	}
 }

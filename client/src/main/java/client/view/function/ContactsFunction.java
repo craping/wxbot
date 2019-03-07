@@ -18,8 +18,22 @@ public class ContactsFunction extends SettingFunction {
 		super();
 	}
 	
+	/**
+	 * 解析 emoji表情
+	 * @param str
+	 * @return
+	 */
 	public String getEmoji(String str) {
 		return EmojiUtil.getEmoji(str);
+	}
+	
+	/**
+	 * 过滤 emoji表情
+	 * @param str
+	 * @return
+	 */
+	public String rmEmoji(String str) {
+		return EmojiUtil.rmEmoji(str);
 	}
 	
 	/**  
@@ -32,6 +46,7 @@ public class ContactsFunction extends SettingFunction {
 	    
 	public JSONString getIndividuals() {
 		try {
+			System.out.println(jsonMapper.writeValueAsString(cacheService.getIndividuals()));
 			return new JSONString(jsonMapper.writeValueAsString(cacheService.getIndividuals()));
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
