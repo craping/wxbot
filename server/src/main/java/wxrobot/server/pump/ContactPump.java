@@ -1,5 +1,6 @@
 package wxrobot.server.pump;
 
+import java.io.IOException;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
@@ -18,11 +19,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.FullHttpRequest;
 import net.sf.json.JSONObject;
 import wxrobot.biz.server.ContactServer;
+import wxrobot.biz.server.KeywordServer;
+import wxrobot.biz.server.SettingServer;
+import wxrobot.biz.server.TimerServer;
+import wxrobot.dao.entity.field.UserInfo;
 import wxrobot.server.enums.CustomErrors;
+import wxrobot.server.param.TokenParam;
 import wxrobot.server.utils.RedisUtil;
 
 @Pump("contact")
@@ -33,6 +41,16 @@ public class ContactPump extends DataPump<JSONObject, FullHttpRequest, Channel> 
 	
 	@Autowired
 	private ContactServer contactServer;
+	
+	@Autowired
+	private KeywordServer keywordServer;
+	
+	@Autowired
+	private TimerServer timerServer;
+	
+	@Autowired
+	private SettingServer settingServer;
+	
 	@Autowired
 	private StringRedisTemplate redisTemplate;
 	
@@ -51,6 +69,35 @@ public class ContactPump extends DataPump<JSONObject, FullHttpRequest, Channel> 
 		
 		Map<Object, Object> userMap = redisTemplate.opsForHash().entries(key);
 		contactServer.syncContacts(userMap.get("uid").toString(), params);
+		return new DataResult(Errors.OK);
+	}
+	
+	
+	@Pipe("syncSeq")
+	@BarScreen(
+		desc="同步seq",
+		params= {
+			@Parameter(type=TokenParam.class),
+			@Parameter(value="seqMap",  desc="Map集合{oldSeq:newSeq}"),
+		}
+	)
+	public Errcode syncSeq(JSONObject params) throws ErrcodeException {
+		UserInfo userInfo = contactServer.getUserInfo(params);
+		Map<String, String> seqMap = null;
+		try {
+			seqMap = ContactServer.JSON_MAPPER.readValue(params.getString("seqMap"), new TypeReference<Map<String, String>>(){});
+		} catch (IOException e) {
+			e.printStackTrace();
+			return new Result(Errors.PARAM_FORMAT_ERROR);
+		}
+		seqMap.forEach((k, v) -> {
+			//更新关键词seq
+			keywordServer.modKeyword(userInfo.getUserName(), k, v);
+			//更新定时消息seq
+			timerServer.modTimer(userInfo.getUserName(), k, v);
+			//更新群转发seq
+			settingServer.modForward(userInfo.getUserName(), k, v);
+		});
 		return new DataResult(Errors.OK);
 	}
 }

@@ -9,6 +9,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedTransferQueue;
 import java.util.concurrent.TransferQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -136,7 +137,19 @@ public class SyncContext implements SchedulingConfigurer {
 		}
 	}
 	
-	public static void main2(String[] args) throws Exception {
+	public static void main(String[] args) throws Exception {
+		Map<String, Long> map = new ConcurrentHashMap<>();
+		map.put("a", 1L);
+		map.put("b", 2L);
+		map.remove(null);
+		AtomicInteger count = new AtomicInteger(0);
+		map.forEach((k, v) -> {
+			System.out.println(k+"="+v);
+			map.put(k+count.getAndIncrement(), map.remove(k));
+		});
+	}
+	
+	public static void main3(String[] args) throws Exception {
 		Map<String, Long> map = new ConcurrentHashMap<>();
 		new Thread(() -> {
 			while (true) {
@@ -182,7 +195,7 @@ public class SyncContext implements SchedulingConfigurer {
 		}
 	}
 	
-	public static void main(String[] args) throws Exception {
+	public static void main2(String[] args) throws Exception {
 		Queue<Integer> queue = new LinkedTransferQueue<>();
 		new Thread(() -> {
 			while (true) {

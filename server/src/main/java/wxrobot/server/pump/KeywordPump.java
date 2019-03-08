@@ -74,23 +74,23 @@ public class KeywordPump extends DataPump<JSONObject, FullHttpRequest, Channel> 
 		return new DataResult(mod > 0?Errors.OK:CustomErrors.USER_OPR_ERR);
 	}
 	
-	@Pipe("modKeyword")
-	@BarScreen(
-		desc="修改词库",
-		params= {
-			@Parameter(type=TokenParam.class),
-			@Parameter(value="oldSeq", desc="oldSeq"),
-			@Parameter(value="newSeq", desc="newSeq")
-		}
-	)
-	public Errcode modKeyword (JSONObject params) throws ErrcodeException {
-		
-		UserInfo userInfo = keywordServer.getUserInfo(params);
-		
-		long mod = keywordServer.modKeyword(userInfo.getUserName(), params.getString("oldSeq"), params.getString("newSeq"));
-		
-		return new DataResult(mod > 0?Errors.OK:CustomErrors.USER_OPR_ERR);
-	}
+//	@Pipe("modKeyword")
+//	@BarScreen(
+//		desc="修改词库",
+//		params= {
+//			@Parameter(type=TokenParam.class),
+//			@Parameter(value="oldSeq", desc="oldSeq"),
+//			@Parameter(value="newSeq", desc="newSeq")
+//		}
+//	)
+//	public Errcode modKeyword (JSONObject params) throws ErrcodeException {
+//		
+//		UserInfo userInfo = keywordServer.getUserInfo(params);
+//		
+//		long mod = keywordServer.modKeyword(userInfo.getUserName(), params.getString("oldSeq"), params.getString("newSeq"));
+//		
+//		return new DataResult(mod > 0?Errors.OK:CustomErrors.USER_OPR_ERR);
+//	}
 	
 	@Pipe("delKeyword")
 	@BarScreen(

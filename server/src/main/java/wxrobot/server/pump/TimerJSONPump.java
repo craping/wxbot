@@ -70,23 +70,23 @@ public class TimerJSONPump extends DataPump<JSONObject, FullHttpRequest, Channel
 		return new DataResult(mod > 0?Errors.OK:CustomErrors.USER_OPR_ERR);
 	}
 	
-	@Pipe("modTimer")
-	@BarScreen(
-		desc="修改定时计划",
-		params= {
-			@Parameter(type=TokenParam.class),
-			@Parameter(value="oldSeq", desc="oldSeq"),
-			@Parameter(value="newSeq", desc="newSeq")
-		}
-	)
-	public Errcode modTimer (JSONObject params) throws ErrcodeException {
-		
-		UserInfo userInfo = timerServer.getUserInfo(params);
-		
-		long mod = timerServer.modTimer(userInfo.getUserName(), params.getString("oldSeq"), params.getString("newSeq"));
-		
-		return new DataResult(mod > 0?Errors.OK:CustomErrors.USER_OPR_ERR);
-	}
+//	@Pipe("modTimer")
+//	@BarScreen(
+//		desc="修改定时计划",
+//		params= {
+//			@Parameter(type=TokenParam.class),
+//			@Parameter(value="oldSeq", desc="oldSeq"),
+//			@Parameter(value="newSeq", desc="newSeq")
+//		}
+//	)
+//	public Errcode modTimer (JSONObject params) throws ErrcodeException {
+//		
+//		UserInfo userInfo = timerServer.getUserInfo(params);
+//		
+//		long mod = timerServer.modTimer(userInfo.getUserName(), params.getString("oldSeq"), params.getString("newSeq"));
+//		
+//		return new DataResult(mod > 0?Errors.OK:CustomErrors.USER_OPR_ERR);
+//	}
 	
 	@Pipe("delTimer")
 	@BarScreen(

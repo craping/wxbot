@@ -82,4 +82,22 @@ public class SettingPump extends DataPump<JSONObject, FullHttpRequest, Channel> 
 		
 		return new DataResult(mod > 0?Errors.OK:CustomErrors.USER_OPR_ERR);
 	}
+	
+//	@Pipe("modForward")
+//	@BarScreen(
+//		desc="修改群转发",
+//		params= {
+//			@Parameter(type=TokenParam.class),
+//			@Parameter(value="oldSeq", desc="oldSeq"),
+//			@Parameter(value="newSeq", desc="newSeq")
+//		}
+//	)
+//	public Errcode modForward (JSONObject params) throws ErrcodeException {
+//		
+//		UserInfo userInfo = settingServer.getUserInfo(params);
+//		
+//		long mod = settingServer.modForward(userInfo.getUserName(), params.getString("oldSeq"), params.getString("newSeq"));
+//		
+//		return new DataResult(mod > 0?Errors.OK:CustomErrors.USER_OPR_ERR);
+//	}
 }
