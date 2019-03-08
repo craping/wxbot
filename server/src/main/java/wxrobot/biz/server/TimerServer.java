@@ -129,7 +129,7 @@ public class TimerServer extends BaseServer {
 	*/  
 	    
 	public long addMsg(String userName, String seq, ScheduleMsg msg){
-		Query query = new Query(Criteria.where("userName").is(userName).and("timerMap."+seq).exists(true));
+		Query query = new Query(Criteria.where("userName").is(userName));
 		
 		Update update = new Update();
 		update.push("timerMap."+seq, msg);

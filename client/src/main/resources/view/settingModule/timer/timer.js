@@ -1,4 +1,0 @@
-Timer = {
-    data:{},
-    methods:{}
-}

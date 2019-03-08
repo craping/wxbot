@@ -26,35 +26,27 @@ public class Setting {
 	@Field
 	private String userName;
 	
-	  
 	/**  
 	* @Fields 群转发数组[seq]
 	*/  
-	    
 	@Field
 	private List<String> forwards;
 	
-	  
 	/**  
 	* @Fields 提示语设置
 	*/  
-	    
 	@Field
 	private Tips tips;
 	
-	  
 	/**  
 	* @Fields 功能开关设置
 	*/  
-	    
 	@Field
 	private Switchs switchs;
 	
-	  
 	/**  
 	* @Fields 用户权限
 	*/  
-	    
 	@Field
 	private Permissions permissions;
 }

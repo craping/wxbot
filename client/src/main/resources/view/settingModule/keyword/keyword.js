@@ -1,4 +1,0 @@
-Keyword = {
-    data:{},
-    methods:{}
-}

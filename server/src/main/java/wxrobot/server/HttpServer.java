@@ -23,6 +23,7 @@ import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
 import io.netty.handler.stream.ChunkedWriteHandler;
+import wxrobot.server.sync.NettySyncRender;
 
 public class HttpServer {
 
@@ -42,7 +43,7 @@ public class HttpServer {
 		final NettyTreatment treatment = new NettyTreatment(boot);
 		treatment.addRender(new NettyJSONRender());
 		treatment.addRender(new NettyXMLRender());
-		
+		treatment.addRender(new NettySyncRender());
 		// Configure SSL.
 		final SslContextBuilder sslCtx;
 		if (SSL) {
