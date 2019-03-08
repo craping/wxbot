@@ -121,12 +121,23 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 							&& ("*".equals(cron[4]) || dateTime[4].equals(cron[4]))
 						){
 							System.out.println("固定时间消息匹配："+msg.getSchedule());
-							Contact chatRoom = cacheService.getChatRoom(seq);
-							if(chatRoom != null){
-								if (msg.getType() == 1) {
-									sendText(seq, chatRoom.getNickName(), chatRoom.getUserName(), msg.getContent());
-								} else {
-									sendApp(seq, chatRoom.getNickName(), chatRoom.getUserName(), Config.ATTCH_PATH+msg.getContent());
+							if (Config.GLOBA_SEQ.equals(seq)) {
+								
+								cacheService.getChatRooms().forEach(chatRoom -> {
+									if (msg.getType() == 1) {
+										sendText(chatRoom.getSeq(), chatRoom.getNickName(), chatRoom.getUserName(), msg.getContent());
+									} else {
+										sendApp(chatRoom.getSeq(), chatRoom.getNickName(), chatRoom.getUserName(), Config.ATTCH_PATH+msg.getContent());
+									}
+								});
+							} else {
+								Contact chatRoom = cacheService.getChatRoom(seq);
+								if(chatRoom != null){
+									if (msg.getType() == 1) {
+										sendText(seq, chatRoom.getNickName(), chatRoom.getUserName(), msg.getContent());
+									} else {
+										sendApp(seq, chatRoom.getNickName(), chatRoom.getUserName(), Config.ATTCH_PATH+msg.getContent());
+									}
 								}
 							}
 						}

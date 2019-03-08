@@ -162,4 +162,24 @@ public class WxMessageTool {
 			}
 		});
 	}
+
+	/**
+	 * 刷新联系人、群聊列表
+	 * 
+	 * @param msg
+	 */
+	public static void execContactsChanged(String msg) {
+		WxbotView wxbotView = WxbotView.getInstance();
+		String script = "Contacts.methods.execContactsChanged(" + msg + ")";
+		wxbotView.executeScript(script);
+	}
+
+	/**
+	 * 刷新群成员列表
+	 */
+	public static void reloadMember() {
+		WxbotView wxbotView = WxbotView.getInstance();
+		String script = "Info.methods.reloadMember()";
+		wxbotView.executeScript(script);
+	}
 }

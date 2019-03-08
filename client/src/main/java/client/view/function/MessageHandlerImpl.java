@@ -378,6 +378,7 @@ public class MessageHandlerImpl implements MessageHandler {
 			JSValue syncSeq = app.getProperty("syncSeq");
 			try {
 				syncSeq.asFunction().invoke(app, new JSONString(jsonMapper.writeValueAsString(seqMap)));
+				WxMessageTool.execContactsChanged("您有好友更新消息，已成功刷新列表");
 			} catch (JsonProcessingException e) {
 				e.printStackTrace();
 			}
@@ -472,38 +473,32 @@ public class MessageHandlerImpl implements MessageHandler {
 
 	@Override
 	public void onStatusNotifyReaded(Message message) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void onStatusNotifyEnterSession(Message message) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void onStatusNotifyInited(Message message) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void onStatusNotifyQuitSession(Message message) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void onStatusNotifySyncConv(Message message) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void onFriendVerify(Contact contact) {
-		// TODO Auto-generated method stub
-		
+		logger.info("onFriendVerify 消息");
+		try {
+			System.out.println(jsonMapper.writeValueAsString(contact));
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
