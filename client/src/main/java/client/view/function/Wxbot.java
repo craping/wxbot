@@ -9,6 +9,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
@@ -32,6 +33,7 @@ import client.view.WxbotView;
  */
 
 @Component
+@EnableScheduling
 public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 
 	public Wxbot() {

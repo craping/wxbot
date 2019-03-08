@@ -2,12 +2,10 @@ package client.view.function;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.LinkedList;
 import java.util.Map;
 
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -17,10 +15,9 @@ import client.pojo.ScheduleMsg;
 import client.utils.HttpUtil;
 
 @Component
-@EnableScheduling
 public class TimerFunction extends ChatFunction {
 
-	public static Map<String, List<ScheduleMsg>> timerMap;
+	public static Map<String, LinkedList<ScheduleMsg>> timerMap;
 	
 	public final static String GLOBA_SEQ = "global";
 	
@@ -35,7 +32,7 @@ public class TimerFunction extends ChatFunction {
 	
 	public void syncTimers(JSObject syncTimerMap) {
 		try {
-			timerMap = jsonMapper.readValue(syncTimerMap.toJSONString(), new TypeReference<Map<String, List<ScheduleMsg>>>() {});
+			timerMap = jsonMapper.readValue(syncTimerMap.toJSONString(), new TypeReference<Map<String, LinkedList<ScheduleMsg>>>() {});
 			timerMap.forEach((k, v) -> {
 				v.forEach(msg -> {
 					if(msg.getType() != 1){
@@ -58,7 +55,7 @@ public class TimerFunction extends ChatFunction {
 				timerMap = new HashMap<>();
 			}
 			if (!timerMap.containsKey(seq)) {
-				timerMap.put(seq, new ArrayList<>());
+				timerMap.put(seq, new LinkedList<>());
 			}
 			timerMap.get(seq).add(msg);
 		} catch (IOException e) {

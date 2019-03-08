@@ -253,7 +253,7 @@ public final class WxbotView extends AnchorPane  {
 		AnchorPane.setRightAnchor(settingBrowserView, 0.0);
 		AnchorPane.setBottomAnchor(settingBrowserView, 0.0);
 		AnchorPane.setLeftAnchor(settingBrowserView, 0.0);
-        Scene settingScene = new Scene(pane, 550, 450);
+        Scene settingScene = new Scene(pane, 700, 500);
         settingStage = new Stage();
         settingStage.setTitle("设置");
         settingStage.setResizable(false);
