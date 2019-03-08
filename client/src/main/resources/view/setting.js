@@ -112,6 +112,17 @@ $script.ready(["user", "general", "forward", "globalTimer", "globalKeyword", "ti
                 }
             });
         },
+        setTips(tips){
+            const me = this;
+            Web.ajax("setting/setTips", {
+                data:tips,
+                success: function (data) {
+                    me.setting = data.info;
+                },
+                fail: function (data) {
+                }
+            });
+        },
         onMembersSeqChanged(seqMap){
             app.modKeywords(seqMap);
         }

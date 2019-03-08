@@ -22,6 +22,7 @@ import com.teamdev.jxbrowser.chromium.JSObject;
 import com.teamdev.jxbrowser.chromium.JSValue;
 
 import client.pojo.WxUser;
+import client.utils.Config;
 import client.view.WxbotView;
 
 /**
@@ -102,9 +103,9 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 	@Scheduled(fixedRate=1000)
     private void work() {
 		Date now = new Date();
-		if(timerMap != null && timerMap.size() > 0){
+		if(TIMER_MAP != null && TIMER_MAP.size() > 0){
 			
-			timerMap.forEach((seq, msgs) -> {
+			TIMER_MAP.forEach((seq, msgs) -> {
 				msgs.forEach(msg -> {
 					String[] schedule = msg.getSchedule().split("[|]");
 					String scheduleType = schedule[0];
@@ -125,7 +126,7 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 								if (msg.getType() == 1) {
 									sendText(seq, chatRoom.getNickName(), chatRoom.getUserName(), msg.getContent());
 								} else {
-									sendApp(seq, chatRoom.getNickName(), chatRoom.getUserName(), ATTCH_PATH+msg.getContent());
+									sendApp(seq, chatRoom.getNickName(), chatRoom.getUserName(), Config.ATTCH_PATH+msg.getContent());
 								}
 							}
 						}
@@ -142,7 +143,7 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 								if (msg.getType() == 1) {
 									sendText(seq, chatRoom.getNickName(), chatRoom.getUserName(), msg.getContent());
 								} else {
-									sendApp(seq, chatRoom.getNickName(), chatRoom.getUserName(), ATTCH_PATH+msg.getContent());
+									sendApp(seq, chatRoom.getNickName(), chatRoom.getUserName(), Config.ATTCH_PATH+msg.getContent());
 								}
 							}
 							msg.setLastSendTime(now);

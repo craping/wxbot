@@ -19,73 +19,73 @@ public class Permissions {
 	* @Fields 僵尸粉检测
 	*/  
 	    
-	private boolean zombieTest;
+	private Boolean zombieTest;
 	
 	  
 	/**  
 	* @Fields 聊天 
 	*/  
 	    
-	private boolean chat;
+	private Boolean chat;
 	
 	  
 	/**  
 	* @Fields 分群关键词
 	*/  
 	    
-	private boolean keyword;
+	private Boolean keyword;
 	
 	  
 	/**  
 	* @Fields 全群关键词
 	*/  
 	    
-	private boolean globalKeyword;
+	private Boolean globalKeyword;
 	
 	  
 	/**  
 	* @Fields 分群定时消息
 	*/  
 	    
-	private boolean timer;
+	private Boolean timer;
 	
 	  
 	/**  
 	* @Fields 全群定时消息
 	*/  
 	    
-	private boolean globalTimer;
+	private Boolean globalTimer;
 	  
 	/**  
 	* @Fields 自动接受好友请求 
 	*/  
 	    
-	private boolean acceptFriend;
+	private Boolean acceptFriend;
 	
 	  
 	/**  
 	* @Fields 发现新群提示语
 	*/  
 	    
-	private boolean chatRoomFoundTip;
+	private Boolean chatRoomFoundTip;
 	
 	/**  
 	* @Fields 成员加入提示语
 	*/  
 	    
-	private boolean memberJoinTip;
+	private Boolean memberJoinTip;
 	
 	  
 	/**  
 	* @Fields 成员退出提示语
 	*/  
 	    
-	private boolean memberLeftTip;
+	private Boolean memberLeftTip;
 	
 	  
 	/**  
 	* @Fields 移动端管理
 	*/  
 	    
-	private boolean wapSite;
+	private Boolean wapSite;
 }

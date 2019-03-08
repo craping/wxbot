@@ -1,7 +1,7 @@
 package client.pojo;
 
 import java.security.Permissions;
-import java.util.List;
+import java.util.LinkedList;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -14,7 +14,7 @@ public class Setting {
 	/**  
 	* @Fields 群转发数组[seq]
 	*/  
-	private List<String> forwards;
+	private LinkedList<String> forwards;
 	
 	/**  
 	* @Fields 提示语设置

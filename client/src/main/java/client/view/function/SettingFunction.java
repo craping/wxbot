@@ -9,11 +9,14 @@ import org.springframework.stereotype.Component;
 import com.cherry.jeeves.Jeeves;
 import com.cherry.jeeves.service.CacheService;
 import com.cherry.jeeves.service.WechatHttpService;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.teamdev.jxbrowser.chromium.JSObject;
 
 import client.pojo.Setting;
+import client.pojo.Switchs;
 import client.pojo.WxUser;
 import client.view.WxbotView;
 import javafx.application.Platform;
@@ -38,9 +41,12 @@ public class SettingFunction {
 	protected ObjectMapper jsonMapper = new ObjectMapper();
 	{
 		jsonMapper.configure(MapperFeature.AUTO_DETECT_GETTERS, false);
+		jsonMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+		jsonMapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+		jsonMapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true); 
 	}
 	
-	public static Setting setting;
+	public static Setting SETTING;
 	
 	public void openSetting(){
 		Platform.runLater(() -> {
@@ -50,21 +56,38 @@ public class SettingFunction {
 	
 	public void syncSetting(JSObject syncSetting){
 		try {
-			setting = jsonMapper.readValue(syncSetting.toJSONString(), Setting.class);
+			SETTING = jsonMapper.readValue(syncSetting.toJSONString(), Setting.class);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 	
 	public void enableForward(String seq){
-		if(setting != null){
-			setting.getForwards().add(seq);
+		if(SETTING != null){
+			SETTING.getForwards().add(seq);
 		}
 	}
 	
 	public void disableForward(String seq){
-		if(setting != null){
-			setting.getForwards().remove(seq);
+		if(SETTING != null){
+			SETTING.getForwards().remove(seq);
+		}
+	}
+	
+	public void modForward(String oldSeq, String newSeq){
+		if(SETTING != null){
+			if(SETTING.getForwards().remove(oldSeq))
+				SETTING.getForwards().add(newSeq);
+		}
+	}
+	
+	public void syncSwitchs(JSObject syncSwitchs){
+		if(SETTING != null){
+			try {
+				SETTING.setSwitchs(jsonMapper.readValue(syncSwitchs.toJSONString(), Switchs.class));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 }

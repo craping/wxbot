@@ -48,8 +48,22 @@ $script.ready(["header", "contacts", "chat", "keyword", "timer", "info"], functi
             }
             return res;
         },
-        onMembersSeqChanged(seqMap){
-            app.modKeywords(seqMap);
+        syncSeq(seqMap){
+            console.log("syncSeq:"+seqMap);
+            Web.ajax("contact/syncSeq", {
+                data:{
+                    seqMap:JSON.stringify(seqMap)
+                },
+                success: function (data) {
+                    console.log("seq同步成功")
+                },
+                fail: function (data) {
+                    console.log("seq同步失败")
+                },
+                error: function(){
+                    console.log("seq同步失败")
+                }
+            });
         }
     }, Header.methods, Contacts.methods, Chat.methods, Keyword.methods, Timer.methods, Info.methods);
 

@@ -22,6 +22,7 @@ import com.cherry.jeeves.utils.MessageUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.teamdev.jxbrowser.chromium.CookieStorage;
 import com.teamdev.jxbrowser.chromium.JSONString;
 import com.teamdev.jxbrowser.chromium.JSObject;
@@ -49,6 +50,7 @@ public class MessageHandlerImpl implements MessageHandler {
 	private ObjectMapper jsonMapper = new ObjectMapper();
 	{
 		jsonMapper.configure(MapperFeature.AUTO_DETECT_GETTERS, false);
+		jsonMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 	}
 	private QRView qrView;
 
@@ -150,7 +152,7 @@ public class MessageHandlerImpl implements MessageHandler {
 		
 		if (chatRoom != null) {
 			// 全域关键词自动回复
-			Map<String, String> keyMap = KeywordFunction.keyMap.get(KeywordFunction.GLOBA_SEQ);
+			Map<String, String> keyMap = KeywordFunction.KEY_MAP.get(Config.GLOBA_SEQ);
 			if (keyMap != null) {
 				for (Map.Entry<String, String> entry : keyMap.entrySet()) {
 					if (content.contains(entry.getKey())) {
@@ -165,7 +167,7 @@ public class MessageHandlerImpl implements MessageHandler {
 			}
 
 			// 分群关键词自动回复
-			keyMap = KeywordFunction.keyMap.get(chatRoom.getSeq());
+			keyMap = KeywordFunction.KEY_MAP.get(chatRoom.getSeq());
 			if (keyMap != null) {
 				for (Map.Entry<String, String> entry : keyMap.entrySet()) {
 					if (content.contains(entry.getKey())) {
@@ -373,19 +375,21 @@ public class MessageHandlerImpl implements MessageHandler {
 		Platform.runLater(() -> {
 			WxbotView wxbotView = WxbotView.getInstance();
 			JSObject app = wxbotView.getBrowser().executeJavaScriptAndReturnValue("app").asObject();
-			JSValue onMembersSeqChanged = app.getProperty("onMembersSeqChanged");
+			JSValue syncSeq = app.getProperty("syncSeq");
 			try {
-				onMembersSeqChanged.asFunction().invoke(app, new JSONString(jsonMapper.writeValueAsString(seqMap)));
-				// seq变动，重命名聊天记录文件夹
-				seqMap.forEach((k, v) -> {
-					String oldPath = Config.CHAT_RECORD_PATH + k;
-					String newPath = Config.CHAT_RECORD_PATH + v;
-					FileUtil.renameFile(oldPath, newPath);
-				});
+				syncSeq.asFunction().invoke(app, new JSONString(jsonMapper.writeValueAsString(seqMap)));
 			} catch (JsonProcessingException e) {
 				e.printStackTrace();
 			}
 		});
+		// seq变动，重命名聊天记录文件夹
+		seqMap.forEach((k, v) -> {
+			String oldPath = Config.CHAT_RECORD_PATH + k;
+			String newPath = Config.CHAT_RECORD_PATH + v;
+			FileUtil.renameFile(oldPath, newPath);
+		});
+		//变更关键词seq
+		WxMessageTool.syncSeq(seqMap);
 	}
 
 	@Override
@@ -498,6 +502,12 @@ public class MessageHandlerImpl implements MessageHandler {
 
 	@Override
 	public void onFriendVerify(Contact contact) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onFriendBlacklist(Contact contact) {
 		// TODO Auto-generated method stub
 		
 	}

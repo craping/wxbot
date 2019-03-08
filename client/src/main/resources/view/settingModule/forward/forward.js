@@ -39,7 +39,7 @@ Forward = {
                     seq:e.seq
                 },
                 success: function (data) {
-                    // wxbot.enableForward(e.seq);
+                    wxbot.enableForward(e.seq);
                     me.setting.forwards.push(e.seq);
                     me.$Message.success("操作成功!");
                 },
@@ -67,7 +67,7 @@ Forward = {
                     seq:e.seq
                 },
                 success: function (data) {
-                    // wxbot.disableForward(e.seq);
+                    wxbot.disableForward(e.seq);
                     me.setting.forwards.splice(me.setting.forwards.indexOf(e.seq), 1);
                     me.$Message.success("操作成功!");
                 },
@@ -83,6 +83,12 @@ Forward = {
                     e.loading = false;
                     me.$forceUpdate();
                 }
+            });
+        },
+        modForward(oldSeq, newSeq){
+            Object.keys(seqMap).forEach(oldSeq => {
+                const newSeq = seqMap[oldSeq];
+                me.setting.forwards.splice(me.setting.forwards.indexOf(oldSeq), 1, newSeq);
             });
         }
     }

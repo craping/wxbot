@@ -1,7 +1,9 @@
 package client.utils;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.cherry.jeeves.domain.shared.Contact;
 import com.cherry.jeeves.domain.shared.Owner;
@@ -12,8 +14,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import client.enums.ChatType;
 import client.enums.Direction;
+import client.pojo.ScheduleMsg;
 import client.pojo.WxMessage;
 import client.view.WxbotView;
+import client.view.function.KeywordFunction;
+import client.view.function.SettingFunction;
+import client.view.function.TimerFunction;
 
 /**
  * 
@@ -131,5 +137,29 @@ public class WxMessageTool {
 		WxbotView wxbotView = WxbotView.getInstance();
 		String script = "Chat.methods.newVoiceMessage(" + timestamp + ")";
 		wxbotView.executeScript(script);
+	}
+	
+	public static void syncSeq(Map<String, String> seqMap){
+		seqMap.forEach((k, v) -> {
+			//同步关键词seq
+			if(KeywordFunction.KEY_MAP != null){
+				ConcurrentHashMap<String, String> map = KeywordFunction.KEY_MAP.remove(k);
+				if(map != null)
+					KeywordFunction.KEY_MAP.put(v, map);
+			}
+			
+			//同步定时消息seq
+			if(TimerFunction.TIMER_MAP != null){
+				LinkedList<ScheduleMsg> linked = TimerFunction.TIMER_MAP.remove(k);
+				if(linked != null)
+					TimerFunction.TIMER_MAP.put(v, linked);
+			}
+			
+			//同步群转发seq
+			if(SettingFunction.SETTING != null && SettingFunction.SETTING.getForwards() != null){
+				if(SettingFunction.SETTING.getForwards().remove(k))
+					SettingFunction.SETTING.getForwards().add(v);
+			}
+		});
 	}
 }

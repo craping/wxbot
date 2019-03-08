@@ -100,24 +100,6 @@ Keyword = {
                 me.getKeyMap();
             }
         },
-        modKeywords(seqMap){
-            console.log(seqMap);
-            Object.keys(seqMap).forEach(oldSeq => {
-                const newSeq = seqMap[oldSeq];
-                Web.ajax("keyword/modKeyword", {
-                    data:{
-                        oldSeq:oldSeq,
-                        newSeq:newSeq
-                    },
-                    success: function (data) {
-                        console.log(data)
-                    },
-                    fail: function (data) {
-                    }
-                });
-            });
-            this.syncKeywords();
-        },
         loadKeyMap(seq){
             this.keyword.form.seq = seq;
             this.getKeyMap();
