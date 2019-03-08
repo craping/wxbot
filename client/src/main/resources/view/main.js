@@ -67,8 +67,8 @@ $script.ready(["header", "contacts", "chat", "keyword", "timer", "info"], functi
         },
         computed:computed,
         mounted() {
-            this.syncKeywords();
-            this.syncTimers();
+            //this.syncKeywords();
+            //this.syncTimers();
             this.loadContacts();
         },
         updated: function () {

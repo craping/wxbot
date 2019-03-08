@@ -1,3 +1,12 @@
+<div>
+    <div class="member">
+        <i-button size="small" type="large" :loading="contacts.loading" @click="" style="width: 35px;
+        height: 35px;" ghost>
+            <Icon type="md-sync" size="20" color="black"/>
+        </i-button>
+        <p class="member_nickname ng-binding">刷新</p>
+    </div>
+</div>
 <div v-for="(item, index) in info.members">
     <div class="member">
         <img class="avatar2" :src="hostUrl() + item.HeadImgUrl" mm-src="" alt="" title="">
