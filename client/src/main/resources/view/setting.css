@@ -92,7 +92,9 @@ table.fixed thead tr th{
 table.fixed tbody tr:first-child td{
     border-top:none;
 }
-
+table.fixed tbody tr.h-100:hover{
+    background-color: #fff;
+}
 table.fixed thead {
     width: 100%
 }

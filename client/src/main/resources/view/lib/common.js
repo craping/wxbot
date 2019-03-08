@@ -12,7 +12,7 @@ var Store = Store||{
 }
 var wxbot = {
 	getToken(){
-		return "6dfb108f262845a1bfec3ef6647c28f7";
+		return "a95c408455a940f8a5e3315177986297";
 	},
 	getHostUrl(){
 		return "";

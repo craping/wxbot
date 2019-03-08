@@ -29,7 +29,7 @@ $script.ready(["header", "contacts", "chat", "keyword", "timer", "info"], functi
         filterAll(data, argumentObj) {
             return data.filter(d => {
                 for (let argu in argumentObj) {
-                    if (d[argu].indexOf(argumentObj[argu]) > -1)
+                    if (d[argu].toUpperCase().indexOf(argumentObj[argu].toUpperCase()) > -1)
                         return true;
                 }
                 return false;

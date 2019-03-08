@@ -3,42 +3,18 @@ Forward = {
         form:{
             filterKey:""
         },
-        columns: [{
-            title: "群ID",
-            width:80,
-            key: "seq"
-        },{
-            title: "群名称",
-            key: "NickName"
-        }, {
-            title: "状态",
-            key:"status",
-            width:80,
-            slot:"status"
-        }, {
-            title: "操作",
-            width:80,
-            slot:"opt"
-        }],
-        chatRooms:[{
-            seq:"65535",
-            NickName:"上帝群 明天香港采购🇭🇰",
-            status:1
-        },{
-            seq:"65536",
-            NickName:"华强电脑 古城便民服务（一）群",
-            status:1
-        }],
-        forwardChatRooms:["65535"]
     },
     computed: {
         forwards() {
             let me = this;
+            me.forward.form.loadings = {};
             return me.filterAll(me.chatRooms.map(e => {
+                me.forward.form.loadings[e.seq] = false;
                 return {
                     seq: e.seq,
                     NickName: e.NickName,
-                    status:me.forward.forwardChatRooms.indexOf(e.seq) != -1
+                    status:me.setting.forwards.indexOf(e.seq) != -1,
+                    loading:false
                 };
             }), {
                 NickName: me.forward.form.filterKey
@@ -46,22 +22,68 @@ Forward = {
         }
     },
     methods:{
-        syncForwards(){
-            let me = this;
-            Web.ajax("forward/getForward", {
+        changeForward(e){
+            console.log(e);
+            if(e.status)
+                this.enableForward(e);
+            else
+                this.disableForward(e);
+        },
+        enableForward(e){
+            const me = this;
+            e.loading = true;
+            me.$forceUpdate();
+
+            Web.ajax("setting/enableForward", {
+                data:{
+                    seq:e.seq
+                },
                 success: function (data) {
-                    console.log(data.info)
-                    wxbot.syncKeywords(data.info);
+                    // wxbot.enableForward(e.seq);
+                    me.setting.forwards.push(e.seq);
+                    me.$Message.success("操作成功!");
                 },
                 fail: function (data) {
+                    me.$Message.error("操作失败："+data.msg);
+                    e.status = !e.status;
+                    e.loading = false;
+                    me.$forceUpdate();
+                },
+                error:function(XMLHttpRequest, textStatus, errorThrown){
+                    me.$Message.error("操作失败:"+textStatus);
+                    e.status = !e.status;
+                    e.loading = false;
+                    me.$forceUpdate();
                 }
             });
         },
-        addForward(){
+        disableForward(e){
+            const me = this;
+            e.loading = true;
+            me.$forceUpdate();
 
-        },
-        delForward(){
-
+            Web.ajax("setting/disableForward", {
+                data:{
+                    seq:e.seq
+                },
+                success: function (data) {
+                    // wxbot.disableForward(e.seq);
+                    me.setting.forwards.splice(me.setting.forwards.indexOf(e.seq), 1);
+                    me.$Message.success("操作成功!");
+                },
+                fail: function (data) {
+                    me.$Message.error("操作失败："+data.msg);
+                    e.status = !e.status;
+                    e.loading = false;
+                    me.$forceUpdate();
+                },
+                error:function(XMLHttpRequest, textStatus, errorThrown){
+                    me.$Message.error("操作失败:"+textStatus);
+                    e.status = !e.status;
+                    e.loading = false;
+                    me.$forceUpdate();
+                }
+            });
         }
     }
 }

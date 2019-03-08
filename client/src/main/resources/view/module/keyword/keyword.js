@@ -6,6 +6,7 @@ Keyword = {
             modalLoading:true,
             confirm:false,
             confirmLoading:false,
+            edit:false,
             delKey:"",
             filterKey:"",
             key:"",
@@ -45,6 +46,7 @@ Keyword = {
                         on: {
                             click: () => {
                                 Keyword.data.form.modal = true;
+                                Keyword.data.form.edit = true;
                                 Keyword.data.form.key = params.row.key;
                                 Keyword.data.form.value = params.row.value;
                             }
@@ -66,16 +68,16 @@ Keyword = {
                 ];
             }
         }],
-        chatroomKeyMap: {},
-        chatroomKeyMapLoading:false
+        chatRoomKeyMap: {},
+        chatRoomKeyMapLoading:false
     },
     computed: {
         keyMap() {
             let me = this;
-            return me.filterAll(Object.keys(me.keyword.chatroomKeyMap).map(key => {
+            return me.filterAll(Object.keys(me.keyword.chatRoomKeyMap).map(key => {
                 return {
                     key: key,
-                    value: me.keyword.chatroomKeyMap[key]
+                    value: me.keyword.chatRoomKeyMap[key]
                 };
             }), {
                 key: me.keyword.form.filterKey,
@@ -122,7 +124,7 @@ Keyword = {
         },
         getKeyMap(){
             let me = this;
-            me.keyword.chatroomKeyMapLoading = true;
+            me.keyword.chatRoomKeyMapLoading = true;
             Web.ajax("keyword/getKeywords", {
                 data:{
                     seq:me.keyword.form.seq
@@ -130,10 +132,10 @@ Keyword = {
                 success: function (data) {
                     console.log(data)
                     if(data.info)
-                        me.keyword.chatroomKeyMap = data.info[me.keyword.form.seq];
+                        me.keyword.chatRoomKeyMap = data.info[me.keyword.form.seq];
                     else
-                        me.keyword.chatroomKeyMap = {};
-                    me.keyword.chatroomKeyMapLoading = false;
+                        me.keyword.chatRoomKeyMap = {};
+                    me.keyword.chatRoomKeyMapLoading = false;
                 },
                 fail: function (data) {
                 }
@@ -149,7 +151,7 @@ Keyword = {
                     keyMap:keyMap
                 },
                 success: function (data) {
-                    me.$set(me.keyword.chatroomKeyMap, me.keyword.form.key, me.keyword.form.value);
+                    me.$set(me.keyword.chatRoomKeyMap, me.keyword.form.key, me.keyword.form.value);
                     wxbot.setKeyMap(me.keyword.form.seq, me.keyword.form.key, me.keyword.form.value);
                     me.keyword.form.key = "";
                     me.keyword.form.value = "";
@@ -180,7 +182,7 @@ Keyword = {
                 },
                 success: function (data) {
                     console.log(data);
-                    me.$delete(me.keyword.chatroomKeyMap, me.keyword.form.delKey);
+                    me.$delete(me.keyword.chatRoomKeyMap, me.keyword.form.delKey);
                     wxbot.delKeyMap(me.keyword.form.seq, me.keyword.form.delKey);
                     me.keyword.form.confirm = false;
                     me.keyword.form.confirmLoading = false;

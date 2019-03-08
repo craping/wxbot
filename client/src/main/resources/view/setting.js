@@ -15,11 +15,11 @@ $script.ready(["vue", "iview", "jquery", "crypto", "common"], function () {
     $("#forward").load("settingModule/forward/forward.html", {}, function () {
         $script("settingModule/forward/forward.js", "forward");
     });
-    $("#timer").load("settingModule/timer/timer.html", {}, function () {
-        $script("settingModule/timer/timer.js", "timer");
+    $("#globalTimer").load("settingModule/globalTimer/globalTimer.html", {}, function () {
+        $script("settingModule/globalTimer/globalTimer.js", "globalTimer");
     });
-    $("#keyword").load("settingModule/keyword/keyword.html", {}, function () {
-        $script("settingModule/keyword/keyword.js", "keyword");
+    $("#globalKeyword").load("settingModule/globalKeyword/globalKeyword.html", {}, function () {
+        $script("settingModule/globalKeyword/globalKeyword.js", "globalKeyword");
     });
     $("#tips").load("settingModule/tips/tips.html", {}, function () {
         $script("settingModule/tips/tips.js", "tips");
@@ -38,15 +38,15 @@ const constant = {
         },
         forward: {
             icon: "fa-paper-plane",
-            title: "群转发"
+            title: "全群转发"
         },
-        timer: {
+        globalTimer: {
             icon: "fa-clock",
-            title: "定时群发"
+            title: "全群定时"
         },
-        keyword: {
+        globalKeyword: {
             icon: "fa-book",
-            title: "群关键词"
+            title: "全群回复"
         },
         tips: {
             icon: "fa-info-circle",
@@ -54,28 +54,36 @@ const constant = {
         }
     }
 };
-$script.ready(["user", "general", "forward", "timer", "keyword", "tips"], function () {
+$script.ready(["user", "general", "forward", "globalTimer", "globalKeyword", "tips"], function () {
     let chatRooms = [];
-    for (let i = 0; i < 250; i++) {
+    for (let i = 0; i < 50; i++) {
         chatRooms.push({
-            seq:"65535",
+            seq:"65535"+i,
             NickName:"上帝群 明天香港采购🇭🇰",
             status:1
         },{
-            seq:"65536",
+            seq:"65536"+i,
             NickName:"华强电脑 古城便民服务（一）群",
             status:1
         });
     }
     let data = Object.assign({
         header:{},
+        setting:{
+            switchs:{
+                autoAcceptFriend:true,
+                globalKeyword:true,
+                globalTimer:true
+            },
+            forwards:[]
+        },
         chatRooms:Object.freeze(chatRooms)
-    }, {user:User.data}, {general:General.data}, {forward:Forward.data}, {timer:Timer.data}, {keyword:Keyword.data}, {tips:Tips.data});
+    }, {user:User.data}, {general:General.data}, {forward:Forward.data}, {globalTimer:GlobalTimer.data}, {globalKeyword:GlobalKeyword.data}, {tips:Tips.data});
     let methods = Object.assign({
         filterAll(data, argumentObj) {
             return data.filter(d => {
                 for (let argu in argumentObj) {
-                    if (d[argu].indexOf(argumentObj[argu]) > -1)
+                    if (d[argu].toUpperCase().indexOf(argumentObj[argu].toUpperCase()) > -1)
                         return true;
                 }
                 return false;
@@ -94,17 +102,30 @@ $script.ready(["user", "general", "forward", "timer", "keyword", "tips"], functi
             }
             return res;
         },
+        syncSetting(){
+            const me = this;
+            Web.ajax("setting/getSetting", {
+                success: function (data) {
+                    me.setting = data.info;
+                },
+                fail: function (data) {
+                }
+            });
+        },
         onMembersSeqChanged(seqMap){
             app.modKeywords(seqMap);
         }
-    }, User.methods, General.methods, Forward.methods, Timer.methods, Keyword.methods, Tips.methods);
-    let computed = Object.assign({}, User.computed, General.computed, Forward.computed, Timer.computed, Keyword.computed, Tips.computed);
+    }, User.methods, General.methods, Forward.methods, GlobalTimer.methods, GlobalKeyword.methods, Tips.methods);
+    let computed = Object.assign({}, User.computed, General.computed, Forward.computed, GlobalTimer.computed, GlobalKeyword.computed, Tips.computed);
     app = new Vue({
         el: "#app",
         data: data,
         computed:computed,
         mounted() {
-            
+            // this.syncSetting();
+            this.loadMsgs();
+            this.loadKeyMap();
+            this.generalReset();
         },
         methods: methods
     });

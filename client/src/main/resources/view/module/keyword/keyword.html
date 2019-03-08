@@ -1,14 +1,11 @@
-<i-form inline @submit.native.prevent>
-    <form-item class="mb-0 ml-2">
-        <i-input v-model="keyword.form.filterKey" clearable size="small" placeholder="搜索..." prefix="ios-search" />
-    </form-item>
+<i-form @submit.native.prevent>
     <form-item class="mb-0">
-        <i-button icon="ios-add" size="small" type="primary" @click="keyword.form.modal=true"></i-button>
-        <!-- <i-button icon="ios-alert" size="small" type="primary" @click="function(){wxbot.execute()}"></i-button> -->
+        <i-button class="float-right" icon="ios-add" size="small" type="primary" @click="keyword.form.modal=true;keyword.form.edit=false;"></i-button>
+        <i-input class="d-block w-auto" style="margin-right:30px" v-model="keyword.form.filterKey" clearable size="small" placeholder="搜索..." prefix="ios-search" />
     </form-item>
 </i-form>
 <div>
-    <i-table :show-header="false" :columns="keyword.columns" :data="keyMap" :loading="keyword.chatroomKeyMapLoading" :height="530"></i-table>
+    <i-table :show-header="false" :columns="keyword.columns" :data="keyMap" :loading="keyword.chatRoomKeyMapLoading" :height="530"></i-table>
 </div>
 
 
@@ -22,7 +19,7 @@
 
 <modal v-model="keyword.form.modal" title="关键词" width="400" :mask-closable="false" :loading="keyword.form.modalLoading" @on-ok="editKeyMapOk" @on-cancel="editKeyMapCancel">
     <div>
-        <i-input placeholder="关键词..." clearable v-model="keyword.form.key"/>
+        <i-input placeholder="关键词..." clearable :disabled="keyword.form.edit" v-model="keyword.form.key"/>
     </div>
     <br>
     <div>

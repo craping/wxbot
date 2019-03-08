@@ -29,9 +29,21 @@ Timer = {
                 let info = "";
                 if (type == "1") {
                     const cron = schedule[1].split(",");
-                    info = "定时"+cron[0] + "月" + cron[1] + "日"+ cron[2] + "点" + cron[3] + "分" + cron[4] + "秒";
+                    info = [
+                        h("strong", { 
+                            domProps: {innerText: "定时"},
+                            style:{color:"#5cadff"}
+                        }), 
+                        "["+cron[0] + "月" + cron[1] + "日"+ cron[2] + "点" + cron[3] + "分" + cron[4] + "秒]"
+                    ];
                 } else {
-                    info = "间隔"+parseInt(parseInt(schedule[1])/60/60%60)+"小时"+ parseInt(parseInt(schedule[1])/60%60)+"分钟"+ parseInt(parseInt(schedule[1])%60)+"秒"
+                    info = [
+                        h("strong", { 
+                            domProps: {innerText: "间隔" },
+                            style:{color:"#5cadff"}
+                        }), 
+                        "["+parseInt(parseInt(schedule[1])/60/60%60)+"小时"+ parseInt(parseInt(schedule[1])/60%60)+"分钟"+ parseInt(parseInt(schedule[1])%60)+"秒]"
+                    ];
                 }
                 return h('span', info)
             }
