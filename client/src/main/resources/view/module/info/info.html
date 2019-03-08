@@ -1,8 +1,7 @@
 <div>
     <div class="member">
-        <i-button size="small" type="large" :loading="contacts.loading" @click="" style="width: 35px;
-        height: 35px;" ghost>
-            <Icon type="md-sync" size="20" color="black"/>
+        <i-button size="small" icon="ios-sync" type="primary" :loading="info.loading" @click="reloadChatRoomMember" 
+            style="width: 35px; height: 35px;">
         </i-button>
         <p class="member_nickname ng-binding">刷新</p>
     </div>

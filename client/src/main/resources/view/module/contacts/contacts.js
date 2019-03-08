@@ -84,7 +84,7 @@ Contacts = {
         },
         // 初始化联系人列表
         loadContacts() {
-            //console.log(wxbot.getIndividuals());
+            console.log(wxbot.getIndividuals());
             Contacts.data.chatRooms = wxbot.getChatRooms();
             Contacts.data.individuals = wxbot.getIndividuals();
             //console.log($('#avatar_683740735').html());
@@ -104,6 +104,13 @@ Contacts = {
                     me.$Message.success("刷新联系人列表成功！");
                 });
             }, 1000);
+        },
+        // 处理好友，群成员变动
+        execContactsChanged(msg) {
+            Contacts.methods.loadContacts();
+            app.$nextTick(() => {
+                app.$Message.success(String(msg));
+            });
         },
         // 图片 base64
         getBase64Image(imgSrc) {
@@ -194,6 +201,7 @@ Contacts = {
             Chat.data.ownerHeadImg = wxbot.getOwnerHeadImgUrl();
             Chat.data.chatRecord = wxbot.chatRecord(seq);
             Info.data.members = wxbot.getChatRoomMembers(userName);
+            Info.data.chatRoomUserName = userName;
             $('#avatar_' + seq + " sup.ivu-badge-count").remove();
             Contacts.data.filterKey = "";
             this.$refs.searchResult.style['display'] = "none";

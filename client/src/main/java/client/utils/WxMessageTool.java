@@ -23,12 +23,12 @@ import client.view.WxbotView;
  *
  */
 public class WxMessageTool {
-	
+
 	private static ObjectMapper jsonMapper = new ObjectMapper();
 	{
 		jsonMapper.configure(MapperFeature.AUTO_DETECT_GETTERS, false);
 	}
-	
+
 	private static Map<String, Integer> noRead = new HashMap<String, Integer>();
 
 	/**
@@ -92,9 +92,10 @@ public class WxMessageTool {
 			newVoiceMessage(timestamp);
 		}
 	}
-	
+
 	/**
 	 * 处理已读消息，
+	 * 
 	 * @param seq
 	 */
 	public static void haveRead(String seq) {
@@ -130,6 +131,26 @@ public class WxMessageTool {
 	public static void newVoiceMessage(String timestamp) {
 		WxbotView wxbotView = WxbotView.getInstance();
 		String script = "Chat.methods.newVoiceMessage(" + timestamp + ")";
+		wxbotView.executeScript(script);
+	}
+
+	/**
+	 * 刷新联系人、群聊列表
+	 * 
+	 * @param msg
+	 */
+	public static void execContactsChanged(String msg) {
+		WxbotView wxbotView = WxbotView.getInstance();
+		String script = "Contacts.methods.execContactsChanged(" + msg + ")";
+		wxbotView.executeScript(script);
+	}
+
+	/**
+	 * 刷新群成员列表
+	 */
+	public static void reloadMember() {
+		WxbotView wxbotView = WxbotView.getInstance();
+		String script = "Info.methods.reloadMember()";
 		wxbotView.executeScript(script);
 	}
 }

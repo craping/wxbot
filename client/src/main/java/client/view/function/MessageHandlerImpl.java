@@ -382,6 +382,7 @@ public class MessageHandlerImpl implements MessageHandler {
 					String newPath = Config.CHAT_RECORD_PATH + v;
 					FileUtil.renameFile(oldPath, newPath);
 				});
+				WxMessageTool.execContactsChanged("您有好友更新消息，已成功刷新列表");
 			} catch (JsonProcessingException e) {
 				e.printStackTrace();
 			}
@@ -422,12 +423,14 @@ public class MessageHandlerImpl implements MessageHandler {
 	public void onNewChatRoomsFound(Set<Contact> chatRooms) {
 		logger.info("发现新群消息");
 		chatRooms.forEach(x -> logger.info(x.getUserName()));
+		WxMessageTool.execContactsChanged("发现新群消息，已成功刷新列表");
 	}
 
 	@Override
 	public void onChatRoomsDeleted(Set<Contact> chatRooms) {
 		logger.info("群被删除消息");
 		chatRooms.forEach(x -> logger.info(x.getUserName()));
+		WxMessageTool.execContactsChanged("群被删除，已成功刷新列表");
 	}
 
 	@Override
@@ -437,6 +440,7 @@ public class MessageHandlerImpl implements MessageHandler {
 			logger.info(x.getUserName());
 			logger.info(x.getNickName());
 		});
+		WxMessageTool.execContactsChanged("发现新好友消息，已成功刷新列表");
 	}
 
 	@Override
@@ -446,6 +450,7 @@ public class MessageHandlerImpl implements MessageHandler {
 			logger.info(x.getUserName());
 			logger.info(x.getNickName());
 		});
+		WxMessageTool.execContactsChanged("好友被删除消息，已成功刷新列表");
 	}
 
 	@Override
@@ -468,37 +473,31 @@ public class MessageHandlerImpl implements MessageHandler {
 
 	@Override
 	public void onStatusNotifyReaded(Message message) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void onStatusNotifyEnterSession(Message message) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void onStatusNotifyInited(Message message) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void onStatusNotifyQuitSession(Message message) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void onStatusNotifySyncConv(Message message) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void onFriendVerify(Contact contact) {
-		// TODO Auto-generated method stub
-		
+		logger.info("onFriendVerify 消息");
+		try {
+			System.out.println(jsonMapper.writeValueAsString(contact));
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
 	}
 }
