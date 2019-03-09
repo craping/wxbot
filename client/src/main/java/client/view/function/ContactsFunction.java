@@ -1,7 +1,6 @@
 package client.view.function;
 
 import java.io.IOException;
-import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.springframework.stereotype.Component;

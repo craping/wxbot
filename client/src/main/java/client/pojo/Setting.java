@@ -1,33 +1,36 @@
 package client.pojo;
 
-import java.security.Permissions;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
 
 @Data
-@JsonInclude(Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class Setting {
 	/**  
 	* @Fields 群转发数组[seq]
 	*/  
-	private ConcurrentLinkedQueue<String> forwards;
+	@JsonProperty
+	private ConcurrentLinkedQueue<String> forwards = new ConcurrentLinkedQueue<>();
 	
 	/**  
 	* @Fields 提示语设置
 	*/  
-	private Tips tips;
+	@JsonProperty
+	private Tips tips = new Tips();
 	
 	/**  
 	* @Fields 功能开关设置
 	*/  
-	private Switchs switchs;
+	@JsonProperty
+	private Switchs switchs = new Switchs();
 	
 	/**  
 	* @Fields 用户权限
 	*/  
-	private Permissions permissions;
+	@JsonProperty
+	private Permissions permissions = new Permissions();
 }

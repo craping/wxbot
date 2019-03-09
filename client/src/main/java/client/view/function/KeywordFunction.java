@@ -5,7 +5,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.teamdev.jxbrowser.chromium.JSONString;
 import com.teamdev.jxbrowser.chromium.JSObject;
 
 @Component
@@ -16,6 +18,18 @@ public class KeywordFunction extends TimerFunction {
 	public KeywordFunction() {
 		super();
 
+	}
+	
+	public JSONString getKeyMap(String seq){
+		ConcurrentHashMap<String, String> keyMap = KEY_MAP.get(seq);
+		if(keyMap == null)
+			return new JSONString("{}");
+		try {
+			return new JSONString(jsonMapper.writeValueAsString(keyMap));
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			return new JSONString("{}");
+		}
 	}
 	
 	public void syncKeywords(JSObject syncKeyMap) {

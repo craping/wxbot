@@ -71,18 +71,19 @@ public final class WxbotView extends AnchorPane  {
 	private Scene viewScene;
 	
 	
+//	private Browser debugBrowser;
+//	
+//	private BrowserView debugBrowserView;
+//	
+//	private Stage debugStage;
+	
+	
+	
 	private Browser settingBrowser;
 	
 	private BrowserView settingBrowserView;
 	
 	private Stage settingStage;
-	
-	
-	private Browser debugBrowser;
-	
-	private BrowserView debugBrowserView;
-	
-	private Stage debugStage;
 	
 	private boolean debug;
 	
@@ -194,7 +195,7 @@ public final class WxbotView extends AnchorPane  {
                 if (event.isMainFrame()) {
                     Browser browser = event.getBrowser();
                     JSValue value = browser.executeJavaScriptAndReturnValue("window");
-                    value.asObject().setProperty("wxbot", Launch.context.getBean(Wxbot.class));
+                	value.asObject().setProperty("wxbot", Launch.context.getBean(Wxbot.class));
                 }
             }
         });
@@ -230,8 +231,15 @@ public final class WxbotView extends AnchorPane  {
 				close.handle(e);
 		});
 		viewStage.show();
+		setting();
 	}
 	
+	public void openSetting(){
+		if(settingStage != null){
+			settingBrowser.executeJavaScript("app.syncSetting()");
+			settingStage.show();
+		}
+	}
 	
 	public void setting() {
 		settingBrowser = new Browser();
@@ -254,17 +262,23 @@ public final class WxbotView extends AnchorPane  {
 		AnchorPane.setBottomAnchor(settingBrowserView, 0.0);
 		AnchorPane.setLeftAnchor(settingBrowserView, 0.0);
         Scene settingScene = new Scene(pane, 700, 500);
+        settingScene.setOnKeyPressed(e -> {
+			if(e.getCode() == KeyCode.F12) {
+				debugSetting();
+			}
+		});
         settingStage = new Stage();
         settingStage.setTitle("设置");
         settingStage.setResizable(false);
         settingStage.setIconified(false);
         settingStage.setScene(settingScene);
-        settingStage.show();
-        settingStage.setOnCloseRequest(e -> {
-			new Thread(() -> {
-				System.out.println("settingView is disposed = " + settingBrowser.dispose(true));
-			}).start();
-		});
+//        settingStage.show();
+        settingStage.onCloseRequestProperty().bind(settingStage.onHiddenProperty());
+//        settingStage.setOnCloseRequest(e -> {
+//			new Thread(() -> {
+//				System.out.println("settingView is disposed = " + settingBrowser.dispose(true));
+//			}).start();
+//		});
 	}
 	
 	/**  
@@ -276,11 +290,11 @@ public final class WxbotView extends AnchorPane  {
 	*/  
 	public void debug() {
 		if(this.debug) {
-			debugBrowser = new Browser();
-			debugBrowserView = new BrowserView(debugBrowser);
+			Browser debugBrowser = new Browser();
+			BrowserView debugBrowserView = new BrowserView(debugBrowser);
 	        debugBrowser.loadURL(browser.getRemoteDebuggingURL());
 	        Scene debugScene = new Scene(debugBrowserView, 790, 790);
-	        debugStage = new Stage();
+	        Stage debugStage = new Stage();
 			debugStage.setTitle("调试");
 			debugStage.setResizable(true);
 			debugStage.setIconified(false);
@@ -294,7 +308,25 @@ public final class WxbotView extends AnchorPane  {
 		}
 	}
 	
-	  
+	public void debugSetting() {
+		if(this.debug) {
+			Browser debugBrowser = new Browser();
+			BrowserView debugBrowserView = new BrowserView(debugBrowser);
+	        debugBrowser.loadURL(settingBrowser.getRemoteDebuggingURL());
+	        Scene debugScene = new Scene(debugBrowserView, 790, 790);
+	        Stage debugStage = new Stage();
+			debugStage.setTitle("调试");
+			debugStage.setResizable(true);
+			debugStage.setIconified(false);
+			debugStage.setScene(debugScene);
+			debugStage.show();
+			debugStage.setOnCloseRequest(e -> {
+				new Thread(() -> {
+					System.out.println("debugView is disposed = " + debugBrowser.dispose(true));
+				}).start();
+			});
+		}
+	}
 	/**  
 	* @Title: close  
 	* @Description: 关闭视图
@@ -307,8 +339,6 @@ public final class WxbotView extends AnchorPane  {
 			viewStage.close();
 		if(settingStage != null)
 			settingStage.close();
-		if(debugStage != null)
-			debugStage.close();
 	}
 	
 	  
@@ -424,30 +454,6 @@ public final class WxbotView extends AnchorPane  {
 
 	public void setViewStage(Stage viewStage) {
 		this.viewStage = viewStage;
-	}
-
-	public Browser getDebugBrowser() {
-		return debugBrowser;
-	}
-
-	public void setDebugBrowser(Browser debugBrowser) {
-		this.debugBrowser = debugBrowser;
-	}
-
-	public BrowserView getDebugBrowserView() {
-		return debugBrowserView;
-	}
-
-	public void setDebugBrowserView(BrowserView debugBrowserView) {
-		this.debugBrowserView = debugBrowserView;
-	}
-
-	public Stage getDebugStage() {
-		return debugStage;
-	}
-
-	public void setDebugStage(Stage debugStage) {
-		this.debugStage = debugStage;
 	}
 
 	public boolean isDebug() {

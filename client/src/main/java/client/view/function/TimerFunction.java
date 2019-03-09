@@ -7,7 +7,9 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.teamdev.jxbrowser.chromium.JSONString;
 import com.teamdev.jxbrowser.chromium.JSObject;
 
 import client.pojo.ScheduleMsg;
@@ -22,6 +24,18 @@ public class TimerFunction extends ChatFunction {
 	public TimerFunction() {
 		super();
 
+	}
+	
+	public JSONString getMsgs(String seq){
+		ConcurrentLinkedQueue<ScheduleMsg> msgs = TIMER_MAP.get(seq);
+		if(msgs == null)
+			return new JSONString("[]");
+		try {
+			return new JSONString(jsonMapper.writeValueAsString(msgs));
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			return new JSONString("[]");
+		}
 	}
 	
 	public void syncTimers(JSObject syncTimerMap) {

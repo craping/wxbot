@@ -2,9 +2,12 @@ package client.pojo;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import lombok.Data;
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class ScheduleMsg {
 	
 	private String uuid;

@@ -1,5 +1,7 @@
 package client.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import lombok.Data;
 
   
@@ -12,6 +14,7 @@ import lombok.Data;
 */  
     
 @Data
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class Permissions {
  
 	  
@@ -19,73 +22,73 @@ public class Permissions {
 	* @Fields 僵尸粉检测
 	*/  
 	    
-	private Boolean zombieTest;
+	private boolean zombieTest;
 	
 	  
 	/**  
 	* @Fields 聊天 
 	*/  
 	    
-	private Boolean chat;
+	private boolean chat;
 	
 	  
 	/**  
 	* @Fields 分群关键词
 	*/  
 	    
-	private Boolean keyword;
+	private boolean keyword;
 	
 	  
 	/**  
 	* @Fields 全群关键词
 	*/  
 	    
-	private Boolean globalKeyword;
+	private boolean globalKeyword;
 	
 	  
 	/**  
 	* @Fields 分群定时消息
 	*/  
 	    
-	private Boolean timer;
+	private boolean timer;
 	
 	  
 	/**  
 	* @Fields 全群定时消息
 	*/  
 	    
-	private Boolean globalTimer;
+	private boolean globalTimer;
 	  
 	/**  
 	* @Fields 自动接受好友请求 
 	*/  
 	    
-	private Boolean acceptFriend;
+	private boolean acceptFriend;
 	
 	  
 	/**  
 	* @Fields 发现新群提示语
 	*/  
 	    
-	private Boolean chatRoomFoundTip;
+	private boolean chatRoomFoundTip;
 	
 	/**  
 	* @Fields 成员加入提示语
 	*/  
 	    
-	private Boolean memberJoinTip;
+	private boolean memberJoinTip;
 	
 	  
 	/**  
 	* @Fields 成员退出提示语
 	*/  
 	    
-	private Boolean memberLeftTip;
+	private boolean memberLeftTip;
 	
 	  
 	/**  
 	* @Fields 移动端管理
 	*/  
 	    
-	private Boolean wapSite;
+	private boolean wapSite;
 }

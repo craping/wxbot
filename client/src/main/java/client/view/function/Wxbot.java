@@ -1,6 +1,5 @@
 package client.view.function;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,6 +8,7 @@ import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -16,7 +16,6 @@ import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.stereotype.Component;
 
-import com.cherry.jeeves.domain.response.UploadMediaResponse;
 import com.cherry.jeeves.domain.shared.Contact;
 import com.cherry.jeeves.enums.MessageType;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -27,6 +26,7 @@ import com.teamdev.jxbrowser.chromium.JSValue;
 import client.pojo.WxUser;
 import client.utils.Config;
 import client.view.WxbotView;
+import client.view.server.ChatServer;
 
 /**
  * @ClassName: Wxbot
@@ -39,7 +39,10 @@ import client.view.WxbotView;
 @Component
 @EnableScheduling
 public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
-
+	
+	@Autowired
+	protected ChatServer chatServer;
+	
 	public Wxbot() {
 		super();
 	}
@@ -112,6 +115,24 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 				msgs.forEach(msg -> {
 					String[] schedule = msg.getSchedule().split("[|]");
 					String scheduleType = schedule[0];
+					MessageType msgType;
+					switch (msg.getType()) {
+					case 1:
+						msgType = MessageType.TEXT;
+						break;
+					case 2:
+						msgType = MessageType.IMAGE;
+						break;
+					case 3:
+						msgType = MessageType.EMOTICON;
+						break;
+					case 4:
+						msgType = MessageType.VIDEO;
+						break;
+					default:
+						msgType = MessageType.APP;
+						break;
+					}
 					
 					//固定时间发送
 					if ("1".equals(scheduleType)) {
@@ -125,34 +146,8 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 						){
 							System.out.println("固定时间消息匹配："+msg.getSchedule());
 							//全局群消息走转发
-							if (Config.GLOBA_SEQ.equals(seq)) {
-								UploadMediaResponse media = null;
-								for (Contact chatRoom : cacheService.getChatRooms()) {
-									if (msg.getType() == 1) {
-										sendText(chatRoom.getSeq(), chatRoom.getNickName(), chatRoom.getUserName(), msg.getContent());
-									} else {
-										try {
-											MessageType msgType = MessageType.APP;
-											switch (msg.getType()) {
-											case 2:
-												msgType = MessageType.IMAGE;
-												break;
-											case 3:
-												msgType = MessageType.EMOTICON;
-												break;
-											case 4:
-												msgType = MessageType.VIDEO;
-												break;
-											}
-											if(media == null){
-												media = wechatService.uploadMedia(chatRoom.getUserName(), Config.ATTCH_PATH+msg.getContent());
-											}
-											wechatService.forwardMsg(chatRoom.getNickName(), media, msgType);
-										} catch (IOException e) {
-											e.printStackTrace();
-										}
-									}
-								}
+							if (SettingFunction.SETTING.getSwitchs().isGlobalTimer() && Config.GLOBA_SEQ.equals(seq)) {
+								chatServer.sendGloba(cacheService.getChatRooms(), msg.getContent(), msgType);
 							} else {
 								Contact chatRoom = cacheService.getChatRoom(seq);
 								if(chatRoom != null){
@@ -172,12 +167,17 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 						if(now.getTime() - msg.getLastSendTime().getTime() >= interval){
 							
 							System.out.println("间隔时间消息匹配："+msg.getSchedule());
-							Contact chatRoom = cacheService.getChatRoom(seq);
-							if(chatRoom != null){
-								if (msg.getType() == 1) {
-									sendText(seq, chatRoom.getNickName(), chatRoom.getUserName(), msg.getContent());
-								} else {
-									sendApp(seq, chatRoom.getNickName(), chatRoom.getUserName(), Config.ATTCH_PATH+msg.getContent());
+							//全局群消息走转发
+							if (SettingFunction.SETTING.getSwitchs().isGlobalTimer() && Config.GLOBA_SEQ.equals(seq)) {
+								chatServer.sendGloba(cacheService.getChatRooms(), msg.getContent(), msgType);
+							} else {
+								Contact chatRoom = cacheService.getChatRoom(seq);
+								if(chatRoom != null){
+									if (msg.getType() == 1) {
+										sendText(seq, chatRoom.getNickName(), chatRoom.getUserName(), msg.getContent());
+									} else {
+										sendApp(seq, chatRoom.getNickName(), chatRoom.getUserName(), Config.ATTCH_PATH+msg.getContent());
+									}
 								}
 							}
 							msg.setLastSendTime(now);
