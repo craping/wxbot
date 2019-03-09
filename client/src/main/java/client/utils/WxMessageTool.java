@@ -29,13 +29,39 @@ import client.view.function.TimerFunction;
  *
  */
 public class WxMessageTool {
-	
+
 	private static ObjectMapper jsonMapper = new ObjectMapper();
 	{
 		jsonMapper.configure(MapperFeature.AUTO_DETECT_GETTERS, false);
 	}
-	
+
 	private static Map<String, Integer> noRead = new HashMap<String, Integer>();
+
+	/**
+	 * 保存自己发送的聊天信息
+	 * 
+	 * @param recipient 接收者
+	 * @param message   消息体
+	 * @param from      发送者
+	 * @param chatType  聊天类型
+	 */
+	public static void sendMessage(Contact recipient, WxMessage message, String from, int chatType) {
+		String timestamp = Tools.getTimestamp();
+		message.setTimestamp(timestamp);
+		message.setTo(recipient.getNickName());
+		message.setFrom(from);
+		message.setDirection(Direction.SEND.getCode());
+		message.setChatType(chatType);
+		String jsonStr = "";
+		try {
+			jsonStr = jsonMapper.writeValueAsString(message);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+		String filePath = Config.CHAT_RECORD_PATH + recipient.getSeq();
+		FileUtil.writeFile(filePath, Tools.getSysDate() + ".txt", jsonStr);
+		WxMessageTool.avatarBadge(recipient.getSeq());
+	}
 
 	/**
 	 * 处理私聊消息
@@ -98,9 +124,55 @@ public class WxMessageTool {
 			newVoiceMessage(timestamp);
 		}
 	}
-	
+
+	public static void syncSeq(Map<String, String> seqMap) {
+		seqMap.forEach((k, v) -> {
+			// 同步关键词seq
+			if (KeywordFunction.KEY_MAP != null) {
+				ConcurrentHashMap<String, String> map = KeywordFunction.KEY_MAP.remove(k);
+				if (map != null)
+					KeywordFunction.KEY_MAP.put(v, map);
+			}
+
+			// 同步定时消息seq
+			if (TimerFunction.TIMER_MAP != null) {
+				LinkedList<ScheduleMsg> linked = TimerFunction.TIMER_MAP.remove(k);
+				if (linked != null)
+					TimerFunction.TIMER_MAP.put(v, linked);
+			}
+
+			// 同步群转发seq
+			if (SettingFunction.SETTING != null && SettingFunction.SETTING.getForwards() != null) {
+				if (SettingFunction.SETTING.getForwards().remove(k))
+					SettingFunction.SETTING.getForwards().add(v);
+			}
+		});
+	}
+
+	/* ################################## 执行js 方法 分割线 ###################################  */
+	/**
+	 * 刷新联系人、群聊列表
+	 * 
+	 * @param msg
+	 */
+	public static void execContactsChanged(String msg) {
+		WxbotView wxbotView = WxbotView.getInstance();
+		String script = "Contacts.methods.execContactsChanged(" + msg + ")";
+		wxbotView.executeScript(script);
+	}
+
+	/**
+	 * 刷新群成员列表
+	 */
+	public static void reloadMember() {
+		WxbotView wxbotView = WxbotView.getInstance();
+		String script = "Info.methods.reloadMember()";
+		wxbotView.executeScript(script);
+	}
+
 	/**
 	 * 处理已读消息，
+	 * 
 	 * @param seq
 	 */
 	public static void haveRead(String seq) {
@@ -136,50 +208,6 @@ public class WxMessageTool {
 	public static void newVoiceMessage(String timestamp) {
 		WxbotView wxbotView = WxbotView.getInstance();
 		String script = "Chat.methods.newVoiceMessage(" + timestamp + ")";
-		wxbotView.executeScript(script);
-	}
-	
-	public static void syncSeq(Map<String, String> seqMap){
-		seqMap.forEach((k, v) -> {
-			//同步关键词seq
-			if(KeywordFunction.KEY_MAP != null){
-				ConcurrentHashMap<String, String> map = KeywordFunction.KEY_MAP.remove(k);
-				if(map != null)
-					KeywordFunction.KEY_MAP.put(v, map);
-			}
-			
-			//同步定时消息seq
-			if(TimerFunction.TIMER_MAP != null){
-				LinkedList<ScheduleMsg> linked = TimerFunction.TIMER_MAP.remove(k);
-				if(linked != null)
-					TimerFunction.TIMER_MAP.put(v, linked);
-			}
-			
-			//同步群转发seq
-			if(SettingFunction.SETTING != null && SettingFunction.SETTING.getForwards() != null){
-				if(SettingFunction.SETTING.getForwards().remove(k))
-					SettingFunction.SETTING.getForwards().add(v);
-			}
-		});
-	}
-
-	/**
-	 * 刷新联系人、群聊列表
-	 * 
-	 * @param msg
-	 */
-	public static void execContactsChanged(String msg) {
-		WxbotView wxbotView = WxbotView.getInstance();
-		String script = "Contacts.methods.execContactsChanged(" + msg + ")";
-		wxbotView.executeScript(script);
-	}
-
-	/**
-	 * 刷新群成员列表
-	 */
-	public static void reloadMember() {
-		WxbotView wxbotView = WxbotView.getInstance();
-		String script = "Info.methods.reloadMember()";
 		wxbotView.executeScript(script);
 	}
 }
