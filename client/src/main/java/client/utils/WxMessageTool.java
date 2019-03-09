@@ -29,13 +29,39 @@ import client.view.function.TimerFunction;
  *
  */
 public class WxMessageTool {
-	
+
 	private static ObjectMapper jsonMapper = new ObjectMapper();
 	{
 		jsonMapper.configure(MapperFeature.AUTO_DETECT_GETTERS, false);
 	}
-	
+
 	private static Map<String, Integer> noRead = new HashMap<String, Integer>();
+
+	/**
+	 * 保存自己发送的聊天信息
+	 * 
+	 * @param recipient 接收者
+	 * @param message   消息体
+	 * @param from      发送者
+	 * @param chatType  聊天类型
+	 */
+	public static void sendMessage(Contact recipient, WxMessage message, String from, int chatType) {
+		String timestamp = Tools.getTimestamp();
+		message.setTimestamp(timestamp);
+		message.setTo(recipient.getNickName());
+		message.setFrom(from);
+		message.setDirection(Direction.SEND.getCode());
+		message.setChatType(chatType);
+		String jsonStr = "";
+		try {
+			jsonStr = jsonMapper.writeValueAsString(message);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+		String filePath = Config.CHAT_RECORD_PATH + recipient.getSeq();
+		FileUtil.writeFile(filePath, Tools.getSysDate() + ".txt", jsonStr);
+		WxMessageTool.avatarBadge(recipient.getSeq());
+	}
 
 	/**
 	 * 处理私聊消息
