@@ -1,7 +1,7 @@
 package client.pojo;
 
 import java.security.Permissions;
-import java.util.LinkedList;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -14,7 +14,7 @@ public class Setting {
 	/**  
 	* @Fields 群转发数组[seq]
 	*/  
-	private LinkedList<String> forwards;
+	private ConcurrentLinkedQueue<String> forwards;
 	
 	/**  
 	* @Fields 提示语设置

@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 
 import com.cherry.jeeves.domain.response.SendMsgResponse;
 import com.cherry.jeeves.domain.response.UploadMediaResponse;
+import com.cherry.jeeves.domain.shared.Contact;
 import com.cherry.jeeves.enums.MessageType;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.teamdev.jxbrowser.chromium.JSONString;
@@ -175,27 +176,18 @@ public abstract class ChatFunction extends ContactsFunction {
 	}
 
 	
-	  
-	/**  
-	* @Title: forwardApp  
-	* @Description: 转发消息 
-	* @param @param seq
-	* @param @param userName
-	* @param @param media
-	* @param @param msgType
-	* @param @param fileUrl    参数  
-	* @return void    返回类型  
-	* @throws  
-	*/  
-	    
-	public void forwardApp(String seq, String userName, UploadMediaResponse media, MessageType msgType, String fileUrl) {
-        try {  
-        	SendMsgResponse response = wechatService.forwardMsg(userName, media, msgType);
+	public void writeForwardRecord(Contact contact, MessageType msgType, String content, String msgId, String localFileUrl){
+		try {  
 	        WxMessage message = new WxMessage();
 	        message.setMsgType(msgType.getCode());
 	        
-	        String thumbImagePath = null;
+	        //缩略图本地路径
+	        String thumbImageName = null;
+	        String thumbImageUrl = null;
 	        switch (msgType) {
+	        case TEXT:
+	        	message.setBody(new WxMessageBody(content));
+	        	break;
 			case IMAGE:
 				
 				break;
@@ -203,24 +195,28 @@ public abstract class ChatFunction extends ContactsFunction {
 				
 				break;
 			case VIDEO:
-				// 下载发送视频 缩略图
-        		String thumbImageUrl = String.format(WECHAT_URL_GET_MSG_IMG, cacheService.getHostUrl(), response.getMsgID(), cacheService.getsKey()) + "&type=slave";
-        		thumbImageUrl = wechatService.download(thumbImageUrl, response.getMsgID()+".jpg", MessageType.IMAGE);
+				thumbImageName = msgId+".jpg";
+				//缩略图不存在则下载
+				if(!new File(thumbImageName).exists()){
+					thumbImageUrl = String.format(WECHAT_URL_GET_MSG_IMG, cacheService.getHostUrl(), msgId, cacheService.getsKey()) + "&type=slave";
+					thumbImageUrl = wechatService.download(thumbImageUrl, thumbImageName, MessageType.IMAGE);
+				}
 	        	
-	        	message.setBody(new WxMessageBody(fileUrl, thumbImageUrl));
+	        	message.setBody(new WxMessageBody(localFileUrl, thumbImageUrl));
 				break;
 			case APP:
-				message.setBody(new WxMessageBody(msgType, fileUrl, new File(fileUrl).getName(), FileUtil.getFileSizeString(fileUrl)));
+				message.setBody(new WxMessageBody(msgType, localFileUrl, new File(localFileUrl).getName(), FileUtil.getFileSizeString(localFileUrl)));
 				break;
 			}
-			message.setTimestamp(Tools.getTimestamp());
+	        
+			message.setTo(contact.getUserName());
+			message.setFrom(cacheService.getOwner().getNickName());
 			message.setDirection(Direction.SEND.getCode());
-			message.setChatType(userName.startsWith("@@")?2:1);
-			FileUtil.writeFile(Config.CHAT_RECORD_PATH + seq, Tools.getSysDate() + ".txt", jsonMapper.writeValueAsString(message));
-			WxMessageTool.avatarBadge(seq);
+			message.setTimestamp(Tools.getTimestamp());
+			message.setChatType(contact.getUserName().startsWith("@@")?2:1);
+			FileUtil.writeFile(Config.CHAT_RECORD_PATH + contact.getSeq(), Tools.getSysDate() + ".txt", jsonMapper.writeValueAsString(message));
+			WxMessageTool.avatarBadge(contact.getSeq());
 		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-		}  catch (IOException e) {
 			e.printStackTrace();
 		}
 	}

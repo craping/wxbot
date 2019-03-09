@@ -1,5 +1,6 @@
 package client.view.function;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,7 +16,9 @@ import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.stereotype.Component;
 
+import com.cherry.jeeves.domain.response.UploadMediaResponse;
 import com.cherry.jeeves.domain.shared.Contact;
+import com.cherry.jeeves.enums.MessageType;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.teamdev.jxbrowser.chromium.JSONString;
 import com.teamdev.jxbrowser.chromium.JSObject;
@@ -121,15 +124,35 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 							&& ("*".equals(cron[4]) || dateTime[4].equals(cron[4]))
 						){
 							System.out.println("固定时间消息匹配："+msg.getSchedule());
+							//全局群消息走转发
 							if (Config.GLOBA_SEQ.equals(seq)) {
-								
-								cacheService.getChatRooms().forEach(chatRoom -> {
+								UploadMediaResponse media = null;
+								for (Contact chatRoom : cacheService.getChatRooms()) {
 									if (msg.getType() == 1) {
 										sendText(chatRoom.getSeq(), chatRoom.getNickName(), chatRoom.getUserName(), msg.getContent());
 									} else {
-										sendApp(chatRoom.getSeq(), chatRoom.getNickName(), chatRoom.getUserName(), Config.ATTCH_PATH+msg.getContent());
+										try {
+											MessageType msgType = MessageType.APP;
+											switch (msg.getType()) {
+											case 2:
+												msgType = MessageType.IMAGE;
+												break;
+											case 3:
+												msgType = MessageType.EMOTICON;
+												break;
+											case 4:
+												msgType = MessageType.VIDEO;
+												break;
+											}
+											if(media == null){
+												media = wechatService.uploadMedia(chatRoom.getUserName(), Config.ATTCH_PATH+msg.getContent());
+											}
+											wechatService.forwardMsg(chatRoom.getNickName(), media, msgType);
+										} catch (IOException e) {
+											e.printStackTrace();
+										}
 									}
-								});
+								}
 							} else {
 								Contact chatRoom = cacheService.getChatRoom(seq);
 								if(chatRoom != null){

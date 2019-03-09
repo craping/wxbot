@@ -2,6 +2,7 @@ package client.view.function;
 
 import java.io.IOException;
 import java.util.Set;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.springframework.stereotype.Component;
 
@@ -78,7 +79,7 @@ public class ContactsFunction extends SettingFunction {
 	 */
 	public String getChatRoomMemberHeadImgUrl(String chatRoomName, String memberUserName) {
 		try {
-			Set<Contact> members = wechatService.getChatRoomInfo(chatRoomName).getMemberList();
+			ConcurrentLinkedQueue<Contact> members = wechatService.getChatRoomInfo(chatRoomName).getMemberList();
 			Contact member = members.stream().filter(x -> memberUserName.equals(x.getNickName())).findFirst().orElse(null);
 			return getHostUrl() + member.getHeadImgUrl();
 		} catch (IOException e) {
@@ -110,7 +111,7 @@ public class ContactsFunction extends SettingFunction {
 	 */
 	public JSONString getChatRoomMembers(String chatRoomName) {
 		try {
-			Set<Contact> members = wechatService.getChatRoomInfo(chatRoomName).getMemberList();
+			ConcurrentLinkedQueue<Contact> members = wechatService.getChatRoomInfo(chatRoomName).getMemberList();
 			return new JSONString(jsonMapper.writeValueAsString(members));
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();

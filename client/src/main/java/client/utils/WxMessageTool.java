@@ -1,9 +1,9 @@
 package client.utils;
 
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import com.cherry.jeeves.domain.shared.Contact;
 import com.cherry.jeeves.domain.shared.Owner;
@@ -150,9 +150,9 @@ public class WxMessageTool {
 			
 			//同步定时消息seq
 			if(TimerFunction.TIMER_MAP != null){
-				LinkedList<ScheduleMsg> linked = TimerFunction.TIMER_MAP.remove(k);
-				if(linked != null)
-					TimerFunction.TIMER_MAP.put(v, linked);
+				ConcurrentLinkedQueue<ScheduleMsg> queue = TimerFunction.TIMER_MAP.remove(k);
+				if(queue != null)
+					TimerFunction.TIMER_MAP.put(v, queue);
 			}
 			
 			//同步群转发seq

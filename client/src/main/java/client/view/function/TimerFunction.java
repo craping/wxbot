@@ -2,9 +2,8 @@ package client.view.function;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.springframework.stereotype.Component;
 
@@ -18,7 +17,7 @@ import client.utils.HttpUtil;
 @Component
 public class TimerFunction extends ChatFunction {
 
-	public static Map<String, LinkedList<ScheduleMsg>> TIMER_MAP;
+	public static ConcurrentHashMap<String, ConcurrentLinkedQueue<ScheduleMsg>> TIMER_MAP = new ConcurrentHashMap<>();
 	
 	public TimerFunction() {
 		super();
@@ -27,7 +26,8 @@ public class TimerFunction extends ChatFunction {
 	
 	public void syncTimers(JSObject syncTimerMap) {
 		try {
-			TIMER_MAP = jsonMapper.readValue(syncTimerMap.toJSONString(), new TypeReference<Map<String, LinkedList<ScheduleMsg>>>() {});
+			TIMER_MAP.clear();
+			TIMER_MAP.putAll(jsonMapper.readValue(syncTimerMap.toJSONString(), new TypeReference<ConcurrentHashMap<String, ConcurrentLinkedQueue<ScheduleMsg>>>() {}));
 			TIMER_MAP.forEach((k, v) -> {
 				v.forEach(msg -> {
 					if(msg.getType() != 1){
@@ -46,21 +46,22 @@ public class TimerFunction extends ChatFunction {
 			ScheduleMsg msg = jsonMapper.readValue(addMsg.toJSONString(), ScheduleMsg.class);
 			if(msg.getType() == 2)
 				downloadAttach(msg.getContent());
-			if(TIMER_MAP == null){
-				TIMER_MAP = new HashMap<>();
+			
+			ConcurrentLinkedQueue<ScheduleMsg> msgs = TIMER_MAP.get(seq);
+			if (msgs == null) {
+				msgs = new ConcurrentLinkedQueue<>();
+				TIMER_MAP.put(seq, msgs);
 			}
-			if (!TIMER_MAP.containsKey(seq)) {
-				TIMER_MAP.put(seq, new LinkedList<>());
-			}
-			TIMER_MAP.get(seq).add(msg);
+			msgs.add(msg);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 	
 	public void delMsg(String seq, String uuid){
-		if(TIMER_MAP != null && TIMER_MAP.containsKey(seq))
-			TIMER_MAP.get(seq).removeIf(e -> e.getUuid().equals(uuid));
+		ConcurrentLinkedQueue<ScheduleMsg> msgs = TIMER_MAP.get(seq);
+		if (msgs != null)
+			msgs.removeIf(e -> e.getUuid().equals(uuid));
 	}
 	
 	public void downloadAttach(String fileName){
