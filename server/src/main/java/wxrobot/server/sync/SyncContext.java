@@ -2,14 +2,9 @@ package wxrobot.server.sync;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedTransferQueue;
-import java.util.concurrent.TransferQueue;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -136,117 +131,5 @@ public class SyncContext implements SchedulingConfigurer {
 			future.addListener(ChannelFutureListener.CLOSE);
 		}
 	}
-	
-	public static void main(String[] args) throws Exception {
-		Map<String, Long> map = new ConcurrentHashMap<>();
-		map.put("a", 1L);
-		map.put("b", 2L);
-		map.remove(null);
-		AtomicInteger count = new AtomicInteger(0);
-		map.forEach((k, v) -> {
-			System.out.println(k+"="+v);
-			map.put(k+count.getAndIncrement(), map.remove(k));
-		});
-	}
-	
-	public static void main3(String[] args) throws Exception {
-		Map<String, Long> map = new ConcurrentHashMap<>();
-		new Thread(() -> {
-			while (true) {
-//				Object[] arr = map.entrySet().toArray();
-//				for (Object entry : arr) {
-//					System.out.println(entry);
-//				}
-//				for (Map.Entry<String, Long> entry : map.entrySet()) {
-//					System.out.println(entry.getKey()+"="+entry.getValue());
-//				}
-//				for (String key : map.keySet()) {
-//					System.out.println(key+"="+map.get(key));
-//				}
-				map.forEach((k, v) -> {
-					System.out.println(k+"="+v);
-					map.remove(k);
-				});
-				System.out.println("遍历完成:"+map.size());
-			}
-		}).start();
-		
-		long i = 0;
-		while (true) {
-			map.put(i+"", i);
-//			i++;
-		}
-	}
-	
-	public static void main1(String[] args) throws Exception {
-		TransferQueue<Integer> queue = new LinkedTransferQueue<>();
-		new Thread(() -> {
-			while (true) {
-				List<Integer> list = new ArrayList<>();
-				System.out.println("poll:"+queue.drainTo(list, 100));
-				
-			}
-		}).start();
-		
-		int i = 0;
-		while (true) {
-			queue.put(i);
-			System.out.println("put:"+i);
-		}
-	}
-	
-	public static void main2(String[] args) throws Exception {
-		Queue<Integer> queue = new LinkedTransferQueue<>();
-		new Thread(() -> {
-			while (true) {
-				
-//				for (Integer i : list) {
-//					System.out.println("remove:"+i);
-//					list.remove(i);
-//				}
-				Integer i = null;
-				while ((i = queue.peek()) != null) {
-					System.out.println("remove:"+i);
-					try {
-						Thread.sleep(1000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-					queue.poll();
-				}
-//				list.forEach(i -> {
-//					System.out.println("remove:"+i);
-//					list.remove(i);
-//					try {
-//						Thread.sleep(1000);
-//					} catch (InterruptedException e) {
-//						e.printStackTrace();
-//					}
-//				});
-				System.out.println("遍历完成");
-			}
-		}).start();
-		
-		new Thread(() -> {
-			int i = 0;
-			while (true) {
-				queue.offer(i);
-				System.out.println("add:"+i);
-				try {
-					Thread.sleep(500);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				i++;
-			}
-		}).start();
-		
-		int i = 0;
-		while (true) {
-			queue.offer(i);
-			System.out.println("add:"+i);
-			Thread.sleep(500);
-			i++;
-		}
-	}
+
 }
