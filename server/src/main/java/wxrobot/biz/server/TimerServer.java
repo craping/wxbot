@@ -91,7 +91,7 @@ public class TimerServer extends BaseServer {
 	public long modTimer(String userName, String oldSeq, String newSeq){
 		Query query = new Query(Criteria.where("userName").is(userName));
 		
-		Update update = Update.update("timerMap."+oldSeq, newSeq);
+		Update update = new Update().rename("timerMap."+oldSeq, "timerMap."+newSeq);
 		
 		return mongoTemplate.updateFirst(query, update, Timer.class).getModifiedCount();
 	}

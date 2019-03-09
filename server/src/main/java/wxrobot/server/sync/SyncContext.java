@@ -65,7 +65,6 @@ public class SyncContext implements SchedulingConfigurer {
 	
 	@Scheduled(fixedDelay=1000)
     private void run() {
-		System.out.println("消息同步线程执行");
 		long currentTime = System.currentTimeMillis();
 		
 		SyncSession session = null;

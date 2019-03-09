@@ -87,7 +87,7 @@ public class KeywordServer extends BaseServer {
 	public long modKeyword(String userName, String oldSeq, String newSeq){
 		Query query = new Query(Criteria.where("userName").is(userName));
 		
-		Update update = Update.update("keyMap."+oldSeq, newSeq);
+		Update update = new Update().rename("keyMap."+oldSeq, "keyMap."+newSeq);
 		
 		return mongoTemplate.updateFirst(query, update, Keyword.class).getModifiedCount();
 	}
