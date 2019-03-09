@@ -59,26 +59,26 @@ GlobalTimer = {
             this.globalTimer.form.file = file;
             return false;
         },
-        loadMsgs(){
-            this.getMsgs();
-        },
+        // loadMsgs(){
+        //     let me = this;
+        //     me.globalTimer.msgsLoading = true;
+        //     Web.ajax("timer/getTimers", {
+        //         data:{
+        //             seq:"global"
+        //         },
+        //         success: function (data) {
+        //             if(data.info)
+        //             me.globalTimer.msgs = data.info["global"];
+        //             else
+        //             me.globalTimer.msgs = [];
+        //             me.globalTimer.msgsLoading = false;
+        //         },
+        //         fail: function (data) {
+        //         }
+        //     });
+        // },
         getMsgs(){
-            let me = this;
-            me.globalTimer.msgsLoading = true;
-            Web.ajax("timer/getTimers", {
-                data:{
-                    seq:"global"
-                },
-                success: function (data) {
-                    if(data.info)
-                        me.globalTimer.msgs = data.info["global"];
-                    else
-                        me.globalTimer.msgs = [];
-                    me.globalTimer.msgsLoading = false;
-                },
-                fail: function (data) {
-                }
-            });
+            this.globalTimer.msgs = wxbot.getMsgs("global");
         },
         editMsgOk(){
             let me = this;

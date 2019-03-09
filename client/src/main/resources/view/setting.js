@@ -55,29 +55,10 @@ const constant = {
     }
 };
 $script.ready(["user", "general", "forward", "globalTimer", "globalKeyword", "tips"], function () {
-    let chatRooms = [];
-    for (let i = 0; i < 50; i++) {
-        chatRooms.push({
-            seq:"65535"+i,
-            NickName:"上帝群 明天香港采购🇭🇰",
-            status:1
-        },{
-            seq:"65536"+i,
-            NickName:"华强电脑 古城便民服务（一）群",
-            status:1
-        });
-    }
     let data = Object.assign({
         header:{},
-        setting:{
-            switchs:{
-                autoAcceptFriend:true,
-                globalKeyword:true,
-                globalTimer:true
-            },
-            forwards:[]
-        },
-        chatRooms:Object.freeze(chatRooms)
+        setting:{},
+        chatRooms:[]
     }, {user:User.data}, {general:General.data}, {forward:Forward.data}, {globalTimer:GlobalTimer.data}, {globalKeyword:GlobalKeyword.data}, {tips:Tips.data});
     let methods = Object.assign({
         filterAll(data, argumentObj) {
@@ -103,25 +84,11 @@ $script.ready(["user", "general", "forward", "globalTimer", "globalKeyword", "ti
             return res;
         },
         syncSetting(){
-            const me = this;
-            Web.ajax("setting/getSetting", {
-                success: function (data) {
-                    me.setting = data.info;
-                },
-                fail: function (data) {
-                }
-            });
-        },
-        setTips(tips){
-            const me = this;
-            Web.ajax("setting/setTips", {
-                data:tips,
-                success: function (data) {
-                    me.setting = data.info;
-                },
-                fail: function (data) {
-                }
-            });
+            this.setting = wxbot.getSetting();
+            this.chatRooms = Object.freeze(wxbot.getChatRooms())
+            this.generalReset();
+            this.getMsgs();
+            this.getKeyMap();
         },
         onMembersSeqChanged(seqMap){
             app.modKeywords(seqMap);
@@ -133,10 +100,7 @@ $script.ready(["user", "general", "forward", "globalTimer", "globalKeyword", "ti
         data: data,
         computed:computed,
         mounted() {
-            // this.syncSetting();
-            this.loadMsgs();
-            this.loadKeyMap();
-            this.generalReset();
+            this.syncSetting();
         },
         methods: methods
     });

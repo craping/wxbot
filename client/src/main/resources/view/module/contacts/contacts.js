@@ -205,8 +205,8 @@ Contacts = {
             $('#avatar_' + seq + " sup.ivu-badge-count").remove();
             Contacts.data.filterKey = "";
             this.$refs.searchResult.style['display'] = "none";
-            //this.loadKeyMap(seq);
-            //this.loadMsgs(seq);
+            this.getKeyMap(seq);
+            this.getMsgs(seq);
         }
     }
 }

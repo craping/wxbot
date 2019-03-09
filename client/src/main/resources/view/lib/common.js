@@ -10,23 +10,23 @@ var Store = Store||{
 		localStorage.removeItem(key);
 	}
 }
-var wxbot = {
-	getToken(){
-		return "a95c408455a940f8a5e3315177986297";
-	},
-	getHostUrl(){
-		return "";
-	},
-	getEmoji(){
-		return "";
-	},
-	getIndividuals(){
-		return [];
-	},
-	getChatRooms(){
-		return [];
-	}
-}
+// var wxbot = {
+// 	getToken(){
+// 		return "a95c408455a940f8a5e3315177986297";
+// 	},
+// 	getHostUrl(){
+// 		return "";
+// 	},
+// 	getEmoji(){
+// 		return "";
+// 	},
+// 	getIndividuals(){
+// 		return [];
+// 	},
+// 	getChatRooms(){
+// 		return [];
+// 	}
+// }
 var Web = {
 	serverURL: "http://127.0.0.1:9527/",
 	// serverURL: "http://118.89.37.101:9527/",

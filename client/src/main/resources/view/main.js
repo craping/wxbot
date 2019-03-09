@@ -64,6 +64,16 @@ $script.ready(["header", "contacts", "chat", "keyword", "timer", "info"], functi
                     console.log("seq同步失败")
                 }
             });
+        },
+        syncSetting(){
+            const me = this;
+            Web.ajax("setting/getSetting", {
+                success: function (data) {
+                    wxbot.syncSetting(data.info);
+                },
+                fail: function (data) {
+                }
+            });
         }
     }, Header.methods, Contacts.methods, Chat.methods, Keyword.methods, Timer.methods, Info.methods);
 
@@ -81,9 +91,10 @@ $script.ready(["header", "contacts", "chat", "keyword", "timer", "info"], functi
         },
         computed:computed,
         mounted() {
-            //this.syncKeywords();
-            //this.syncTimers();
             this.loadContacts();
+            this.syncSetting();
+            this.syncKeywords();
+            this.syncTimers();
         },
         updated: function () {
             methods.scrollToBottom();

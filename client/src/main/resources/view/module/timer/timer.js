@@ -98,28 +98,28 @@ Timer = {
                 me.getMsgs();
             }
         },
-        loadMsgs(seq){
+        // loadMsgs(){
+        //     let me = this;
+        //     me.timer.msgsLoading = true;
+        //     Web.ajax("timer/getTimers", {
+        //         data:{
+        //             seq:me.timer.form.seq
+        //         },
+        //         success: function (data) {
+        //             console.log(data)
+        //             if(data.info)
+        //             me.timer.msgs = data.info[me.timer.form.seq];
+        //             else
+        //             me.timer.msgs = [];
+        //             me.timer.msgsLoading = false;
+        //         },
+        //         fail: function (data) {
+        //         }
+        //     });
+        // },
+        getMsgs(seq){
             this.timer.form.seq = seq;
-            this.getMsgs();
-        },
-        getMsgs(){
-            let me = this;
-            me.timer.msgsLoading = true;
-            Web.ajax("timer/getTimers", {
-                data:{
-                    seq:me.timer.form.seq
-                },
-                success: function (data) {
-                    console.log(data)
-                    if(data.info)
-                        me.timer.msgs = data.info[me.timer.form.seq];
-                    else
-                        me.timer.msgs = [];
-                    me.timer.msgsLoading = false;
-                },
-                fail: function (data) {
-                }
-            });
+            this.timer.msgs = wxbot.getMsgs(seq);
         },
         editMsgOk(){
             let me = this;

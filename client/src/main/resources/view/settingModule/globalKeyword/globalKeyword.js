@@ -29,27 +29,27 @@ GlobalKeyword = {
         }
     },
     methods:{
-        loadKeyMap(){
-            this.getKeyMap();
-        },
+        // loadKeyMap(){
+        //     let me = this;
+        //     me.globalKeyword.chatRoomKeyMapLoading = true;
+        //     Web.ajax("keyword/getKeywords", {
+        //         data:{
+        //             seq:"global"
+        //         },
+        //         success: function (data) {
+        //             console.log(data)
+        //             if(data.info)
+        //             me.globalKeyword.chatRoomKeyMap = data.info["global"];
+        //             else
+        //             me.globalKeyword.chatRoomKeyMap = {};
+        //             me.globalKeyword.chatRoomKeyMapLoading = false;
+        //         },
+        //         fail: function (data) {
+        //         }
+        //     });
+        // },
         getKeyMap(){
-            let me = this;
-            me.globalKeyword.chatRoomKeyMapLoading = true;
-            Web.ajax("keyword/getKeywords", {
-                data:{
-                    seq:"global"
-                },
-                success: function (data) {
-                    console.log(data)
-                    if(data.info)
-                        me.globalKeyword.chatRoomKeyMap = data.info["global"];
-                    else
-                        me.globalKeyword.chatRoomKeyMap = {};
-                    me.globalKeyword.chatRoomKeyMapLoading = false;
-                },
-                fail: function (data) {
-                }
-            });
+            this.globalKeyword.chatRoomKeyMap = wxbot.getKeyMap("global");
         },
         editKeyMapOk(){
             let me = this;

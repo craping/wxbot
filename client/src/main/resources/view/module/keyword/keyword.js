@@ -100,28 +100,28 @@ Keyword = {
                 me.getKeyMap();
             }
         },
-        loadKeyMap(seq){
+        // loadKeyMap(){
+        //     let me = this;
+        //     me.keyword.chatRoomKeyMapLoading = true;
+        //     Web.ajax("keyword/getKeywords", {
+        //         data:{
+        //             seq:me.keyword.form.seq
+        //         },
+        //         success: function (data) {
+        //             console.log(data)
+        //             if(data.info)
+        //             me.keyword.chatRoomKeyMap = data.info[me.keyword.form.seq];
+        //             else
+        //             me.keyword.chatRoomKeyMap = {};
+        //             me.keyword.chatRoomKeyMapLoading = false;
+        //         },
+        //         fail: function (data) {
+        //         }
+        //     });
+        // },
+        getKeyMap(seq){
             this.keyword.form.seq = seq;
-            this.getKeyMap();
-        },
-        getKeyMap(){
-            let me = this;
-            me.keyword.chatRoomKeyMapLoading = true;
-            Web.ajax("keyword/getKeywords", {
-                data:{
-                    seq:me.keyword.form.seq
-                },
-                success: function (data) {
-                    console.log(data)
-                    if(data.info)
-                        me.keyword.chatRoomKeyMap = data.info[me.keyword.form.seq];
-                    else
-                        me.keyword.chatRoomKeyMap = {};
-                    me.keyword.chatRoomKeyMapLoading = false;
-                },
-                fail: function (data) {
-                }
-            });
+            this.keyword.chatRoomKeyMap = wxbot.getKeyMap(seq);
         },
         editKeyMapOk(){
             let me = this;

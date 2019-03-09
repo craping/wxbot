@@ -3,7 +3,7 @@
         <i-button icon="ios-add" size="small" type="primary" @click="globalTimer.form.modal=true">添加定时群发</i-button>
     </form-item>
 </i-form>
-<table class="table table-hover border fixed">
+<table class="table table-hover border fixed mb-0">
     <thead>
         <tr>
             <th width="190">时间</th>
@@ -11,7 +11,7 @@
             <th class="text-center" width="70">操作</th>
         </tr>
     </thead>
-    <tbody style="height: 350px;">
+    <tbody style="height: 367px;">
         <template v-if="globalTimer.msgs.length">
             <tr v-for="e in globalTimer.msgs">
                 <td width="190">

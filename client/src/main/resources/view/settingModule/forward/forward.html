@@ -7,7 +7,7 @@
         <i-button v-show="!row.status" type="success" size="small" style="margin-right: 5px" @click="console.log(row)">开启</i-button>
     </template>
 </i-table> -->
-<table class="table table-hover border fixed">
+<table class="table table-hover border fixed mb-0">
     <thead>
         <tr>
             <th width="70">群ID</th>
@@ -15,7 +15,7 @@
             <th class="text-center" width="80">状态</th>
         </tr>
     </thead>
-    <tbody style="height: 350px;">
+    <tbody style="height: 375px;">
         <template v-if="forwards.length">
             <tr v-for="e in forwards">
                 <td width="70">{{e.seq}}</td>
