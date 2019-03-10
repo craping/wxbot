@@ -45,6 +45,11 @@ height: 38px;
 .error-text {
 color: #fa8341;
 }
+
+.ivu-form-item-error-tip {
+    padding-top: 3px;
+}
+
 ::-webkit-scrollbar{
     width:7px;
 }

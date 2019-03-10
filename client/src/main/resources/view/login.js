@@ -17,26 +17,39 @@ $script.ready(["vue", "iview", "jquery", "crypto", "md5", "common"], function ()
                     skin: "dark",
                     modal:false,
                     Login:{
-                        login_name:"",
-                        login_pwd:"",
+                        mobile:"",
+                        password:"",
                         loading:false,
                         error:{}
                     },
                     Register:{
-                        login_name:"",
-                        login_pwd:"",
+                        mobile:"",
+                        password:"",
+                        repeatPwd:"",
                         code:"",
                         loading:false,
+                        disabled:false,
                         getMessageText:"获取验证码",
                         error:{}
                     },
                     ruleInline:{
-                        login_name: [
+                        mobile: [
                             { required: true, message: "手机号码不能为空", trigger: 'blur' }
                         ],
-                        login_pwd: [
+                        password: [
                             { required: true, message: "密码不能为空", trigger: 'blur' }
                         ],
+                        repeatPwd: [{
+                            required: true, validator: (rule, value, callback) => {
+                                if (value === '') {
+                                    callback(new Error("确认密码不能为空"));
+                                } else if (value !== app.Register.password) {
+                                    callback(new Error("两次输入的密码不一致"));
+                                } else {
+                                    callback();
+                                }
+                            }, trigger: 'blur'
+                        }],
                         code: [
                             { required: true, message: "验证码", trigger: 'blur' }
                         ]
@@ -57,8 +70,8 @@ $script.ready(["vue", "iview", "jquery", "crypto", "md5", "common"], function ()
                                 Web.ajax("user/login", {
                                     safe:true,
                                     data:{
-                                        login_name:me.Login.login_name,
-                                        login_pwd:md5(me.Login.login_pwd)
+                                        login_name:me.Login.mobile,
+                                        login_pwd:md5(me.Login.password)
                                     },
                                     success: function (data) {
                                         me.Login.loading = false;
@@ -83,9 +96,16 @@ $script.ready(["vue", "iview", "jquery", "crypto", "md5", "common"], function ()
                             if (valid) {
                                 me.Register.loading = true;
                                 Web.ajax("user/register", {
-                                    data:me.Register,
+                                    safe:true,
+                                    data:{
+                                        user_name:me.Register.mobile,
+                                        user_pwd:md5(me.Register.password),
+                                        confirm_pwd:md5(me.Register.repeatPwd),
+                                        code:me.Register.code
+                                    },
                                     success: function (data) {
                                         me.Register.loading = false;
+                                        me.$Message.success("注册成功");
                                     },
                                     fail: function (data) {
                                         me.Register.loading = false;
@@ -101,11 +121,19 @@ $script.ready(["vue", "iview", "jquery", "crypto", "md5", "common"], function ()
                         })
                     },
                     seedMessage(){
-        
+                        const me = this;
+                        me.Register.disabled = true;
+                        let i = 30;
+                        let timer = setInterval(() => {
+                            me.Register.getMessageText = "获取验证码("+(i--)+"s)";
+                            if(i <= 0){
+                                clearInterval(timer);
+                                me.Register.disabled = false;
+                            }
+                        }, 1000);
                     },
                 }
             });
-
             wxbot.showLogin();
         },
         fail: function (data) {

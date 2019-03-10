@@ -13,12 +13,12 @@
 	<div id="app" class="layout" onselectstart="return false" ondragstart="return false" v-cloak>
 		<Tabs value="login" class="px-5">
 			<Tab-Pane name="login" label="登录">
-				<i-Form ref="Login" :model="Login" :rules="ruleInline" class="signin mt-4">
-					<Form-Item prop="login_name">
-						<i-Input prefix="ios-contact" size="large" v-model="Login.login_name" clearable placeholder="手机号码"></i-Input>
+				<i-Form ref="Login" :model="Login" :rules="ruleInline" class="signin mt-5">
+					<Form-Item prop="mobile">
+						<i-Input prefix="ios-phone-portrait" size="large" v-model="Login.mobile" clearable placeholder="手机号码"></i-Input>
 					</Form-Item>
-					<Form-Item prop="login_pwd">
-						<i-Input prefix="ios-lock" size="large" type="password" v-model="Login.login_pwd" clearable placeholder="密码"></i-Input>
+					<Form-Item prop="password">
+						<i-Input prefix="ios-lock" size="large" type="password" v-model="Login.password" clearable placeholder="密码"></i-Input>
 					</Form-Item>
 					<Form-Item class="text-center">
 						<p class="error-text" v-show="Login.error.all">{{Login.error.all}}</p>
@@ -27,20 +27,23 @@
 				</i-Form>
 			</Tab-Pane>
 			<Tab-Pane name="register" label="注册">
-				<i-Form ref="Register" :model="Register" :rules="ruleInline" class="signup mt-4">
-					<Form-Item prop="login_name">
-						<i-Input prefix="ios-contact" v-model="Register.login_name" placeholder="输入手机号码"></i-Input>
+				<i-Form ref="Register" :model="Register" :rules="ruleInline" class="signup mt-2">
+					<Form-Item prop="mobile" class="mb-3">
+						<i-Input prefix="ios-phone-portrait" v-model="Register.mobile" placeholder="输入手机号码"></i-Input>
 					</Form-Item>
-					<Form-Item prop="login_pwd">
-						<i-Input prefix="ios-lock" type="password" v-model="Register.login_pwd" placeholder="输入密码"></i-Input>
-						</Form-Item>
-					<Form-Item prop="code">
+					<Form-Item prop="password" class="mb-3">
+						<i-Input prefix="ios-lock" type="password" v-model="Register.password" placeholder="输入密码"></i-Input>
+					</Form-Item>
+					<Form-Item prop="repeatPwd" class="mb-3">
+						<i-Input prefix="ios-lock" type="password" v-model="Register.repeatPwd" placeholder="确认密码"></i-Input>
+					</Form-Item>
+					<Form-Item prop="code" class="mb-3">
 						<div class="d-flex">
-							<i-Input prefix="ios-finger-print" v-model="Register.code" placeholder="输入获取的验证码"></i-Input>
-							<i-Button type="info" ghost @click="seedMessage">{{Register.getMessageText}}</i-Button>
+							<i-Input prefix="ios-finger-print"  v-model="Register.code" placeholder="输入获取的验证码"></i-Input>
+							<i-Button type="info" ghost :disabled="Register.disabled" @click="seedMessage">{{Register.getMessageText}}</i-Button>
 						</div>
 					</Form-Item>
-					<Form-Item style="text-align:center">
+					<Form-Item style="text-align:center" class="mb-0">
 						<p class="error-text marb8" v-show="Register.error.error">
 							{{Register.error.error}}</p>
 						<i-Button type="primary" :loading="Register.loading" @click="registerSubmit('Register')" long style="font-size:16px">注 册</i-Button>
