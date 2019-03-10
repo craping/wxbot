@@ -1,6 +1,5 @@
 package client.view.function;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,7 +23,6 @@ import com.teamdev.jxbrowser.chromium.JSONString;
 import com.teamdev.jxbrowser.chromium.JSObject;
 import com.teamdev.jxbrowser.chromium.JSValue;
 
-import client.pojo.WxUser;
 import client.utils.Config;
 import client.view.WxbotView;
 import client.view.server.ChatServer;
@@ -46,15 +44,6 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 	
 	public Wxbot() {
 		super();
-	}
-
-	/**
-	 * 获取用户token
-	 * 
-	 * @return
-	 */
-	public String getToken() {
-		return user.getToken();
 	}
 
 	/**
@@ -82,13 +71,7 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 	*/  
 	    
 	public void syncUserInfo(JSObject syncUserInfo){
-		if(syncUserInfo != null && syncUserInfo.toJSONString() != null && !syncUserInfo.toJSONString().isEmpty()){
-			try {
-				this.user = jsonMapper.readValue(syncUserInfo.toJSONString(), WxUser.class);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+		this.user = syncUserInfo;
 	}
 
 	/**
@@ -99,13 +82,7 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 	 * @throws
 	 */
 	public void start(JSObject syncUserInfo) {
-		if (syncUserInfo != null && syncUserInfo.toJSONString() != null && !syncUserInfo.toJSONString().isEmpty()) {
-			try {
-				this.user = jsonMapper.readValue(syncUserInfo.toJSONString(), WxUser.class);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+		this.user = syncUserInfo;
 		wxbotThread = new Thread(() -> {
 			try {
 				jeeves.start();

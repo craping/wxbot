@@ -34,7 +34,7 @@ public class SettingFunction {
 
 	protected SimpleDateFormat dateFormat = new SimpleDateFormat("M,d,H,m,s");
 	
-	protected WxUser user;
+	protected JSObject user;
 	
 	@Autowired
 	protected WechatHttpService wechatService;

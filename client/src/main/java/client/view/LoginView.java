@@ -227,10 +227,6 @@ public final class LoginView extends AnchorPane  {
 	    
 	public void hide() {
 		viewStage.hide();
-		
-		new Thread(() -> {
-			System.out.println("wxbotView is disposed = " + browser.dispose(true));
-		}).start();
 	}
 
 	public Browser getBrowser() {

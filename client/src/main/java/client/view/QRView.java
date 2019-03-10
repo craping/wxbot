@@ -61,7 +61,7 @@ public class QRView extends AnchorPane {
 			label = (Label) root.lookup("#msgLab");
 			label.setText("请使用微信扫一扫以登录");
 		} else {
-			// 关闭登录窗口
+			// 隐藏登录窗口
 //			LoginController.LOGIN_STAGE.hide();
 			LoginView.getInstance().hide();
 
@@ -79,7 +79,7 @@ public class QRView extends AnchorPane {
 			QR_STAGE.setResizable(false);
 			QR_STAGE.setOnCloseRequest(e -> {
 				QR_STAGE.close();
-				System.exit(0);
+				LoginView.getInstance().close();
 			});
 			QR_STAGE.show();
 		}

@@ -31,6 +31,7 @@ var Web = {
 	serverURL: "http://127.0.0.1:9527/",
 	// serverURL: "http://118.89.37.101:9527/",
 	/* Common - Ajax request */
+	user:{},
 	ajax: function (method, param) {
 		var cipher = Crypto.generateCipher();
 		if (!param)
@@ -41,7 +42,7 @@ var Web = {
 			timeout: 20000,
 			safe: false,
 			data: {
-				token: wxbot.getToken(),
+				token: Web.user.token,
 			},
 			url: Web.serverURL,
 			success: function () { },

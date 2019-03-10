@@ -1,6 +1,6 @@
 package client.pojo;
 
-import org.json.JSONObject;
+import com.teamdev.jxbrowser.chromium.JSObject;
 
 import lombok.Data;
 
@@ -26,19 +26,19 @@ public class WxUser {
 	/** 用户token */
 	private String token;
 
-	public WxUser(JSONObject params) {
-		this.id = params.getString("id");
-		this.token = params.getString("token");
-		JSONObject userInfo = params.getJSONObject("userInfo");
-		this.userName = userInfo.optString("userName");
-		this.userPwd = userInfo.optString("userPwd");
-		this.nickName = userInfo.optString("nickName");
-		this.regTime = userInfo.optString("regTime");
-		this.serverEnd = userInfo.optString("serverEnd");
-		this.serverState = userInfo.optBoolean("serverState");
-		this.phoneNum = userInfo.optString("phoneNum");
-		this.phoneState = userInfo.optBoolean("phoneState");
-		this.comefrom = userInfo.optInt("comefrom");
-		this.regIp = userInfo.optString("regIp");
+	public WxUser(JSObject jsObject) {
+		this.id = jsObject.getProperty("id").getStringValue();
+		this.token = jsObject.getProperty("token").toString();
+		JSObject userInfo = jsObject.getProperty("userInfo").asObject();
+		this.userName = userInfo.getProperty("userName").getStringValue();
+		this.userPwd = userInfo.getProperty("userPwd").toString();
+		this.nickName = userInfo.getProperty("nickName").toString();
+		this.regTime = userInfo.getProperty("regTime").toString();
+		this.serverEnd = userInfo.getProperty("serverEnd").toString();
+		this.serverState = userInfo.getProperty("serverState").getBooleanValue();
+		this.phoneNum = userInfo.getProperty("phoneNum").toString();
+		this.phoneState = userInfo.getProperty("phoneState").getBooleanValue();
+		this.comefrom = (int)userInfo.getProperty("comefrom").getNumberValue();
+		this.regIp = userInfo.getProperty("regIp").toString();
 	}
 }
