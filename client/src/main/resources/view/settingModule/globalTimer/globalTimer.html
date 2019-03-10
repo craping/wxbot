@@ -34,7 +34,8 @@
 </table>
 
 
-<modal v-model="globalTimer.form.modal" title="添加定时群发" width="440" :mask-closable="false" :loading="globalTimer.form.modalLoading" @on-ok="editMsgOk" @on-cancel="editMsgCancel">
+<modal v-model="globalTimer.form.modal" title="添加定时群发" width="440" :mask-closable="false" :loading="globalTimer.form.modalLoading" class-name="vertical-center-modal"
+onselectstart="return false" ondragstart="return false" @on-ok="editMsgOk" @on-cancel="editMsgCancel">
     <i-form @submit.native.prevent>
         <form-item label="时间类型" class="mb-0">
             <radio-group v-model="globalTimer.form.scheduleType">
@@ -113,7 +114,7 @@
         </div>
     </i-form>
 </modal>
-<modal v-model="globalTimer.form.confirm" width="360" :mask-closable="false">
+<modal v-model="globalTimer.form.confirm" width="360" onselectstart="return false" ondragstart="return false" :mask-closable="false" class-name="vertical-center-modal">
     <p slot="header" class="text-center" style="color:#f60;">
         <icon type="ios-information-circle"></icon>
         <span>删除确认</span>

@@ -12,7 +12,9 @@ General = {
             const me = this;
             me.general.loading = true;
             Web.ajax("setting/setSwitchs", {
-                data:me.general.form,
+                data:{
+                    switchs:JSON.stringify(me.general.form)
+                },
                 success: function (data) {
                     me.setting.switchs = Object.assign({}, me.general.form);
                     wxbot.syncSwitchs(me.general.form);

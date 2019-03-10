@@ -16,7 +16,7 @@
 
 
 
-<modal v-model="timer.form.modal" title="添加定时消息" width="440" :mask-closable="false" :loading="timer.form.modalLoading" @on-ok="editMsgOk" @on-cancel="editMsgCancel">
+<modal v-model="timer.form.modal" title="添加定时消息" width="440" :mask-closable="false" :loading="timer.form.modalLoading" onselectstart="return false" ondragstart="return false" @on-ok="editMsgOk" @on-cancel="editMsgCancel">
     <i-form @submit.native.prevent>
         <form-item label="时间类型" class="mb-0">
             <radio-group v-model="timer.form.scheduleType">
@@ -95,7 +95,7 @@
         </div>
     </i-form>
 </modal>
-<modal v-model="timer.form.confirm" width="360" :mask-closable="false">
+<modal v-model="timer.form.confirm" width="360" onselectstart="return false" ondragstart="return false" :mask-closable="false">
     <p slot="header" class="text-center" style="color:#f60;">
         <icon type="ios-information-circle"></icon>
         <span>删除确认</span>

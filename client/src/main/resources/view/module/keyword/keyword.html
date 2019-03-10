@@ -17,7 +17,7 @@
 
 
 
-<modal v-model="keyword.form.modal" title="关键词" width="400" :mask-closable="false" :loading="keyword.form.modalLoading" @on-ok="editKeyMapOk" @on-cancel="editKeyMapCancel">
+<modal v-model="keyword.form.modal" title="关键词" width="400" :mask-closable="false" :loading="keyword.form.modalLoading" onselectstart="return false" ondragstart="return false" @on-ok="editKeyMapOk" @on-cancel="editKeyMapCancel">
     <div>
         <i-input placeholder="关键词..." clearable :disabled="keyword.form.edit" v-model="keyword.form.key"/>
     </div>
@@ -26,7 +26,7 @@
         <i-input type="textarea" :autosize="{maxRows: 4, minRows: 4}" placeholder="回复内容..." v-model="keyword.form.value"/>
     </div>
 </modal>
-<modal v-model="keyword.form.confirm" width="360" :mask-closable="false">
+<modal v-model="keyword.form.confirm" onselectstart="return false" ondragstart="return false" width="360" :mask-closable="false">
     <p slot="header" class="text-center" style="color:#f60;">
         <icon type="ios-information-circle"></icon>
         <span>删除确认</span>

@@ -24,6 +24,15 @@ textarea{
         width: 16.666667%;
     }
 }
+
+@media (max-width: 768px){
+    .ivu-modal{
+        width:440px!important;
+    }
+    .vertical-center-modal .ivu-modal {
+        flex: none;
+    }
+}
 .side-nav {
     position: fixed;
     height: 100%;
@@ -97,6 +106,15 @@ table.fixed tbody tr.h-100:hover{
 }
 table.fixed thead {
     width: 100%
+}
+
+.vertical-center-modal{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.vertical-center-modal .ivu-modal{
+    top: 0;
 }
 
 ::-webkit-scrollbar{

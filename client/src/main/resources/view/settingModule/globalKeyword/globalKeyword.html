@@ -32,7 +32,8 @@
 </table>
 
 
-<modal v-model="globalKeyword.form.modal" title="全群关键词" width="400" :mask-closable="false" :loading="globalKeyword.form.modalLoading" @on-ok="editKeyMapOk" @on-cancel="editKeyMapCancel">
+<modal v-model="globalKeyword.form.modal" title="全群关键词" width="400" :mask-closable="false" :loading="globalKeyword.form.modalLoading" class-name="vertical-center-modal"
+@on-ok="editKeyMapOk" @on-cancel="editKeyMapCancel">
     <div>
         <i-input placeholder="关键词..." clearable :disabled="globalKeyword.form.edit" v-model="globalKeyword.form.key"/>
     </div>
@@ -41,7 +42,7 @@
         <i-input type="textarea" :autosize="{maxRows: 4, minRows: 4}" placeholder="回复内容..." v-model="globalKeyword.form.value"/>
     </div>
 </modal>
-<modal v-model="globalKeyword.form.confirm" width="360" :mask-closable="false">
+<modal v-model="globalKeyword.form.confirm" width="360" :mask-closable="false" class-name="vertical-center-modal">
     <p slot="header" class="text-center" style="color:#f60;">
         <icon type="ios-information-circle"></icon>
         <span>删除确认</span>

@@ -16,11 +16,11 @@
 
 <body>
 	<div id="app" class="layout" v-cloak>
-		<header id="header"></header>
+		<header id="header" onselectstart="return false" ondragstart="return false"></header>
 		<i-content class="content">
 			<row>
 				<!-- 通讯录模块 -->
-				<i-col id="contacts" span="6"></i-col>
+				<i-col id="contacts" span="6" onselectstart="return false" ondragstart="return false"></i-col>
 				<!-- 通讯录模块 -->
 
 				<!-- 聊天模块 -->
@@ -28,11 +28,11 @@
 				<!-- 聊天模块 -->
 
 				<!-- 关键词设置模块 -->
-				<i-col id="right" span="9">
+				<i-col id="right" span="9" onselectstart="return false" ondragstart="return false">
 					<card dis-hover="true" class="p-0 bg-gray">
-						<tabs value="timer" :animated="false" class="right">
-							<tab-pane label="关键词" name="keyword" id="keyword" class="keyword"></tab-pane>
-							<tab-pane label="定时消息" name="timer" id="timer" class="timer"></tab-pane>
+						<tabs value="keyword" :animated="false" class="right">
+							<tab-pane v-if="chat.userName && chat.userName.indexOf('@@') > -1" label="关键词" name="keyword" id="keyword" class="keyword"></tab-pane>
+							<tab-pane v-if="chat.userName && chat.userName.indexOf('@@') > -1" label="定时消息" name="timer" id="timer" class="timer"></tab-pane>
 							<tab-pane label="联系人信息" name="info" id="info" class="info"></tab-pane>
 						</tabs>
 					</card>
