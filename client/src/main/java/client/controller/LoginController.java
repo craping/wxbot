@@ -92,7 +92,7 @@ public class LoginController implements Initializable {
 	}
 	
 	public void register() {
-		WxbotView.getInstance().load();
+		//WxbotView.getInstance().load();
 		Platform.runLater(() -> {
 			try {
 				new RegisterView().open();
