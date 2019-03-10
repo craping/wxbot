@@ -22,6 +22,8 @@ import com.teamdev.jxbrowser.chromium.events.FinishLoadingEvent;
 import com.teamdev.jxbrowser.chromium.events.LoadAdapter;
 import com.teamdev.jxbrowser.chromium.events.NotificationEvent;
 import com.teamdev.jxbrowser.chromium.events.NotificationListener;
+import com.teamdev.jxbrowser.chromium.events.ScriptContextAdapter;
+import com.teamdev.jxbrowser.chromium.events.ScriptContextEvent;
 import com.teamdev.jxbrowser.chromium.javafx.BrowserView;
 
 import client.Launch;
@@ -88,23 +90,6 @@ public final class WxbotView extends AnchorPane  {
 	
 	private WxbotView(boolean debug) {
 		this.debug = debug;
-		viewScene = new Scene(this, 900, 652);
-		viewScene.setOnKeyPressed(e -> {
-			if(e.getCode() == KeyCode.F12) {
-				debug();
-			}
-		});
-	}
-	
-	  
-	/**  
-	* @Title: load  
-	* @Description: 启动网页主界面视图
-	* @param     参数  
-	* @return void    返回类型  
-	* @throws  
-	*/   
-	public void load() {
 		getChildren().remove(browserView);
 		browser = new Browser();
 	    browserView = new BrowserView(browser);
@@ -157,20 +142,19 @@ public final class WxbotView extends AnchorPane  {
                 return PermissionStatus.DENIED;
             }
         });
-		browser.addLoadListener(new LoadAdapter() {
+        browser.addScriptContextListener(new ScriptContextAdapter() {
             @Override
-            public void onFinishLoadingFrame(FinishLoadingEvent event) {
-                if (event.isMainFrame()) {
-                    Browser browser = event.getBrowser();
-                    JSValue value = browser.executeJavaScriptAndReturnValue("window");
-                	value.asObject().setProperty("wxbot", Launch.context.getBean(Wxbot.class));
-                }
+            public void onScriptContextCreated(ScriptContextEvent event) {
+            	Browser browser = event.getBrowser();
+                JSValue value = browser.executeJavaScriptAndReturnValue("window");
+            	value.asObject().setProperty("wxbot", Launch.context.getBean(Wxbot.class));
             }
         });
 		if(this.debug)
 			browser.setContextMenuHandler(new MyContextMenuHandler(browserView));
         browser.addDisposeListener(event -> {
         	System.out.println("disposed event = "+event);
+        	System.exit(0);
         });
         browser.loadURL(getClass().getClassLoader().getResource("view/main.html").toExternalForm());
         
@@ -186,6 +170,12 @@ public final class WxbotView extends AnchorPane  {
 		setLeftAnchor(browserView, 0.0);
 		getChildren().add(browserView);
 		
+		viewScene = new Scene(this, 900, 652);
+		viewScene.setOnKeyPressed(e -> {
+			if(e.getCode() == KeyCode.F12) {
+				debug();
+			}
+		});
 		viewStage = new Stage();
 		viewStage.setTitle("微信机器人");
 		viewStage.setResizable(false);
@@ -198,8 +188,19 @@ public final class WxbotView extends AnchorPane  {
 			if(close !=null)
 				close.handle(e);
 		});
-		viewStage.show();
 		setting();
+	}
+	
+	  
+	/**  
+	* @Title: load  
+	* @Description: 启动网页主界面视图
+	* @param     参数  
+	* @return void    返回类型  
+	* @throws  
+	*/   
+	public void load() {
+		viewStage.show();
 	}
 	
 	public void openSetting(String menu){
@@ -215,14 +216,12 @@ public final class WxbotView extends AnchorPane  {
 	public void setting() {
 		settingBrowser = new Browser();
 		settingBrowserView = new BrowserView(settingBrowser);
-		settingBrowser.addLoadListener(new LoadAdapter() {
+		settingBrowser.addScriptContextListener(new ScriptContextAdapter() {
             @Override
-            public void onFinishLoadingFrame(FinishLoadingEvent event) {
-                if (event.isMainFrame()) {
-                    Browser browser = event.getBrowser();
-                    JSValue value = browser.executeJavaScriptAndReturnValue("window");
-                    value.asObject().setProperty("wxbot", Launch.context.getBean(Wxbot.class));
-                }
+            public void onScriptContextCreated(ScriptContextEvent event) {
+            	Browser browser = event.getBrowser();
+                JSValue value = browser.executeJavaScriptAndReturnValue("window");
+            	value.asObject().setProperty("wxbot", Launch.context.getBean(Wxbot.class));
             }
         });
 		settingBrowser.loadURL(getClass().getClassLoader().getResource("view/setting.html").toExternalForm());
@@ -243,13 +242,7 @@ public final class WxbotView extends AnchorPane  {
         settingStage.setResizable(false);
         settingStage.setIconified(false);
         settingStage.setScene(settingScene);
-//        settingStage.show();
         settingStage.onCloseRequestProperty().bind(settingStage.onHiddenProperty());
-//        settingStage.setOnCloseRequest(e -> {
-//			new Thread(() -> {
-//				System.out.println("settingView is disposed = " + settingBrowser.dispose(true));
-//			}).start();
-//		});
 	}
 	
 	/**  

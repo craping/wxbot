@@ -24,8 +24,10 @@ import com.teamdev.jxbrowser.chromium.JSObject;
 import com.teamdev.jxbrowser.chromium.JSValue;
 
 import client.utils.Config;
+import client.view.LoginView;
 import client.view.WxbotView;
 import client.view.server.ChatServer;
+import javafx.application.Platform;
 
 /**
  * @ClassName: Wxbot
@@ -46,6 +48,17 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 		super();
 	}
 
+	public void showLogin(){
+		Platform.runLater(() -> {
+			LoginView.getInstance().load();
+		});
+	}
+	
+	public void showWxbot(){
+		Platform.runLater(() -> {
+			WxbotView.getInstance().load();
+		});
+	}
 	/**
 	 * 获取用户信息
 	 * 
@@ -53,14 +66,8 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 	 * @return
 	 */
 	public JSONString getUserInfo() {
-		try {
-			return new JSONString(jsonMapper.writeValueAsString(user));
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-		}
-		return new JSONString("{}");
+		return new JSONString(user.toJSONString());
 	}
-	
 	  
 	/**  
 	* @Title: syncUserInfo  

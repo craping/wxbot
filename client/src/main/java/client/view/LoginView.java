@@ -18,6 +18,8 @@ import com.teamdev.jxbrowser.chromium.events.FinishLoadingEvent;
 import com.teamdev.jxbrowser.chromium.events.LoadAdapter;
 import com.teamdev.jxbrowser.chromium.events.NotificationEvent;
 import com.teamdev.jxbrowser.chromium.events.NotificationListener;
+import com.teamdev.jxbrowser.chromium.events.ScriptContextAdapter;
+import com.teamdev.jxbrowser.chromium.events.ScriptContextEvent;
 import com.teamdev.jxbrowser.chromium.javafx.BrowserView;
 
 import client.Launch;
@@ -68,23 +70,6 @@ public final class LoginView extends AnchorPane  {
 	
 	private LoginView(boolean debug) {
 		this.debug = debug;
-		viewScene = new Scene(this, 400, 300);
-		viewScene.setOnKeyPressed(e -> {
-			if(e.getCode() == KeyCode.F12) {
-				debug();
-			}
-		});
-	}
-	
-	  
-	/**  
-	* @Title: load  
-	* @Description: 启动网页主界面视图
-	* @param     参数  
-	* @return void    返回类型  
-	* @throws  
-	*/   
-	public void load() {
 		getChildren().remove(browserView);
 		browser = new Browser();
 	    browserView = new BrowserView(browser);
@@ -137,14 +122,12 @@ public final class LoginView extends AnchorPane  {
                 return PermissionStatus.DENIED;
             }
         });
-		browser.addLoadListener(new LoadAdapter() {
+        browser.addScriptContextListener(new ScriptContextAdapter() {
             @Override
-            public void onFinishLoadingFrame(FinishLoadingEvent event) {
-                if (event.isMainFrame()) {
-                    Browser browser = event.getBrowser();
-                    JSValue value = browser.executeJavaScriptAndReturnValue("window");
-                	value.asObject().setProperty("wxbot", Launch.context.getBean(Wxbot.class));
-                }
+            public void onScriptContextCreated(ScriptContextEvent event) {
+            	Browser browser = event.getBrowser();
+                JSValue value = browser.executeJavaScriptAndReturnValue("window");
+            	value.asObject().setProperty("wxbot", Launch.context.getBean(Wxbot.class));
             }
         });
         browser.addDisposeListener(event -> {
@@ -165,6 +148,12 @@ public final class LoginView extends AnchorPane  {
 		setLeftAnchor(browserView, 0.0);
 		getChildren().add(browserView);
 		
+		viewScene = new Scene(this, 400, 300);
+		viewScene.setOnKeyPressed(e -> {
+			if(e.getCode() == KeyCode.F12) {
+				debug();
+			}
+		});
 		viewStage = new Stage();
 		viewStage.setTitle("微信机器人");
 		viewStage.setResizable(false);
@@ -175,6 +164,17 @@ public final class LoginView extends AnchorPane  {
 				System.out.println("wxbotView is disposed = " + browser.dispose(true));
 			}).start();
 		});
+	}
+	
+	  
+	/**  
+	* @Title: load  
+	* @Description: 启动网页主界面视图
+	* @param     参数  
+	* @return void    返回类型  
+	* @throws  
+	*/   
+	public void load() {
 		viewStage.show();
 	}
 	
@@ -214,6 +214,9 @@ public final class LoginView extends AnchorPane  {
 	*/  
 	public void close() {
 		viewStage.close();
+		new Thread(() -> {
+			System.out.println("wxbotView is disposed = " + browser.dispose(true));
+		}).start();
 	}
 	
 	  

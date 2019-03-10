@@ -21,7 +21,6 @@ import com.teamdev.jxbrowser.chromium.JSObject;
 import client.pojo.Setting;
 import client.pojo.Switchs;
 import client.pojo.Tips;
-import client.pojo.WxUser;
 import client.view.WxbotView;
 import javafx.application.Platform;
 

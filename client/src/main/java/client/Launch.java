@@ -17,7 +17,6 @@ import com.teamdev.jxbrowser.chromium.internal.Environment;
 
 import client.view.LoginView;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.stage.Stage;
 
 @Configuration
@@ -57,19 +56,7 @@ public class Launch extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		try {
-			LoginView.getInstance().load();
-//			Scene scene = new Scene(FXMLLoader.load(getClass().getClassLoader().getResource("Login.fxml")));
-////			Scene scene = new Scene(new LoginView(), 400, 300);
-//			scene.getStylesheets().add(getClass().getClassLoader().getResource("application.css").toExternalForm());
-//			primaryStage.setIconified(false);
-//			primaryStage.setScene(scene);
-//			primaryStage.setTitle("微信机器人");
-//			primaryStage.setOnCloseRequest(e -> {
-//				
-//				System.exit(0);
-//			});
-//			primaryStage.show();
-			Platform.setImplicitExit(false);
+			LoginView.getInstance();
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
