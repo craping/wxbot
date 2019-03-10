@@ -1,15 +1,11 @@
 package client.view;
 
-import java.awt.Point;
-
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.teamdev.jxbrowser.chromium.Browser;
 import com.teamdev.jxbrowser.chromium.BrowserContext;
-import com.teamdev.jxbrowser.chromium.ContextMenuHandler;
-import com.teamdev.jxbrowser.chromium.ContextMenuParams;
 import com.teamdev.jxbrowser.chromium.JSValue;
 import com.teamdev.jxbrowser.chromium.Notification;
 import com.teamdev.jxbrowser.chromium.NotificationHandler;
@@ -27,35 +23,28 @@ import com.teamdev.jxbrowser.chromium.javafx.BrowserView;
 import client.Launch;
 import client.view.function.Wxbot;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.geometry.Point2D;
 import javafx.scene.Scene;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
   
 /**  
-* @ClassName: WxbotView  
-* @Description: Chromium外壳窗口类，单例模式
+* @ClassName: LoginView  
+* @Description: Chromium外壳登录窗口类，单例模式
 * @author Crap  
 * @date 2019年1月26日  
 *    
 */  
     
-public final class WxbotView extends AnchorPane  {
+public final class LoginView extends AnchorPane  {
 	
-	private static final Logger logger = LogManager.getLogger(WxbotView.class);
+	private static final Logger logger = LogManager.getLogger(LoginView.class);
 	
-	private static WxbotView INSTANCE;
+	private static LoginView INSTANCE;
 	
 	private Browser browser;
 	
@@ -65,30 +54,21 @@ public final class WxbotView extends AnchorPane  {
 	
 	private Scene viewScene;
 	
-	
-	private Browser settingBrowser;
-	
-	private BrowserView settingBrowserView;
-	
-	private Stage settingStage;
-	
 	private boolean debug;
 	
-	private EventHandler<Event> close;
-	
-	public static WxbotView getInstance() {
+	public static LoginView getInstance() {
 		if(INSTANCE == null)
-			INSTANCE = new WxbotView(true);
+			INSTANCE = new LoginView(true);
 		return INSTANCE;
 	}
 	
-	private WxbotView() {
+	private LoginView() {
 		this(false);
 	}
 	
-	private WxbotView(boolean debug) {
+	private LoginView(boolean debug) {
 		this.debug = debug;
-		viewScene = new Scene(this, 900, 652);
+		viewScene = new Scene(this, 400, 300);
 		viewScene.setOnKeyPressed(e -> {
 			if(e.getCode() == KeyCode.F12) {
 				debug();
@@ -167,12 +147,11 @@ public final class WxbotView extends AnchorPane  {
                 }
             }
         });
-		if(this.debug)
-			browser.setContextMenuHandler(new MyContextMenuHandler(browserView));
         browser.addDisposeListener(event -> {
         	System.out.println("disposed event = "+event);
+        	System.exit(0);
         });
-        browser.loadURL(getClass().getClassLoader().getResource("view/main.html").toExternalForm());
+        browser.loadURL(getClass().getClassLoader().getResource("view/login.html").toExternalForm());
         
         browser.addConsoleListener(e -> {
         	String level = e.getLevel().name();
@@ -195,61 +174,8 @@ public final class WxbotView extends AnchorPane  {
 			new Thread(() -> {
 				System.out.println("wxbotView is disposed = " + browser.dispose(true));
 			}).start();
-			if(close !=null)
-				close.handle(e);
 		});
 		viewStage.show();
-		setting();
-	}
-	
-	public void openSetting(String menu){
-		if(settingStage != null){
-			settingBrowser.executeJavaScript("app.syncSetting('"+menu+"')");
-			if(!settingStage.isShowing())
-				settingStage.show();
-			else
-				settingStage.toFront();
-		}
-	}
-	
-	public void setting() {
-		settingBrowser = new Browser();
-		settingBrowserView = new BrowserView(settingBrowser);
-		settingBrowser.addLoadListener(new LoadAdapter() {
-            @Override
-            public void onFinishLoadingFrame(FinishLoadingEvent event) {
-                if (event.isMainFrame()) {
-                    Browser browser = event.getBrowser();
-                    JSValue value = browser.executeJavaScriptAndReturnValue("window");
-                    value.asObject().setProperty("wxbot", Launch.context.getBean(Wxbot.class));
-                }
-            }
-        });
-		settingBrowser.loadURL(getClass().getClassLoader().getResource("view/setting.html").toExternalForm());
-		
-		AnchorPane pane = new AnchorPane(settingBrowserView);
-		AnchorPane.setTopAnchor(settingBrowserView, 0.0);
-		AnchorPane.setRightAnchor(settingBrowserView, 0.0);
-		AnchorPane.setBottomAnchor(settingBrowserView, 0.0);
-		AnchorPane.setLeftAnchor(settingBrowserView, 0.0);
-        Scene settingScene = new Scene(pane, 700, 500);
-        settingScene.setOnKeyPressed(e -> {
-			if(e.getCode() == KeyCode.F12) {
-				debugSetting();
-			}
-		});
-        settingStage = new Stage();
-        settingStage.setTitle("设置");
-        settingStage.setResizable(false);
-        settingStage.setIconified(false);
-        settingStage.setScene(settingScene);
-//        settingStage.show();
-        settingStage.onCloseRequestProperty().bind(settingStage.onHiddenProperty());
-//        settingStage.setOnCloseRequest(e -> {
-//			new Thread(() -> {
-//				System.out.println("settingView is disposed = " + settingBrowser.dispose(true));
-//			}).start();
-//		});
 	}
 	
 	/**  
@@ -279,25 +205,6 @@ public final class WxbotView extends AnchorPane  {
 		}
 	}
 	
-	public void debugSetting() {
-		if(this.debug) {
-			Browser debugBrowser = new Browser();
-			BrowserView debugBrowserView = new BrowserView(debugBrowser);
-	        debugBrowser.loadURL(settingBrowser.getRemoteDebuggingURL());
-	        Scene debugScene = new Scene(debugBrowserView, 790, 790);
-	        Stage debugStage = new Stage();
-			debugStage.setTitle("调试");
-			debugStage.setResizable(true);
-			debugStage.setIconified(false);
-			debugStage.setScene(debugScene);
-			debugStage.show();
-			debugStage.setOnCloseRequest(e -> {
-				new Thread(() -> {
-					System.out.println("debugView is disposed = " + debugBrowser.dispose(true));
-				}).start();
-			});
-		}
-	}
 	/**  
 	* @Title: close  
 	* @Description: 关闭视图
@@ -306,102 +213,25 @@ public final class WxbotView extends AnchorPane  {
 	* @throws  
 	*/  
 	public void close() {
-		if(viewStage != null)
-			viewStage.close();
-		if(settingStage != null)
-			settingStage.close();
+		viewStage.close();
 	}
 	
 	  
 	/**  
-	* @Title: onClose  
-	* @Description: 关闭事件处理
-	* @param @param event    
+	* @Title: hide  
+	* @Description: 隐藏登录窗口
+	* @param     参数  
 	* @return void    返回类型  
 	* @throws  
 	*/  
-	public void onClose(EventHandler<Event> event) {
-		close = event;
+	    
+	public void hide() {
+		viewStage.hide();
+		
+		new Thread(() -> {
+			System.out.println("wxbotView is disposed = " + browser.dispose(true));
+		}).start();
 	}
-	
-	  
-	/**  
-	* @Title: executeScript  
-	* @Description: 执行javascript
-	* @param @param javaScript
-	* @param @return    参数  
-	* @return JSValue    返回类型  
-	* @throws  
-	*/  
-	public JSValue executeScript(String javaScript) {
-		return browser.executeJavaScriptAndReturnValue(javaScript);
-	}
-	
-	private static class MyContextMenuHandler implements ContextMenuHandler {
-
-        private final Pane pane;
-
-        private MyContextMenuHandler(Pane paren) {
-            this.pane = paren;
-        }
-
-        private static MenuItem createMenuItem(String title, final Runnable action) {
-            MenuItem menuItem = new MenuItem(title);
-            menuItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    action.run();
-                }
-            });
-            return menuItem;
-        }
-
-        public void showContextMenu(final ContextMenuParams params) {
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    createAndDisplayContextMenu(params);
-                }
-            });
-        }
-
-        private void createAndDisplayContextMenu(final ContextMenuParams params) {
-            final ContextMenu contextMenu = new ContextMenu();
-
-            // Since context menu doesn't auto hide, listen mouse scroll events
-            // on BrowserView and hide context menu on mouse click
-            pane.setOnScroll(new EventHandler<ScrollEvent>() {
-                @Override
-                public void handle(ScrollEvent event) {
-                    contextMenu.hide();
-                }
-            });
-
-            // If there's link under mouse pointer, create and add
-            // the "Open link in new window" menu item to our context menu
-            if (!params.getLinkText().isEmpty()) {
-                contextMenu.getItems().add(createMenuItem(
-                        "Open link in new window", new Runnable() {
-                            public void run() {
-                                String linkURL = params.getLinkURL();
-                                System.out.println("linkURL = " + linkURL);
-                            }
-                        }));
-            }
-
-            // Create and add "Reload" menu item to our context menu
-            contextMenu.getItems().add(createMenuItem("重新加载", new Runnable() {
-                public void run() {
-                    params.getBrowser().reload();
-                }
-            }));
-
-            // Display context menu at required location on screen
-            Point location = params.getLocation();
-            Point2D screenLocation = pane.localToScreen(location.x, location.y);
-            contextMenu.show(pane, screenLocation.getX(), screenLocation.getY());
-        }
-    }
 
 	public Browser getBrowser() {
 		return browser;

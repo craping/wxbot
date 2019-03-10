@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import client.Launch;
-import client.controller.LoginController;
 import client.view.function.Wxbot;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -63,7 +62,8 @@ public class QRView extends AnchorPane {
 			label.setText("请使用微信扫一扫以登录");
 		} else {
 			// 关闭登录窗口
-			LoginController.LOGIN_STAGE.hide();
+//			LoginController.LOGIN_STAGE.hide();
+			LoginView.getInstance().hide();
 
 			root = FXMLLoader.load(getClass().getClassLoader().getResource("QR.fxml"));
 			// 获取ImageView 并赋值

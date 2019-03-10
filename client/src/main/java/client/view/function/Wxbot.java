@@ -1,5 +1,6 @@
 package client.view.function;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -70,6 +71,25 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 		}
 		return new JSONString("{}");
 	}
+	
+	  
+	/**  
+	* @Title: syncUserInfo  
+	* @Description: 同步用户信息
+	* @param @param syncUserInfo    参数  
+	* @return void    返回类型  
+	* @throws  
+	*/  
+	    
+	public void syncUserInfo(JSObject syncUserInfo){
+		if(syncUserInfo != null && syncUserInfo.toJSONString() != null && !syncUserInfo.toJSONString().isEmpty()){
+			try {
+				this.user = jsonMapper.readValue(syncUserInfo.toJSONString(), WxUser.class);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 
 	/**
 	 * @Title: start 
@@ -78,9 +98,13 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 	 * @return void 返回类型 
 	 * @throws
 	 */
-	public void start(WxUser user) {
-		if (this.user == null) {
-			this.user = user;
+	public void start(JSObject syncUserInfo) {
+		if (syncUserInfo != null && syncUserInfo.toJSONString() != null && !syncUserInfo.toJSONString().isEmpty()) {
+			try {
+				this.user = jsonMapper.readValue(syncUserInfo.toJSONString(), WxUser.class);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		wxbotThread = new Thread(() -> {
 			try {
@@ -108,8 +132,9 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 
 	@Scheduled(fixedRate=1000)
     private void work() {
-		Date now = new Date();
-		if(TIMER_MAP != null && TIMER_MAP.size() > 0){
+		//判断定时消息是否开启
+		if(SettingFunction.SETTING.getSwitchs().isGlobalTimer() && TIMER_MAP != null){
+			Date now = new Date();
 			
 			TIMER_MAP.forEach((seq, msgs) -> {
 				msgs.forEach(msg -> {
@@ -146,7 +171,7 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 						){
 							System.out.println("固定时间消息匹配："+msg.getSchedule());
 							//全局群消息走转发
-							if (SettingFunction.SETTING.getSwitchs().isGlobalTimer() && Config.GLOBA_SEQ.equals(seq)) {
+							if (Config.GLOBA_SEQ.equals(seq)) {
 								chatServer.sendGloba(cacheService.getChatRooms(), msg.getContent(), msgType);
 							} else {
 								Contact chatRoom = cacheService.getChatRoom(seq);
@@ -168,7 +193,7 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 							
 							System.out.println("间隔时间消息匹配："+msg.getSchedule());
 							//全局群消息走转发
-							if (SettingFunction.SETTING.getSwitchs().isGlobalTimer() && Config.GLOBA_SEQ.equals(seq)) {
+							if (Config.GLOBA_SEQ.equals(seq)) {
 								chatServer.sendGloba(cacheService.getChatRooms(), msg.getContent(), msgType);
 							} else {
 								Contact chatRoom = cacheService.getChatRoom(seq);

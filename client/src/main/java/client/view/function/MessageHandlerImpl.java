@@ -5,12 +5,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.cherry.jeeves.domain.shared.Contact;
+import com.cherry.jeeves.domain.shared.FriendInvitationContent;
 import com.cherry.jeeves.domain.shared.Member;
 import com.cherry.jeeves.domain.shared.Message;
 import com.cherry.jeeves.domain.shared.RecommendInfo;
@@ -23,12 +25,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.teamdev.jxbrowser.chromium.CookieStorage;
 import com.teamdev.jxbrowser.chromium.JSONString;
 import com.teamdev.jxbrowser.chromium.JSObject;
 import com.teamdev.jxbrowser.chromium.JSValue;
 
-import client.controller.LoginController;
 import client.enums.ChatType;
 import client.pojo.WxMessage;
 import client.pojo.WxMessageBody;
@@ -102,7 +104,7 @@ public class MessageHandlerImpl implements MessageHandler {
 			qrView.close();
 			WxbotView wxbotView = WxbotView.getInstance();
 			wxbotView.onClose(e -> {
-				LoginController.LOGIN_STAGE.show();
+				
 			});
 			wxbotView.load();
 			CookieStorage cookieStorage = wxbotView.getBrowser().getCookieStorage();
@@ -160,23 +162,20 @@ public class MessageHandlerImpl implements MessageHandler {
 		}
 		
 		
-		if (chatRoom != null) {
-			Map<String, String> keyMap;
+		//判断关键词是否开启
+		if (SettingFunction.SETTING.getSwitchs().isGlobalKeyword() && chatRoom != null) {
 			
 			// 全域关键词自动回复
-			if(SettingFunction.SETTING.getSwitchs().isGlobalKeyword()) {
-				
-				keyMap = KeywordFunction.KEY_MAP.get(Config.GLOBA_SEQ);
-				if (keyMap != null) {
-					for (Map.Entry<String, String> entry : keyMap.entrySet()) {
-						if (content.contains(entry.getKey())) {
-							try {
-								//回复关键词并写聊天记录
-								wechatHttpService.sendText(chatRoom.getUserName(), entry.getValue());
-								chatServer.writeSendTextRecord(chatRoom, entry.getValue());
-							} catch (IOException e) {
-								e.printStackTrace();
-							}
+			Map<String, String> keyMap = KeywordFunction.KEY_MAP.get(Config.GLOBA_SEQ);
+			if (keyMap != null) {
+				for (Map.Entry<String, String> entry : keyMap.entrySet()) {
+					if (content.contains(entry.getKey())) {
+						try {
+							//回复关键词并写聊天记录
+							wechatHttpService.sendText(chatRoom.getUserName(), entry.getValue());
+							chatServer.writeSendTextRecord(chatRoom, entry.getValue());
+						} catch (IOException e) {
+							e.printStackTrace();
 						}
 					}
 				}
@@ -529,17 +528,18 @@ public class MessageHandlerImpl implements MessageHandler {
 		logger.debug("收到好友请求消息");
 		logger.debug("recommendinfo content:" + info.getContent());
 		// 默认接收所有的邀请
-		return true;
+		return SettingFunction.SETTING.getSwitchs().isAutoAcceptFriend();
 	}
 
 	@Override
 	public void postAcceptFriendInvitation(Message message) throws IOException {
 		logger.debug("接受好友请求消息");
 //        将该用户的微信号设置成他的昵称
-//		String content = StringEscapeUtils.unescapeXml(message.getContent());
-//		ObjectMapper xmlMapper = new XmlMapper();
-//		FriendInvitationContent friendInvitationContent = xmlMapper.readValue(content, FriendInvitationContent.class);
+		String content = StringEscapeUtils.unescapeXml(message.getContent());
+		ObjectMapper xmlMapper = new XmlMapper();
+		FriendInvitationContent friendInvitationContent = xmlMapper.readValue(content, FriendInvitationContent.class);
 		wechatHttpService.setAlias(message.getRecommendInfo().getUserName(), message.getRecommendInfo().getNickName());
+		wechatHttpService.setAlias(message.getRecommendInfo().getUserName(), friendInvitationContent.getFromusername());
 	}
 
 	@Override

@@ -55,9 +55,9 @@ public class SettingFunction {
 		SETTING.setForwards(new ConcurrentLinkedQueue<>());
 	}
 	
-	public void openSetting(){
+	public void openSetting(String menu){
 		Platform.runLater(() -> {
-			WxbotView.getInstance().openSetting();
+			WxbotView.getInstance().openSetting(menu);
 		});
 	}
 	
