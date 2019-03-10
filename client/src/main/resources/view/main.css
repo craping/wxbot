@@ -48,6 +48,29 @@ textarea{
     margin-bottom: 0;
 }
 
+table.fixed tbody {
+    display: block;
+    overflow-y: auto;
+}
+table.fixed thead, 
+table.fixed tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+table.fixed thead tr th{
+    background-color: #f8f8f9;
+    border-width: 1px;
+}
+table.fixed tbody tr:first-child td{
+    border-top:none;
+}
+table.fixed tbody tr.h-100:hover{
+    background-color: #fff;
+}
+table.fixed thead {
+    width: 100%
+}
 
 ::-webkit-scrollbar{
     width:7px;

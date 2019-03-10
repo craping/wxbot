@@ -2,8 +2,14 @@
     overflow: hidden;
     padding-top: 5px;
     padding-left: 15px;
-    cursor: pointer;
     border-bottom: 1px solid #dcdee2;
+}
+.contact-ul{
+    height: 530px;
+    overflow-y: auto;
+}
+.contact-ul li:hover{
+    background-color: #00000013;
 }
 .avatar {
     float: left;

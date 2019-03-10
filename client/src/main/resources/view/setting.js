@@ -55,6 +55,7 @@ const constant = {
     }
 };
 $script.ready(["user", "general", "forward", "globalTimer", "globalKeyword", "tips"], function () {
+    Web.user = wxbot.getUserInfo();
     let data = Object.assign({
         header:{},
         setting:{},
@@ -84,7 +85,8 @@ $script.ready(["user", "general", "forward", "globalTimer", "globalKeyword", "ti
             return res;
         },
         syncSetting(menu){
-            this.header = constant.header[menu]
+            this.header = constant.header[menu];
+            $("a[name='"+menu+"']").tab("show");
             this.setting = wxbot.getSetting();
             this.chatRooms = Object.freeze(wxbot.getChatRooms())
             this.generalReset();

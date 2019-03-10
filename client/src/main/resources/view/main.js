@@ -25,6 +25,7 @@ $script.ready(["vue", "iview", "jquery", "crypto", "common"], function () {
 })
 var app;
 $script.ready(["header", "contacts", "chat", "keyword", "timer", "info"], function () {
+    Web.user = wxbot.getUserInfo();
     let methods = Object.assign({
         filterAll(data, argumentObj) {
             return data.filter(d => {

@@ -106,7 +106,7 @@ $script.ready(["vue", "iview", "jquery", "crypto", "md5", "common"], function ()
                 }
             });
 
-
+            wxbot.showLogin();
         },
         fail: function (data) {
             notify("操作提示", { body: "机器人始化失败："+data.msg }, 3000);

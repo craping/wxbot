@@ -44,42 +44,40 @@ Contacts = {
             if (filterKey && filterKey.length > 0) {
                 _searchResult.style['display'] = "block";
                 _loading.style['display'] = "block";
-                setTimeout(() => {
-                    let me = this;
-                    if (Contacts.data.contactTab == "chatroom") {
-                        Contacts.data.searchResult = me.filterAll(Contacts.data.chatRooms.map(e => {
-                            return {
-                                seq: e.seq,
-                                UserName: e.UserName,
-                                HeadImgUrl: e.HeadImgUrl,
-                                NickName: Contacts.methods.emojiFormatter(e.NickName)
-                            };
-                        }), {
-                                NickName: filterKey
-                        });
-                    } else if (Contacts.data.contactTab == "contact") {
-                        Contacts.data.searchResult = me.filterAll(Contacts.data.individuals.map(e => {
-                            return {
-                                seq: e.seq,
-                                UserName: e.UserName,
-                                HeadImgUrl: e.HeadImgUrl,
-                                NickName: Contacts.methods.emojiFormatter(e.NickName)
-                            };
-                        }), {
-                                NickName: filterKey
-                        });
-                    } else {
-                        // app.$Message.error("操作失败！"); // 没有匹配到tab name
-                    }
+                let me = this;
+                if (Contacts.data.contactTab == "chatroom") {
+                    Contacts.data.searchResult = me.filterAll(Contacts.data.chatRooms.map(e => {
+                        return {
+                            seq: e.seq,
+                            UserName: e.UserName,
+                            HeadImgUrl: e.HeadImgUrl,
+                            NickName: Contacts.methods.emojiFormatter(e.NickName)
+                        };
+                    }), {
+                            NickName: filterKey
+                    });
+                } else if (Contacts.data.contactTab == "contact") {
+                    Contacts.data.searchResult = me.filterAll(Contacts.data.individuals.map(e => {
+                        return {
+                            seq: e.seq,
+                            UserName: e.UserName,
+                            HeadImgUrl: e.HeadImgUrl,
+                            NickName: Contacts.methods.emojiFormatter(e.NickName)
+                        };
+                    }), {
+                            NickName: filterKey
+                    });
+                } else {
+                    // app.$Message.error("操作失败！"); // 没有匹配到tab name
+                }
 
-                    _loading.style['display'] = "none";
-                    // 未匹配任何结果
-                    if (Contacts.data.searchResult.length == 0) {
-                        _not_found.style['display'] = "block";
-                    } else {
-                        _result.style['display'] = "block";
-                    }
-                }, 500);
+                _loading.style['display'] = "none";
+                // 未匹配任何结果
+                if (Contacts.data.searchResult.length == 0) {
+                    _not_found.style['display'] = "block";
+                } else {
+                    _result.style['display'] = "block";
+                }
             }
         },
         // 初始化联系人列表
