@@ -34,6 +34,8 @@
 							<tab-pane v-if="chat.userName && chat.userName.indexOf('@@') > -1" label="关键词" name="keyword" id="keyword" class="keyword"></tab-pane>
 							<tab-pane v-if="chat.userName && chat.userName.indexOf('@@') > -1" label="定时消息" name="timer" id="timer" class="timer"></tab-pane>
 							<tab-pane label="联系人信息" name="info" id="info" class="info"></tab-pane>
+							<tab-pane label="未关联关键词" name="withoutKeyword" id="withoutKeyword" class="keyword"></tab-pane>
+							<tab-pane label="未关键定时消息" name="withoutTimer" id="withoutTimer" class="timer"></tab-pane>
 						</tabs>
 					</card>
 				</i-col>

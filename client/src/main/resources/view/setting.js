@@ -83,7 +83,8 @@ $script.ready(["user", "general", "forward", "globalTimer", "globalKeyword", "ti
             }
             return res;
         },
-        syncSetting(){
+        syncSetting(menu){
+            this.header = constant.header[menu]
             this.setting = wxbot.getSetting();
             this.chatRooms = Object.freeze(wxbot.getChatRooms())
             this.generalReset();
