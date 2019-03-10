@@ -506,7 +506,7 @@ public class MessageHandlerImpl implements MessageHandler {
 			JSObject app = wxbotView.getBrowser().executeJavaScriptAndReturnValue("app").asObject();
 			JSValue syncSeq = app.getProperty("syncSeq");
 			try {
-				syncSeq.asFunction().invoke(app, new JSONString(jsonMapper.writeValueAsString(seqMap)));
+				syncSeq.asFunction().invokeAsync(app, new JSONString(jsonMapper.writeValueAsString(seqMap)));
 				WxMessageTool.execContactsChanged("您有好友更新消息，已成功刷新列表");
 			} catch (JsonProcessingException e) {
 				e.printStackTrace();

@@ -14,8 +14,6 @@ import com.teamdev.jxbrowser.chromium.PermissionHandler;
 import com.teamdev.jxbrowser.chromium.PermissionRequest;
 import com.teamdev.jxbrowser.chromium.PermissionStatus;
 import com.teamdev.jxbrowser.chromium.PermissionType;
-import com.teamdev.jxbrowser.chromium.events.FinishLoadingEvent;
-import com.teamdev.jxbrowser.chromium.events.LoadAdapter;
 import com.teamdev.jxbrowser.chromium.events.NotificationEvent;
 import com.teamdev.jxbrowser.chromium.events.NotificationListener;
 import com.teamdev.jxbrowser.chromium.events.ScriptContextAdapter;

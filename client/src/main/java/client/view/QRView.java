@@ -41,7 +41,7 @@ public class QRView extends AnchorPane {
 	}
 	
 	public void close() {
-		QR_STAGE.hide();
+		QR_STAGE.close();
 	}
 
 	public void open(byte[] qrData) throws IOException {
