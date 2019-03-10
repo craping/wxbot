@@ -48,12 +48,12 @@ public class UserPump extends DataPump<JSONObject, FullHttpRequest, Channel> {
 	@Pipe("register")
 	@BarScreen(
 		desc="用户注册",
+				security=true,
 		params= {
 			@Parameter(value="user_name",  desc="登录名", type=MobileParam.class),
 			@Parameter(value="user_pwd",  desc="密码"),
 			@Parameter(value="confirm_pwd",  desc="确认密码"),
-			@Parameter(value="phone_num",  desc="手机号码", type=MobileParam.class),
-			@Parameter(value="phone_code",  desc="手机验证码")
+			@Parameter(value="code",  desc="手机验证码")
 		}
 	)
 	public Errcode register (JSONObject params) throws ErrcodeException {
@@ -62,7 +62,7 @@ public class UserPump extends DataPump<JSONObject, FullHttpRequest, Channel> {
 			throw new ErrcodeException(CustomErrors.USER_CHANGE_PWD_ERR);
 		
 		User user = new User();
-		UserInfo userInfo = new UserInfo(params.getString("user_name"), userPwd, params.getString("phone_num"));
+		UserInfo userInfo = new UserInfo(params.getString("user_name"), userPwd, params.getString("user_name"));
 		user.setUserInfo(userInfo);
 		userServer.insert(user);
 		return new DataResult(Errors.OK);
