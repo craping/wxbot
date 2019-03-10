@@ -31,7 +31,6 @@ import wxrobot.dao.entity.User;
 import wxrobot.dao.entity.field.UserInfo;
 import wxrobot.server.enums.CustomErrors;
 import wxrobot.server.param.MobileParam;
-import wxrobot.server.param.UserNameParam;
 import wxrobot.server.utils.RedisUtil;
 import wxrobot.server.utils.Tools;
 
@@ -50,7 +49,7 @@ public class UserPump extends DataPump<JSONObject, FullHttpRequest, Channel> {
 	@BarScreen(
 		desc="用户注册",
 		params= {
-			@Parameter(value="user_name",  desc="登录名", type=UserNameParam.class),
+			@Parameter(value="user_name",  desc="登录名", type=MobileParam.class),
 			@Parameter(value="user_pwd",  desc="密码"),
 			@Parameter(value="confirm_pwd",  desc="确认密码"),
 			@Parameter(value="phone_num",  desc="手机号码", type=MobileParam.class),
