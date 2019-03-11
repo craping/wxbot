@@ -83,7 +83,7 @@ GlobalTimer = {
         editMsgOk(){
             let me = this;
             var form = new FormData();
-            form.append("token", wxbot.getToken());
+            form.append("token", Web.user.token);
             form.append("content", me.globalTimer.form.type=="text"?me.globalTimer.form.text:me.globalTimer.form.file);
             let schedule = [];
 

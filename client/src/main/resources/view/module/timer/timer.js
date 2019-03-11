@@ -124,7 +124,7 @@ Timer = {
         editMsgOk(){
             let me = this;
             var form = new FormData();
-            form.append("token", wxbot.getToken());
+            form.append("token", Web.user.token);
             form.append("seq", me.timer.form.seq);
             form.append("content", me.timer.form.type=="text"?me.timer.form.text:me.timer.form.file);
             let schedule = [];
