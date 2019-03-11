@@ -12,13 +12,11 @@ Info = {
             console.log(Info.data.chatRoomUserName);
             let me = this;
             Info.data.loading = true;
-            setTimeout(() => {
-                Info.data.members = wxbot.getChatRoomMembers(Info.data.chatRoomUserName);
-                this.$nextTick(() => {
-                    Info.data.loading = false;
-                    me.$Message.success("刷新群成员列表成功！");
-                });
-            }, 1000);
+            wxbot.getChatRoomMembers(Info.data.chatRoomUserName, data => {
+                Info.data.members = data;
+                Info.data.loading = false;
+                me.$Message.success("刷新群成员列表成功！");
+            });
         },
         // 后台主动刷新
         reloadMember() {

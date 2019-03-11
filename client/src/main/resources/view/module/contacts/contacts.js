@@ -197,8 +197,16 @@ Contacts = {
             Chat.data.title = nickName;
             Chat.data.userName = userName;
             Chat.data.ownerHeadImg = wxbot.getOwnerHeadImgUrl();
-            Chat.data.chatRecord = wxbot.chatRecord(seq);
-            Info.data.members = wxbot.getChatRoomMembers(userName);
+            // Chat.data.chatRecord = wxbot.chatRecord(seq);
+            // Info.data.members = wxbot.getChatRoomMembers(userName);
+            wxbot.chatRecord(seq, data =>{
+                Chat.data.chatRecord = data;
+            });
+            Info.data.loading = true;
+            wxbot.getChatRoomMembers(userName, data => {
+                Info.data.members = data;
+                Info.data.loading = false;
+            });
             Info.data.chatRoomUserName = userName;
             $('#avatar_' + seq + " sup.ivu-badge-count").remove();
             Contacts.data.filterKey = "";

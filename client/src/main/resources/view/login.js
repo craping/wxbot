@@ -132,6 +132,11 @@ $script.ready(["vue", "iview", "jquery", "crypto", "md5", "common"], function ()
                             }
                         }, 1000);
                     },
+                    call(){
+                        wxbot.call(function(data){
+                            console.log(data);
+                        });
+                    }
                 }
             });
             wxbot.showLogin();
