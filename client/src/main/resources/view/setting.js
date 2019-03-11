@@ -92,6 +92,7 @@ $script.ready(["user", "general", "forward", "globalTimer", "globalKeyword", "ti
             this.generalReset();
             this.getMsgs();
             this.getKeyMap();
+            this.tipsReset();
         },
         onMembersSeqChanged(seqMap){
             app.modKeywords(seqMap);
