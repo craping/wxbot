@@ -19,7 +19,7 @@ Contacts = {
             Contacts.data.chatRooms.forEach(e => {
                 _outStr = _outStr + wxbot.rmEmoji(e.NickName) + "\n";
             });
-            var export_blob = new Blob([_outStr]);
+            var export_blob = new Blob([new String(_outStr, "utf-8")]);
             var save_link = document.createElementNS("http://www.w3.org/1999/xhtml", "a")
             save_link.href = urlObject.createObjectURL(export_blob);
             save_link.download = "联系人.txt";

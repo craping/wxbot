@@ -63,10 +63,9 @@ Header = {
                         var TaskControl = function (taskFunction, finishFunction) {
                             this.finish = false;
                             this.next = function () {
-                                if (!this.finish) {
+                                if (!this.finish && Header.data.checkLoading) {
                                     taskFunction.call(this);
                                 } else {
-                                    Header.data.checkProgress.count = Contacts.data.individuals.length;
                                     finishFunction.call(this);
                                 }
                             };
@@ -75,12 +74,12 @@ Header = {
                         var task = function () {
                             var send = function () {
                                 this.index++;
-                                Header.data.checkProgress.count = this.index;
                                 console.time("任务：" + this.index);
                                 //判断列表中还有没有任务
-                                if (this.index >= this.data.length) {
+                                if (this.index >= this.data.length || !Header.data.checkLoading) {
                                     this.finish = true;
                                 } else {
+                                    Header.data.checkProgress.count++;
                                     var contact = this.data[this.index];
                                     wxbot.sendText(contact.seq, contact.NickName, contact.UserName, "僵尸检测，此消息不用回复!");
                                 }
