@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import com.cherry.jeeves.domain.shared.Contact;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.teamdev.jxbrowser.chromium.JSFunction;
 import com.teamdev.jxbrowser.chromium.JSONString;
 
 import client.utils.EmojiUtil;
@@ -108,15 +109,18 @@ public class ContactsFunction extends SettingFunction {
 	 * @param chatRoomName
 	 * @return
 	 */
-	public JSONString getChatRoomMembers(String chatRoomName) {
-		try {
-			ConcurrentLinkedQueue<Contact> members = wechatService.getChatRoomInfo(chatRoomName).getMemberList();
-			return new JSONString(jsonMapper.writeValueAsString(members));
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	public JSONString getChatRoomMembers(String chatRoomName, JSFunction function) {
+		new Thread(() -> {
+			try {
+				ConcurrentLinkedQueue<Contact> members = wechatService.getChatRoomInfo(chatRoomName).getMemberList();
+				function.invokeAsync(function, new JSONString(jsonMapper.writeValueAsString(members)));
+//				return new JSONString(jsonMapper.writeValueAsString(members));
+			} catch (JsonProcessingException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}).start();
 		return new JSONString("{}");
 	}
 	  

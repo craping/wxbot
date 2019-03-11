@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Component;
 import com.cherry.jeeves.domain.response.SendMsgResponse;
 import com.cherry.jeeves.enums.MessageType;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.teamdev.jxbrowser.chromium.JSFunction;
 import com.teamdev.jxbrowser.chromium.JSONString;
 
 import client.enums.Direction;
@@ -178,25 +180,28 @@ public abstract class ChatFunction extends ContactsFunction {
 	 * @param seq
 	 * @return
 	 */
-	public JSONString chatRecord(String seq) {
-		try {
-			String path = Config.CHAT_RECORD_PATH + seq + "/" + Tools.getSysDate() + ".txt";
-			List<String> l = FileUtil.readFile(path);
-			List<WxMessage> records = new ArrayList<WxMessage>();
-			if (l.size() > 0 && l != null) {
-				for (String str : l) {
-					WxMessage msg = jsonMapper.readValue(str, WxMessage.class);
-					records.add(msg);
+	public JSONString chatRecord(String seq, JSFunction function) {
+		new Thread(() -> {
+			try {
+				String path = Config.CHAT_RECORD_PATH + seq + "/" + Tools.getSysDate() + ".txt";
+				List<String> l = FileUtil.readFile(path);
+				List<WxMessage> records = new LinkedList<WxMessage>();
+				if (l.size() > 0 && l != null) {
+					for (String str : l) {
+						WxMessage msg = jsonMapper.readValue(str, WxMessage.class);
+						records.add(msg);
+					}
 				}
+				// 全部设置已读消息
+				WxMessageTool.haveRead(seq);
+//				return new JSONString(jsonMapper.writeValueAsString(records));
+				function.invokeAsync(function, new JSONString(jsonMapper.writeValueAsString(records)));
+			} catch (JsonProcessingException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
-			// 全部设置已读消息
-			WxMessageTool.haveRead(seq);
-			return new JSONString(jsonMapper.writeValueAsString(records));
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		}).start();
 		return new JSONString("{}");
 	}
 

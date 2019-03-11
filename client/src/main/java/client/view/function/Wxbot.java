@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 import com.cherry.jeeves.domain.shared.Contact;
 import com.cherry.jeeves.enums.MessageType;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.teamdev.jxbrowser.chromium.JSFunction;
 import com.teamdev.jxbrowser.chromium.JSONString;
 import com.teamdev.jxbrowser.chromium.JSObject;
 import com.teamdev.jxbrowser.chromium.JSValue;
@@ -235,5 +236,10 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void call(JSFunction function) {
+		System.out.println(function);
+		function.invokeAsync(function, "123");
 	}
 }
