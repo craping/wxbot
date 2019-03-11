@@ -1,6 +1,7 @@
 package client.view.function;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -634,11 +635,37 @@ public class MessageHandlerImpl implements MessageHandler {
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
+		
+		Map<String, Contact> contactMap = new HashMap<String, Contact>();
+		WxbotView wxbotView = WxbotView.getInstance();
+		JSObject app = wxbotView.getBrowser().executeJavaScriptAndReturnValue("app").asObject();
+		JSValue deleteEvt = app.getProperty("deleteEvt");
+		try {
+			contactMap.put(contact.getSeq(), contact);
+			deleteEvt.asFunction().invoke(app, new JSONString(jsonMapper.writeValueAsString(contactMap)));
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void onFriendBlacklist(Contact contact) {
-		// TODO Auto-generated method stub
+		logger.debug("onFriendBlacklist 消息");
+		try {
+			System.out.println(jsonMapper.writeValueAsString(contact));
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
 		
+		Map<String, Contact> contactMap = new HashMap<String, Contact>();
+		WxbotView wxbotView = WxbotView.getInstance();
+		JSObject app = wxbotView.getBrowser().executeJavaScriptAndReturnValue("app").asObject();
+		JSValue blacklistEvt = app.getProperty("blacklistEvt");
+		try {
+			contactMap.put(contact.getSeq(), contact);
+			blacklistEvt.asFunction().invoke(app, new JSONString(jsonMapper.writeValueAsString(contactMap)));
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
 	}
 }
