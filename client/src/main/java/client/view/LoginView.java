@@ -1,5 +1,9 @@
 package client.view;
 
+import java.io.DataInputStream;
+import java.io.InputStream;
+import java.net.URL;
+
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,6 +18,10 @@ import com.teamdev.jxbrowser.chromium.PermissionHandler;
 import com.teamdev.jxbrowser.chromium.PermissionRequest;
 import com.teamdev.jxbrowser.chromium.PermissionStatus;
 import com.teamdev.jxbrowser.chromium.PermissionType;
+import com.teamdev.jxbrowser.chromium.ProtocolHandler;
+import com.teamdev.jxbrowser.chromium.ProtocolService;
+import com.teamdev.jxbrowser.chromium.URLRequest;
+import com.teamdev.jxbrowser.chromium.URLResponse;
 import com.teamdev.jxbrowser.chromium.events.NotificationEvent;
 import com.teamdev.jxbrowser.chromium.events.NotificationListener;
 import com.teamdev.jxbrowser.chromium.events.ScriptContextAdapter;
@@ -22,6 +30,7 @@ import com.teamdev.jxbrowser.chromium.javafx.BrowserView;
 import com.teamdev.jxbrowser.chromium.javafx.DefaultDialogHandler;
 
 import client.Launch;
+import client.utils.FileUtil;
 import client.view.function.Wxbot;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -59,7 +68,7 @@ public final class LoginView extends AnchorPane  {
 	
 	public static LoginView getInstance() {
 		if(INSTANCE == null)
-			INSTANCE = new LoginView(true);
+			INSTANCE = new LoginView();
 		return INSTANCE;
 	}
 	
@@ -73,6 +82,26 @@ public final class LoginView extends AnchorPane  {
 		browser = new Browser();
 	    browserView = new BrowserView(browser);
 	    BrowserContext context = browser.getContext();
+	    ProtocolService protocolService = context.getProtocolService();
+	    protocolService.setProtocolHandler("jar", new ProtocolHandler() {
+	        @Override
+	        public URLResponse onRequest(URLRequest request) {
+	            try {
+	                URLResponse response = new URLResponse();
+	                URL path = new URL(request.getURL().split("[?]")[0]);
+	                InputStream inputStream = path.openStream();
+	                DataInputStream stream = new DataInputStream(inputStream);
+	                byte[] data = new byte[stream.available()];
+	                stream.readFully(data);
+	                response.setData(data);
+	                String mimeType = FileUtil.getMimeType(path.toString());
+	                response.getHeaders().setHeader("Content-Type", mimeType);
+	                return response;
+	            } catch (Exception ignored) {}
+	            return null;
+	        }
+	    });
+	    
         NotificationService notificationService = context.getNotificationService();
         notificationService.setNotificationHandler(new NotificationHandler() {
             @Override
@@ -150,11 +179,12 @@ public final class LoginView extends AnchorPane  {
 		getChildren().add(browserView);
 		
 		viewScene = new Scene(this, 400, 300);
-		viewScene.setOnKeyPressed(e -> {
-			if(e.getCode() == KeyCode.F12) {
-				debug();
-			}
-		});
+		if(this.debug)
+			viewScene.setOnKeyPressed(e -> {
+				if(e.getCode() == KeyCode.F12) {
+					debug();
+				}
+			});
 		viewStage = new Stage();
 		viewStage.setTitle("微信机器人");
 		viewStage.setResizable(false);
@@ -166,8 +196,6 @@ public final class LoginView extends AnchorPane  {
 			}).start();
 		});
 	}
-	
-	  
 	/**  
 	* @Title: load  
 	* @Description: 启动网页主界面视图

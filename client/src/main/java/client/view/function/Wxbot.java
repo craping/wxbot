@@ -1,5 +1,6 @@
 package client.view.function;
 
+import java.io.File;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -52,6 +53,10 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 		super();
 	}
 
+	public String getDomain(){
+		return Config.DOMAIN;
+	}
+	
 	public void showLogin(){
 		Platform.runLater(() -> {
 			LoginView.getInstance().load();
@@ -178,7 +183,7 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 									if (msg.getType() == 1) {
 										sendText(seq, chatRoom.getNickName(), chatRoom.getUserName(), msg.getContent());
 									} else {
-										sendApp(seq, chatRoom.getNickName(), chatRoom.getUserName(), Config.ATTCH_PATH+msg.getContent());
+										sendApp(seq, chatRoom.getNickName(), chatRoom.getUserName(), new File(Config.ATTCH_PATH+msg.getContent()));
 									}
 								}
 							}
@@ -200,7 +205,7 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 									if (msg.getType() == 1) {
 										sendText(seq, chatRoom.getNickName(), chatRoom.getUserName(), msg.getContent());
 									} else {
-										sendApp(seq, chatRoom.getNickName(), chatRoom.getUserName(), Config.ATTCH_PATH+msg.getContent());
+										sendApp(seq, chatRoom.getNickName(), chatRoom.getUserName(), new File(Config.ATTCH_PATH+msg.getContent()));
 									}
 								}
 							}

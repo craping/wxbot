@@ -16,7 +16,7 @@
                     <li v-for="(item, index) in contacts.searchResult" class="ivu-select-item">
                         <div @click="[contacts.contactTab=='contact'?startChat(item.seq,item.NickName,item.UserName,item.HeadImgUrl):startGroupChat(item.seq,item.NickName,item.UserName)]">
                             <div class="avatar">
-                                <img :src="hostUrl() + item.HeadImgUrl" width="25px" height="25px;">
+                                <img :src="Web.wxHost + item.HeadImgUrl" width="25px" height="25px;">
                             </div>
                             <div class="info">
                                 <h4 class="nickname">{{emojiFormatter(item.NickName)}}</h>
@@ -35,8 +35,8 @@
                     <div class="contact_item" @click="startChat(item.seq,item.NickName,item.UserName,item.HeadImgUrl)">
                         <div class="avatar">
                             <Badge :id="'avatar_' + item.seq" overflow-count="99">
-                                <img class="avatar2" :src="hostUrl() + item.HeadImgUrl">
-                                <!-- <Avatar shape="square" icon="ios-person" :src="hostUrl() + item.HeadImgUrl" /> -->
+                                <img class="avatar2" :src="Web.wxHost + item.HeadImgUrl">
+                                <!-- <Avatar shape="square" icon="ios-person" :src="Web.wxHost + item.HeadImgUrl" /> -->
                             </Badge>
                         </div>
                         <div class="info">
@@ -52,7 +52,7 @@
                     <div class="contact_item" @click="startGroupChat(item.seq,item.NickName,item.UserName)">
                         <div class="avatar">
                             <Badge :id="'avatar_' + item.seq" overflow-count="999">
-                                <img class="avatar2" :src="hostUrl() + item.HeadImgUrl">
+                                <img class="avatar2" :src="Web.wxHost + item.HeadImgUrl">
                             </Badge>
                         </div>
                         <div class="info">

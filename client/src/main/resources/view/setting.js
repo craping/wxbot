@@ -56,6 +56,8 @@ const constant = {
 };
 $script.ready(["user", "general", "forward", "globalTimer", "globalKeyword", "tips"], function () {
     Web.user = wxbot.getUserInfo();
+    Web.serverURL = wxbot.getDomain()+":9527/";
+    Web.wxHost = wxbot.getHostUrl();
     let data = Object.assign({
         header:{},
         setting:{},

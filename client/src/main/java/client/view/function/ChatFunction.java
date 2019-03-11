@@ -84,12 +84,7 @@ public abstract class ChatFunction extends ContactsFunction {
 			lastSendFile = sendChooser.showOpenDialog(WxbotView.getInstance().getViewStage());
 			if (lastSendFile == null)
 				return;
-			
-	        // 获取文件绝对路径
-			String fileUrl = lastSendFile.getAbsolutePath();
-			// 获取文件Content-Type(Mime-Type)
-			System.out.println(fileUrl);
-			sendApp(seq, nickName, userName, fileUrl);
+			sendApp(seq, nickName, userName, lastSendFile);
 		});
 	}
 	/**
@@ -100,22 +95,21 @@ public abstract class ChatFunction extends ContactsFunction {
 	 * @throws
 	 */
 
-	public void sendApp(String seq, String nickName, String userName, String fileUrl) {
+	public void sendApp(String seq, String nickName, String userName, File file) {
         String contentType = null;  
         try {  
-            contentType = Files.probeContentType(new File(fileUrl).toPath());
-	        System.out.println("File content type is : " + contentType);  
+            contentType = Files.probeContentType(file.toPath());
 	        
 	        WxMessage message = new WxMessage();
 	        // 发送表情
 	        if (contentType != null && contentType.contains(PREFIX_GIF)) {
-	        	wechatService.sendEmoticon(userName == null ? cacheService.getOwner().getUserName() : userName, fileUrl);
+	        	wechatService.sendEmoticon(userName == null ? cacheService.getOwner().getUserName() : userName, file.getPath());
 	        	message.setMsgType(MessageType.EMOTICON.getCode());
-	        	message.setBody(new WxMessageBody(fileUrl, getImgHeightOrWidth(fileUrl, "height"), getImgHeightOrWidth(fileUrl, "width")));
+	        	message.setBody(new WxMessageBody(file.getPath(), getImgHeightOrWidth(file.getPath(), "height"), getImgHeightOrWidth(file.getPath(), "width")));
 	        }
 	        // 发送图片
 	        else if (contentType != null && contentType.contains(PREFIX_IMG)) {
-	        	SendMsgResponse response = wechatService.sendImage(userName == null ? cacheService.getOwner().getUserName() : userName, fileUrl);
+	        	SendMsgResponse response = wechatService.sendImage(userName == null ? cacheService.getOwner().getUserName() : userName, file.getPath());
 	        	String thumbImageUrl = String.format(WECHAT_URL_GET_MSG_IMG, cacheService.getHostUrl(), response.getMsgID(), cacheService.getsKey()) + "&type=slave";
 	        	String fullImageUrl = String.format(WECHAT_URL_GET_MSG_IMG, cacheService.getHostUrl(), response.getMsgID(), cacheService.getsKey());
 	        	fullImageUrl = wechatService.download(fullImageUrl, response.getMsgID()+".jpg", MessageType.VIDEO);
@@ -127,7 +121,7 @@ public abstract class ChatFunction extends ContactsFunction {
 	        // 发送视频
 	        else if (contentType != null && contentType.contains(PREFIX_VIDEO)) {
 	        	// 文件超限 25MB
-				if (FileUtil.getFileSize(fileUrl) > MAX_VIDEO_SIZE) {
+				if (file.length() > MAX_VIDEO_SIZE) {
 					WxbotView wxbotView = WxbotView.getInstance();
 					String msg = "发送的视频文件不能大于25M";
 					String script = "Chat.methods.alertUtil('WARNING','" + msg + "')";
@@ -135,16 +129,16 @@ public abstract class ChatFunction extends ContactsFunction {
 					return;
 				}
 	        	
-	        	SendMsgResponse response = wechatService.sendVideo(userName == null ? cacheService.getOwner().getUserName() : userName, fileUrl);
+	        	SendMsgResponse response = wechatService.sendVideo(userName == null ? cacheService.getOwner().getUserName() : userName, file.getPath());
 	        	// 下载发送视频 缩略图
         		String thumbImageUrl = String.format(WECHAT_URL_GET_MSG_IMG, cacheService.getHostUrl(), response.getMsgID(), cacheService.getsKey()) + "&type=slave";
         		thumbImageUrl = wechatService.download(thumbImageUrl, response.getMsgID()+".jpg", MessageType.VIDEO);
 	        	
 	        	message.setMsgType(MessageType.VIDEO.getCode());
-	        	message.setBody(new WxMessageBody(fileUrl, thumbImageUrl));
+	        	message.setBody(new WxMessageBody(file.getPath(), thumbImageUrl));
 	        } else {
 	        	// 文件超限 100MB
-				if (FileUtil.getFileSize(fileUrl) > MAX_FILE_SIZE) {
+				if (file.length() > MAX_FILE_SIZE) {
 					WxbotView wxbotView = WxbotView.getInstance();
 					String msg = "发送的文件不能大于100M";
 					String script = "Chat.methods.alertUtil('WARNING','" + msg + "')";
@@ -152,9 +146,9 @@ public abstract class ChatFunction extends ContactsFunction {
 					return;
 				}
 				
-	        	wechatService.sendApp(userName == null ? cacheService.getOwner().getUserName() : userName, fileUrl);
+	        	wechatService.sendApp(userName == null ? cacheService.getOwner().getUserName() : userName, file.getPath());
 	        	message.setMsgType(MessageType.APP.getCode());
-	        	message.setBody(new WxMessageBody(MessageType.APP, fileUrl, lastSendFile.getName(), FileUtil.getFileSizeString(fileUrl)));
+	        	message.setBody(new WxMessageBody(MessageType.APP, file.getPath(), file.getName(), FileUtil.getFileSizeString(file.length())));
 	        }
 
 			String timestamp = Tools.getTimestamp();

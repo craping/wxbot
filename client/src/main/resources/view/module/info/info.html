@@ -8,7 +8,7 @@
 </div>
 <div v-for="(item, index) in info.members">
     <div class="member">
-        <img class="avatar2" :src="hostUrl() + item.HeadImgUrl" mm-src="" alt="" title="">
+        <img class="avatar2" :src="Web.wxHost + item.HeadImgUrl" mm-src="" alt="" title="">
         <p class="member_nickname ng-binding">{{emojiFormatter(item.NickName)}}</p>
     </div>
 </div>

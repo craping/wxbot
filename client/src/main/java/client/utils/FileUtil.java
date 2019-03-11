@@ -33,6 +33,33 @@ public class FileUtil {
 		// System.out.println(readFile(realPath).size());
 	}
 
+	public static String getMimeType(String path) {
+		path = path.split("[?]")[0];
+		String ext = path.substring(path.lastIndexOf(".")+1);
+		switch (ext) {
+		case "html":
+			return "text/html";
+		case "css":
+			return "text/css";
+		case "js":
+	        return "text/javascript";
+	    case "svg":
+	        return "image/svg+xml";
+	    case "ttf":
+	        return "application/x-font-truetype";
+	    case "otf":
+	        return "application/x-font-opentype";
+	    case "eot":
+	        return "application/vnd.ms-fontobject";
+	    case "woff":
+	        return "application/x-font-woff";
+	    case "woff2":
+	        return "application/x-font-woff";
+		default:
+			return "text/html";
+		}
+	}
+	
 	/**
 	 * 文件夹重命名
 	 * 

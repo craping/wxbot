@@ -6,6 +6,7 @@ $script("lib/md5.min.js", "md5");
 $script("lib/common.js", "common");
 var app;
 $script.ready(["vue", "iview", "jquery", "crypto", "md5", "common"], function () {
+    Web.serverURL = wxbot.getDomain()+":9527/";
     Web.ajax("api/getPublicKey", {
         success: function (data) {
             Crypto.setRSAPublicKey(data.info.n);
@@ -129,6 +130,7 @@ $script.ready(["vue", "iview", "jquery", "crypto", "md5", "common"], function ()
                             if(i <= 0){
                                 clearInterval(timer);
                                 me.Register.disabled = false;
+                                me.Register.getMessageText = "获取验证码";
                             }
                         }, 1000);
                     },

@@ -11,8 +11,8 @@ var Store = Store||{
 	}
 }
 var Web = {
-	serverURL: "http://127.0.0.1:9527/",
-	// serverURL: "http://118.89.37.101:9527/",
+	serverURL: "",
+	wxHost:"",
 	/* Common - Ajax request */
 	user:{},
 	ajax: function (method, param) {

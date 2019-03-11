@@ -13,7 +13,7 @@ public class Config {
 	
 	// 图片显示最大宽度
 	public static final int MAX_IMG_WIDTH = 200;
-	public static final String DOMAIN = "http://127.0.0.1";
+	public static final String DOMAIN = "http://39.105.37.169";
 	public static final String CHAT_RECORD_PATH = "resource/chat/";
 	public static final String USERINFO_URL = String.format("%s:9527/user/getUserInfo?format=json", DOMAIN);
 	public static final String REGISTER_URL = String.format("%s:9527/user/register?format=json", DOMAIN);

@@ -171,10 +171,6 @@ Contacts = {
             //     });
             // });
         },
-        // 获取host url
-        hostUrl() {
-            return wxbot.getHostUrl();
-        },
         // 处理emoji表情
         emojiFormatter(userName) {
             return wxbot.getEmoji(userName);
@@ -184,7 +180,7 @@ Contacts = {
             Chat.data.seq = seq;
             Chat.data.title = nickName;
             Chat.data.userName = userName;
-            Chat.data.userHeadImg = wxbot.getHostUrl() + headImgUrl;
+            Chat.data.userHeadImg = Web.wxHost + headImgUrl;
             Chat.data.ownerHeadImg = wxbot.getOwnerHeadImgUrl();
             // Chat.data.chatRecord = wxbot.chatRecord(seq);
             wxbot.chatRecord(seq, data =>{

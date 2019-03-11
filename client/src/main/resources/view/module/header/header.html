@@ -36,7 +36,7 @@
                                 <li v-for="(value, key) in header.checkProgress.deleteMap">
                                     <div class="h_contact_item" @click="startChat(value.seq,value.NickName,value.UserName,value.HeadImgUrl)">
                                         <div class="h_avatar">
-                                            <img class="h_avatar2" :src="hostUrl() + value.HeadImgUrl">
+                                            <img class="h_avatar2" :src="Web.wxHost + value.HeadImgUrl">
                                         </div>
                                         <div class="h_info">
                                             <h4 class="h_nickname">{{emojiFormatter(value.NickName)}}</h>
@@ -53,7 +53,7 @@
                                 <li v-for="(value, key) in header.checkProgress.blacklistMap">
                                     <div class="h_contact_item" @click="startChat(value.seq,value.NickName,value.UserName,value.HeadImgUrl)">
                                         <div class="h_avatar">
-                                            <img class="h_avatar2" :src="hostUrl() + value.HeadImgUrl">
+                                            <img class="h_avatar2" :src="Web.wxHost + value.HeadImgUrl">
                                         </div>
                                         <div class="h_info">
                                             <h4 class="h_nickname">{{emojiFormatter(value.NickName)}}</h>
