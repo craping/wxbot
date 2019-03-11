@@ -133,7 +133,12 @@ public class MessageHandlerImpl implements MessageHandler {
 		logger.debug("用ID：" + member.getUserName());
 		logger.debug("用户名：" + member.getNickName());
 	}
-
+	
+	@Override
+	public void onContactCompleted() {
+		WxbotView.getInstance().executeScript("app.loadContacts()");
+	}
+	
 	@Override
 	public void onReceivingChatRoomTextMessage(Message message) {
 		String content = MessageUtils.getChatRoomTextMessageContent(message.getContent());
@@ -625,6 +630,7 @@ public class MessageHandlerImpl implements MessageHandler {
 
 	@Override
 	public void onStatusNotifySyncConv(Message message) {
+		WxbotView.getInstance().executeScript("app.loadContacts()");
 	}
 
 	@Override

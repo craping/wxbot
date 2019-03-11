@@ -15,15 +15,14 @@
 			<Tab-Pane name="login" label="登录">
 				<i-Form ref="Login" :model="Login" :rules="ruleInline" class="signin mt-5">
 					<Form-Item prop="mobile">
-						<i-Input prefix="ios-phone-portrait" size="large" v-model="Login.mobile" clearable placeholder="手机号码"></i-Input>
+						<i-Input prefix="ios-phone-portrait" size="large" v-model="Login.mobile" @on-enter="loginSubmit" clearable placeholder="手机号码"></i-Input>
 					</Form-Item>
 					<Form-Item prop="password">
-						<i-Input prefix="ios-lock" size="large" type="password" v-model="Login.password" clearable placeholder="密码"></i-Input>
+						<i-Input prefix="ios-lock" size="large" type="password" v-model="Login.password" @on-enter="loginSubmit" clearable placeholder="密码"></i-Input>
 					</Form-Item>
 					<Form-Item class="text-center">
 						<p class="error-text" v-show="Login.error.all">{{Login.error.all}}</p>
-						<i-Button type="primary" :loading="Login.loading" @click="call" long style="font-size:16px">登 录</i-Button>
-						<i-Button type="primary" :loading="Login.loading" @click="loginSubmit('Login')" long style="font-size:16px">登 录</i-Button>
+						<i-Button type="primary" :loading="Login.loading" @click="loginSubmit" long style="font-size:16px">登 录</i-Button>
 					</Form-Item>
 				</i-Form>
 			</Tab-Pane>
@@ -47,7 +46,7 @@
 					<Form-Item style="text-align:center" class="mb-0">
 						<p class="error-text marb8" v-show="Register.error.error">
 							{{Register.error.error}}</p>
-						<i-Button type="primary" :loading="Register.loading" @click="registerSubmit('Register')" long style="font-size:16px">注 册</i-Button>
+						<i-Button type="primary" :loading="Register.loading" @click="registerSubmit" long style="font-size:16px">注 册</i-Button>
 					</Form-Item>
 				</i-Form>
 			</Tab-Pane>
