@@ -19,6 +19,7 @@ import com.teamdev.jxbrowser.chromium.events.NotificationListener;
 import com.teamdev.jxbrowser.chromium.events.ScriptContextAdapter;
 import com.teamdev.jxbrowser.chromium.events.ScriptContextEvent;
 import com.teamdev.jxbrowser.chromium.javafx.BrowserView;
+import com.teamdev.jxbrowser.chromium.javafx.DefaultDialogHandler;
 
 import client.Launch;
 import client.view.function.Wxbot;
@@ -120,6 +121,8 @@ public final class LoginView extends AnchorPane  {
                 return PermissionStatus.DENIED;
             }
         });
+        browser.setDialogHandler(new DefaultDialogHandler(browserView));
+        
         browser.addScriptContextListener(new ScriptContextAdapter() {
             @Override
             public void onScriptContextCreated(ScriptContextEvent event) {

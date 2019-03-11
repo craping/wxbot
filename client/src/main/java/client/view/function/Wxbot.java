@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -29,6 +30,8 @@ import client.view.LoginView;
 import client.view.WxbotView;
 import client.view.server.ChatServer;
 import javafx.application.Platform;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 
 /**
  * @ClassName: Wxbot
@@ -55,11 +58,19 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 		});
 	}
 	
-	public void showWxbot(){
+	public void shutdown(String msg) {
 		Platform.runLater(() -> {
-			WxbotView.getInstance().load();
+			Alert alert = new Alert(Alert.AlertType.ERROR);
+			alert.setTitle("错误");
+			alert.setHeaderText(null);
+			alert.setContentText(msg);
+			Optional<ButtonType> result = alert.showAndWait();
+			if(result.isPresent() && result.get() == ButtonType.OK){
+				LoginView.getInstance().close();
+			}
 		});
 	}
+	
 	/**
 	 * 获取用户信息
 	 * 
@@ -113,6 +124,9 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 		jeeves.stop();
 		if (wxbotThread != null)
 			wxbotThread.interrupt();
+		Platform.runLater(() -> {
+			WxbotView.getInstance().close();
+		});
 	}
 
 	@Scheduled(fixedRate=1000)
