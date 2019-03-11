@@ -82,13 +82,13 @@ Header = {
                                     this.finish = true;
                                 } else {
                                     var contact = this.data[this.index];
-                                    //wxbot.sendText(contact.seq, contact.NickName, contact.UserName, "HI!");
+                                    wxbot.sendText(contact.seq, contact.NickName, contact.UserName, "僵尸检测，此消息不用回复!");
                                 }
                                 console.timeEnd("任务：" + this.index);
                                 //继续下一个
                                 this.next();
                             }.bind(this);
-                            setTimeout(send, 5000);
+                            setTimeout(send, 1000);
                             //send();
                         };
 

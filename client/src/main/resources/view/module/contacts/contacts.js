@@ -186,7 +186,10 @@ Contacts = {
             Chat.data.userName = userName;
             Chat.data.userHeadImg = wxbot.getHostUrl() + headImgUrl;
             Chat.data.ownerHeadImg = wxbot.getOwnerHeadImgUrl();
-            Chat.data.chatRecord = wxbot.chatRecord(seq);
+            // Chat.data.chatRecord = wxbot.chatRecord(seq);
+            wxbot.chatRecord(seq, data =>{
+                Chat.data.chatRecord = data;
+            });
             $('#avatar_' + seq + " sup.ivu-badge-count").remove();
             Contacts.data.filterKey = "";
             this.$refs.searchResult.style['display'] = "none";

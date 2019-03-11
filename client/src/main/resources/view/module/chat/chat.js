@@ -39,17 +39,21 @@ Chat = {
         },
         // 发送文本消息
         sendText() {
-            if (this.chat.text == ""){
+            const text = $("#chatText").val();
+            if (text == ""){
                 this.$Message.warning('不能发送空消息');
                 return false;
             }
-            wxbot.sendText(this.chat.seq, this.chat.title, this.chat.userName, this.chat.text);
-            Chat.data.text = "";
+            wxbot.sendText(this.chat.seq, this.chat.title, this.chat.userName, text);
+            $("#chatText").val("");
             Chat.methods.reloadChat(this.chat.seq);
         },
         // 重新加载聊天信息窗口
         reloadChat(seq) {
-            Chat.data.chatRecord = wxbot.chatRecord(seq);
+            // Chat.data.chatRecord = wxbot.chatRecord(seq);
+            wxbot.chatRecord(seq, data =>{
+                Chat.data.chatRecord = data;
+            });
             Chat.methods.scrollToBottom();
         },
         // 渲染 新消息

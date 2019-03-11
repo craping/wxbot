@@ -72,7 +72,7 @@
                 <icon :color="'#2db7f5'" size="16" type="ios-folder" ghost @click="sendApp"></icon>
             </a>
         </div>
-        <textarea class="w-100 border-0 px-2 bg-transparent" @keydown.ctrl.enter="sendText" @keydown.alt.83="sendText" v-model="chat.text" type="textarea" rows="3" style="resize:none;outline: none"></textarea>
+        <textarea id="chatText" class="w-100 border-0 px-2 bg-transparent" @keydown.ctrl.enter="sendText" @keydown.alt.83="sendText" type="textarea" rows="3" style="resize:none;outline: none"></textarea>
         <div class="text-right w-100 p-2">
             <i-button type="info" size="small" @click="sendText">发 送(S)</i-button>
         </div>
