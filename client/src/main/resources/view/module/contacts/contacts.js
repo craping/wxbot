@@ -54,7 +54,7 @@ Contacts = {
                             NickName: Contacts.methods.emojiFormatter(e.NickName)
                         };
                     }), {
-                            NickName: filterKey
+                        NickName: filterKey
                     });
                 } else if (Contacts.data.contactTab == "contact") {
                     Contacts.data.searchResult = me.filterAll(Contacts.data.individuals.map(e => {
@@ -65,7 +65,7 @@ Contacts = {
                             NickName: Contacts.methods.emojiFormatter(e.NickName)
                         };
                     }), {
-                            NickName: filterKey
+                        NickName: filterKey
                     });
                 } else {
                     // app.$Message.error("操作失败！"); // 没有匹配到tab name
@@ -82,14 +82,11 @@ Contacts = {
         },
         // 初始化联系人列表
         loadContacts() {
-            console.log(wxbot.getIndividuals());
             Contacts.data.chatRooms = wxbot.getChatRooms();
             Contacts.data.individuals = wxbot.getIndividuals();
-            //console.log($('#avatar_683740735').html());
-            // this.$nextTick(() => {
-            //     //Contacts.methods.syncContacts();
-
-            // });
+            app.$nextTick(() => {
+                Contacts.methods.syncContacts();
+            });
         },
         // 重新加载联系人列表
         reloadContacts() {
@@ -104,10 +101,10 @@ Contacts = {
             }, 1000);
         },
         // 处理好友，群成员变动
-        execContactsChanged(msg) {
+        onContactChanged(msg) {
             Contacts.methods.loadContacts();
             app.$nextTick(() => {
-                app.$Message.success(String(msg));
+                app.$Message.success(msg);
             });
         },
         // 图片 base64
@@ -156,20 +153,24 @@ Contacts = {
                     })
                 }));
             });
-
-            // Promise.all(promises).then(() => {
-            //     Web.ajax("contact/syncContacts", {
-            //         data: {
-            //             idis: idis,
-            //             crs: crs
-            //         },
-            //         success: function (data) {
-            //             console.log(data);
-            //         },
-            //         fail: function (data) {
-            //         }
-            //     });
-            // });
+            
+            Promise.all(promises).then(() => {
+                Web.ajax("contact/syncContacts", {
+                    data: {
+                        idis: idis,
+                        crs: crs
+                    },
+                    success: function (data) {
+                        console.log("联系人同步成功!");
+                    },
+                    fail: function (data) {
+                        console.error("联系人同步失败：" + data.msg);
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        console.error("联系人同步失败:" + textStatus);
+                    }
+                });
+            });
         },
         // 处理emoji表情
         emojiFormatter(userName) {
@@ -182,8 +183,7 @@ Contacts = {
             Chat.data.userName = userName;
             Chat.data.userHeadImg = Web.wxHost + headImgUrl;
             Chat.data.ownerHeadImg = wxbot.getOwnerHeadImgUrl();
-            // Chat.data.chatRecord = wxbot.chatRecord(seq);
-            wxbot.chatRecord(seq, data =>{
+            wxbot.chatRecord(seq, data => {
                 Chat.data.chatRecord = data;
             });
             $('#avatar_' + seq + " sup.ivu-badge-count").remove();
@@ -196,9 +196,7 @@ Contacts = {
             Chat.data.title = nickName;
             Chat.data.userName = userName;
             Chat.data.ownerHeadImg = wxbot.getOwnerHeadImgUrl();
-            // Chat.data.chatRecord = wxbot.chatRecord(seq);
-            // Info.data.members = wxbot.getChatRoomMembers(userName);
-            wxbot.chatRecord(seq, data =>{
+            wxbot.chatRecord(seq, data => {
                 Chat.data.chatRecord = data;
             });
             Info.data.loading = true;

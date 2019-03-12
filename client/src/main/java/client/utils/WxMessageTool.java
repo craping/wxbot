@@ -196,7 +196,7 @@ public class WxMessageTool {
 	 */
 	public static void execContactsChanged(String msg) {
 		WxbotView wxbotView = WxbotView.getInstance();
-		String script = "Contacts.methods.execContactsChanged(" + msg + ")";
+		String script = "app.onContactChanged('" + msg + "')";
 		wxbotView.executeScript(script);
 	}
 
