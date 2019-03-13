@@ -1,0 +1,88 @@
+[v-cloak] {
+    display: none;
+}
+body{
+    overflow: hidden;
+}
+textarea{
+    resize: none;
+}
+.layout{
+    border: 1px solid #d7dde4;
+    background: #f5f7f9;
+    position: relative;
+    border-radius: 4px;
+    overflow: hidden;
+}
+.content{
+    height: 600px;
+}
+.content > .ivu-row,
+.content > .ivu-row > .ivu-col {
+    height: inherit;
+}
+
+.ivu-card.p-0 .ivu-card-body{
+    padding: 0px;
+}
+.ivu-card-head p{
+    font-weight: normal;
+}
+.bg-gray{
+    background-color: #eee
+}
+.border-gray{
+    border-color:#d6d6d6;
+}
+.ivu-card-head {
+    border-color:#d6d6d6;
+}
+
+
+.right .ivu-tabs-content{
+    height: 562px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+.ivu-tabs-bar{
+    margin-bottom: 0;
+}
+
+table.fixed tbody {
+    display: block;
+    overflow-y: auto;
+}
+table.fixed thead, 
+table.fixed tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+table.fixed thead tr th{
+    background-color: #f8f8f9;
+    border-width: 1px;
+}
+table.fixed tbody tr:first-child td{
+    border-top:none;
+}
+table.fixed tbody tr.h-100:hover{
+    background-color: #fff;
+}
+table.fixed thead {
+    width: 100%
+}
+
+::-webkit-scrollbar{
+    width:7px;
+}
+::-webkit-scrollbar-track-piece{
+    background-color:transparent ;
+}
+::-webkit-scrollbar-thumb{
+    background:#d9d9d9;
+    border-radius: 7px;
+    margin-right: 1px;
+}
+::-webkit-scrollbar-thumb:hover{
+    background:#6c6e71;
+}

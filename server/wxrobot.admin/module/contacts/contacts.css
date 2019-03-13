@@ -1,0 +1,106 @@
+.contact_item {
+    overflow: hidden;
+    padding-top: 5px;
+    padding-left: 15px;
+    border-bottom: 1px solid #dcdee2;
+}
+.contact-ul{
+    height: 530px;
+    overflow-y: auto;
+}
+.contact-ul li:hover{
+    background-color: #00000013;
+}
+.avatar {
+    float: left;
+    margin-right: 10px;
+}
+.info {
+    overflow: hidden;
+    line-height: 30px;
+    padding: 5px;
+}
+.info .nickname {
+    color: #292c33;
+    font-weight: 400;
+    font-size: 13px;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    word-wrap: normal;
+}
+h4 {
+    display: block;
+    margin-block-start: 1.33em;
+    margin-block-end: 1.33em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+}
+.ivu-badge-count {
+    font-family: Monospaced Number;
+    line-height: 1;
+    vertical-align: middle;
+    position: absolute;
+    -webkit-transform: translateX(50%);
+    transform: translateX(50%);
+    top: -4px;
+    right: 0;
+    height: 18px;
+    border-radius: 10px;
+    min-width: 20px;
+    background: #ed4014;
+    border: 1px solid transparent;
+    color: #fff;
+    line-height: 16px;
+    text-align: center;
+    padding: 0 2px;
+    font-size: 12px;
+    white-space: nowrap;
+    -webkit-transform-origin: -10% center;
+    transform-origin: -10% center;
+    z-index: 10;
+    box-shadow: 0 0 0 1px #fff;
+}
+
+.keyword .opt > .ivu-table-cell{
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.keyword .ivu-table td, 
+.keyword .ivu-table th{
+    height: 30px;
+}
+.ivu-scroll-loader-wrapper {
+    /* padding: 5px 0; */
+    height: 0;
+    background-color: inherit;
+    -webkit-transform: scale(0);
+    -ms-transform: scale(0);
+    transform: scale(0);
+    -webkit-transition: opacity .3s,height .5s,-webkit-transform .5s;
+    transition: opacity .3s,height .5s,-webkit-transform .5s;
+    transition: opacity .3s,transform .5s,height .5s;
+    transition: opacity .3s,transform .5s,height .5s,-webkit-transform .5s;
+}
+.ivu-select .ivu-select-dropdown {
+    width: auto;
+}
+.ivu-select-dropdown {
+    width: inherit;
+    max-height: 300px;
+    overflow-x:hidden;
+    overflow-y:auto;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    word-wrap: normal;
+    margin: 5px 0;
+    padding: 5px 0;
+    background-color: #fff;
+    box-sizing: border-box;
+    border-radius: 4px;
+    box-shadow: 0 1px 6px rgba(0,0,0,.2);
+    position: absolute;
+    z-index: 900;
+}

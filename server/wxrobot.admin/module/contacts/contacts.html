@@ -1,0 +1,66 @@
+<card dis-hover="true" class="p-0 bg-gray">
+    <i-form inline @submit.native.prevent>
+        <form-item class="mb-0 ml-2">
+            <i-input v-model.trim="contacts.filterKey" style="width:144px;" clearable size="small" placeholder="搜索..."
+                prefix="ios-search" @input="searchContacts" ref="searchInput" />
+            <i-button icon="ios-paper" size="small" type="primary" @click="saveContactsAsTxt" title="导出联系人"></i-button>
+            <i-button icon="ios-sync" size="small" type="primary" :loading="contacts.loading" @click="reloadContacts"
+                title="刷新联系人列表"></i-button>
+            <div class="ivu-select-dropdown ivu-auto-complete" style="width: 206px; position: absolute; will-change: top, left; 
+                        transform-origin: center top; top: 26px;display: none; max-height:400px;"
+                x-placement="bottom" ref="searchResult">
+                <ul class="ivu-select-not-found" style="display: none;">
+                    <li>无匹配数据</li>
+                </ul>
+                <ul class="ivu-select-dropdown-list" style="display: none;">
+                    <li v-for="(item, index) in contacts.searchResult" class="ivu-select-item">
+                        <div @click="[contacts.contactTab=='contact'?startChat(item.seq,item.NickName,item.UserName,item.HeadImgUrl):startGroupChat(item.seq,item.NickName,item.UserName)]">
+                            <div class="avatar">
+                                <img :src="Web.wxHost + item.HeadImgUrl" width="25px" height="25px;">
+                            </div>
+                            <div class="info">
+                                <h4 class="nickname">{{emojiFormatter(item.NickName)}}</h>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+                <ul class="ivu-select-loading" style="display: none;">加载中...</ul>
+            </div>
+        </form-item>
+    </i-form>
+    <tabs value="contact" :animated="false" v-model="contacts.contactTab">
+        <tab-pane label="联系人" icon="ios-person" name="contact">
+            <ul class="contact-ul">
+                <li v-for="(item, index) in contacts.individuals">
+                    <div class="contact_item" @click="startChat(item.seq,item.NickName,item.UserName,item.HeadImgUrl)">
+                        <div class="avatar">
+                            <Badge :id="'avatar_' + item.seq" overflow-count="99">
+                                <img class="avatar2" :src="Web.wxHost + item.HeadImgUrl">
+                                <!-- <Avatar shape="square" icon="ios-person" :src="Web.wxHost + item.HeadImgUrl" /> -->
+                            </Badge>
+                        </div>
+                        <div class="info">
+                            <h4 class="nickname">{{emojiFormatter(item.NickName)}}</h>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </tab-pane>
+        <tab-pane label="群聊" icon="ios-people" name="chatroom">
+            <ul class="contact-ul">
+                <li v-for="(item, index) in contacts.chatRooms">
+                    <div class="contact_item" @click="startGroupChat(item.seq,item.NickName,item.UserName)">
+                        <div class="avatar">
+                            <Badge :id="'avatar_' + item.seq" overflow-count="999">
+                                <img class="avatar2" :src="Web.wxHost + item.HeadImgUrl">
+                            </Badge>
+                        </div>
+                        <div class="info">
+                            <h4 class="nickname">{{emojiFormatter(item.NickName)}}</h>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </tab-pane>
+    </tabs>
+</card>

@@ -1,0 +1,66 @@
+[v-cloak] {
+    display: none;
+}
+body{
+    overflow: hidden;
+}
+textarea{
+    resize: none;
+}
+
+.ivu-card.p-0 .ivu-card-body{
+    padding: 0px;
+}
+.ivu-card-head p{
+    font-weight: normal;
+}
+.bg-gray{
+    background-color: #eee
+}
+.border-gray{
+    border-color:#d6d6d6;
+}
+.ivu-card-head {
+    border-color:#d6d6d6;
+}
+
+
+.right .ivu-tabs-content{
+    height: 562px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+.ivu-tabs-bar{
+    margin-bottom: 0;
+}
+
+.ivu-tabs-nav {
+left: 50%;
+transform: translateX(-50%);
+font-size: 20px;
+}
+.qqwximg {
+height: 38px;
+}
+.error-text {
+color: #fa8341;
+}
+
+.ivu-form-item-error-tip {
+    padding-top: 3px;
+}
+
+::-webkit-scrollbar{
+    width:7px;
+}
+::-webkit-scrollbar-track-piece{
+    background-color:transparent ;
+}
+::-webkit-scrollbar-thumb{
+    background:#d9d9d9;
+    border-radius: 7px;
+    margin-right: 1px;
+}
+::-webkit-scrollbar-thumb:hover{
+    background:#6c6e71;
+}
