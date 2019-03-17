@@ -1,13 +1,10 @@
 package wxrobot.biz.server;
 
 import org.crap.jrain.core.ErrcodeException;
-import org.springframework.data.mongodb.core.query.BasicQuery;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
-
-import com.mongodb.BasicDBObject;
 
 import wxrobot.dao.entity.User;
 import wxrobot.server.enums.CustomErrors;
@@ -36,15 +33,7 @@ public class UserServer extends BaseServer{
 	 * @return
 	 */
 	public User find(String id) {
-		BasicDBObject fieldsObject = new BasicDBObject();
-		fieldsObject.put("_id", true);
-		fieldsObject.put("userInfo.userName", true);
-
-		BasicDBObject dbObject = new BasicDBObject();
-		fieldsObject.put("_id", "5c43609a76785a40bca4aa5e");
-
-		Query query = new BasicQuery(dbObject.toJson(), fieldsObject.toJson());
-		return mongoTemplate.findOne(query, User.class);
+		return mongoTemplate.findOne(Query.query(Criteria.where("_id").is(id)), User.class);
 	}
 
 	/**
