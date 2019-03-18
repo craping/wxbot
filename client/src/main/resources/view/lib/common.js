@@ -55,7 +55,7 @@ var Web = {
 	wxHost:"",
 	/* Common - Ajax request */
 	user:{},
-	ajax: function (method, param) {
+	ajax: function (method, param, format) {
 		var cipher = Crypto.generateCipher();
 		if (!param)
 			param = {};
@@ -87,7 +87,7 @@ var Web = {
 			data: defaultParam.type == "get" ? defaultParam.data : JSON.stringify(defaultParam.data),
 			async: defaultParam.async,
 			timeout: defaultParam.timeout,
-			url: defaultParam.url + method + "?format=json",
+			url: defaultParam.url + method + "?format="+(format?format:"json"),
 			contentType: "application/json",
 			processData: false,
 			dataType: "text",

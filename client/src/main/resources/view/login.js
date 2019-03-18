@@ -65,6 +65,8 @@ $script.ready(["vue", "iview", "jquery", "crypto", "md5", "common"], function ()
                 methods:{
                     loginSubmit(){
                         const me = this;
+                        if(me.Login.loading)
+                            return;
                         me.$refs.Login.validate((valid) => {
                             if (valid) {
                                 me.Login.loading = true;
@@ -93,6 +95,8 @@ $script.ready(["vue", "iview", "jquery", "crypto", "md5", "common"], function ()
                     },
                     registerSubmit(){
                         const me = this;
+                        if(me.Register.loading)
+                            return;
                         me.$refs.Register.validate((valid) => {
                             if (valid) {
                                 me.Register.loading = true;

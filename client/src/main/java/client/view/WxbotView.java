@@ -101,9 +101,6 @@ public final class WxbotView extends AnchorPane  {
 	    browserView = new BrowserView(browser);
 	    BrowserContext context = browser.getContext();
 
-	    browser.getCacheStorage().clearHttpAuthenticationCache(() -> {
-	    	
-	    });
 	    ProtocolService protocolService = context.getProtocolService();
 	    protocolService.setProtocolHandler("jar", new ProtocolHandler() {
 	        @Override
@@ -186,7 +183,6 @@ public final class WxbotView extends AnchorPane  {
         	System.out.println("disposed event = "+event);
         	System.exit(0);
         });
-        browser.loadURL(getClass().getClassLoader().getResource("view/main.html").toExternalForm());
         
         browser.addConsoleListener(e -> {
         	String level = e.getLevel().name();
@@ -225,14 +221,21 @@ public final class WxbotView extends AnchorPane  {
 	  
 	/**  
 	* @Title: load  
-	* @Description: 启动网页主界面视图
+	* @Description: 加载网页主界面视图
 	* @param     参数  
 	* @return void    返回类型  
 	* @throws  
 	*/   
 	public void load() {
+		browser.loadURL(getClass().getClassLoader().getResource("view/main.html").toExternalForm());
 		viewStage.show();
 	}
+	
+	public void show() {
+		viewStage.show();
+	}
+	
+	
 	
 	public void openSetting(String menu){
 		if(settingStage != null){
@@ -360,6 +363,9 @@ public final class WxbotView extends AnchorPane  {
 			viewStage.close();
 		if(settingStage != null)
 			settingStage.close();
+		new Thread(() -> {
+			System.out.println("wxbotView is disposed = " + browser.dispose(true));
+		}).start();
 	}
 	
 	  
@@ -384,7 +390,11 @@ public final class WxbotView extends AnchorPane  {
 	* @throws  
 	*/  
 	public void executeScript(String javaScript) {
-		browser.executeJavaScript(javaScript);
+		try{
+			browser.executeJavaScript(javaScript);
+		}catch (Exception e) {
+			logger.error(e);
+		}
 	}
 	
 	private static class MyContextMenuHandler implements ContextMenuHandler {

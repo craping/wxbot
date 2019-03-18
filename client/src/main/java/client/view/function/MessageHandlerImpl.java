@@ -34,6 +34,7 @@ import client.enums.ChatType;
 import client.pojo.WxMessage;
 import client.pojo.WxMessageBody;
 import client.utils.Config;
+import client.utils.EmojiUtil;
 import client.utils.FileUtil;
 import client.utils.WxMessageTool;
 import client.view.QRView;
@@ -89,7 +90,10 @@ public class MessageHandlerImpl implements MessageHandler {
 	@Override
 	public void onConfirmation() {
 		logger.debug("确认登录");
-
+		Platform.runLater(() -> {
+			qrView.close();
+			WxbotView.getInstance().show();
+		});
 	}
 
 	@Override
@@ -98,29 +102,15 @@ public class MessageHandlerImpl implements MessageHandler {
 		logger.debug("用ID：" + member.getUserName());
 		logger.debug("用户名：" + member.getNickName());
 		Platform.runLater(() -> {
-			qrView.close();
-			WxbotView wxbotView = WxbotView.getInstance();
-			wxbotView.onClose(e -> {
-				
-			});
-			CookieStorage cookieStorage = wxbotView.getBrowser().getCookieStorage();
+			CookieStorage cookieStorage = WxbotView.getInstance().getBrowser().getCookieStorage();
 			wechatHttpService.getCookies().forEach((k, v) -> {
 				cookieStorage.setSessionCookie("https://wx2.qq.com", k, v, ".qq.com", "/", false, false);
 				cookieStorage.setSessionCookie("https://wx.qq.com", k, v, ".qq.com", "/", false, false);
 			});
 			cookieStorage.save();
-			wxbotView.load();
+			WxbotView.getInstance().load();
 		});
-		try {
-			logger.debug("individuals：");
-			System.out.println(BaseServer.JSON_MAPPER.writeValueAsString(cacheService.getIndividuals()));
-			logger.debug("mediaPlatforms：");
-			System.out.println(BaseServer.JSON_MAPPER.writeValueAsString(cacheService.getMediaPlatforms()));
-			logger.debug("chatRooms：");
-			System.out.println(BaseServer.JSON_MAPPER.writeValueAsString(cacheService.getChatRooms()));
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-		}
+		
 	}
 
 	@Override
@@ -128,6 +118,9 @@ public class MessageHandlerImpl implements MessageHandler {
 		logger.debug("用户退出");
 		logger.debug("用ID：" + member.getUserName());
 		logger.debug("用户名：" + member.getNickName());
+		Platform.runLater(() -> {
+			WxbotView.getInstance().close();
+		});
 	}
 	
 	@Override
@@ -137,7 +130,7 @@ public class MessageHandlerImpl implements MessageHandler {
 	
 	@Override
 	public void onReceivingChatRoomTextMessage(Message message) {
-		String content = MessageUtils.getChatRoomTextMessageContent(message.getContent());
+		String content = EmojiUtil.formatFace(MessageUtils.getChatRoomTextMessageContent(message.getContent()));
 		String userName = MessageUtils.getSenderOfChatRoomTextMessage(message.getContent());
 		logger.debug("群聊文本消息");
 		logger.debug("from chatroom: " + message.getFromUserName());
@@ -337,12 +330,13 @@ public class MessageHandlerImpl implements MessageHandler {
 
 	@Override
 	public void onReceivingPrivateTextMessage(Message message) {
+		String content = EmojiUtil.formatFace(message.getContent());
 		logger.debug("私聊文本消息");
 		logger.debug("from: " + message.getFromUserName());
 		logger.debug("to: " + message.getToUserName());
-		logger.debug("content:" + message.getContent());
+		logger.debug("content:" + content);
 		
-		WxMessage msg = new WxMessage(MessageType.TEXT.getCode(), new WxMessageBody(message.getContent()));
+		WxMessage msg = new WxMessage(MessageType.TEXT.getCode(), new WxMessageBody(content));
 		if (message.getFromUserName().equals(cacheService.getOwner().getUserName())) {
 			Contact recipient = cacheService.getContact(message.getToUserName());
 			msgTool.sendMessage(recipient, msg, cacheService.getOwner().getNickName(), ChatType.CHAT.getCode());

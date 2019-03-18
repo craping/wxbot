@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import client.utils.Arith;
-import lombok.Data;
 
 /**
  * 消息体
@@ -13,7 +12,6 @@ import lombok.Data;
  * @author wr
  *
  */
-@Data
 @JsonIgnoreProperties(ignoreUnknown=true)
 @JsonInclude(Include.NON_NULL)
 public class WxMessageBody {
@@ -75,4 +73,37 @@ public class WxMessageBody {
 		this.fileName = fileName;
 		this.fileSize = fileSize;
 	}
+
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+	public String getThumbImageUrl() {
+		return thumbImageUrl;
+	}
+
+	public void setThumbImageUrl(String thumbImageUrl) {
+		this.thumbImageUrl = thumbImageUrl;
+	}
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+
+	public String getFileSize() {
+		return fileSize;
+	}
+
+	public void setFileSize(String fileSize) {
+		this.fileSize = fileSize;
+	}
+	
 }

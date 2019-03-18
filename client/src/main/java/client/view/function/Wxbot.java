@@ -10,7 +10,6 @@ import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -30,7 +29,6 @@ import client.utils.Config;
 import client.view.LoginView;
 import client.view.WxbotView;
 import client.view.server.BaseServer;
-import client.view.server.ChatServer;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;

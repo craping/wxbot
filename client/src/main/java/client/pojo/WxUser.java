@@ -2,9 +2,6 @@ package client.pojo;
 
 import com.teamdev.jxbrowser.chromium.JSObject;
 
-import lombok.Data;
-
-@Data
 public class WxUser {
 
 	private String id;
@@ -41,4 +38,101 @@ public class WxUser {
 		this.comefrom = (int)userInfo.getProperty("comefrom").getNumberValue();
 		this.regIp = userInfo.getProperty("regIp").toString();
 	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public String getUserPwd() {
+		return userPwd;
+	}
+
+	public void setUserPwd(String userPwd) {
+		this.userPwd = userPwd;
+	}
+
+	public String getNickName() {
+		return nickName;
+	}
+
+	public void setNickName(String nickName) {
+		this.nickName = nickName;
+	}
+
+	public String getRegTime() {
+		return regTime;
+	}
+
+	public void setRegTime(String regTime) {
+		this.regTime = regTime;
+	}
+
+	public String getServerEnd() {
+		return serverEnd;
+	}
+
+	public void setServerEnd(String serverEnd) {
+		this.serverEnd = serverEnd;
+	}
+
+	public Boolean getServerState() {
+		return serverState;
+	}
+
+	public void setServerState(Boolean serverState) {
+		this.serverState = serverState;
+	}
+
+	public String getPhoneNum() {
+		return phoneNum;
+	}
+
+	public void setPhoneNum(String phoneNum) {
+		this.phoneNum = phoneNum;
+	}
+
+	public Boolean getPhoneState() {
+		return phoneState;
+	}
+
+	public void setPhoneState(Boolean phoneState) {
+		this.phoneState = phoneState;
+	}
+
+	public int getComefrom() {
+		return comefrom;
+	}
+
+	public void setComefrom(int comefrom) {
+		this.comefrom = comefrom;
+	}
+
+	public String getRegIp() {
+		return regIp;
+	}
+
+	public void setRegIp(String regIp) {
+		this.regIp = regIp;
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+	
 }

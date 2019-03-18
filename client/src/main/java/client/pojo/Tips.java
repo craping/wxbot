@@ -3,8 +3,6 @@ package client.pojo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import lombok.Data;
-
   
 /**  
 * @ClassName: Tips  
@@ -14,7 +12,6 @@ import lombok.Data;
 *    
 */  
     
-@Data
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class Tips {
 	
@@ -37,4 +34,35 @@ public class Tips {
 	*/  
 	@JsonProperty
 	private String memberLeftTip;
+
+
+	public String getChatRoomFoundTip() {
+		return chatRoomFoundTip;
+	}
+
+
+	public void setChatRoomFoundTip(String chatRoomFoundTip) {
+		this.chatRoomFoundTip = chatRoomFoundTip;
+	}
+
+
+	public String getMemberJoinTip() {
+		return memberJoinTip;
+	}
+
+
+	public void setMemberJoinTip(String memberJoinTip) {
+		this.memberJoinTip = memberJoinTip;
+	}
+
+
+	public String getMemberLeftTip() {
+		return memberLeftTip;
+	}
+
+
+	public void setMemberLeftTip(String memberLeftTip) {
+		this.memberLeftTip = memberLeftTip;
+	}
+	
 }

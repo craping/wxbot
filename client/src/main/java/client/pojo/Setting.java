@@ -5,9 +5,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import lombok.Data;
-
-@Data
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class Setting {
 	/**  
@@ -33,4 +30,37 @@ public class Setting {
 	*/  
 	@JsonProperty
 	private Permissions permissions = new Permissions();
+
+	public ConcurrentLinkedQueue<String> getForwards() {
+		return forwards;
+	}
+
+	public void setForwards(ConcurrentLinkedQueue<String> forwards) {
+		this.forwards = forwards;
+	}
+
+	public Tips getTips() {
+		return tips;
+	}
+
+	public void setTips(Tips tips) {
+		this.tips = tips;
+	}
+
+	public Switchs getSwitchs() {
+		return switchs;
+	}
+
+	public void setSwitchs(Switchs switchs) {
+		this.switchs = switchs;
+	}
+
+	public Permissions getPermissions() {
+		return permissions;
+	}
+
+	public void setPermissions(Permissions permissions) {
+		this.permissions = permissions;
+	}
+	
 }

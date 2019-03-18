@@ -10,7 +10,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.teamdev.jxbrowser.chromium.JSFunction;
 import com.teamdev.jxbrowser.chromium.JSONString;
 
-import client.utils.EmojiUtil;
 import client.view.server.BaseServer;
 
 @Component
@@ -18,24 +17,6 @@ public class ContactsFunction extends SettingFunction {
 	
 	public ContactsFunction() {
 		super();
-	}
-	
-	/**
-	 * 解析 emoji表情
-	 * @param str
-	 * @return
-	 */
-	public String getEmoji(String str) {
-		return EmojiUtil.getEmoji(str);
-	}
-	
-	/**
-	 * 过滤 emoji表情
-	 * @param str
-	 * @return
-	 */
-	public String rmEmoji(String str) {
-		return EmojiUtil.rmEmoji(str);
 	}
 	
 	/**  

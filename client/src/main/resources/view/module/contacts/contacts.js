@@ -5,7 +5,7 @@ Contacts = {
         filterKey: '', // 搜索关键字
         searchResult: [], // 搜索结果
         contactTab: 'contact',
-        loading: false
+        loading: true
     },
     computed:{
         filterIndividuals(){
@@ -56,6 +56,8 @@ Contacts = {
                 this.contacts.individuals = data.sort((e, t) => {
                     e.count = 0;
                     t.count = 0;
+                    e.HeadImgUrl += "r="+Date.now();
+                    t.HeadImgUrl += "r="+Date.now();
                     e.MMOrderSymbol = this.getContactOrderSymbol(e);
                     t.MMOrderSymbol = this.getContactOrderSymbol(t);
                     return e.MMOrderSymbol > t.MMOrderSymbol ? 1 : -1
@@ -69,6 +71,8 @@ Contacts = {
                 this.contacts.chatRooms = data.sort((e, t) => {
                     e.count = 0;
                     t.count = 0;
+                    e.HeadImgUrl += "r="+Date.now();
+                    t.HeadImgUrl += "r="+Date.now();
                     e.MMOrderSymbol = this.getContactOrderSymbol(e);
                     t.MMOrderSymbol = this.getContactOrderSymbol(t);
                     return e.MMOrderSymbol > t.MMOrderSymbol ? 1 : -1

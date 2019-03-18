@@ -112,10 +112,22 @@ $script.ready(["header", "contacts", "chat", "keyword", "timer", "info"], () => 
                 }
             });
         },
+        sync(){
+            Web.ajax("api/sync", {
+                success: function (data) {
+                    sync();
+                },
+                fail: function (data) {
+                    sync();
+                },
+                error: function(){
+                    sync();
+                }
+            }, "sync");
+        },
         global_click(event){
             if(this.$refs.recordDatePicker && !this.$refs.recordDatePicker.$el.contains(event.target))
                 this.chat.datePickerOpen = false;
-            console.log("click");
         }
     }, Header.methods, Contacts.methods, Chat.methods, Keyword.methods, Timer.methods, Info.methods);
 
@@ -143,7 +155,3 @@ $script.ready(["header", "contacts", "chat", "keyword", "timer", "info"], () => 
         methods: methods
     });
 })
-
-function text() {
-    return { a: 1, b: 2 };
-}

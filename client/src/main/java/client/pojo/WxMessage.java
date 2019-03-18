@@ -4,9 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-import lombok.Data;
-
-@Data
 @JsonIgnoreProperties(ignoreUnknown=true)
 @JsonInclude(Include.NON_NULL)
 public class WxMessage {
@@ -36,4 +33,70 @@ public class WxMessage {
 		this.msgType = msgType;
 		this.body = body;
 	}
+
+	public String getTimestamp() {
+		return timestamp;
+	}
+
+	public void setTimestamp(String timestamp) {
+		this.timestamp = timestamp;
+	}
+
+	public String getTo() {
+		return to;
+	}
+
+	public void setTo(String to) {
+		this.to = to;
+	}
+
+	public String getFrom() {
+		return from;
+	}
+
+	public void setFrom(String from) {
+		this.from = from;
+	}
+
+	public String getAvatar() {
+		return avatar;
+	}
+
+	public void setAvatar(String avatar) {
+		this.avatar = avatar;
+	}
+
+	public int getChatType() {
+		return chatType;
+	}
+
+	public void setChatType(int chatType) {
+		this.chatType = chatType;
+	}
+
+	public int getDirection() {
+		return direction;
+	}
+
+	public void setDirection(int direction) {
+		this.direction = direction;
+	}
+
+	public int getMsgType() {
+		return msgType;
+	}
+
+	public void setMsgType(int msgType) {
+		this.msgType = msgType;
+	}
+
+	public WxMessageBody getBody() {
+		return body;
+	}
+
+	public void setBody(WxMessageBody body) {
+		this.body = body;
+	}
+	
+	
 }

@@ -3,8 +3,6 @@ package client.pojo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import lombok.Data;
-
   
 /**  
 * @ClassName: Switchs  
@@ -14,7 +12,6 @@ import lombok.Data;
 *    
 */  
     
-@Data
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class Switchs {
 	
@@ -36,4 +33,30 @@ public class Switchs {
 	*/  
 	@JsonProperty
 	private boolean globalTimer;
+
+	public boolean isAutoAcceptFriend() {
+		return autoAcceptFriend;
+	}
+
+	public void setAutoAcceptFriend(boolean autoAcceptFriend) {
+		this.autoAcceptFriend = autoAcceptFriend;
+	}
+
+	public boolean isGlobalKeyword() {
+		return globalKeyword;
+	}
+
+	public void setGlobalKeyword(boolean globalKeyword) {
+		this.globalKeyword = globalKeyword;
+	}
+
+	public boolean isGlobalTimer() {
+		return globalTimer;
+	}
+
+	public void setGlobalTimer(boolean globalTimer) {
+		this.globalTimer = globalTimer;
+	}
+	
+	
 }

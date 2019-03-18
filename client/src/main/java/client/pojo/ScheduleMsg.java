@@ -5,9 +5,6 @@ import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import lombok.Data;
-
-@Data
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class ScheduleMsg {
 	@JsonProperty
@@ -33,4 +30,46 @@ public class ScheduleMsg {
     public int hashCode() {
         return this.getUuid().hashCode();
     }
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public int getType() {
+		return type;
+	}
+
+	public void setType(int type) {
+		this.type = type;
+	}
+
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+	public String getSchedule() {
+		return schedule;
+	}
+
+	public void setSchedule(String schedule) {
+		this.schedule = schedule;
+	}
+
+	public Date getLastSendTime() {
+		return lastSendTime;
+	}
+
+	public void setLastSendTime(Date lastSendTime) {
+		this.lastSendTime = lastSendTime;
+	}
+    
+    
 }

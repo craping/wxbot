@@ -18,7 +18,7 @@
                     <div class="popover show position-relative" :class="[item.direction==2?'float-left bs-popover-right contact':'float-right bs-popover-left self']" style="max-width: 75%;">
                         <div class="arrow" style="top: .25rem;"></div>
         
-                        <div class="popover-body" v-if="item.msgType==1">{{item.body.content}}</div>
+                        <div class="popover-body" v-if="item.msgType==1" v-html="item.body.content"></div>
         
                         <div class="popover-body" v-else-if="item.msgType==3" @click="mediaPlay(item.body.content)">
                             <img :src="Web.root + item.body.thumbImageUrl" style="max-height:100px;cursor: pointer;" />

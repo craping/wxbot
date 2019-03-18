@@ -3,8 +3,6 @@ package client.pojo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import lombok.Data;
-
   
 /**  
 * @ClassName: Permissions  
@@ -14,7 +12,6 @@ import lombok.Data;
 *    
 */  
     
-@Data
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class Permissions {
  
@@ -92,4 +89,116 @@ public class Permissions {
 	*/  
 	@JsonProperty
 	private boolean wapSite;
+
+
+	public boolean isZombieTest() {
+		return zombieTest;
+	}
+
+
+	public void setZombieTest(boolean zombieTest) {
+		this.zombieTest = zombieTest;
+	}
+
+
+	public boolean isChat() {
+		return chat;
+	}
+
+
+	public void setChat(boolean chat) {
+		this.chat = chat;
+	}
+
+
+	public boolean isKeyword() {
+		return keyword;
+	}
+
+
+	public void setKeyword(boolean keyword) {
+		this.keyword = keyword;
+	}
+
+
+	public boolean isGlobalKeyword() {
+		return globalKeyword;
+	}
+
+
+	public void setGlobalKeyword(boolean globalKeyword) {
+		this.globalKeyword = globalKeyword;
+	}
+
+
+	public boolean isTimer() {
+		return timer;
+	}
+
+
+	public void setTimer(boolean timer) {
+		this.timer = timer;
+	}
+
+
+	public boolean isGlobalTimer() {
+		return globalTimer;
+	}
+
+
+	public void setGlobalTimer(boolean globalTimer) {
+		this.globalTimer = globalTimer;
+	}
+
+
+	public boolean isAcceptFriend() {
+		return acceptFriend;
+	}
+
+
+	public void setAcceptFriend(boolean acceptFriend) {
+		this.acceptFriend = acceptFriend;
+	}
+
+
+	public boolean isChatRoomFoundTip() {
+		return chatRoomFoundTip;
+	}
+
+
+	public void setChatRoomFoundTip(boolean chatRoomFoundTip) {
+		this.chatRoomFoundTip = chatRoomFoundTip;
+	}
+
+
+	public boolean isMemberJoinTip() {
+		return memberJoinTip;
+	}
+
+
+	public void setMemberJoinTip(boolean memberJoinTip) {
+		this.memberJoinTip = memberJoinTip;
+	}
+
+
+	public boolean isMemberLeftTip() {
+		return memberLeftTip;
+	}
+
+
+	public void setMemberLeftTip(boolean memberLeftTip) {
+		this.memberLeftTip = memberLeftTip;
+	}
+
+
+	public boolean isWapSite() {
+		return wapSite;
+	}
+
+
+	public void setWapSite(boolean wapSite) {
+		this.wapSite = wapSite;
+	}
+	
+	
 }
