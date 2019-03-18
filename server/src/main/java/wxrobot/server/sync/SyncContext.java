@@ -30,6 +30,7 @@ import io.netty.handler.codec.http.HttpHeaderValues;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
 import io.netty.util.CharsetUtil;
+import wxrobot.server.sync.pojo.SyncMsg;
 import wxrobot.server.utils.RedisUtil;
 
 @Component
@@ -60,7 +61,11 @@ public class SyncContext implements SchedulingConfigurer {
 //		} catch (JsonProcessingException e1) {
 //			e1.printStackTrace();
 //		}
-		redisUtil.rpush("queue_"+token, msg.getMsg());
+		try {
+			redisUtil.rpush("queue_"+token, MAPPER.writeValueAsString(msg));
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@Scheduled(fixedDelay=1000)

@@ -29,7 +29,7 @@ import net.sf.json.JSONObject;
 import wxrobot.server.HttpServer;
 import wxrobot.server.param.TokenParam;
 import wxrobot.server.sync.SyncContext;
-import wxrobot.server.sync.SyncMsg;
+import wxrobot.server.sync.pojo.SyncMsg;
 
 @Pump("api")
 @Component
@@ -77,7 +77,7 @@ public class ApiPump extends DataPump<JSONObject, FullHttpRequest, Channel> {
 	)
 	public Errcode sync (JSONObject params) throws ErrcodeException {
 		
-		return new DataResult(Errors.OK, new Data(params.getString("token")));
+		return new Result(Errors.OK);
 	}
 	
 	@Pipe("put")
@@ -90,7 +90,7 @@ public class ApiPump extends DataPump<JSONObject, FullHttpRequest, Channel> {
 	)
 	public Errcode put (JSONObject params) throws ErrcodeException {
 		SyncMsg msg = new SyncMsg();
-		msg.setMsg(params.getString("msg"));
+		msg.setData(params.getString("msg"));
 		SyncContext.putMsg(params.getString("token"), msg);
 		return new DataResult(Errors.OK);
 	}
