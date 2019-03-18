@@ -550,6 +550,23 @@ public class Tools {
 		res = simpleDateFormat.format(date);
 		return res;
 	}
+	
+	/**
+	 * 将时间转换为时间戳 UTZ 例：2019-03-19T16:00:00.000Z
+	 * @param str
+	 * @return
+	 */
+	public static String dateUTCToStamp(String str) {
+		str = str.replace("Z", " UTC");//注意是空格+UTC
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS Z");//注意格式化的表达式
+		Date date = new Date();
+		try {
+			date = format.parse(str);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return String.valueOf(date.getTime());
+	}
 
 	/**
 	 * 获取当前时间 时间戳
@@ -582,5 +599,7 @@ public class Tools {
 		System.out.println(dateToStamp("2019-01-25 03:20:03"));
 		System.out.println(getTimestamp());
 		System.out.println(stampToDate("1548878771000"));
+		String date = "2019-03-19T16:00:00.000Z";
+		System.out.println(dateUTCToStamp(date));
 	}
 }

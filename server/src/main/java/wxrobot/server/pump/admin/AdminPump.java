@@ -29,6 +29,7 @@ import net.sf.json.JSONObject;
 import wxrobot.biz.server.AdminServer;
 import wxrobot.dao.entity.AdminUser;
 import wxrobot.server.enums.CustomErrors;
+import wxrobot.server.param.AdminTokenParam;
 import wxrobot.server.utils.Tools;
 
 @Pump("admin")
@@ -44,7 +45,6 @@ public class AdminPump extends DataPump<JSONObject, FullHttpRequest, Channel> {
 	
 	@Pipe("login")
 	@BarScreen(
-		security=true,
 		desc="用户登录",
 		params= {
 			@Parameter(value="user_name",  desc="登录名"),
@@ -79,7 +79,10 @@ public class AdminPump extends DataPump<JSONObject, FullHttpRequest, Channel> {
 	
 	@Pipe("logout")
 	@BarScreen(
-		desc="用户退出"
+		desc="用户退出",
+		params= {
+			@Parameter(type=AdminTokenParam.class)
+		}
 	)
 	public Errcode logout (JSONObject params) {
 		String key = "admin_user_" + params.getString("token");
@@ -89,7 +92,10 @@ public class AdminPump extends DataPump<JSONObject, FullHttpRequest, Channel> {
 	
 	@Pipe("userInfo")
 	@BarScreen(
-		desc="获取用户信息"
+		desc="获取用户信息",
+		params= {
+			@Parameter(type=AdminTokenParam.class)
+		}
 	)
 	public Errcode userInfo (JSONObject params) {
 		String key = "admin_user_" + params.optString("token");

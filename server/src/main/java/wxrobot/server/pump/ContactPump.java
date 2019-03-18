@@ -58,6 +58,7 @@ public class ContactPump extends DataPump<JSONObject, FullHttpRequest, Channel> 
 	@BarScreen(
 		desc="同步群聊",
 		params= {
+			@Parameter(type=TokenParam.class),
 			@Parameter(value="crs",  desc="群聊"),
 		}
 	)

@@ -10,9 +10,10 @@ import wxrobot.server.utils.Tools;
  */
 @Data
 public class UserInfo {
-	
-	public UserInfo() {}
-	
+
+	public UserInfo() {
+	}
+
 	public UserInfo(String userName, String userPwd, String phoneNum) {
 		this.userName = userName;
 		this.userPwd = userPwd;
@@ -28,13 +29,15 @@ public class UserInfo {
 	private String nickName;
 	private String regTime = Tools.getTimestamp();
 	/** 软件到期时间 */
-	private String serverEnd=Tools.getTimestamp();
+	private String serverEnd = Tools.getTimestamp();
 	/** 软件服务状态 */
 	private Boolean serverState;
+	/** 注销标识 */
+	private Boolean destroy = false;
 	private String phoneNum;
 	/** 手机认证状态 */
-	private Boolean phoneState=false;
-	/** 帐号来源0管理员添加，1注册*/
-	private int comefrom=0;
+	private Boolean phoneState = false;
+	/** 帐号来源0管理员添加，1注册 */
+	private int comefrom = 0;
 	private String regIp;
 }
