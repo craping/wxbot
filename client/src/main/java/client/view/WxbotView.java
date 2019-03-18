@@ -91,7 +91,7 @@ public final class WxbotView extends AnchorPane  {
 	}
 	
 	private WxbotView() {
-		this(false);
+		this(true);
 	}
 	
 	private WxbotView(boolean debug) {
@@ -100,7 +100,10 @@ public final class WxbotView extends AnchorPane  {
 		browser = new Browser();
 	    browserView = new BrowserView(browser);
 	    BrowserContext context = browser.getContext();
-	    
+
+	    browser.getCacheStorage().clearHttpAuthenticationCache(() -> {
+	    	
+	    });
 	    ProtocolService protocolService = context.getProtocolService();
 	    protocolService.setProtocolHandler("jar", new ProtocolHandler() {
 	        @Override
@@ -293,7 +296,10 @@ public final class WxbotView extends AnchorPane  {
         settingStage.setResizable(false);
         settingStage.setIconified(false);
         settingStage.setScene(settingScene);
-        settingStage.onCloseRequestProperty().bind(settingStage.onHiddenProperty());
+        settingStage.setOnCloseRequest(e -> {
+        	settingStage.hide();
+        	e.consume();
+        });
 	}
 	
 	/**  
@@ -377,8 +383,8 @@ public final class WxbotView extends AnchorPane  {
 	* @return JSValue    返回类型  
 	* @throws  
 	*/  
-	public JSValue executeScript(String javaScript) {
-		return browser.executeJavaScriptAndReturnValue(javaScript);
+	public void executeScript(String javaScript) {
+		browser.executeJavaScript(javaScript);
 	}
 	
 	private static class MyContextMenuHandler implements ContextMenuHandler {

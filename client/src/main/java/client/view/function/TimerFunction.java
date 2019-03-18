@@ -15,6 +15,7 @@ import com.teamdev.jxbrowser.chromium.JSObject;
 import client.pojo.ScheduleMsg;
 import client.utils.Config;
 import client.utils.HttpUtil;
+import client.view.server.BaseServer;
 
 @Component
 public class TimerFunction extends ChatFunction {
@@ -31,7 +32,7 @@ public class TimerFunction extends ChatFunction {
 		if(msgs == null)
 			return new JSONString("[]");
 		try {
-			return new JSONString(jsonMapper.writeValueAsString(msgs));
+			return new JSONString(BaseServer.JSON_MAPPER.writeValueAsString(msgs));
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 			return new JSONString("[]");
@@ -41,7 +42,7 @@ public class TimerFunction extends ChatFunction {
 	public void syncTimers(JSObject syncTimerMap) {
 		try {
 			TIMER_MAP.clear();
-			TIMER_MAP.putAll(jsonMapper.readValue(syncTimerMap.toJSONString(), new TypeReference<ConcurrentHashMap<String, ConcurrentLinkedQueue<ScheduleMsg>>>() {}));
+			TIMER_MAP.putAll(BaseServer.JSON_MAPPER.readValue(syncTimerMap.toJSONString(), new TypeReference<ConcurrentHashMap<String, ConcurrentLinkedQueue<ScheduleMsg>>>() {}));
 			TIMER_MAP.forEach((k, v) -> {
 				v.forEach(msg -> {
 					if(msg.getType() != 1){
@@ -57,7 +58,7 @@ public class TimerFunction extends ChatFunction {
 	
 	public void addMsg(String seq, JSObject addMsg){
 		try {
-			ScheduleMsg msg = jsonMapper.readValue(addMsg.toJSONString(), ScheduleMsg.class);
+			ScheduleMsg msg = BaseServer.JSON_MAPPER.readValue(addMsg.toJSONString(), ScheduleMsg.class);
 			if(msg.getType() != 1){
 				System.out.printf("定时文件消息[%s]\n", msg.getContent());
 				downloadAttach(msg.getContent());

@@ -1,11 +1,15 @@
-$script("lib/vue/vue.js", "vue");
-$script("lib/iview-3/iview.min.js", "iview");
+$script("lib/vue/vue.js", "vue", () => {
+    $script([
+    "lib/vue-virtual-scroller/intersection-observer.js", "lib/vue-virtual-scroller/vue-observe-visibility.min.js", 
+    "lib/vue-virtual-scroller/vue-virtual-scroller.min.js", 
+    "lib/iview-3/iview.min.js"], "vue-plugs");
+});
 $script('lib/jquery/jquery-3.3.1.min.js', 'jquery', function (){
     $script(['lib/bootstrap-4.2.1-dist/js/popper.min.js', 'lib/bootstrap-4.2.1-dist/js/bootstrap.min.js'], 'bootstrap');
 });
 $script("lib/crypto.min.js", "crypto");
 $script("lib/common.js", "common");
-$script.ready(["vue", "iview", "jquery", "crypto", "common"], function () {
+$script.ready(["vue-plugs", "bootstrap", "crypto", "common"], function () {
     $("#user").load("settingModule/user/user.html", {}, function () {
         $script("settingModule/user/user.js", "user");
     });
@@ -57,7 +61,10 @@ const constant = {
 $script.ready(["user", "general", "forward", "globalTimer", "globalKeyword", "tips"], function () {
     Web.user = wxbot.getUserInfo();
     Web.serverURL = wxbot.getDomain()+":9527/";
+    Web.root = wxbot.getRootPath();
     Web.wxHost = wxbot.getHostUrl();
+    Web.owner = wxbot.getOwner();
+
     let data = Object.assign({
         header:{},
         setting:{},
@@ -90,7 +97,9 @@ $script.ready(["user", "general", "forward", "globalTimer", "globalKeyword", "ti
             this.header = constant.header[menu];
             $("a[name='"+menu+"']").tab("show");
             this.setting = wxbot.getSetting();
-            this.chatRooms = Object.freeze(wxbot.getChatRooms())
+            wxbot.getChatRooms(data => {
+                this.chatRooms = data;
+            });
             this.generalReset();
             this.getMsgs();
             this.getKeyMap();
@@ -106,7 +115,7 @@ $script.ready(["user", "general", "forward", "globalTimer", "globalKeyword", "ti
         data: data,
         computed:computed,
         mounted() {
-            this.syncSetting();
+            // this.syncSetting("user");
         },
         methods: methods
     });

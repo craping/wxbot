@@ -107,6 +107,9 @@ table.fixed tbody tr.h-100:hover{
 table.fixed thead {
     width: 100%
 }
+.vue-recycle-scroller__item-view.hover{
+    background-color: #00000013;
+}
 
 .vertical-center-modal{
     display: flex;

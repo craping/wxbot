@@ -10,11 +10,7 @@ import org.springframework.stereotype.Component;
 import com.cherry.jeeves.Jeeves;
 import com.cherry.jeeves.service.CacheService;
 import com.cherry.jeeves.service.WechatHttpService;
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.teamdev.jxbrowser.chromium.JSONString;
 import com.teamdev.jxbrowser.chromium.JSObject;
 
@@ -22,6 +18,8 @@ import client.pojo.Setting;
 import client.pojo.Switchs;
 import client.pojo.Tips;
 import client.view.WxbotView;
+import client.view.server.BaseServer;
+import client.view.server.ChatServer;
 import javafx.application.Platform;
 
 @Component
@@ -41,13 +39,8 @@ public class SettingFunction {
 	@Autowired
 	protected CacheService cacheService;
 	
-	protected ObjectMapper jsonMapper = new ObjectMapper();
-	{
-		jsonMapper.configure(MapperFeature.AUTO_DETECT_GETTERS, false);
-		jsonMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-		jsonMapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
-		jsonMapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true); 
-	}
+	@Autowired
+	protected ChatServer chatServer;
 	
 	public static Setting SETTING = new Setting();
 	static {
@@ -62,7 +55,7 @@ public class SettingFunction {
 	
 	public JSONString getSetting(){
 		try {
-			return new JSONString(jsonMapper.writeValueAsString(SETTING));
+			return new JSONString(BaseServer.JSON_MAPPER.writeValueAsString(SETTING));
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 			return new JSONString("{}");
@@ -72,7 +65,7 @@ public class SettingFunction {
 	public void syncSetting(JSObject syncSetting){
 		if(syncSetting != null && syncSetting.toJSONString() != null && !syncSetting.toJSONString().isEmpty()){
 			try {
-				SETTING = jsonMapper.readValue(syncSetting.toJSONString(), Setting.class);
+				SETTING = BaseServer.JSON_MAPPER.readValue(syncSetting.toJSONString(), Setting.class);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -95,7 +88,7 @@ public class SettingFunction {
 	public void syncSwitchs(JSObject syncSwitchs){
 		if(syncSwitchs != null && syncSwitchs.toJSONString() != null && !syncSwitchs.toJSONString().isEmpty()){
 			try {
-				SETTING.setSwitchs(jsonMapper.readValue(syncSwitchs.toJSONString(), Switchs.class));
+				SETTING.setSwitchs(BaseServer.JSON_MAPPER.readValue(syncSwitchs.toJSONString(), Switchs.class));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -105,7 +98,7 @@ public class SettingFunction {
 	public void syncTips(JSObject syncTips){
 		if(syncTips != null && syncTips.toJSONString() != null && !syncTips.toJSONString().isEmpty()){
 			try {
-				SETTING.setTips(jsonMapper.readValue(syncTips.toJSONString(), Tips.class));
+				SETTING.setTips(BaseServer.JSON_MAPPER.readValue(syncTips.toJSONString(), Tips.class));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

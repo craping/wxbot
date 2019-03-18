@@ -11,6 +11,7 @@ import com.teamdev.jxbrowser.chromium.JSFunction;
 import com.teamdev.jxbrowser.chromium.JSONString;
 
 import client.utils.EmojiUtil;
+import client.view.server.BaseServer;
 
 @Component
 public class ContactsFunction extends SettingFunction {
@@ -45,10 +46,23 @@ public class ContactsFunction extends SettingFunction {
 	* @throws  
 	*/  
 	    
-	public JSONString getIndividuals() {
+	public void getIndividuals(JSFunction function) {
+		new Thread(() -> {
+			try {
+				function.invokeAsync(function, new JSONString(BaseServer.JSON_MAPPER.writeValueAsString(cacheService.getIndividuals())));
+			} catch (JsonProcessingException e) {
+				e.printStackTrace();
+			}
+		}).start();
+	}
+	
+	/**
+	 * 获取当前登录微信用户信息
+	 * @return
+	 */
+	public JSONString getOwner() {
 		try {
-			System.out.println(jsonMapper.writeValueAsString(cacheService.getIndividuals()));
-			return new JSONString(jsonMapper.writeValueAsString(cacheService.getIndividuals()));
+			return new JSONString(BaseServer.JSON_MAPPER.writeValueAsString(cacheService.getOwner()));
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
@@ -95,13 +109,14 @@ public class ContactsFunction extends SettingFunction {
 	* @return JSONString    返回类型  
 	* @throws  
 	*/  
-	public JSONString getChatRooms() {
-		try {
-			return new JSONString(jsonMapper.writeValueAsString(cacheService.getChatRooms()));
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-		}
-		return new JSONString("{}");
+	public void getChatRooms(JSFunction function) {
+		new Thread(() -> {
+			try {
+				function.invokeAsync(function, new JSONString(BaseServer.JSON_MAPPER.writeValueAsString(cacheService.getChatRooms())));
+			} catch (JsonProcessingException e) {
+				e.printStackTrace();
+			}
+		}).start();
 	}
 	
 	/**
@@ -109,11 +124,11 @@ public class ContactsFunction extends SettingFunction {
 	 * @param chatRoomName
 	 * @return
 	 */
-	public JSONString getChatRoomMembers(String chatRoomName, JSFunction function) {
+	public void getChatRoomMembers(String chatRoomName, JSFunction function) {
 		new Thread(() -> {
 			try {
 				ConcurrentLinkedQueue<Contact> members = wechatService.getChatRoomInfo(chatRoomName).getMemberList();
-				function.invokeAsync(function, new JSONString(jsonMapper.writeValueAsString(members)));
+				function.invokeAsync(function, new JSONString(BaseServer.JSON_MAPPER.writeValueAsString(members)));
 //				return new JSONString(jsonMapper.writeValueAsString(members));
 			} catch (JsonProcessingException e) {
 				e.printStackTrace();
@@ -121,7 +136,6 @@ public class ContactsFunction extends SettingFunction {
 				e.printStackTrace();
 			}
 		}).start();
-		return new JSONString("{}");
 	}
 	  
 	/**  
@@ -134,7 +148,7 @@ public class ContactsFunction extends SettingFunction {
 	    
 	public JSONString getMediaPlatforms() {
 		try {
-			return new JSONString(jsonMapper.writeValueAsString(cacheService.getMediaPlatforms()));
+			return new JSONString(BaseServer.JSON_MAPPER.writeValueAsString(cacheService.getMediaPlatforms()));
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}

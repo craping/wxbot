@@ -1,7 +1,7 @@
 Info = {
     data: {
         loading: false,
-        chatRoomUserName: "",
+        user: null,
         members: [],
     },
     computed: {
@@ -9,20 +9,35 @@ Info = {
     methods: {
         // 重新加载群成员
         reloadChatRoomMember() {
-            console.log(Info.data.chatRoomUserName);
-            let me = this;
-            Info.data.loading = true;
-            wxbot.getChatRoomMembers(Info.data.chatRoomUserName, data => {
-                Info.data.members = data;
-                Info.data.loading = false;
-                me.$Message.success("刷新群成员列表成功！");
-            });
+            if(this.info.user && this.info.user.UserName.includes('@@')){
+                this.info.loading = true;
+                setTimeout(() => {
+                    wxbot.getChatRoomMembers(this.info.user.UserName, data => {
+                        this.info.members = data;
+                        this.info.loading = false;
+                        this.$Message.success("刷新群成员列表成功！");
+                    });
+                });
+            }
+        },
+        autoLoadChatRoomMember(tab){
+            if(tab == "info" && this.info.user && this.info.user.UserName.includes('@@') && !this.info.members.length){
+                this.info.loading = true;
+                setTimeout(() => {
+                    wxbot.getChatRoomMembers(this.info.user.UserName, data => {
+                        this.info.members = data;
+                        this.info.loading = false;
+                    });
+                }, 50);
+            }
         },
         // 后台主动刷新
         reloadMember() {
-            Info.data.members = wxbot.getChatRoomMembers(Info.data.chatRoomUserName);
-            app.$nextTick(() => {
-                app.$Message.success("收到群成员变动消息,刷新群成员列表成功！");
+            this.info.loading = true;
+            wxbot.getChatRoomMembers(this.info.user.UserName, data => {
+                this.info.members = data;
+                this.info.loading = false;
+                this.$Message.success("收到群成员变动消息,刷新群成员列表成功！");
             });
         }
     }

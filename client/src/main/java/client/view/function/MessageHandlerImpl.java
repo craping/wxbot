@@ -23,9 +23,7 @@ import com.cherry.jeeves.service.MessageHandler;
 import com.cherry.jeeves.service.WechatHttpService;
 import com.cherry.jeeves.utils.MessageUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.teamdev.jxbrowser.chromium.CookieStorage;
 import com.teamdev.jxbrowser.chromium.JSONString;
@@ -40,6 +38,7 @@ import client.utils.FileUtil;
 import client.utils.WxMessageTool;
 import client.view.QRView;
 import client.view.WxbotView;
+import client.view.server.BaseServer;
 import client.view.server.ChatServer;
 import javafx.application.Platform;
 
@@ -52,13 +51,10 @@ public class MessageHandlerImpl implements MessageHandler {
 	@Autowired
 	private CacheService cacheService;
 	@Autowired
-	protected ChatServer chatServer;
-
-	private ObjectMapper jsonMapper = new ObjectMapper();
-	{
-		jsonMapper.configure(MapperFeature.AUTO_DETECT_GETTERS, false);
-		jsonMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-	}
+	private ChatServer chatServer;
+	@Autowired
+	private WxMessageTool msgTool;
+	
 	private QRView qrView;
 
 	@Override
@@ -117,11 +113,11 @@ public class MessageHandlerImpl implements MessageHandler {
 		});
 		try {
 			logger.debug("individuals：");
-			System.out.println(jsonMapper.writeValueAsString(cacheService.getIndividuals()));
+			System.out.println(BaseServer.JSON_MAPPER.writeValueAsString(cacheService.getIndividuals()));
 			logger.debug("mediaPlatforms：");
-			System.out.println(jsonMapper.writeValueAsString(cacheService.getMediaPlatforms()));
+			System.out.println(BaseServer.JSON_MAPPER.writeValueAsString(cacheService.getMediaPlatforms()));
 			logger.debug("chatRooms：");
-			System.out.println(jsonMapper.writeValueAsString(cacheService.getChatRooms()));
+			System.out.println(BaseServer.JSON_MAPPER.writeValueAsString(cacheService.getChatRooms()));
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
@@ -153,16 +149,16 @@ public class MessageHandlerImpl implements MessageHandler {
 		Contact chatRoom = new Contact();
 		if (message.getFromUserName().equals(cacheService.getOwner().getUserName())) {
 			chatRoom = cacheService.getChatRoom(message.getToUserName());
-			WxMessageTool.sendMessage(chatRoom, msg, cacheService.getOwner().getNickName(), ChatType.GROUPCHAT.getCode());
+			msgTool.sendMessage(chatRoom, msg, cacheService.getOwner().getNickName(), ChatType.GROUPCHAT.getCode());
 		} else {
 			chatRoom = cacheService.getChatRoom(message.getFromUserName());
 			Contact sender = cacheService.searchContact(chatRoom.getMemberList(), userName);
-			WxMessageTool.receiveGroupMessage(chatRoom, sender, msg);
+			msgTool.receiveGroupMessage(chatRoom, sender, msg);
 		}
 		
 		try {
-			System.out.println(jsonMapper.writeValueAsString(message));
-			System.out.println(jsonMapper.writeValueAsString(chatRoom));
+			System.out.println(BaseServer.JSON_MAPPER.writeValueAsString(message));
+			System.out.println(BaseServer.JSON_MAPPER.writeValueAsString(chatRoom));
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
@@ -215,39 +211,53 @@ public class MessageHandlerImpl implements MessageHandler {
 		fullImageUrl = wechatHttpService.download(fullImageUrl, message.getMsgId() + ".jpg", MessageType.IMAGE);
 		thumbImageUrl = wechatHttpService.download(thumbImageUrl, message.getMsgId() + "_thumb.jpg", MessageType.IMAGE);
 		// 处理消息
-		WxMessage msg = new WxMessage(MessageType.IMAGE.getCode(), new WxMessageBody(fullImageUrl, thumbImageUrl, message.getImgHeight(), message.getImgWidth())); 
+		WxMessage msg = new WxMessage(MessageType.IMAGE.getCode(), new WxMessageBody(fullImageUrl, thumbImageUrl)); 
 		Contact chatRoom = new Contact();
 		if (message.getFromUserName().equals(cacheService.getOwner().getUserName())) {
 			chatRoom = cacheService.getChatRoom(message.getToUserName());
-			WxMessageTool.sendMessage(chatRoom, msg, cacheService.getOwner().getNickName(), ChatType.GROUPCHAT.getCode());
+			msgTool.sendMessage(chatRoom, msg, cacheService.getOwner().getNickName(), ChatType.GROUPCHAT.getCode());
 		} else {
 			chatRoom = cacheService.getChatRoom(message.getFromUserName());
 			Contact sender = cacheService.searchContact(chatRoom.getMemberList(), MessageUtils.getSenderOfChatRoomTextMessage(message.getContent()));
-			WxMessageTool.receiveGroupMessage(chatRoom, sender, msg);
+			msgTool.receiveGroupMessage(chatRoom, sender, msg);
 		}
 	}
 
 	@Override
 	public void onReceivingChatRoomEmoticonMessage(Message message, String emoticonUrl) {
+		String content = MessageUtils.getChatRoomTextMessageContent(message.getContent());
 		logger.debug("群聊表情消息");
 		logger.debug("from chatroom: " + message.getFromUserName());
 		logger.debug("from person: " + MessageUtils.getSenderOfChatRoomTextMessage(message.getContent()));
 		logger.debug("to: " + message.getToUserName());
-		logger.debug("content:" + MessageUtils.getChatRoomTextMessageContent(message.getContent()));
+		logger.debug("content:" + content);
 		logger.debug("emoticonUrl:" + emoticonUrl);
 		
-		// 下载表情文件 到本地
-		emoticonUrl = wechatHttpService.download(emoticonUrl, message.getMsgId() + ".gif", MessageType.EMOTICON);
-		// 处理消息
-		WxMessage msg = new WxMessage(MessageType.EMOTICON.getCode(), new WxMessageBody(emoticonUrl, message.getImgHeight(), message.getImgWidth()));
-		Contact chatRoom = new Contact();
-		if (message.getFromUserName().equals(cacheService.getOwner().getUserName())) {
-			chatRoom = cacheService.getChatRoom(message.getToUserName());
-			WxMessageTool.sendMessage(chatRoom, msg, cacheService.getOwner().getNickName(), ChatType.GROUPCHAT.getCode());
+		if(content.trim().isEmpty()) {
+			WxMessage msg = new WxMessage(MessageType.TEXT.getCode(), new WxMessageBody("[发送了一个表情，请在手机上查看]"));
+			Contact chatRoom = new Contact();
+			if (message.getFromUserName().equals(cacheService.getOwner().getUserName())) {
+				chatRoom = cacheService.getChatRoom(message.getToUserName());
+				msgTool.sendMessage(chatRoom, msg, cacheService.getOwner().getNickName(), ChatType.GROUPCHAT.getCode());
+			} else {
+				chatRoom = cacheService.getChatRoom(message.getFromUserName());
+				Contact sender = cacheService.searchContact(chatRoom.getMemberList(), MessageUtils.getSenderOfChatRoomTextMessage(message.getContent()));
+				msgTool.receiveGroupMessage(chatRoom, sender, msg);
+			}
 		} else {
-			chatRoom = cacheService.getChatRoom(message.getFromUserName());
-			Contact sender = cacheService.searchContact(chatRoom.getMemberList(), MessageUtils.getSenderOfChatRoomTextMessage(message.getContent()));
-			WxMessageTool.receiveGroupMessage(chatRoom, sender, msg);
+			// 下载表情文件 到本地
+			emoticonUrl = wechatHttpService.download(emoticonUrl, message.getMsgId() + ".gif", MessageType.EMOTICON);
+			// 处理消息
+			WxMessage msg = new WxMessage(MessageType.EMOTICON.getCode(), new WxMessageBody(emoticonUrl));
+			Contact chatRoom = new Contact();
+			if (message.getFromUserName().equals(cacheService.getOwner().getUserName())) {
+				chatRoom = cacheService.getChatRoom(message.getToUserName());
+				msgTool.sendMessage(chatRoom, msg, cacheService.getOwner().getNickName(), ChatType.GROUPCHAT.getCode());
+			} else {
+				chatRoom = cacheService.getChatRoom(message.getFromUserName());
+				Contact sender = cacheService.searchContact(chatRoom.getMemberList(), MessageUtils.getSenderOfChatRoomTextMessage(message.getContent()));
+				msgTool.receiveGroupMessage(chatRoom, sender, msg);
+			}
 		}
 	}
 
@@ -267,11 +277,11 @@ public class MessageHandlerImpl implements MessageHandler {
 		Contact chatRoom = new Contact();
 		if (message.getFromUserName().equals(cacheService.getOwner().getUserName())) {
 			chatRoom = cacheService.getChatRoom(message.getToUserName());
-			WxMessageTool.sendMessage(chatRoom, msg, cacheService.getOwner().getNickName(), ChatType.GROUPCHAT.getCode());
+			msgTool.sendMessage(chatRoom, msg, cacheService.getOwner().getNickName(), ChatType.GROUPCHAT.getCode());
 		} else {
 			chatRoom = cacheService.getChatRoom(message.getFromUserName());
 			Contact sender = cacheService.searchContact(chatRoom.getMemberList(), MessageUtils.getSenderOfChatRoomTextMessage(message.getContent()));
-			WxMessageTool.receiveGroupMessage(chatRoom, sender, msg);
+			msgTool.receiveGroupMessage(chatRoom, sender, msg);
 		}
 	}
 
@@ -293,11 +303,11 @@ public class MessageHandlerImpl implements MessageHandler {
 		Contact chatRoom = new Contact();
 		if (message.getFromUserName().equals(cacheService.getOwner().getUserName())) {
 			chatRoom = cacheService.getChatRoom(message.getToUserName());
-			WxMessageTool.sendMessage(chatRoom, msg, cacheService.getOwner().getNickName(), ChatType.GROUPCHAT.getCode());
+			msgTool.sendMessage(chatRoom, msg, cacheService.getOwner().getNickName(), ChatType.GROUPCHAT.getCode());
 		} else {
 			chatRoom = cacheService.getChatRoom(message.getFromUserName());
 			Contact sender = cacheService.searchContact(chatRoom.getMemberList(), MessageUtils.getSenderOfChatRoomTextMessage(message.getContent()));
-			WxMessageTool.receiveGroupMessage(chatRoom, sender, msg);
+			msgTool.receiveGroupMessage(chatRoom, sender, msg);
 		}
 	}
 
@@ -313,15 +323,15 @@ public class MessageHandlerImpl implements MessageHandler {
 		// 下载文件
 		mediaUrl = wechatHttpService.download(mediaUrl, message.getMsgId() + "_" + message.getFileName(), MessageType.APP);
 		// 处理通用文件消息
-		WxMessage msg = new WxMessage(MessageType.APP.getCode(), new WxMessageBody(MessageType.APP, mediaUrl, message.getFileName(), FileUtil.getFileSizeString(Long.valueOf(message.getFileSize()))));		
+		WxMessage msg = new WxMessage(MessageType.APP.getCode(), new WxMessageBody(mediaUrl, message.getFileName(), FileUtil.getFileSizeString(Long.valueOf(message.getFileSize()))));		
 		Contact chatRoom = new Contact();
 		if (message.getFromUserName().equals(cacheService.getOwner().getUserName())) {
 			chatRoom = cacheService.getChatRoom(message.getToUserName());
-			WxMessageTool.sendMessage(chatRoom, msg, cacheService.getOwner().getNickName(), ChatType.GROUPCHAT.getCode());
+			msgTool.sendMessage(chatRoom, msg, cacheService.getOwner().getNickName(), ChatType.GROUPCHAT.getCode());
 		} else {
 			chatRoom = cacheService.getChatRoom(message.getFromUserName());
 			Contact sender = cacheService.searchContact(chatRoom.getMemberList(), MessageUtils.getSenderOfChatRoomTextMessage(message.getContent()));
-			WxMessageTool.receiveGroupMessage(chatRoom, sender, msg);
+			msgTool.receiveGroupMessage(chatRoom, sender, msg);
 		}
 	}
 
@@ -335,10 +345,10 @@ public class MessageHandlerImpl implements MessageHandler {
 		WxMessage msg = new WxMessage(MessageType.TEXT.getCode(), new WxMessageBody(message.getContent()));
 		if (message.getFromUserName().equals(cacheService.getOwner().getUserName())) {
 			Contact recipient = cacheService.getContact(message.getToUserName());
-			WxMessageTool.sendMessage(recipient, msg, cacheService.getOwner().getNickName(), ChatType.CHAT.getCode());
+			msgTool.sendMessage(recipient, msg, cacheService.getOwner().getNickName(), ChatType.CHAT.getCode());
 		} else {
 			Contact sender = cacheService.getContact(message.getFromUserName());
-			WxMessageTool.receiveMessage(sender, cacheService.getOwner(), msg);
+			msgTool.receiveMessage(sender, cacheService.getOwner(), msg);
 		}
 		
 		//转发给群
@@ -363,14 +373,14 @@ public class MessageHandlerImpl implements MessageHandler {
 		final String fullImagePath = wechatHttpService.download(fullImageUrl, message.getMsgId() + ".jpg", MessageType.IMAGE);
 		final String  thumbImagePath = wechatHttpService.download(thumbImageUrl, message.getMsgId() + "_thumb.jpg", MessageType.IMAGE);
 		// 处理图片消息
-		WxMessage msg = new WxMessage(MessageType.IMAGE.getCode(), new WxMessageBody(fullImagePath, thumbImagePath, message.getImgHeight(), message.getImgWidth()));
+		WxMessage msg = new WxMessage(MessageType.IMAGE.getCode(), new WxMessageBody(fullImagePath, thumbImagePath));
 		// 处理消息
 		if (message.getFromUserName().equals(cacheService.getOwner().getUserName())) {
 			Contact recipient = cacheService.getContact(message.getToUserName());
-			WxMessageTool.sendMessage(recipient, msg, cacheService.getOwner().getNickName(), ChatType.CHAT.getCode());
+			msgTool.sendMessage(recipient, msg, cacheService.getOwner().getNickName(), ChatType.CHAT.getCode());
 		} else {
 			Contact sender = cacheService.getContact(message.getFromUserName());
-			WxMessageTool.receiveMessage(sender, cacheService.getOwner(), msg);
+			msgTool.receiveMessage(sender, cacheService.getOwner(), msg);
 		}
 		
 		//转发给群
@@ -378,7 +388,7 @@ public class MessageHandlerImpl implements MessageHandler {
 			cacheService.getChatRooms().stream().filter(c -> SettingFunction.SETTING.getForwards().contains(c.getSeq())).forEach(c -> {
 				try {
 					wechatHttpService.forwardMsg(c.getUserName(), message);
-					WxMessageTool.sendMessage(c, msg, cacheService.getOwner().getNickName(), ChatType.CHAT.getCode());
+					msgTool.sendMessage(c, msg, cacheService.getOwner().getNickName(), ChatType.CHAT.getCode());
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -390,28 +400,40 @@ public class MessageHandlerImpl implements MessageHandler {
 	public void onReceivingPrivateEmoticonMessage(Message message, String emoticonUrl) {
 		logger.debug("私聊表情消息");
 		logger.debug("emoticonUrl:" + emoticonUrl);
-		// 下载表情文件 到本地
-		emoticonUrl = wechatHttpService.download(emoticonUrl, message.getMsgId() + ".gif", MessageType.EMOTICON);
-		// 处理表情消息
-		WxMessage msg = new WxMessage(MessageType.EMOTICON.getCode(), new WxMessageBody(emoticonUrl, message.getImgHeight(), message.getImgWidth()));
-		if (message.getFromUserName().equals(cacheService.getOwner().getUserName())) {
-			Contact recipient = cacheService.getContact(message.getToUserName());
-			WxMessageTool.sendMessage(recipient, msg, cacheService.getOwner().getNickName(), ChatType.CHAT.getCode());
-		} else {
-			Contact sender = cacheService.getContact(message.getFromUserName());
-			WxMessageTool.receiveMessage(sender, cacheService.getOwner(), msg);
-		}
 		
-		//转发给群
-		if(cacheService.getOwner().getUserName().equals(message.getFromUserName())){
-			cacheService.getChatRooms().stream().filter(c -> SettingFunction.SETTING.getForwards().contains(c.getSeq())).forEach(c -> {
-				try {
-					wechatHttpService.forwardMsg(c.getUserName(), message);
-					WxMessageTool.sendMessage(c, msg, cacheService.getOwner().getNickName(), ChatType.CHAT.getCode());
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			});
+		if(message.getContent() == null || message.getContent().isEmpty()) {
+			WxMessage msg = new WxMessage(MessageType.TEXT.getCode(), new WxMessageBody("[发送了一个表情，请在手机上查看]"));
+			if (message.getFromUserName().equals(cacheService.getOwner().getUserName())) {
+				Contact recipient = cacheService.getContact(message.getToUserName());
+				msgTool.sendMessage(recipient, msg, cacheService.getOwner().getNickName(), ChatType.CHAT.getCode());
+			} else {
+				Contact sender = cacheService.getContact(message.getFromUserName());
+				msgTool.receiveMessage(sender, cacheService.getOwner(), msg);
+			}
+		} else {
+			// 下载表情文件 到本地
+			emoticonUrl = wechatHttpService.download(emoticonUrl, message.getMsgId() + ".gif", MessageType.EMOTICON);
+			// 处理表情消息
+			WxMessage msg = new WxMessage(MessageType.EMOTICON.getCode(), new WxMessageBody(emoticonUrl));
+			if (message.getFromUserName().equals(cacheService.getOwner().getUserName())) {
+				Contact recipient = cacheService.getContact(message.getToUserName());
+				msgTool.sendMessage(recipient, msg, cacheService.getOwner().getNickName(), ChatType.CHAT.getCode());
+			} else {
+				Contact sender = cacheService.getContact(message.getFromUserName());
+				msgTool.receiveMessage(sender, cacheService.getOwner(), msg);
+			}
+			
+			//转发给群
+			if(cacheService.getOwner().getUserName().equals(message.getFromUserName())){
+				cacheService.getChatRooms().stream().filter(c -> SettingFunction.SETTING.getForwards().contains(c.getSeq())).forEach(c -> {
+					try {
+						wechatHttpService.forwardMsg(c.getUserName(), message);
+						msgTool.sendMessage(c, msg, cacheService.getOwner().getNickName(), ChatType.CHAT.getCode());
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				});
+			}
 		}
 	}
 
@@ -424,10 +446,10 @@ public class MessageHandlerImpl implements MessageHandler {
 		WxMessage msg = new WxMessage(MessageType.VOICE.getCode(), new WxMessageBody(voiceUrl, message.getVoiceLength()));
 		if (message.getFromUserName().equals(cacheService.getOwner().getUserName())) {
 			Contact recipient = cacheService.getContact(message.getToUserName());
-			WxMessageTool.sendMessage(recipient, msg, cacheService.getOwner().getNickName(), ChatType.CHAT.getCode());
+			msgTool.sendMessage(recipient, msg, cacheService.getOwner().getNickName(), ChatType.CHAT.getCode());
 		} else {
 			Contact sender = cacheService.getContact(message.getFromUserName());
-			WxMessageTool.receiveMessage(sender, cacheService.getOwner(), msg);
+			msgTool.receiveMessage(sender, cacheService.getOwner(), msg);
 		}
 		
 		//转发给群
@@ -435,7 +457,7 @@ public class MessageHandlerImpl implements MessageHandler {
 			cacheService.getChatRooms().stream().filter(c -> SettingFunction.SETTING.getForwards().contains(c.getSeq())).forEach(c -> {
 				try {
 					wechatHttpService.forwardMsg(c.getUserName(), message);
-					WxMessageTool.sendMessage(c, msg, cacheService.getOwner().getNickName(), ChatType.CHAT.getCode());
+					msgTool.sendMessage(c, msg, cacheService.getOwner().getNickName(), ChatType.CHAT.getCode());
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -455,10 +477,10 @@ public class MessageHandlerImpl implements MessageHandler {
 		WxMessage msg = new WxMessage(MessageType.VIDEO.getCode(), new WxMessageBody(videoUrl, thumbImageUrl));
 		if (message.getFromUserName().equals(cacheService.getOwner().getUserName())) {
 			Contact recipient = cacheService.getContact(message.getToUserName());
-			WxMessageTool.sendMessage(recipient, msg, cacheService.getOwner().getNickName(), ChatType.CHAT.getCode());
+			msgTool.sendMessage(recipient, msg, cacheService.getOwner().getNickName(), ChatType.CHAT.getCode());
 		} else {
 			Contact sender = cacheService.getContact(message.getFromUserName());
-			WxMessageTool.receiveMessage(sender, cacheService.getOwner(), msg);
+			msgTool.receiveMessage(sender, cacheService.getOwner(), msg);
 		}
 		
 		//转发给群
@@ -466,7 +488,7 @@ public class MessageHandlerImpl implements MessageHandler {
 			cacheService.getChatRooms().stream().filter(c -> SettingFunction.SETTING.getForwards().contains(c.getSeq())).forEach(c -> {
 				try {
 					wechatHttpService.forwardMsg(c.getUserName(), message);
-					WxMessageTool.sendMessage(c, msg, cacheService.getOwner().getNickName(), ChatType.CHAT.getCode());
+					msgTool.sendMessage(c, msg, cacheService.getOwner().getNickName(), ChatType.CHAT.getCode());
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -481,13 +503,13 @@ public class MessageHandlerImpl implements MessageHandler {
 		// 下载文件
 		mediaUrl = wechatHttpService.download(mediaUrl, message.getMsgId() + "_" + message.getFileName(), MessageType.APP);
 		// 处理私聊通用文件消息
-		WxMessage msg = new WxMessage(MessageType.APP.getCode(), new WxMessageBody(MessageType.APP, mediaUrl, message.getFileName(), FileUtil.getFileSizeString(Long.valueOf(message.getFileSize()))));
+		WxMessage msg = new WxMessage(MessageType.APP.getCode(), new WxMessageBody(mediaUrl, message.getFileName(), FileUtil.getFileSizeString(Long.valueOf(message.getFileSize()))));
 		if (message.getFromUserName().equals(cacheService.getOwner().getUserName())) {
 			Contact recipient = cacheService.getContact(message.getToUserName());
-			WxMessageTool.sendMessage(recipient, msg, cacheService.getOwner().getNickName(), ChatType.CHAT.getCode());
+			msgTool.sendMessage(recipient, msg, cacheService.getOwner().getNickName(), ChatType.CHAT.getCode());
 		} else {
 			Contact sender = cacheService.getContact(message.getFromUserName());
-			WxMessageTool.receiveMessage(sender, cacheService.getOwner(), msg);
+			msgTool.receiveMessage(sender, cacheService.getOwner(), msg);
 		}
 		
 		//转发给群
@@ -495,7 +517,7 @@ public class MessageHandlerImpl implements MessageHandler {
 			cacheService.getChatRooms().stream().filter(c -> SettingFunction.SETTING.getForwards().contains(c.getSeq())).forEach(c -> {
 				try {
 					wechatHttpService.forwardMsg(c.getUserName(), message);
-					WxMessageTool.sendMessage(c, msg, cacheService.getOwner().getNickName(), ChatType.CHAT.getCode());
+					msgTool.sendMessage(c, msg, cacheService.getOwner().getNickName(), ChatType.CHAT.getCode());
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -506,27 +528,8 @@ public class MessageHandlerImpl implements MessageHandler {
 	@Override
 	public void onMembersSeqChanged(Map<String, String> seqMap) {
 		logger.debug("收到联系人seq变动消息");
-		System.out.println(seqMap);
-		Platform.runLater(() -> {
-			WxbotView wxbotView = WxbotView.getInstance();
-			JSObject app = wxbotView.getBrowser().executeJavaScriptAndReturnValue("app").asObject();
-			JSValue syncSeq = app.getProperty("syncSeq");
-			try {
-				syncSeq.asFunction().invokeAsync(app, new JSONString(jsonMapper.writeValueAsString(seqMap)));
-				WxMessageTool.execContactsChanged("您有好友更新消息，已成功刷新列表");
-			} catch (JsonProcessingException e) {
-				e.printStackTrace();
-			}
-		});
-		// seq变动，重命名聊天记录文件夹
-		seqMap.forEach((k, v) -> {
-			String oldPath = Config.CHAT_RECORD_PATH + k;
-			String newPath = Config.CHAT_RECORD_PATH + v;
-			FileUtil.renameFile(oldPath, newPath);
-		});
 		//变更关键词seq
-		WxMessageTool.syncSeq(seqMap);
-		WxMessageTool.execContactsChanged("您有好友更新消息，已成功刷新列表");
+		msgTool.syncSeq(seqMap);
 	}
 
 	@Override
@@ -564,14 +567,14 @@ public class MessageHandlerImpl implements MessageHandler {
 	public void onNewChatRoomsFound(Set<Contact> chatRooms) {
 		logger.debug("发现新群消息");
 		chatRooms.forEach(x -> logger.debug(x.getUserName()));
-		WxMessageTool.execContactsChanged("发现新群消息，已成功刷新列表");
+		msgTool.execContactsChanged(chatRooms, 2);
 	}
 
 	@Override
 	public void onChatRoomsDeleted(Set<Contact> chatRooms) {
 		logger.debug("群被删除消息");
 		chatRooms.forEach(x -> logger.debug(x.getUserName()));
-		WxMessageTool.execContactsChanged("群被删除，已成功刷新列表");
+		msgTool.execContactsChanged(chatRooms, 2);
 	}
 
 	@Override
@@ -581,7 +584,7 @@ public class MessageHandlerImpl implements MessageHandler {
 			logger.debug(x.getUserName());
 			logger.debug(x.getNickName());
 		});
-		WxMessageTool.execContactsChanged("发现新好友消息，已成功刷新列表");
+		msgTool.execContactsChanged(contacts, 1);
 	}
 
 	@Override
@@ -591,7 +594,7 @@ public class MessageHandlerImpl implements MessageHandler {
 			logger.debug(x.getUserName());
 			logger.debug(x.getNickName());
 		});
-		WxMessageTool.execContactsChanged("好友被删除消息，已成功刷新列表");
+		msgTool.execContactsChanged(contacts, 1);
 	}
 
 	@Override
@@ -614,33 +617,54 @@ public class MessageHandlerImpl implements MessageHandler {
 
 	@Override
 	public void onStatusNotifyReaded(Message message) {
+		logger.debug("onStatusNotifyReaded 消息");
+		try {
+			logger.debug(BaseServer.JSON_MAPPER.writeValueAsString(message));
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void onStatusNotifyEnterSession(Message message) {
+		logger.debug("onStatusNotifyEnterSession 消息");
+		WxbotView.getInstance().executeScript(String.format("app.setCount('%s', 0)", message.getStatusNotifyUserName()));
+		try {
+			logger.debug(BaseServer.JSON_MAPPER.writeValueAsString(message));
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void onStatusNotifyInited(Message message) {
+		logger.debug("onStatusNotifyInited 消息");
+		try {
+			logger.debug(BaseServer.JSON_MAPPER.writeValueAsString(message));
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void onStatusNotifyQuitSession(Message message) {
+		logger.debug("onStatusNotifyQuitSession 消息");
+		
+		try {
+			logger.debug(BaseServer.JSON_MAPPER.writeValueAsString(message));
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void onStatusNotifySyncConv(Message message) {
-		WxbotView.getInstance().executeScript("app.loadContacts()");
+		WxbotView.getInstance().executeScript("app.loadChatRooms()");
 	}
 
 	@Override
 	public void onFriendVerify(Contact contact) {
 		logger.debug("onFriendVerify 消息");
-		try {
-			System.out.println(jsonMapper.writeValueAsString(contact));
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-		}
 		
 		Map<String, Contact> contactMap = new HashMap<String, Contact>();
 		WxbotView wxbotView = WxbotView.getInstance();
@@ -648,7 +672,7 @@ public class MessageHandlerImpl implements MessageHandler {
 		JSValue deleteEvt = app.getProperty("deleteEvt");
 		try {
 			contactMap.put(contact.getSeq(), contact);
-			deleteEvt.asFunction().invoke(app, new JSONString(jsonMapper.writeValueAsString(contactMap)));
+			deleteEvt.asFunction().invoke(app, new JSONString(BaseServer.JSON_MAPPER.writeValueAsString(contactMap)));
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
@@ -657,11 +681,6 @@ public class MessageHandlerImpl implements MessageHandler {
 	@Override
 	public void onFriendBlacklist(Contact contact) {
 		logger.debug("onFriendBlacklist 消息");
-		try {
-			System.out.println(jsonMapper.writeValueAsString(contact));
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-		}
 		
 		Map<String, Contact> contactMap = new HashMap<String, Contact>();
 		WxbotView wxbotView = WxbotView.getInstance();
@@ -669,7 +688,7 @@ public class MessageHandlerImpl implements MessageHandler {
 		JSValue blacklistEvt = app.getProperty("blacklistEvt");
 		try {
 			contactMap.put(contact.getSeq(), contact);
-			blacklistEvt.asFunction().invoke(app, new JSONString(jsonMapper.writeValueAsString(contactMap)));
+			blacklistEvt.asFunction().invoke(app, new JSONString(BaseServer.JSON_MAPPER.writeValueAsString(contactMap)));
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}

@@ -7,104 +7,142 @@ Contacts = {
         contactTab: 'contact',
         loading: false
     },
+    computed:{
+        filterIndividuals(){
+            let me = this;
+            return me.filterAll(me.contacts.individuals, {
+                RemarkName: me.contacts.filterKey,
+                RemarkPYInitial: me.contacts.filterKey,
+                RemarkPYQuanPin: me.contacts.filterKey,
+                NickName: me.contacts.filterKey,
+                PYInitial: me.contacts.filterKey,
+                PYQuanPin: me.contacts.filterKey
+            });
+        },
+        filterChatRooms(){
+            let me = this;
+            return me.filterAll(me.contacts.chatRooms, {
+                RemarkName: me.contacts.filterKey,
+                RemarkPYInitial: me.contacts.filterKey,
+                RemarkPYQuanPin: me.contacts.filterKey,
+                NickName: me.contacts.filterKey,
+                PYInitial: me.contacts.filterKey,
+                PYQuanPin: me.contacts.filterKey
+            });
+        }
+    },
     methods: {
         // 导出联系人txt
         saveContactsAsTxt() {
             var urlObject = window.URL || window.webkitURL || window;
-            var _outStr = "************ 联系人 ************\n";
-            Contacts.data.individuals.forEach(e => {
-                _outStr = _outStr + wxbot.rmEmoji(e.NickName) + "\n";
+            var content = "************ 联系人 ************\n";
+            this.contacts.individuals.forEach(e => {
+                content += wxbot.rmEmoji(e.NickName) + "\n";
             });
-            _outStr = _outStr + "************ 群聊 ************\n";
-            Contacts.data.chatRooms.forEach(e => {
-                _outStr = _outStr + wxbot.rmEmoji(e.NickName) + "\n";
+            content += "************ 群聊 ************\n";
+            this.contacts.chatRooms.forEach(e => {
+                content += wxbot.rmEmoji(e.NickName) + "\n";
             });
-            var export_blob = new Blob([new String(_outStr, "utf-8")]);
-            var save_link = document.createElementNS("http://www.w3.org/1999/xhtml", "a")
-            save_link.href = urlObject.createObjectURL(export_blob);
-            save_link.download = "联系人.txt";
-            var ev = document.createEvent("MouseEvents");
-            ev.initMouseEvent("click", true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-            save_link.dispatchEvent(ev);
+            this.exportFile(content ,"联系人.txt");
         },
-        // 通过昵称，群名称关键字可搜索
-        searchContacts() {
-            Contacts.data.searchResult = [];
-            let _searchResult = this.$refs.searchResult;
-            let _not_found = _searchResult.firstChild;
-            let _result = _searchResult.querySelector(".ivu-select-dropdown-list");
-            let _loading = _searchResult.lastChild;
-            // 初始化搜索结果div 设置display：none 隐藏
-            _searchResult.style['display'] = "none";
-            _not_found.style['display'] = "none";
-            _result.style['display'] = "none";
-            _loading.style['display'] = "none";
-            // 搜索关键字
-            const filterKey = Contacts.data.filterKey;
-            if (filterKey && filterKey.length > 0) {
-                _searchResult.style['display'] = "block";
-                _loading.style['display'] = "block";
-                let me = this;
-                if (Contacts.data.contactTab == "chatroom") {
-                    Contacts.data.searchResult = me.filterAll(Contacts.data.chatRooms.map(e => {
-                        return {
-                            seq: e.seq,
-                            UserName: e.UserName,
-                            HeadImgUrl: e.HeadImgUrl,
-                            NickName: Contacts.methods.emojiFormatter(e.NickName)
-                        };
-                    }), {
-                        NickName: filterKey
-                    });
-                } else if (Contacts.data.contactTab == "contact") {
-                    Contacts.data.searchResult = me.filterAll(Contacts.data.individuals.map(e => {
-                        return {
-                            seq: e.seq,
-                            UserName: e.UserName,
-                            HeadImgUrl: e.HeadImgUrl,
-                            NickName: Contacts.methods.emojiFormatter(e.NickName)
-                        };
-                    }), {
-                        NickName: filterKey
-                    });
+        // 加载通讯录
+        loadContacts() {
+            this.loadIndividuals();
+            this.loadChatRooms();
+        },
+        //加载联系人
+        loadIndividuals(){
+            wxbot.getIndividuals(data => {
+                this.contacts.individuals = data.sort((e, t) => {
+                    e.count = 0;
+                    t.count = 0;
+                    e.MMOrderSymbol = this.getContactOrderSymbol(e);
+                    t.MMOrderSymbol = this.getContactOrderSymbol(t);
+                    return e.MMOrderSymbol > t.MMOrderSymbol ? 1 : -1
+                });
+                this.contacts.loading = false;
+            })
+        },
+        //加载群聊
+        loadChatRooms(){
+            wxbot.getChatRooms(data => {
+                this.contacts.chatRooms = data.sort((e, t) => {
+                    e.count = 0;
+                    t.count = 0;
+                    e.MMOrderSymbol = this.getContactOrderSymbol(e);
+                    t.MMOrderSymbol = this.getContactOrderSymbol(t);
+                    return e.MMOrderSymbol > t.MMOrderSymbol ? 1 : -1
+                });
+                this.syncChatRooms();
+            })
+        },
+        addContact(contacts){
+            contacts.forEach(e => {
+                e.count = 0;
+                if(e.UserName.includes("@@"))
+                    this.contacts.chatRooms.push(e);
+                else
+                    this.contacts.individuals.push(e);
+            });
+            this.syncChatRooms();
+        },
+        delContact(contacts){
+            contacts.forEach(e => {
+                if(e.UserName.includes("@@")){
+                    const index = this.contacts.chatRooms.findIndex(e1 => e.UserName == e1.UserName);
+                    if(index != -1)
+                    this.contacts.chatRooms.splice(index, 1);
                 } else {
-                    // app.$Message.error("操作失败！"); // 没有匹配到tab name
+                    const index = this.contacts.individuals.findIndex(e1 => e.UserName == e1.UserName);
+                    if(index != -1)
+                    this.contacts.individuals.splice(index, 1);
                 }
-
-                _loading.style['display'] = "none";
-                // 未匹配任何结果
-                if (Contacts.data.searchResult.length == 0) {
-                    _not_found.style['display'] = "block";
-                } else {
-                    _result.style['display'] = "block";
+            });
+            this.syncChatRooms();
+        },
+        //联系人置顶
+        setContactToTop(userName){
+            let index;
+            let contact = this.contacts.individuals.find((e, i) => {
+                index = i;
+                return e.UserName == userName;
+            });
+            if (contact && index != 0) {
+                this.contacts.individuals.splice(index, 1);
+                this.contacts.individuals.splice(0, 0, contact);
+            } else {
+                contact = this.contacts.chatRooms.find((e, i) => {
+                    index = i;
+                    return e.UserName == userName;
+                });
+                if(contact && index != 0){
+                    this.contacts.chatRooms.splice(index, 1);
+                    this.contacts.chatRooms.splice(0, 0, contact);
                 }
             }
         },
-        // 初始化联系人列表
-        loadContacts() {
-            Contacts.data.chatRooms = wxbot.getChatRooms();
-            Contacts.data.individuals = wxbot.getIndividuals();
-            app.$nextTick(() => {
-                Contacts.methods.syncContacts();
-            });
+        setCount(userName, count){
+            const contacts = userName.includes("@@")?this.contacts.chatRooms:this.contacts.individuals;
+            let contact = contacts.find(e => e.UserName == userName);
+            if(contact && contact.count){
+                if(count != undefined)
+                    contact.count = count;
+                else
+                    contact.count ++;
+            } else {
+                if(count != undefined)
+                    contact.count = count;
+                else
+                    contact.count = 1;
+            }
+
         },
-        // 重新加载联系人列表
         reloadContacts() {
-            let me = this;
-            Contacts.data.loading = true;
-            setTimeout(() => {
-                this.loadContacts();
-                this.$nextTick(() => {
-                    Contacts.data.loading = false;
-                    me.$Message.success("刷新联系人列表成功！");
-                });
-            }, 1000);
-        },
-        // 处理好友，群成员变动
-        onContactChanged(msg) {
-            Contacts.methods.loadContacts();
-            app.$nextTick(() => {
-                app.$Message.success(msg);
+            this.contacts.loading = true;
+            this.loadContacts();
+            this.$nextTick(() => {
+                this.contacts.loading = false;
+                this.$Message.success("刷新联系人列表成功！");
             });
         },
         // 图片 base64
@@ -123,28 +161,14 @@ Contacts = {
             }
             return deferred.promise();//问题要让onload完成后再return;
         },
-        // 同步联系人、群聊到服务端
-        syncContacts() {
-            let idis = []; // 联系人
+        // 同步群聊到服务端
+        syncChatRooms() {
             let crs = [];  // 群聊
             let promises = [];
-            Contacts.data.individuals.forEach(e => {
-                promises.push(Promise.resolve(e).then(c => {
-                    const imgSrc = $("#avatar_" + c.seq + " img").attr("src");
-                    return Contacts.methods.getBase64Image(imgSrc).then(base64 => {
-                        idis.push({
-                            seq: c.seq,
-                            headImgUrl: base64,
-                            nickName: c.NickName
-                        });
-                    })
-                }));
-            });
 
-            Contacts.data.chatRooms.forEach(e => {
+            this.contacts.chatRooms.forEach(e => {
                 promises.push(Promise.resolve(e).then(c => {
-                    const imgSrc = $("#avatar_" + c.seq + " img").attr("src");
-                    return Contacts.methods.getBase64Image(imgSrc).then(base64 => {
+                    return Contacts.methods.getBase64Image(Web.wxHost + e.HeadImgUrl).then(base64 => {
                         crs.push({
                             seq: c.seq,
                             headImgUrl: base64,
@@ -157,7 +181,6 @@ Contacts = {
             Promise.all(promises).then(() => {
                 Web.ajax("contact/syncContacts", {
                     data: {
-                        idis: idis,
                         crs: crs
                     },
                     success: function (data) {
@@ -172,44 +195,38 @@ Contacts = {
                 });
             });
         },
-        // 处理emoji表情
-        emojiFormatter(userName) {
-            return wxbot.getEmoji(userName);
-        },
         // 初始化聊天窗口
-        startChat(seq, nickName, userName, headImgUrl) {
-            Chat.data.seq = seq;
-            Chat.data.title = nickName;
-            Chat.data.userName = userName;
-            Chat.data.userHeadImg = Web.wxHost + headImgUrl;
-            Chat.data.ownerHeadImg = wxbot.getOwnerHeadImgUrl();
-            wxbot.chatRecord(seq, data => {
-                Chat.data.chatRecord = data;
-            });
-            $('#avatar_' + seq + " sup.ivu-badge-count").remove();
-            Contacts.data.filterKey = "";
-            this.$refs.searchResult.style['display'] = "none";
+        startChat(item) {
+            if(this.chat.userName != item.UserName) {
+                this.chat.seq = item.seq;
+                this.chat.title = item.RemarkName || item.NickName;
+                this.chat.userName = item.UserName;
+                this.chat.userHeadImg = Web.wxHost + item.HeadImgUrl;
+                this.chat.recordDate = new Date().format("yyyy-MM-dd");
+                this.info.user = item;
+                this.info.members = [];
+                item.count = 0;
+                if(this.contacts.contactTab == "chatroom"){
+                    this.getKeyMap(item.seq);
+                    this.getMsgs(item.seq);
+                    this.rightTab = "keyword";
+                } else {
+                    this.rightTab = "info";
+                }
+                this.resetChatRecord(item.seq);
+            }
+            this.contacts.filterKey = "";
         },
-        // 初始化群聊窗口、群成员列表
-        startGroupChat(seq, nickName, userName) {
-            Chat.data.seq = seq;
-            Chat.data.title = nickName;
-            Chat.data.userName = userName;
-            Chat.data.ownerHeadImg = wxbot.getOwnerHeadImgUrl();
-            wxbot.chatRecord(seq, data => {
-                Chat.data.chatRecord = data;
-            });
-            Info.data.loading = true;
-            wxbot.getChatRoomMembers(userName, data => {
-                Info.data.members = data;
-                Info.data.loading = false;
-            });
-            Info.data.chatRoomUserName = userName;
-            $('#avatar_' + seq + " sup.ivu-badge-count").remove();
-            Contacts.data.filterKey = "";
-            this.$refs.searchResult.style['display'] = "none";
-            this.getKeyMap(seq);
-            this.getMsgs(seq);
+        getContactOrderSymbol: function(e) {
+            if (!e)
+                return "";
+            var t = "";
+            return t = this.clearHtmlStr(e.RemarkPYQuanPin || e.PYQuanPin || e.NickName || "").toLocaleUpperCase().replace(/\W/gi, ""),
+            t.charAt(0) < "A" && (t = "~"),
+            t
+        },
+        clearHtmlStr: function(e) {
+            return e ? e.replace(/<[^>]*>/g, "") : e
         }
     }
 }

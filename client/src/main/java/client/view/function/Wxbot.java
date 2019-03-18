@@ -29,6 +29,7 @@ import com.teamdev.jxbrowser.chromium.JSValue;
 import client.utils.Config;
 import client.view.LoginView;
 import client.view.WxbotView;
+import client.view.server.BaseServer;
 import client.view.server.ChatServer;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
@@ -45,9 +46,6 @@ import javafx.scene.control.ButtonType;
 @Component
 @EnableScheduling
 public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
-	
-	@Autowired
-	protected ChatServer chatServer;
 	
 	public Wxbot() {
 		super();
@@ -237,7 +235,7 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 		c1.setUserName("123456");
 		sets.add(c1);
 		try {
-			return new JSONString(jsonMapper.writeValueAsString(sets));
+			return new JSONString(BaseServer.JSON_MAPPER.writeValueAsString(sets));
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
@@ -251,7 +249,7 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 		JSObject app = wxbotView.getBrowser().executeJavaScriptAndReturnValue("app").asObject();
 		JSValue onMembersSeqChanged = app.getProperty("onMembersSeqChanged");
 		try {
-			onMembersSeqChanged.asFunction().invoke(app, new JSONString(jsonMapper.writeValueAsString(seqMap)));
+			onMembersSeqChanged.asFunction().invoke(app, new JSONString(BaseServer.JSON_MAPPER.writeValueAsString(seqMap)));
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}

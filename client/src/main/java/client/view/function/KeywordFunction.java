@@ -10,6 +10,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.teamdev.jxbrowser.chromium.JSONString;
 import com.teamdev.jxbrowser.chromium.JSObject;
 
+import client.view.server.BaseServer;
+
 @Component
 public class KeywordFunction extends TimerFunction {
 
@@ -25,7 +27,7 @@ public class KeywordFunction extends TimerFunction {
 		if(keyMap == null)
 			return new JSONString("{}");
 		try {
-			return new JSONString(jsonMapper.writeValueAsString(keyMap));
+			return new JSONString(BaseServer.JSON_MAPPER.writeValueAsString(keyMap));
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 			return new JSONString("{}");
@@ -36,7 +38,7 @@ public class KeywordFunction extends TimerFunction {
 		System.out.println(syncKeyMap);
 		try {
 			KEY_MAP.clear();
-			KEY_MAP.putAll(jsonMapper.readValue(syncKeyMap.toJSONString(), new TypeReference<ConcurrentHashMap<String, ConcurrentHashMap<String, String>>>() {}));
+			KEY_MAP.putAll(BaseServer.JSON_MAPPER.readValue(syncKeyMap.toJSONString(), new TypeReference<ConcurrentHashMap<String, ConcurrentHashMap<String, String>>>() {}));
 			System.out.println(KeywordFunction.KEY_MAP);
 		} catch (IOException e) {
 			e.printStackTrace();

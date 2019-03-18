@@ -16,11 +16,11 @@ public abstract class BaseServer {
 	@Autowired
 	protected CacheService cacheService;
 	
-	protected ObjectMapper jsonMapper = new ObjectMapper();
-	{
-		jsonMapper.configure(MapperFeature.AUTO_DETECT_GETTERS, false);
-		jsonMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-		jsonMapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
-		jsonMapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true); 
+	public static ObjectMapper JSON_MAPPER = new ObjectMapper();
+	static {
+		JSON_MAPPER.configure(MapperFeature.AUTO_DETECT_GETTERS, false);
+		JSON_MAPPER.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+		JSON_MAPPER.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+		JSON_MAPPER.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true); 
 	}
 }

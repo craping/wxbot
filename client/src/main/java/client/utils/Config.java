@@ -13,7 +13,7 @@ public class Config {
 	
 	// 图片显示最大宽度
 	public static final int MAX_IMG_WIDTH = 200;
-	public static final String DOMAIN = "http://39.105.37.169";
+	public static final String DOMAIN = "http://127.0.0.1";
 	public static final String CHAT_RECORD_PATH = "resource/chat/";
 	public static final String USERINFO_URL = String.format("%s:9527/user/getUserInfo?format=json", DOMAIN);
 	public static final String REGISTER_URL = String.format("%s:9527/user/register?format=json", DOMAIN);
@@ -23,6 +23,9 @@ public class Config {
 	public static final String ATTACH_URL = String.format("%s:8888/", DOMAIN);
 	
 	public static final String ATTCH_PATH = "resource/attach/";
+	public static final String IMG_PATH = "resource/img/";
+	public static final String VOICE = "resource/voice/";
+	public static final String FILE_PATH = "resource/file/";
 	public final static String GLOBA_SEQ = "global";
 	/**
 	 * 获取文件目录

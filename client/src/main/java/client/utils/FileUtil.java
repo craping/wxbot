@@ -9,9 +9,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.RandomAccessFile;
 import java.math.BigDecimal;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -19,18 +21,139 @@ import javax.imageio.ImageIO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import client.pojo.WxMessage;
+import client.view.server.BaseServer;
+
 public class FileUtil {
 
 	private static final Logger logger = LogManager.getLogger(FileUtil.class);
 
-	public static void main(String args[]) throws IOException {
-		// String sep = File.separator;
-		// String path = "d:" + sep + "chat1" + sep + "20190218";
-		// String fileName = "/2.txt";
-		// String content = "{1111}{2222}";
-		// write(content, path, fileName);
-		// String realPath = path + fileName;
-		// System.out.println(readFile(realPath).size());
+	public static void main1(String args[]) throws IOException {
+		ArrayList<Long> pageEnd = new ArrayList<Long>();// 定义动态数组为Long型
+		String line = null;
+		long pos = 0; // 定义指针
+		int page = 0; // 页数
+		int pageSize = 30;
+		int lineCount = 0; // 页数计数器
+		try {
+			File file = new File(Config.CHAT_RECORD_PATH + "674210262/20190316.txt");// 构建指定文件，命令行参数方式输入文本名字
+			RandomAccessFile raf = new RandomAccessFile(file, "r");// 只读文件内容
+			pageEnd.add(page, pos);// 将每页指针存入动态数组
+			raf.seek(pos);// 指针跳转到指定pos位置
+			while (true) {
+				// 按五行为一页输出
+				line = raf.readLine();
+				for (int i = 0; i < pageSize && line != null; i++,line = raf.readLine()) {
+//					line = raf.readLine();// 按行读文件
+					lineCount++;// 累计行数
+					line = new String(line.getBytes("8859_1"), "utf-8");// 编码转化
+//					System.out.println(line);// 输出文本内容
+				}
+				pos = raf.getFilePointer();// 获取此时页末指针
+				System.out.println("\n");
+				page = lineCount / pageSize; // 每5行为一页（取整）
+				System.out.println("                                  page" + page);// 输出页码
+				// System.out.println(lineCount);
+				// 由于动态数组下标从0开始，在动态数组中第page页的开头对应于下标page-1；
+				pageEnd.add(page - 1, pos);
+				System.out.println("页末指针动态数组：" + pageEnd + "\n");// 输出数组
+				
+				if(line == null)
+					break;
+			}
+			raf.seek(pageEnd.get(3));
+			line = raf.readLine();
+			for (int i = 0; i < pageSize && line != null; i++,line = raf.readLine()) {
+				lineCount++;// 累计行数
+				line = new String(line.getBytes("8859_1"), "utf-8");// 编码转化
+				System.out.println(line);// 输出文本内容
+			}
+			
+		} catch (Exception e) {
+			 e.printStackTrace();
+		}
+		// 本例缺陷：最后一页手动标码
+		page = page + 1;
+		System.out.println("                                  page" + page);
+	}
+	
+	public static void main(String args[]) throws IOException {	
+		
+		
+		RandomAccessFile rf = null;
+		try {
+			rf = new RandomAccessFile("resource/674210262/20190316.txt", "r");
+			long len = rf.length();
+			long start = rf.getFilePointer();
+			long nextend = start + len - 1;
+			StringBuffer line = new StringBuffer();
+			int count = 0;
+			rf.seek(nextend);
+			int c = -1;
+			LinkedList<String> link = new LinkedList<>();
+			
+			while (nextend > start) {
+				c = rf.read();
+				if (c == '\n' || c == '\r') {
+					if(line.length() > 0) {
+						link.addFirst(new String(line.toString().getBytes("ISO-8859-1"), "utf-8"));
+						System.out.println(new String(line.toString().getBytes("ISO-8859-1"), "utf-8"));
+						line.setLength(0);
+						count++;
+					}
+					nextend--;
+				} else {
+					line.insert(0, (char)c);
+				}
+				rf.seek(nextend);
+				if(count == 1)
+					break;
+				nextend--;
+				rf.seek(nextend);
+				if (nextend == 0) {// 当文件指针退至文件开始处，输出第一行
+					line.insert(0, (char)rf.read());
+					System.out.println(new String(line.toString().getBytes("ISO-8859-1"), "utf-8"));
+				}
+				
+			}
+			
+			while (nextend > start) {
+				c = rf.read();
+				if (c == '\n' || c == '\r') {
+					if(line.length() > 0) {
+						link.addFirst(new String(line.toString().getBytes("ISO-8859-1"), "utf-8"));
+						System.out.println(new String(line.toString().getBytes("ISO-8859-1"), "utf-8"));
+						line.setLength(0);
+						count++;
+					}
+					nextend--;
+				} else {
+					line.insert(0, (char)c);
+				}
+				nextend--;
+				rf.seek(nextend);
+				if (nextend == 0) {// 当文件指针退至文件开始处，输出第一行
+					line.insert(0, (char)rf.read());
+					System.out.println(new String(line.toString().getBytes("ISO-8859-1"), "utf-8"));
+				}
+				if(count == 2)
+					break;
+			}
+			
+			System.out.println(nextend);
+			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (rf != null)
+					rf.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	public static String getMimeType(String path) {
@@ -83,32 +206,29 @@ public class FileUtil {
 	 * @return
 	 * @throws IOException
 	 */
-	public static List<String> readFile(String path) throws IOException {
-		// 使用一个字符串集合来存储文本中的路径 ，也可用String []数组
-		List<String> list = new ArrayList<String>();
-
-		// 目录是否存在
-		if (!(new File(path)).exists()) {
-			logger.error("目录[" + path + "]不存在");
-			return list;
-		}
-
-		FileInputStream fis = new FileInputStream(path);
-		// 防止路径乱码 如果utf-8 乱码 改GBK eclipse里创建的txt 用UTF-8，在电脑上自己创建的txt 用GBK
-		InputStreamReader isr = new InputStreamReader(fis, "UTF-8");
-		BufferedReader br = new BufferedReader(isr);
-		String line = "";
-		while ((line = br.readLine()) != null) {
-			// 如果 t x t文件里的路径 不包含---字符串 这里是对里面的内容进行一个筛选
-			if (line.lastIndexOf("---") < 0) {
-				list.add(line);
-			}
-		}
-		br.close();
-		isr.close();
-		fis.close();
-		return list;
-	}
+//	public static List<WxMessage> readFile(String path) throws IOException {
+//		// 使用一个字符串集合来存储文本中的路径 ，也可用String []数组
+//		List<WxMessage> link = new LinkedList<>();
+//
+//		// 目录是否存在
+//		if (!(new File(path)).exists()) {
+//			logger.error("目录[" + path + "]不存在");
+//			return link;
+//		}
+//
+//		FileInputStream fis = new FileInputStream(path);
+//		// 防止路径乱码 如果utf-8 乱码 改GBK eclipse里创建的txt 用UTF-8，在电脑上自己创建的txt 用GBK
+//		InputStreamReader isr = new InputStreamReader(fis, "UTF-8");
+//		BufferedReader br = new BufferedReader(isr);
+//		String line = "";
+//		while ((line = br.readLine()) != null) {
+//			link.add(BaseServer.JSON_MAPPER.readValue(line, WxMessage.class));
+//		}
+//		br.close();
+//		isr.close();
+//		fis.close();
+//		return link;
+//	}
 
 	/**
 	 * 写入文件，一行一行

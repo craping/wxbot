@@ -73,7 +73,7 @@ public final class LoginView extends AnchorPane  {
 	}
 	
 	private LoginView() {
-		this(false);
+		this(true);
 	}
 	
 	private LoginView(boolean debug) {

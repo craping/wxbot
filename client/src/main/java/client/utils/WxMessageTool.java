@@ -1,16 +1,20 @@
 package client.utils;
 
-import java.util.HashMap;
+import java.io.File;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+
+import org.springframework.stereotype.Component;
 
 import com.cherry.jeeves.domain.shared.Contact;
 import com.cherry.jeeves.domain.shared.Owner;
 import com.cherry.jeeves.enums.MessageType;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.teamdev.jxbrowser.chromium.JSONString;
+import com.teamdev.jxbrowser.chromium.JSObject;
+import com.teamdev.jxbrowser.chromium.JSValue;
 
 import client.enums.ChatType;
 import client.enums.Direction;
@@ -20,6 +24,7 @@ import client.view.WxbotView;
 import client.view.function.KeywordFunction;
 import client.view.function.SettingFunction;
 import client.view.function.TimerFunction;
+import client.view.server.BaseServer;
 
 /**
  * 
@@ -28,14 +33,8 @@ import client.view.function.TimerFunction;
  * @author wr
  *
  */
-public class WxMessageTool {
-
-	private static ObjectMapper jsonMapper = new ObjectMapper();
-	{
-		jsonMapper.configure(MapperFeature.AUTO_DETECT_GETTERS, false);
-	}
-
-	private static Map<String, Integer> noRead = new HashMap<String, Integer>();
+@Component
+public class WxMessageTool extends BaseServer {
 
 	/**
 	 * 保存自己发送的聊天信息
@@ -45,7 +44,7 @@ public class WxMessageTool {
 	 * @param from      发送者
 	 * @param chatType  聊天类型
 	 */
-	public static void sendMessage(Contact recipient, WxMessage message, String from, int chatType) {
+	public void sendMessage(Contact recipient, WxMessage message, String from, int chatType) {
 		String timestamp = Tools.getTimestamp();
 		message.setTimestamp(timestamp);
 		message.setTo(recipient.getNickName());
@@ -54,13 +53,13 @@ public class WxMessageTool {
 		message.setChatType(chatType);
 		String jsonStr = "";
 		try {
-			jsonStr = jsonMapper.writeValueAsString(message);
+			jsonStr = JSON_MAPPER.writeValueAsString(message);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
 		String filePath = Config.CHAT_RECORD_PATH + recipient.getSeq();
 		FileUtil.writeFile(filePath, Tools.getSysDate() + ".txt", jsonStr);
-		WxMessageTool.avatarBadge(recipient.getSeq());
+		avatarBadge(recipient.getUserName(), jsonStr);
 	}
 
 	/**
@@ -71,7 +70,7 @@ public class WxMessageTool {
 	 * @param message
 	 * @param msg
 	 */
-	public static void receiveMessage(Contact sender, Owner owner, WxMessage msg) {
+	public void receiveMessage(Contact sender, Owner owner, WxMessage msg) {
 		String seq = sender.getSeq();
 		String timestamp = Tools.getTimestamp();
 		msg.setChatType(ChatType.CHAT.getCode());
@@ -81,17 +80,13 @@ public class WxMessageTool {
 		msg.setDirection(Direction.RECEIVE.getCode());
 		String jsonStr = "";
 		try {
-			jsonStr = jsonMapper.writeValueAsString(msg);
+			jsonStr = JSON_MAPPER.writeValueAsString(msg);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
 		String path = Config.CHAT_RECORD_PATH + seq;
 		FileUtil.writeFile(path, Tools.getSysDate() + ".txt", jsonStr);
-		avatarBadge(seq);
-		// 处理语音消息
-		if (msg.getMsgType() == MessageType.VOICE.getCode()) {
-			newVoiceMessage(timestamp);
-		}
+		avatarBadge(sender.getUserName(), jsonStr);
 	}
 
 	/**
@@ -102,7 +97,7 @@ public class WxMessageTool {
 	 * @param message
 	 * @param msg
 	 */
-	public static void receiveGroupMessage(Contact chatRoom, Contact sender, WxMessage msg) {
+	public void receiveGroupMessage(Contact chatRoom, Contact sender, WxMessage msg) {
 		String seq = chatRoom.getSeq();
 		String timestamp = Tools.getTimestamp();
 		msg.setChatType(ChatType.GROUPCHAT.getCode());
@@ -110,27 +105,27 @@ public class WxMessageTool {
 		msg.setTo(chatRoom.getNickName());
 		msg.setFrom(sender.getNickName());
 		msg.setDirection(Direction.RECEIVE.getCode());
+		
+		if(sender.getSeq() == null){
+			Contact member = wechatService.getChatRoomMemberInfo(chatRoom.getUserName(), sender.getUserName());
+			if(member != null)
+				sender.setHeadImgUrl(member.getHeadImgUrl());
+		}
+		File avatar = new File(Config.IMG_PATH + sender.getSeq()+".jpg");
+		msg.setAvatar(avatar.getPath());
+		if(!avatar.exists() && sender.getHeadImgUrl() != null && !sender.getHeadImgUrl().isEmpty()) {
+			wechatService.download(cacheService.getHostUrl() + sender.getHeadImgUrl(), sender.getSeq()+".jpg", MessageType.IMAGE);
+		}
+		
 		String jsonStr = "";
 		try {
-			jsonStr = jsonMapper.writeValueAsString(msg);
+			jsonStr = JSON_MAPPER.writeValueAsString(msg);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
 		String path = Config.CHAT_RECORD_PATH + seq;
 		FileUtil.writeFile(path, Tools.getSysDate() + ".txt", jsonStr);
-		avatarBadge(seq);
-		// 处理语音消息
-		if (msg.getMsgType() == MessageType.VOICE.getCode()) {
-			newVoiceMessage(timestamp);
-		}
-	}
-	
-	/**
-	 * 处理已读消息，
-	 * @param seq
-	 */
-	public static void haveRead(String seq) {
-		noRead.remove(seq);
+		avatarBadge(chatRoom.getUserName(), jsonStr);
 	}
 
 	/**
@@ -138,34 +133,32 @@ public class WxMessageTool {
 	 * 
 	 * @param seq
 	 */
-	public static void avatarBadge(String seq) {
-		int noReadCount = 1;
-		if (noRead.get(seq) == null) {
-			noRead.put(seq, noReadCount);
-		} else {
-			noReadCount = noRead.get(seq) + 1;
-			noRead.put(seq, noReadCount);
-		}
-		WxbotView wxbotView = WxbotView.getInstance();
-		String script = "Chat.methods.newMessage(" + seq + ", " + noReadCount + ")";
-		if (noReadCount > 100) {
-			script = "Chat.methods.newMessage(" + seq + ", '99+')";
-		}
-		wxbotView.executeScript(script);
+	public void avatarBadge(String userName, String jsonMsg) {
+		JSObject app = WxbotView.getInstance().getBrowser().executeJavaScriptAndReturnValue("app").asObject();
+		JSValue newMessage = app.getProperty("newMessage");
+		newMessage.asFunction().invokeAsync(app, userName, new JSONString(jsonMsg));
 	}
 
-	/**
-	 * 处理新语音消息，未读提醒
-	 * 
-	 * @param timestamp
-	 */
-	public static void newVoiceMessage(String timestamp) {
-		WxbotView wxbotView = WxbotView.getInstance();
-		String script = "Chat.methods.newVoiceMessage(" + timestamp + ")";
-		wxbotView.executeScript(script);
-	}
 	
-	public static void syncSeq(Map<String, String> seqMap){
+	  
+	/**  
+	* @Title: syncSeq  
+	* @Description: 同步seq变更
+	* @param @param seqMap    参数  
+	* @return void    返回类型  
+	* @throws  
+	*/  
+	    
+	public void syncSeq(Map<String, String> seqMap){
+		WxbotView wxbotView = WxbotView.getInstance();
+		JSObject app = wxbotView.getBrowser().executeJavaScriptAndReturnValue("app").asObject();
+		JSValue syncSeq = app.getProperty("syncSeq");
+		try {
+			syncSeq.asFunction().invokeAsync(app, new JSONString(JSON_MAPPER.writeValueAsString(seqMap)));
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+		
 		seqMap.forEach((k, v) -> {
 			//同步关键词seq
 			if(KeywordFunction.KEY_MAP != null){
@@ -186,26 +179,33 @@ public class WxMessageTool {
 				if(SettingFunction.SETTING.getForwards().remove(k))
 					SettingFunction.SETTING.getForwards().add(v);
 			}
+			
+			//seq变动，重命名聊天记录文件夹
+			String oldPath = Config.CHAT_RECORD_PATH + k;
+			String newPath = Config.CHAT_RECORD_PATH + v;
+			FileUtil.renameFile(oldPath, newPath);
 		});
 	}
 
 	/**
-	 * 刷新联系人、群聊列表
+	 * 联系人变化
 	 * 
 	 * @param msg
 	 */
-	public static void execContactsChanged(String msg) {
-		WxbotView wxbotView = WxbotView.getInstance();
-		String script = "app.onContactChanged('" + msg + "')";
-		wxbotView.executeScript(script);
-	}
-
-	/**
-	 * 刷新群成员列表
-	 */
-	public static void reloadMember() {
-		WxbotView wxbotView = WxbotView.getInstance();
-		String script = "Info.methods.reloadMember()";
-		wxbotView.executeScript(script);
+	public void execContactsChanged(Set<Contact> contacts, int type) {
+		JSObject app = WxbotView.getInstance().getBrowser().executeJavaScriptAndReturnValue("app").asObject();
+		String json = "[]";
+		try {
+			json = JSON_MAPPER.writeValueAsString(contacts);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+		if(type == 1){
+			JSValue addContact = app.getProperty("addContact");
+			addContact.asFunction().invokeAsync(app, new JSONString(json));
+		}else{
+			JSValue delContact = app.getProperty("delContact");
+			delContact.asFunction().invokeAsync(app, new JSONString(json));
+		}
 	}
 }

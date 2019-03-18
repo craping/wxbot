@@ -6,7 +6,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -14,6 +13,7 @@ import javax.swing.filechooser.FileSystemView;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -26,12 +26,13 @@ import com.teamdev.jxbrowser.chromium.JSONString;
 import client.enums.Direction;
 import client.pojo.WxMessage;
 import client.pojo.WxMessageBody;
-import client.utils.Arith;
 import client.utils.Config;
 import client.utils.FileUtil;
 import client.utils.Tools;
 import client.utils.WxMessageTool;
 import client.view.WxbotView;
+import client.view.server.BaseServer;
+import client.view.server.ChatServer;
 import javafx.application.Platform;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -60,6 +61,9 @@ public abstract class ChatFunction extends ContactsFunction {
 	private final static long MAX_FILE_SIZE = 104857600;
 	private final static long MAX_VIDEO_SIZE = 26214400;
 
+	@Autowired
+	private WxMessageTool msgTool;
+	
 	public ChatFunction() {
 		super();
 		sendChooser.setTitle("选择文件");
@@ -105,7 +109,7 @@ public abstract class ChatFunction extends ContactsFunction {
 	        if (contentType != null && contentType.contains(PREFIX_GIF)) {
 	        	wechatService.sendEmoticon(userName == null ? cacheService.getOwner().getUserName() : userName, file.getPath());
 	        	message.setMsgType(MessageType.EMOTICON.getCode());
-	        	message.setBody(new WxMessageBody(file.getPath(), getImgHeightOrWidth(file.getPath(), "height"), getImgHeightOrWidth(file.getPath(), "width")));
+	        	message.setBody(new WxMessageBody(file.getPath()));
 	        }
 	        // 发送图片
 	        else if (contentType != null && contentType.contains(PREFIX_IMG)) {
@@ -116,16 +120,13 @@ public abstract class ChatFunction extends ContactsFunction {
         		thumbImageUrl = wechatService.download(thumbImageUrl, response.getMsgID()+"_thumb.jpg", MessageType.VIDEO);
         		
 	        	message.setMsgType(MessageType.IMAGE.getCode());
-	        	message.setBody(new WxMessageBody(fullImageUrl, thumbImageUrl, getImgHeightOrWidth(thumbImageUrl, "height"), getImgHeightOrWidth(thumbImageUrl, "width")));
+	        	message.setBody(new WxMessageBody(fullImageUrl, thumbImageUrl));
 	        }
 	        // 发送视频
 	        else if (contentType != null && contentType.contains(PREFIX_VIDEO)) {
 	        	// 文件超限 25MB
 				if (file.length() > MAX_VIDEO_SIZE) {
-					WxbotView wxbotView = WxbotView.getInstance();
-					String msg = "发送的视频文件不能大于25M";
-					String script = "Chat.methods.alertUtil('WARNING','" + msg + "')";
-					wxbotView.executeScript(script);
+					WxbotView.getInstance().executeScript("app.$Message.error('发送的视频文件不能大于25M');");
 					return;
 				}
 	        	
@@ -139,16 +140,13 @@ public abstract class ChatFunction extends ContactsFunction {
 	        } else {
 	        	// 文件超限 100MB
 				if (file.length() > MAX_FILE_SIZE) {
-					WxbotView wxbotView = WxbotView.getInstance();
-					String msg = "发送的文件不能大于100M";
-					String script = "Chat.methods.alertUtil('WARNING','" + msg + "')";
-					wxbotView.executeScript(script);
+					WxbotView.getInstance().executeScript("app.$Message.error('发送的文件不能大于100M');");
 					return;
 				}
 				
 	        	wechatService.sendApp(userName == null ? cacheService.getOwner().getUserName() : userName, file.getPath());
 	        	message.setMsgType(MessageType.APP.getCode());
-	        	message.setBody(new WxMessageBody(MessageType.APP, file.getPath(), file.getName(), FileUtil.getFileSizeString(file.length())));
+	        	message.setBody(new WxMessageBody(file.getPath(), file.getName(), FileUtil.getFileSizeString(file.length())));
 	        }
 
 			String timestamp = Tools.getTimestamp();
@@ -157,10 +155,11 @@ public abstract class ChatFunction extends ContactsFunction {
 			message.setFrom(cacheService.getOwner().getNickName());
 			message.setDirection(Direction.SEND.getCode());
 			message.setChatType(userName.startsWith("@@")?2:1);
-			String str = jsonMapper.writeValueAsString(message);
+			String json = BaseServer.JSON_MAPPER.writeValueAsString(message);
+			
 			String filePath = Config.CHAT_RECORD_PATH + seq;
-			FileUtil.writeFile(filePath, Tools.getSysDate() + ".txt", str);
-			WxMessageTool.avatarBadge(seq);
+			FileUtil.writeFile(filePath, Tools.getSysDate() + ".txt", json);
+			msgTool.avatarBadge(userName, json);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}  catch (IOException e) {
@@ -173,31 +172,35 @@ public abstract class ChatFunction extends ContactsFunction {
 	 * @param seq
 	 * @return
 	 */
-	public JSONString chatRecord(String seq, JSFunction function) {
+	public void chatRecord(String seq, String date, JSFunction function) {
 		new Thread(() -> {
 			try {
-				String path = Config.CHAT_RECORD_PATH + seq + "/" + Tools.getSysDate() + ".txt";
-				List<String> l = FileUtil.readFile(path);
-				List<WxMessage> records = new LinkedList<WxMessage>();
-				if (l.size() > 0 && l != null) {
-					for (String str : l) {
-						WxMessage msg = jsonMapper.readValue(str, WxMessage.class);
-						records.add(msg);
-					}
-				}
-				// 全部设置已读消息
-				WxMessageTool.haveRead(seq);
-//				return new JSONString(jsonMapper.writeValueAsString(records));
-				function.invokeAsync(function, new JSONString(jsonMapper.writeValueAsString(records)));
+				String path = Config.CHAT_RECORD_PATH + seq + "/" + date.replace("-", "") + ".txt";
+				List<WxMessage> link = chatServer.readRecord(path);
+				function.invokeAsync(function, new JSONString(BaseServer.JSON_MAPPER.writeValueAsString(link)));
 			} catch (JsonProcessingException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}).start();
-		return new JSONString("{}");
 	}
 
+	public void resetChatRecord(String seq, String date, JSFunction function) {
+		new Thread(() -> {
+			try {
+				String path = Config.CHAT_RECORD_PATH + seq + "/" + date.replace("-", "") + ".txt";
+				ChatServer.POINT = null;
+				List<WxMessage> link = chatServer.readRecord(path);
+				function.invokeAsync(function, new JSONString(BaseServer.JSON_MAPPER.writeValueAsString(link)));
+			} catch (JsonProcessingException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}).start();
+	}
+	
 	/**
 	 * @Title: sendText 
 	 * @Description: 发送文本消息 
@@ -218,7 +221,7 @@ public abstract class ChatFunction extends ContactsFunction {
 			message.setMsgType(MessageType.TEXT.getCode());
 			message.setChatType(userName.startsWith("@@")?2:1);
 			message.setBody(new WxMessageBody(content));
-			String str = jsonMapper.writeValueAsString(message);
+			String str = BaseServer.JSON_MAPPER.writeValueAsString(message);
 			String path = Config.CHAT_RECORD_PATH + seq;
 			FileUtil.writeFile(path, Tools.getSysDate() + ".txt", str);
 			wechatService.sendText(userName == null ? cacheService.getOwner().getUserName() : userName, content);
@@ -233,54 +236,8 @@ public abstract class ChatFunction extends ContactsFunction {
 	 * @param path 相对路径
 	 * @return
 	 */
-	public String getRealUrl(String path) {
-		File file = new File(path);
-		if (!file.exists()) {
-			logger.error("getRealUrl:目录[" + path + "]不存在");
-			return "";
-		}
-		return file.getAbsolutePath().replace("\\", "/");
-	}
-	
-	/**
-	 * 切割图片高度、宽度
-	 * @param width
-	 * @param height
-	 * @param type
-	 * @return
-	 */
-	public int cutImg(int width, int height, String type) {
-		// 如果宽度大于最大宽度，则实际高度=原始高度/（原始宽度/最大宽度）
-		if (width > Config.MAX_IMG_WIDTH) {
-			double mult = Arith.div(width, Config.MAX_IMG_WIDTH, 2);
-			height = Arith.getInt(Arith.div(height, mult));
-			width = Config.MAX_IMG_WIDTH;
-		}
-		if ("width".equals(type) || "width" == type) {
-			return width;
-		} else {
-			return height;
-		}
-	}
-
-	/**
-	 * 获取图片高度、宽度
-	 * 
-	 * @param type width宽度
-	 * @throws IOException
-	 * @throws FileNotFoundException
-	 * 
-	 */
-	public int getImgHeightOrWidth(String path, String type) throws FileNotFoundException, IOException {
-		File picture = new File(path);
-		if (!picture.exists()) {
-			logger.error("getImgHeightOrWidth:目录文件[" + path + "]不存在");
-			return 0;
-		}
-		BufferedImage sourceImg = ImageIO.read(new FileInputStream(picture));
-		int width = sourceImg.getWidth(); // 源图宽度
-		int height = sourceImg.getHeight(); // 源图高度
-		return cutImg(width, height, type);
+	public String getRootPath() {
+		return System.getProperty("user.dir")+"/";
 	}
 
 	/**

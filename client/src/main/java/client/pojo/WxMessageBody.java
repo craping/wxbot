@@ -1,6 +1,8 @@
 package client.pojo;
 
-import com.cherry.jeeves.enums.MessageType;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import client.utils.Arith;
 import lombok.Data;
@@ -12,44 +14,26 @@ import lombok.Data;
  *
  */
 @Data
+@JsonIgnoreProperties(ignoreUnknown=true)
+@JsonInclude(Include.NON_NULL)
 public class WxMessageBody {
 
 	/** 文本消息 */
-	public String content = "";
+	public String content;
 
-	/** 缩略图 -> 图片、视频 */
-	public String thumbImageUrl = "";
-
-	/** 图片长宽 -> 图片、表情 */
-	public int imgHeight;
-	public int imgWidth;
-
-	/** 图片消息 */
-	public String fullImageUrl = "";
-
-	/** 表情消息 */
-	public String emoticonUrl = "";
-
-	/** 语音消息 */
-	public String voiceUrl = "";
-	public int voiceLength = 1;
-
-	/** 视频消息 */
-	public String videoUrl = "";
-
-	/** 多媒体消息 */
-	public String mediaUrl = "";
+	/** 缩略图 */
+	public String thumbImageUrl;
 	
-	/** 文件名 */
-	public String fileName = "";
+	public String fileName;
 	/** 文件大小 */
-	public String fileSize = "";
+	public String fileSize;
 
 	public WxMessageBody() {
 	};
 
 	/**
 	 * 文本消息
+	 * 表情消息
 	 * 
 	 * @param content
 	 */
@@ -63,48 +47,21 @@ public class WxMessageBody {
 	 * @param voiceUrl
 	 * @param voiceLength
 	 */
-	public WxMessageBody(String voiceUrl, long voiceLength) {
-		this.voiceUrl = voiceUrl;
-		this.voiceLength = Arith.ceilInt(Arith.div(voiceLength, 1000, 2));
+	public WxMessageBody(String url, long voiceLength) {
+		this(url);
+		this.fileSize = Arith.ceilInt(Arith.div(voiceLength, 1000, 2))+"";
 	}
 
 	/**
 	 * 视频消息
+	 * 图片消息
 	 * 
 	 * @param videoUrl
 	 * @param thumbImageUrl
 	 */
-	public WxMessageBody(String videoUrl, String thumbImageUrl) {
-		this.videoUrl = videoUrl;
+	public WxMessageBody(String url, String thumbImageUrl) {
+		this(url);
 		this.thumbImageUrl = thumbImageUrl;
-	}
-
-	/**
-	 * 表情消息
-	 * 
-	 * @param emoticonUrl
-	 * @param imgHeight
-	 * @param imgWidth
-	 */
-	public WxMessageBody(String emoticonUrl, int imgHeight, int imgWidth) {
-		this.emoticonUrl = emoticonUrl;
-		this.imgHeight = imgHeight;
-		this.imgWidth = imgWidth;
-	}
-
-	/**
-	 * 图片消息
-	 * 
-	 * @param fullImageUrl
-	 * @param thumbImageUrl
-	 * @param imgHeight
-	 * @param imgWidth
-	 */
-	public WxMessageBody(String fullImageUrl, String thumbImageUrl, int imgHeight, int imgWidth) {
-		this.fullImageUrl = fullImageUrl;
-		this.thumbImageUrl = thumbImageUrl;
-		this.imgHeight = imgHeight;
-		this.imgWidth = imgWidth;
 	}
 	
 	/**
@@ -113,11 +70,9 @@ public class WxMessageBody {
 	 * @param type
 	 * @param param
 	 */
-	public WxMessageBody(MessageType type, String fileUrl, String fileName, String fileSize) {
-		if (type.equals(MessageType.APP)) {
-			this.mediaUrl = fileUrl;
-			this.fileName = fileName;
-			this.fileSize = fileSize;
-		}
+	public WxMessageBody(String url, String fileName, String fileSize) {
+		this(url);
+		this.fileName = fileName;
+		this.fileSize = fileSize;
 	}
 }

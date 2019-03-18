@@ -10,6 +10,46 @@ var Store = Store||{
 		localStorage.removeItem(key);
 	}
 }
+// var wxbot = {
+// 	getUserInfo(){},
+// 	getDomain(){
+// 		return "http://127.0.0.1"
+// 	},
+// 	getHostUrl(){},
+// 	getIndividuals(){
+// 		let list = [];
+// 		for (let i = 0; i < 5000; i++) {
+// 			list.push({
+// 				NickName:"名称"+i,
+// 				HeadImgUrl:"",
+// 				UserName:"username"+i,
+// 				seq:"seq"+i
+// 			});
+// 		}
+// 		return list;
+// 	},
+// 	getChatRooms(){
+// 		let list = [];
+// 		for (let i = 0; i < 5000; i++) {
+// 			list.push({
+// 				NickName:"名称"+i,
+// 				HeadImgUrl:"",
+// 				UserName:"username"+i,
+// 				seq:"seq"+i
+// 			});
+// 		}
+// 		return list;
+// 	},
+// 	getEmoji(){
+// 		return "";
+// 	},
+// 	getOwnerHeadImgUrl(){
+// 		return "";
+// 	},
+// 	getOwner(){
+// 		return {};
+// 	}
+// };
 var Web = {
 	serverURL: "",
 	wxHost:"",
@@ -136,7 +176,10 @@ function notify(title, properties, timeout) {
 	}
 }
 
-
+String.prototype.replaceAll = function (FindText, RepText) {
+    regExp = new RegExp(FindText, "g");
+    return this.replace(regExp, RepText);
+}
 Date.prototype.format = function (format) {
 	var date = {
 		"M+": this.getMonth() + 1,
