@@ -56,9 +56,8 @@ public class ContactPump extends DataPump<JSONObject, FullHttpRequest, Channel> 
 	
 	@Pipe("syncContacts")
 	@BarScreen(
-		desc="同步联系人",
+		desc="同步群聊",
 		params= {
-			@Parameter(value="idis",  desc="联系人"),
 			@Parameter(value="crs",  desc="群聊"),
 		}
 	)

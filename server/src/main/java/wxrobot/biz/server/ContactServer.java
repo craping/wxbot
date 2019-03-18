@@ -19,7 +19,7 @@ public class ContactServer extends BaseServer{
 		Query query = new Query(Criteria.where("uid").is(uid));
 		
 		Update update = new Update();
-		update.set("individuals", (List<ContactInfo>) params.optJSONArray("idis"));
+//		update.set("individuals", (List<ContactInfo>) params.optJSONArray("idis"));
 		update.set("chatRooms", (List<ContactInfo>) params.optJSONArray("crs"));
 		
 		return mongoTemplate.upsert(query, update, Contact.class).getModifiedCount();
