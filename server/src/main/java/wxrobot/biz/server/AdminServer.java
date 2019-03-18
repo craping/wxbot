@@ -4,7 +4,6 @@ import java.util.regex.Pattern;
 
 import org.crap.jrain.core.bean.result.criteria.DataResult;
 import org.crap.jrain.core.bean.result.criteria.Page;
-import org.crap.jrain.core.util.DateUtil;
 import org.crap.jrain.core.validate.security.component.Coder;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -20,7 +19,8 @@ import wxrobot.server.utils.Tools;
 public class AdminServer extends BaseServer {
 
 	/**
-	  *  获取admin用户
+	 * 获取用户
+	 * 
 	 * @param userName
 	 * @param userPwd
 	 * @return
@@ -32,7 +32,8 @@ public class AdminServer extends BaseServer {
 	}
 
 	/**
-	  *  获取用户列表
+	 * 获取用户列表
+	 * 
 	 * @param params
 	 * @return
 	 */
@@ -40,7 +41,7 @@ public class AdminServer extends BaseServer {
 		Page page = new Page(params.optInt("curPage", 1), params.optInt("pageSize", 10));
 		Query query = new Query();
 		if (!Tools.isStrEmpty(params.optString("userName"))) {
-			Pattern pattern=Pattern.compile("^.*" + params.optString("userName") + ".*$", Pattern.CASE_INSENSITIVE);
+			Pattern pattern = Pattern.compile("^.*" + params.optString("userName") + ".*$", Pattern.CASE_INSENSITIVE);
 			query.addCriteria(Criteria.where("userInfo.userName").regex(pattern));
 		}
 		if (!Tools.isStrEmpty(params.optString("phoneState"))) {
@@ -49,55 +50,61 @@ public class AdminServer extends BaseServer {
 		if (!Tools.isStrEmpty(params.optString("serverState"))) {
 			query.addCriteria(Criteria.where("userInfo.serverState").is(params.optBoolean("serverState")));
 		}
+		if (!Tools.isStrEmpty(params.optString("destroy"))) {
+			query.addCriteria(Criteria.where("userInfo.destroy").is(params.optBoolean("destroy")));
+		}
 		return findPage(page, query, User.class);
 	}
 
 	/**
-	  *  更新软件服务时间
+	 * 更新软件服务时间
+	 * 
 	 * @param params
 	 * @return
 	 */
-	public int extension(JSONObject params) {
+	public long extension(JSONObject params) {
 		Query query = new Query();
 		query.addCriteria(Criteria.where("_id").is(params.optString("id")));
-		String timestamp = String.valueOf(DateUtil.parseDate(params.getString("server_end"), "yyyy-MM-dd").getTime());
-		Update update = Update.update("userInfo.serverEnd", timestamp);
-		return (int) mongoTemplate.updateFirst(query, update, User.class).getModifiedCount();
+		Update update = Update.update("userInfo.serverEnd", Tools.dateToStamp(params.getString("server_end"), "yyyy-MM-dd"));
+		return mongoTemplate.updateFirst(query, update, User.class).getModifiedCount();
 	}
 
 	/**
-	  *  充值密码 888888
+	 * 充值密码 888888
+	 * 
 	 * @param params
 	 * @return
 	 */
-	public int resetPwd(JSONObject params) {
+	public long resetPwd(JSONObject params) {
 		Query query = new Query();
 		query.addCriteria(Criteria.where("_id").is(params.optString("id")));
 		Update update = Update.update("userInfo.userPwd", Coder.encryptMD5("888888"));
-		return (int) mongoTemplate.updateFirst(query, update, User.class).getModifiedCount();
+		return mongoTemplate.updateFirst(query, update, User.class).getModifiedCount();
 	}
-	
+
 	/**
-	  *  注销用户
+	 * 注销用户
+	 * 
 	 * @param params
 	 * @return
 	 */
-	public int destroy(JSONObject params) {
+	public long destroy(JSONObject params) {
 		Query query = new Query();
 		query.addCriteria(Criteria.where("_id").is(params.optString("id")));
 		Update update = Update.update("userInfo.destroy", params.optBoolean("destroy"));
-		return (int) mongoTemplate.updateFirst(query, update, User.class).getModifiedCount();
+		return mongoTemplate.updateFirst(query, update, User.class).getModifiedCount();
 	}
-	
+
 	/**
-	  *  锁定用户
+	 * 锁定用户
+	 * 
 	 * @param params
 	 * @return
 	 */
-	public int lockUser(JSONObject params) {
+	public long lockUser(JSONObject params) {
 		Query query = new Query();
 		query.addCriteria(Criteria.where("_id").is(params.optString("id")));
 		Update update = Update.update("userInfo.serverState", params.optBoolean("server_state"));
-		return (int) mongoTemplate.updateFirst(query, update, User.class).getModifiedCount();
+		return mongoTemplate.updateFirst(query, update, User.class).getModifiedCount();
 	}
 }
