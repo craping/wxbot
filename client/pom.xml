@@ -45,25 +45,22 @@
 			<version>${log4j.version}</version>
 		</dependency>
 		<!-- log end -->
-		<dependency>
+		<!-- <dependency>
 			<groupId>com.teamdev.jxbrowser</groupId>
 			<artifactId>jxbrowser-cross-platform</artifactId>
 			<type>pom</type>
 			<version>6.22.2</version>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<version>1.18.4</version>
-			<scope>provided</scope>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/com.vdurmont/emoji-java -->
-		<dependency>
-			<groupId>com.vdurmont</groupId>
-			<artifactId>emoji-java</artifactId>
-			<version>4.0.0</version>
-		</dependency>
+		</dependency> -->
+		<!-- <dependency>
+            <groupId>com.teamdev.jxbrowser</groupId>
+            <artifactId>jxbrowser-win32</artifactId>
+            <version>6.22.2</version>
+        </dependency> -->
+        <dependency>
+            <groupId>com.teamdev.jxbrowser</groupId>
+            <artifactId>jxbrowser-win64</artifactId>
+            <version>6.22.2</version>
+        </dependency>
 
 	</dependencies>
 

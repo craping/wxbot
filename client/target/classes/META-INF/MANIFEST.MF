@@ -11,9 +11,8 @@ Class-Path: lib/jeeves-0.2.0.jar lib/spring-context-5.1.4.RELEASE.jar li
  -2.9.2.jar lib/jackson-module-jaxb-annotations-2.9.2.jar lib/stax2-api-
  3.1.4.jar lib/woodstox-core-5.0.3.jar lib/commons-text-1.1.jar lib/comm
  ons-lang3-3.5.jar lib/log4j-api-2.6.2.jar lib/log4j-core-2.6.2.jar lib/
- log4j-slf4j-impl-2.6.2.jar lib/slf4j-api-1.7.21.jar lib/jxbrowser-win32
- -6.22.2.jar lib/jxbrowser-6.22.2.jar lib/jxbrowser-win64-6.22.2.jar lib
- /jxbrowser-linux64-6.22.2.jar lib/jxbrowser-mac-6.22.2.jar
+ log4j-slf4j-impl-2.6.2.jar lib/slf4j-api-1.7.21.jar lib/jxbrowser-win64
+ -6.22.2.jar lib/jxbrowser-6.22.2.jar
 Main-Class: client.Launch
 Created-By: Maven Integration for Eclipse
 

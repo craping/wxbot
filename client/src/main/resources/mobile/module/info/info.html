@@ -1,0 +1,38 @@
+<template v-if="info.user && rightTab =='info'">
+    <div v-if="info.user.UserName.includes('@@')">
+        <div>
+            <div class="member">
+                <i-button size="small" icon="ios-sync" type="primary" :loading="info.loading" @click="reloadChatRoomMember" 
+                    style="width: 35px; height: 35px;">
+                </i-button>
+                <p class="member_nickname ng-binding">刷新</p>
+            </div>
+        </div>
+        <div v-for="(item, index) in info.members">
+            <div class="member">
+                <img class="avatar2" :src="Web.wxHost + item.HeadImgUrl" mm-src="" alt="" title="">
+                <p class="member_nickname ng-binding" v-html="item.NickName"></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="pt-5" v-else>
+        <div class="text-center">
+            <img width="100" height="100" :src="Web.wxHost + info.user.HeadImgUrl" />
+            <h4 class="mt-2" v-html="info.user.RemarkName || info.user.NickName"></h4>
+        </div>
+        <div style="padding-left: 115px;">
+            <span class="d-inline-block align-middle">备注:</span><span 
+            class="d-inline-block text-truncate align-middle" style="width: 175px;" v-html="info.user.RemarkName || info.user.NickName"></span>
+        </div>
+        <div style="padding-left: 115px;">
+            <span class="d-inline-block align-middle">地区:</span><span 
+            class="d-inline-block text-truncate align-middle" style="width: 175px;" >{{info.user.Province}} {{info.user.City}}</span>
+        </div>
+    </div>
+</template>
+<div v-else>
+    <div class="message_empty">
+        <p class="p_blank">未选择联系人</p>
+    </div>
+</div>
