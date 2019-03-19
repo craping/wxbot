@@ -1,6 +1,7 @@
 package wxrobot.server.pump;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,9 +28,14 @@ import io.netty.handler.codec.http.FullHttpRequest;
 import net.sf.json.JSONObject;
 import wxrobot.biz.server.BaseServer;
 import wxrobot.biz.server.KeywordServer;
+import wxrobot.dao.entity.field.Msg;
 import wxrobot.dao.entity.field.UserInfo;
 import wxrobot.server.enums.CustomErrors;
 import wxrobot.server.param.TokenParam;
+import wxrobot.server.sync.SyncContext;
+import wxrobot.server.sync.pojo.SyncAction;
+import wxrobot.server.sync.pojo.SyncBiz;
+import wxrobot.server.sync.pojo.SyncMsg;
 
 @Pump("keyword")
 @Component
@@ -52,27 +58,27 @@ public class KeywordPump extends DataPump<JSONObject, FullHttpRequest, Channel> 
 		
 		UserInfo userInfo = keywordServer.getUserInfo(params);
 		
-		Map<String, Map<String, String>> keywords = keywordServer.getKeywords(userInfo.getUserName(), params.optString("seq", null));
+		Map<String, Map<String, Msg>> keywords = keywordServer.getKeywords(userInfo.getUserName(), params.optString("seq", null));
 		
 		return new DataResult(Errors.OK, new Data(keywords));
 	}
 	
-	@Pipe("addKeyword")
-	@BarScreen(
-		desc="添加词库",
-		params= {
-			@Parameter(type=TokenParam.class),
-			@Parameter(value="seq", desc="seq")
-		}
-	)
-	public Errcode addKeyword (JSONObject params) throws ErrcodeException {
-		
-		UserInfo userInfo = keywordServer.getUserInfo(params);
-		
-		long mod = keywordServer.addKeyword(userInfo.getUserName(), params.getString("seq"));
-		
-		return new DataResult(mod > 0?Errors.OK:CustomErrors.USER_OPR_ERR);
-	}
+//	@Pipe("addKeyword")
+//	@BarScreen(
+//		desc="添加词库",
+//		params= {
+//			@Parameter(type=TokenParam.class),
+//			@Parameter(value="seq", desc="seq")
+//		}
+//	)
+//	public Errcode addKeyword (JSONObject params) throws ErrcodeException {
+//		
+//		UserInfo userInfo = keywordServer.getUserInfo(params);
+//		
+//		long mod = keywordServer.addKeyword(userInfo.getUserName(), params.getString("seq"));
+//		
+//		return new DataResult(mod > 0?Errors.OK:CustomErrors.USER_OPR_ERR);
+//	}
 	
 //	@Pipe("modKeyword")
 //	@BarScreen(
@@ -92,22 +98,22 @@ public class KeywordPump extends DataPump<JSONObject, FullHttpRequest, Channel> 
 //		return new DataResult(mod > 0?Errors.OK:CustomErrors.USER_OPR_ERR);
 //	}
 	
-	@Pipe("delKeyword")
-	@BarScreen(
-		desc="删除词库",
-		params= {
-			@Parameter(type=TokenParam.class),
-			@Parameter(value="seq", desc="seq")
-		}
-	)
-	public Errcode delKeyword (JSONObject params) throws ErrcodeException {
-		
-		UserInfo userInfo = keywordServer.getUserInfo(params);
-		
-		long mod = keywordServer.delKeyword(userInfo.getUserName(), params.getString("seq"));
-		
-		return new DataResult(mod > 0?Errors.OK:CustomErrors.USER_OPR_ERR);
-	}
+//	@Pipe("delKeyword")
+//	@BarScreen(
+//		desc="删除词库",
+//		params= {
+//			@Parameter(type=TokenParam.class),
+//			@Parameter(value="seq", desc="seq")
+//		}
+//	)
+//	public Errcode delKeyword (JSONObject params) throws ErrcodeException {
+//		
+//		UserInfo userInfo = keywordServer.getUserInfo(params);
+//		
+//		long mod = keywordServer.delKeyword(userInfo.getUserName(), params.getString("seq"));
+//		
+//		return new DataResult(mod > 0?Errors.OK:CustomErrors.USER_OPR_ERR);
+//	}
 	
 	
 	@Pipe("setGlobal")
@@ -122,15 +128,26 @@ public class KeywordPump extends DataPump<JSONObject, FullHttpRequest, Channel> 
 		
 		UserInfo userInfo = keywordServer.getUserInfo(params);
 		
-		Map<String, String> keyMap = null;
+		Map<String, Msg> keyMap = null;
 		try {
-			keyMap = BaseServer.JSON_MAPPER.readValue(params.getString("keyMap"), new TypeReference<Map<String, String>>() {});
+			keyMap = BaseServer.JSON_MAPPER.readValue(params.getString("keyMap"), new TypeReference<Map<String, Msg>>() {});
 		} catch (IOException e) {
 			e.printStackTrace();
 			return new Result(Errors.PARAM_FORMAT_ERROR);
 		}
 		
 		keywordServer.addOrMod(userInfo.getUserName(), "global", keyMap);
+		//消息放入关键词事件队列
+		SyncMsg msg = new SyncMsg();
+		msg.setBiz(SyncBiz.KEYWORD);
+		msg.setAction(SyncAction.SET);
+		
+		Map<String, Object> data = new HashMap<>();
+		data.put("seq", "global");
+		data.put("keyMap", keyMap);
+		msg.setData(data);
+		
+		SyncContext.putMsg(params.getString("token"), msg);
 		
 		return new DataResult(Errors.OK);
 	}
@@ -156,7 +173,19 @@ public class KeywordPump extends DataPump<JSONObject, FullHttpRequest, Channel> 
 		}
 		
 		long mod = keywordServer.del(userInfo.getUserName(), "global", keyList);
-		
+		//消息放入关键词事件队列
+		if (mod > 0) {
+			SyncMsg msg = new SyncMsg();
+			msg.setBiz(SyncBiz.KEYWORD);
+			msg.setAction(SyncAction.DEL);
+			
+			Map<String, Object> data = new HashMap<>();
+			data.put("seq", "global");
+			data.put("keyList", keyList);
+			msg.setData(data);
+			
+			SyncContext.putMsg(params.getString("token"), msg);
+		}
 		return new DataResult(mod > 0?Errors.OK:CustomErrors.USER_OPR_ERR);
 	}
 	
@@ -173,16 +202,27 @@ public class KeywordPump extends DataPump<JSONObject, FullHttpRequest, Channel> 
 		
 		UserInfo userInfo = keywordServer.getUserInfo(params);
 		
-		Map<String, String> keyMap = null;
+		Map<String, Msg> keyMap = null;
 		try {
-			keyMap = BaseServer.JSON_MAPPER.readValue(params.getString("keyMap"), new TypeReference<Map<String, String>>() {});
+			keyMap = BaseServer.JSON_MAPPER.readValue(params.getString("keyMap"), new TypeReference<Map<String, Msg>>() {});
 		} catch (IOException e) {
 			e.printStackTrace();
 			return new Result(Errors.PARAM_FORMAT_ERROR);
 		}
 		
 		keywordServer.addOrMod(userInfo.getUserName(), params.getString("seq"), keyMap);
+		//消息放入关键词事件队列
+		SyncMsg msg = new SyncMsg();
+		msg.setBiz(SyncBiz.KEYWORD);
+		msg.setAction(SyncAction.SET);
 		
+		Map<String, Object> data = new HashMap<>();
+		data.put("seq", params.getString("seq"));
+		data.put("keyMap", keyMap);
+		msg.setData(data);
+		
+		SyncContext.putMsg(params.getString("token"), msg);
+				
 		return new DataResult(Errors.OK);
 	}
 	
@@ -208,7 +248,19 @@ public class KeywordPump extends DataPump<JSONObject, FullHttpRequest, Channel> 
 		}
 		
 		long mod = keywordServer.del(userInfo.getUserName(), params.getString("seq"), keyList);
-		
+		//消息放入关键词事件队列
+		if (mod > 0) {
+			SyncMsg msg = new SyncMsg();
+			msg.setBiz(SyncBiz.KEYWORD);
+			msg.setAction(SyncAction.DEL);
+			
+			Map<String, Object> data = new HashMap<>();
+			data.put("seq", params.getString("seq"));
+			data.put("keyList", keyList);
+			msg.setData(data);
+			
+			SyncContext.putMsg(params.getString("token"), msg);
+		}
 		return new DataResult(mod > 0?Errors.OK:CustomErrors.USER_OPR_ERR);
 	}
 }

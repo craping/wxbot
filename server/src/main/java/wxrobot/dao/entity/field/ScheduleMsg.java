@@ -3,18 +3,14 @@ package wxrobot.dao.entity.field;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
-public class ScheduleMsg {
+@EqualsAndHashCode(callSuper=false)
+public class ScheduleMsg extends Msg{
 	
 	@Field
 	private String uuid;
-	
-	@Field
-	private Integer type;
-	
-	@Field
-	private String content;
 	
 	@Field
 	private String schedule;

@@ -77,7 +77,7 @@ public class ApiPump extends DataPump<JSONObject, FullHttpRequest, Channel> {
 	)
 	public Errcode sync (JSONObject params) throws ErrcodeException {
 		
-		return new Result(Errors.OK);
+		return new DataResult(Errors.OK, new Data(params.getString("token")));
 	}
 	
 	@Pipe("put")

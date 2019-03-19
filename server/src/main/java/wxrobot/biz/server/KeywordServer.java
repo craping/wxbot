@@ -12,6 +12,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import wxrobot.dao.entity.Keyword;
+import wxrobot.dao.entity.field.Msg;
 
   
 /**  
@@ -36,7 +37,7 @@ public class KeywordServer extends BaseServer {
 	* @throws  
 	*/  
 	    
-	public Map<String, Map<String, String>> getKeywords(String userName, String seq){
+	public Map<String, Map<String, Msg>> getKeywords(String userName, String seq){
 		Query query = seq == null? 
 		new BasicQuery(
 			Criteria.where("userName").is(userName).getCriteriaObject(),
@@ -122,7 +123,7 @@ public class KeywordServer extends BaseServer {
 	* @throws  
 	*/  
 	    
-	public long addOrMod(String userName, String seq, Map<String, String> keyMap){
+	public long addOrMod(String userName, String seq, Map<String, Msg> keyMap){
 		Query query = new Query(Criteria.where("userName").is(userName));
 		
 		Update update = new Update();

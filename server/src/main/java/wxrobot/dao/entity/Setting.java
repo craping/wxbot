@@ -27,6 +27,15 @@ public class Setting {
 	private String userName;
 	
 	/**  
+	* @Fields 关键词数组[seq]
+	*/  
+	private List<String> keywords;
+	
+	/**  
+	* @Fields 定时消息数组[seq]
+	*/  
+	private List<String> timers;
+	/**  
 	* @Fields 群转发数组[seq]
 	*/  
 	@Field

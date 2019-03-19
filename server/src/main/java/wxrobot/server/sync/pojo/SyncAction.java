@@ -16,5 +16,7 @@ public enum SyncAction {
 	/**  修改操作 */  
 	MOD,
 	/**  删除操作 */  
-	DEL
+	DEL,
+	/**  设置操作 */  
+	SET
 }

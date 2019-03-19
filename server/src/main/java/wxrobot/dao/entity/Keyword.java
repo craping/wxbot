@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import lombok.Data;
+import wxrobot.dao.entity.field.Msg;
 
 @Data
 @Document(collection = "robot_keyword")
@@ -24,5 +25,5 @@ public class Keyword {
 	private String userName;
 	
 	@Field
-	private Map<String, Map<String, String>> keyMap;
+	private Map<String, Map<String, Msg>> keyMap;
 }

@@ -1,5 +1,6 @@
 package wxrobot.server.sync;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -61,6 +62,7 @@ public class SyncContext implements SchedulingConfigurer {
 //		} catch (JsonProcessingException e1) {
 //			e1.printStackTrace();
 //		}
+		token = token.contains("_m")?token.split("_")[0]:token+"_m";
 		try {
 			redisUtil.rpush("queue_"+token, MAPPER.writeValueAsString(msg));
 		} catch (JsonProcessingException e) {
@@ -68,19 +70,25 @@ public class SyncContext implements SchedulingConfigurer {
 		}
 	}
 	
-	@Scheduled(fixedDelay=1000)
+	@Scheduled(fixedDelay=3000)
     private void run() {
-		long currentTime = System.currentTimeMillis();
+		long currentTime;
 		
+//			System.out.println("当前连接数："+CONTEXT.size());
 		SyncSession session = null;
 		while ((session = CONTEXT.peek()) != null) {
+			currentTime = System.currentTimeMillis();
 			String msg = null;
-			List<String> msgs = new ArrayList<>();
+			List<SyncMsg> msgs = new ArrayList<>();
 			for (int i = 0; i < 100 && (msg = redisUtil.lpop("queue_"+session.getToken())) != null; i++) {
-				msgs.add(msg);
+				try {
+					msgs.add(MAPPER.readValue(msg, SyncMsg.class));
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 			if(msgs.size() > 0 || currentTime - session.getTime() > 30000){
-				String json = null;
+				String json = "[]";
 				try {
 					json = MAPPER.writeValueAsString(msgs);
 				} catch (JsonProcessingException e) {
