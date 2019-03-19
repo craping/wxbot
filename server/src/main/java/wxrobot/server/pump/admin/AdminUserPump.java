@@ -33,7 +33,7 @@ import wxrobot.dao.entity.field.UserInfo;
 import wxrobot.server.param.AdminTokenParam;
 import wxrobot.server.utils.Tools;
 
-@Pump("admin_user")
+@Pump("admin")
 @Component
 public class AdminUserPump extends DataPump<JSONObject, FullHttpRequest, Channel> {
 	
@@ -115,8 +115,8 @@ public class AdminUserPump extends DataPump<JSONObject, FullHttpRequest, Channel
 		}
 	)
 	public Errcode extension (JSONObject params) {
-		int ret = adminServer.extension(params);
-		return new DataResult(Errors.OK, new Data(ret));
+		adminServer.extension(params);
+		return new DataResult(Errors.OK);
 	}
 	
 	@Pipe("lock")

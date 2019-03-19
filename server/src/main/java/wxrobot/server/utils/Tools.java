@@ -475,7 +475,7 @@ public class Tools {
 			return false;
 		}
 		String checkExpressions;
-		checkExpressions = "^[1][358]\\d{9}$";
+		checkExpressions = "^[1][23456789]\\d{9}$";
 		return Pattern.matches(checkExpressions, mobileNo);
 	}
 
@@ -522,15 +522,17 @@ public class Tools {
 		}
 	}
 
-	/*
+	/**
 	 * 将时间转换为时间戳
+	 * @param dateStr
+	 * @return
 	 */
-	public static String dateToStamp(String s) {
+	public static String dateToStamp(String dateStr) {
 		String res;
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date date = new Date();
 		try {
-			date = simpleDateFormat.parse(s);
+			date = simpleDateFormat.parse(dateStr);
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
@@ -539,26 +541,51 @@ public class Tools {
 		return res;
 	}
 
-	/*
-	 * 将时间戳转换为时间
+	/**
+	 * 将时间转换为时间戳
+	 * 
+	 * @param dateStr
+	 * @param format
+	 * @return
 	 */
-	public static String stampToDate(String s) {
+	public static String dateToStamp(String dateStr, String format) {
+		String res;
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
+		Date date = new Date();
+		try {
+			date = simpleDateFormat.parse(dateStr);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		long ts = date.getTime();
+		res = String.valueOf(ts);
+		return res;
+	}
+
+	/**
+	 * 将时间戳转换为时间
+	 * 
+	 * @param dateStr
+	 * @return
+	 */
+	public static String stampToDate(String dateStr) {
 		String res;
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		long lt = new Long(s);
+		long lt = new Long(dateStr);
 		Date date = new Date(lt);
 		res = simpleDateFormat.format(date);
 		return res;
 	}
-	
+
 	/**
 	 * 将时间转换为时间戳 UTZ 例：2019-03-19T16:00:00.000Z
+	 * 
 	 * @param str
 	 * @return
 	 */
 	public static String dateUTCToStamp(String str) {
-		str = str.replace("Z", " UTC");//注意是空格+UTC
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS Z");//注意格式化的表达式
+		str = str.replace("Z", " UTC");// 注意是空格+UTC
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS Z");// 注意格式化的表达式
 		Date date = new Date();
 		try {
 			date = format.parse(str);
