@@ -106,6 +106,7 @@ $script.ready(["header", "contacts", "chat", "keyword", "timer", "info"], () => 
             const me = this;
             Web.ajax("setting/getSetting", {
                 success: function (data) {
+                    me.permissions = data.info.permissions;
                     wxbot.syncSetting(data.info);
                 },
                 fail: function (data) {
@@ -113,17 +114,34 @@ $script.ready(["header", "contacts", "chat", "keyword", "timer", "info"], () => 
             });
         },
         sync(){
+            var deferred = $.Deferred();
+            const me = this;
             Web.ajax("api/sync", {
+                timeout:35000,
                 success: function (data) {
-                    sync();
+                    deferred.resolve(data);
                 },
                 fail: function (data) {
-                    sync();
+                    deferred.reject();
+                    me.sync();
                 },
                 error: function(){
-                    sync();
+                    deferred.reject();
+                    me.sync();
                 }
             }, "sync");
+            return deferred.promise();
+        },
+        handling(){
+            this.sync().then(data => {
+                console.log("resolve");
+                console.log(data);
+                
+                this.handling();
+            },() => {
+                console.log("reject");
+                this.handling();
+            });
         },
         global_click(event){
             if(this.$refs.recordDatePicker && !this.$refs.recordDatePicker.$el.contains(event.target))
@@ -137,6 +155,7 @@ $script.ready(["header", "contacts", "chat", "keyword", "timer", "info"], () => 
         data: {
             skin: "dark",
             rightTab:"info",
+            permissions:{},
             header: Header.data,
             contacts: Contacts.data,
             chat: Chat.data,
@@ -149,6 +168,7 @@ $script.ready(["header", "contacts", "chat", "keyword", "timer", "info"], () => 
             this.syncSetting();
             this.syncKeywords();
             this.syncTimers();
+            this.handling();
         },
         updated: function () {
         },
