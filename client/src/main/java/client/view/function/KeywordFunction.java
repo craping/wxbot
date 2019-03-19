@@ -10,12 +10,13 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.teamdev.jxbrowser.chromium.JSONString;
 import com.teamdev.jxbrowser.chromium.JSObject;
 
+import client.pojo.Msg;
 import client.view.server.BaseServer;
 
 @Component
 public class KeywordFunction extends TimerFunction {
 
-	public static ConcurrentHashMap<String, ConcurrentHashMap<String, String>> KEY_MAP = new ConcurrentHashMap<>();
+	public static ConcurrentHashMap<String, ConcurrentHashMap<String, Msg>> KEY_MAP = new ConcurrentHashMap<>();
 
 	public KeywordFunction() {
 		super();
@@ -23,7 +24,7 @@ public class KeywordFunction extends TimerFunction {
 	}
 	
 	public JSONString getKeyMap(String seq){
-		ConcurrentHashMap<String, String> keyMap = KEY_MAP.get(seq);
+		ConcurrentHashMap<String, Msg> keyMap = KEY_MAP.get(seq);
 		if(keyMap == null)
 			return new JSONString("{}");
 		try {
@@ -45,17 +46,17 @@ public class KeywordFunction extends TimerFunction {
 		}
 	}
 	
-	public void setKeyMap(String seq, String key, String value){
-		ConcurrentHashMap<String, String> map = KEY_MAP.get(seq);
+	public void setKeyMap(String seq, String key, int type, String content){
+		ConcurrentHashMap<String, Msg> map = KEY_MAP.get(seq);
 		if(map == null){
 			map = new ConcurrentHashMap<>();
 			KEY_MAP.put(seq, map);
 		}
-		map.put(key, value);
+		map.put(key, new Msg(type, content));
 	}
 	
 	public void delKeyMap(String seq, String key){
-		ConcurrentHashMap<String, String> map = KEY_MAP.get(seq);
+		ConcurrentHashMap<String, Msg> map = KEY_MAP.get(seq);
 		if(map != null)
 			map.remove(key);
 	}

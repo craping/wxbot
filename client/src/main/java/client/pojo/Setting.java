@@ -8,6 +8,18 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class Setting {
 	/**  
+	* @Fields 关键词数组[seq]
+	*/  
+	@JsonProperty
+	private ConcurrentLinkedQueue<String> keywords = new ConcurrentLinkedQueue<>();
+	
+	/**  
+	* @Fields 定时消息数组[seq]
+	*/  
+	@JsonProperty
+	private ConcurrentLinkedQueue<String> timers = new ConcurrentLinkedQueue<>();
+	
+	/**  
 	* @Fields 群转发数组[seq]
 	*/  
 	@JsonProperty
@@ -30,6 +42,23 @@ public class Setting {
 	*/  
 	@JsonProperty
 	private Permissions permissions = new Permissions();
+	
+	
+	public ConcurrentLinkedQueue<String> getKeywords() {
+		return keywords;
+	}
+
+	public void setKeywords(ConcurrentLinkedQueue<String> keywords) {
+		this.keywords = keywords;
+	}
+
+	public ConcurrentLinkedQueue<String> getTimers() {
+		return timers;
+	}
+
+	public void setTimers(ConcurrentLinkedQueue<String> timers) {
+		this.timers = timers;
+	}
 
 	public ConcurrentLinkedQueue<String> getForwards() {
 		return forwards;

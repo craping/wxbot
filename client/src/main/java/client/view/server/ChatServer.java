@@ -14,11 +14,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.cherry.jeeves.domain.response.SendMsgResponse;
-import com.cherry.jeeves.domain.response.UploadMediaResponse;
 import com.cherry.jeeves.domain.shared.Contact;
 import com.cherry.jeeves.enums.MessageType;
 
 import client.enums.Direction;
+import client.pojo.Msg;
 import client.pojo.WxMessage;
 import client.pojo.WxMessageBody;
 import client.utils.Config;
@@ -139,28 +139,45 @@ public class ChatServer extends BaseServer {
 	* @throws  
 	*/  
 	    
-	public void sendGloba(Collection<Contact> contacts, String content, MessageType msgType) {
-		//第一个消息的媒体数据
-		UploadMediaResponse media = null;
+	public void sendGloba(Collection<Contact> contacts, Msg msg) {
+		MessageType msgType;
+		switch (msg.getType()) {
+		case 1:
+			msgType = MessageType.TEXT;
+			break;
+		case 2:
+			msgType = MessageType.IMAGE;
+			break;
+		case 3:
+			msgType = MessageType.EMOTICON;
+			break;
+		case 4:
+			msgType = MessageType.VIDEO;
+			break;
+		default:
+			msgType = MessageType.APP;
+			break;
+		}
+		
 		String msgId = null;
 		for (Contact chatRoom : contacts) {
 			if (msgType == MessageType.TEXT) {
 				try {
-					wechatService.sendText(chatRoom.getUserName(), content);
-					writeSendTextRecord(chatRoom, content);
+					wechatService.sendText(chatRoom.getUserName(), msg.getContent());
+					writeSendTextRecord(chatRoom, msg.getContent());
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			} else {
 				try {
-					if(media == null){
-						media = wechatService.uploadMedia(chatRoom.getUserName(), Config.ATTCH_PATH+content);
+					if(msg.getMediaCache() == null){
+						msg.setMediaCache(wechatService.uploadMedia(chatRoom.getUserName(), Config.ATTCH_PATH+msg.getContent()));
 					}
-					SendMsgResponse response = wechatService.forwardAttachMsg(chatRoom.getNickName(), media, msgType);
+					SendMsgResponse response = wechatService.forwardAttachMsg(chatRoom.getNickName(), msg.getMediaCache(), msgType);
 					if(msgId == null)
 						msgId = response.getMsgID();
 					//写转发消息聊天记录
-					writeSendAppRecord(chatRoom, Config.ATTCH_PATH+content, msgId);
+					writeSendAppRecord(chatRoom, Config.ATTCH_PATH+msg.getContent(), msgId);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

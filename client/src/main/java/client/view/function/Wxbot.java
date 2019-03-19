@@ -1,6 +1,6 @@
 package client.view.function;
 
-import java.io.File;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -18,7 +18,6 @@ import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.stereotype.Component;
 
 import com.cherry.jeeves.domain.shared.Contact;
-import com.cherry.jeeves.enums.MessageType;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.teamdev.jxbrowser.chromium.JSFunction;
 import com.teamdev.jxbrowser.chromium.JSONString;
@@ -137,27 +136,16 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 			Date now = new Date();
 			
 			TIMER_MAP.forEach((seq, msgs) -> {
+				//判断全群定时消息权限
+				if(Config.GLOBA_SEQ.equals(seq) && !SettingFunction.SETTING.getPermissions().isGlobalTimer())
+					return;
+				//判断分群定时消息权限
+				if(!Config.GLOBA_SEQ.equals(seq) && !SettingFunction.SETTING.getPermissions().isTimer())
+					return;
+				
 				msgs.forEach(msg -> {
 					String[] schedule = msg.getSchedule().split("[|]");
 					String scheduleType = schedule[0];
-					MessageType msgType;
-					switch (msg.getType()) {
-					case 1:
-						msgType = MessageType.TEXT;
-						break;
-					case 2:
-						msgType = MessageType.IMAGE;
-						break;
-					case 3:
-						msgType = MessageType.EMOTICON;
-						break;
-					case 4:
-						msgType = MessageType.VIDEO;
-						break;
-					default:
-						msgType = MessageType.APP;
-						break;
-					}
 					
 					//固定时间发送
 					if ("1".equals(scheduleType)) {
@@ -172,15 +160,11 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 							System.out.println("固定时间消息匹配："+msg.getSchedule());
 							//全局群消息走转发
 							if (Config.GLOBA_SEQ.equals(seq)) {
-								chatServer.sendGloba(cacheService.getChatRooms(), msg.getContent(), msgType);
+								chatServer.sendGloba(cacheService.getChatRooms(), msg);
 							} else {
 								Contact chatRoom = cacheService.getChatRoom(seq);
 								if(chatRoom != null){
-									if (msg.getType() == 1) {
-										sendText(seq, chatRoom.getNickName(), chatRoom.getUserName(), msg.getContent());
-									} else {
-										sendApp(seq, chatRoom.getNickName(), chatRoom.getUserName(), new File(Config.ATTCH_PATH+msg.getContent()));
-									}
+									chatServer.sendGloba(Arrays.asList(chatRoom), msg);
 								}
 							}
 						}
@@ -194,15 +178,11 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 							System.out.println("间隔时间消息匹配："+msg.getSchedule());
 							//全局群消息走转发
 							if (Config.GLOBA_SEQ.equals(seq)) {
-								chatServer.sendGloba(cacheService.getChatRooms(), msg.getContent(), msgType);
+								chatServer.sendGloba(cacheService.getChatRooms(), msg);
 							} else {
 								Contact chatRoom = cacheService.getChatRoom(seq);
 								if(chatRoom != null){
-									if (msg.getType() == 1) {
-										sendText(seq, chatRoom.getNickName(), chatRoom.getUserName(), msg.getContent());
-									} else {
-										sendApp(seq, chatRoom.getNickName(), chatRoom.getUserName(), new File(Config.ATTCH_PATH+msg.getContent()));
-									}
+									chatServer.sendGloba(Arrays.asList(chatRoom), msg);
 								}
 							}
 							msg.setLastSendTime(now);

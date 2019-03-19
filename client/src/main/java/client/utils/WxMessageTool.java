@@ -18,6 +18,7 @@ import com.teamdev.jxbrowser.chromium.JSValue;
 
 import client.enums.ChatType;
 import client.enums.Direction;
+import client.pojo.Msg;
 import client.pojo.ScheduleMsg;
 import client.pojo.WxMessage;
 import client.view.WxbotView;
@@ -162,7 +163,7 @@ public class WxMessageTool extends BaseServer {
 		seqMap.forEach((k, v) -> {
 			//同步关键词seq
 			if(KeywordFunction.KEY_MAP != null){
-				ConcurrentHashMap<String, String> map = KeywordFunction.KEY_MAP.remove(k);
+				ConcurrentHashMap<String, Msg> map = KeywordFunction.KEY_MAP.remove(k);
 				if(map != null)
 					KeywordFunction.KEY_MAP.put(v, map);
 			}

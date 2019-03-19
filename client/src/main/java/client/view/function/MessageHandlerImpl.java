@@ -1,6 +1,7 @@
 package client.view.function;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -31,6 +32,7 @@ import com.teamdev.jxbrowser.chromium.JSObject;
 import com.teamdev.jxbrowser.chromium.JSValue;
 
 import client.enums.ChatType;
+import client.pojo.Msg;
 import client.pojo.WxMessage;
 import client.pojo.WxMessageBody;
 import client.utils.Config;
@@ -138,15 +140,15 @@ public class MessageHandlerImpl implements MessageHandler {
 		logger.debug("to: " + message.getToUserName());
 		logger.debug("content:" + content);
 		
-		WxMessage msg = new WxMessage(MessageType.TEXT.getCode(), new WxMessageBody(content));
-		Contact chatRoom = new Contact();
+		WxMessage record = new WxMessage(MessageType.TEXT.getCode(), new WxMessageBody(content));
+		final Contact chatRoom;
 		if (message.getFromUserName().equals(cacheService.getOwner().getUserName())) {
 			chatRoom = cacheService.getChatRoom(message.getToUserName());
-			msgTool.sendMessage(chatRoom, msg, cacheService.getOwner().getNickName(), ChatType.GROUPCHAT.getCode());
+			msgTool.sendMessage(chatRoom, record, cacheService.getOwner().getNickName(), ChatType.GROUPCHAT.getCode());
 		} else {
 			chatRoom = cacheService.getChatRoom(message.getFromUserName());
 			Contact sender = cacheService.searchContact(chatRoom.getMemberList(), userName);
-			msgTool.receiveGroupMessage(chatRoom, sender, msg);
+			msgTool.receiveGroupMessage(chatRoom, sender, record);
 		}
 		
 		try {
@@ -160,35 +162,31 @@ public class MessageHandlerImpl implements MessageHandler {
 		//判断关键词是否开启
 		if (SettingFunction.SETTING.getSwitchs().isGlobalKeyword() && chatRoom != null) {
 			
-			// 全域关键词自动回复
-			Map<String, String> keyMap = KeywordFunction.KEY_MAP.get(Config.GLOBA_SEQ);
-			if (keyMap != null) {
-				for (Map.Entry<String, String> entry : keyMap.entrySet()) {
-					if (content.contains(entry.getKey())) {
-						try {
-							//回复关键词并写聊天记录
-							wechatHttpService.sendText(chatRoom.getUserName(), entry.getValue());
-							chatServer.writeSendTextRecord(chatRoom, entry.getValue());
-						} catch (IOException e) {
-							e.printStackTrace();
+			Map<String, Msg> keyMap = null;
+			
+			//判断全群关键词权限
+			if(SettingFunction.SETTING.getPermissions().isGlobalKeyword()){
+				// 全群关键词自动回复
+				keyMap = KeywordFunction.KEY_MAP.get(Config.GLOBA_SEQ);
+				if (keyMap != null) {
+					keyMap.forEach((k, v) -> {
+						if (content.contains(k)) {
+							chatServer.sendGloba(cacheService.getChatRooms(), v);
 						}
-					}
+					});
 				}
 			}
 			
-			// 分群关键词自动回复
-			keyMap = KeywordFunction.KEY_MAP.get(chatRoom.getSeq());
-			if (keyMap != null) {
-				for (Map.Entry<String, String> entry : keyMap.entrySet()) {
-					if (content.contains(entry.getKey())) {
-						try {
-							//回复关键词并写聊天记录
-							wechatHttpService.sendText(message.getFromUserName(), entry.getValue());
-							chatServer.writeSendTextRecord(chatRoom, entry.getValue());
-						} catch (IOException e) {
-							e.printStackTrace();
+			//判断分群关键词权限
+			if(SettingFunction.SETTING.getPermissions().isKeyword()){
+				// 分群关键词自动回复
+				keyMap = KeywordFunction.KEY_MAP.get(chatRoom.getSeq());
+				if (keyMap != null) {
+					keyMap.forEach((k, v) -> {
+						if (content.contains(k)) {
+							chatServer.sendGloba(Arrays.asList(chatRoom), v);
 						}
-					}
+					});
 				}
 			}
 		}
@@ -530,8 +528,8 @@ public class MessageHandlerImpl implements MessageHandler {
 	public boolean onReceivingFriendInvitation(RecommendInfo info) {
 		logger.debug("收到好友请求消息");
 		logger.debug("recommendinfo content:" + info.getContent());
-		// 默认接收所有的邀请
-		return SettingFunction.SETTING.getSwitchs().isAutoAcceptFriend();
+		// 判断全选和开关
+		return SettingFunction.SETTING.getPermissions().isAcceptFriend() && SettingFunction.SETTING.getSwitchs().isAutoAcceptFriend();
 	}
 
 	@Override

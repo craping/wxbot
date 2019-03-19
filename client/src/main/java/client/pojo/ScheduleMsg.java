@@ -6,13 +6,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown=true)
-public class ScheduleMsg {
+public class ScheduleMsg extends Msg {
 	@JsonProperty
 	private String uuid;
-	@JsonProperty
-	private int type;
-	@JsonProperty
-	private String content;
 	@JsonProperty
 	private String schedule;
 	@JsonProperty
@@ -37,18 +33,6 @@ public class ScheduleMsg {
 
 	public void setUuid(String uuid) {
 		this.uuid = uuid;
-	}
-
-	public int getType() {
-		return type;
-	}
-
-	public void setType(int type) {
-		this.type = type;
-	}
-
-	public String getContent() {
-		return content;
 	}
 
 	public void setContent(String content) {
