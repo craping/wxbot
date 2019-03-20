@@ -26,8 +26,10 @@ import org.springframework.stereotype.Component;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.FullHttpRequest;
 import net.sf.json.JSONObject;
+import wxrobot.biz.server.SettingServer;
 import wxrobot.biz.server.UserServer;
 import wxrobot.dao.entity.User;
+import wxrobot.dao.entity.field.Permissions;
 import wxrobot.dao.entity.field.UserInfo;
 import wxrobot.server.enums.CustomErrors;
 import wxrobot.server.param.MobileParam;
@@ -42,6 +44,8 @@ public class UserPump extends DataPump<JSONObject, FullHttpRequest, Channel> {
 	
 	@Autowired
 	private UserServer userServer;
+	@Autowired
+	private SettingServer settingServer;
 	@Autowired
 	private StringRedisTemplate redisTemplate;
 	
@@ -65,6 +69,9 @@ public class UserPump extends DataPump<JSONObject, FullHttpRequest, Channel> {
 		UserInfo userInfo = new UserInfo(params.getString("user_name"), userPwd, params.getString("user_name"));
 		user.setUserInfo(userInfo);
 		userServer.insert(user);
+		
+		// 初始化用户权限设置
+		settingServer.initSetting(userInfo.getUserName(), new Permissions());
 		return new DataResult(Errors.OK);
 	}
 	

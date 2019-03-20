@@ -16,7 +16,7 @@ public enum CustomErrors implements Errcode {
 	USER_NOT_LOGIN(1,506, "用户未登录"),
 	USER_SERVER_END(1,507, "服务已过期，请联系管理员"),
 	USER_EXIST_ERR(1,508, "用户<{}>已注册"),
-	
+	USER_NOT_EXIST(1,509, "用户不存在"),
 	
 	USER_LOCKED(1,999, "状态异常，请联系管理员");
 	

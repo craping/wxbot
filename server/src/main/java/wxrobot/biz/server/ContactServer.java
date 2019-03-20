@@ -12,16 +12,26 @@ import wxrobot.dao.entity.Contact;
 import wxrobot.dao.entity.field.ContactInfo;
 
 @Service
-public class ContactServer extends BaseServer{
+public class ContactServer extends BaseServer {
 
 	@SuppressWarnings("unchecked")
 	public long syncContacts(String uid, JSONObject params) {
 		Query query = new Query(Criteria.where("uid").is(uid));
-		
+
 		Update update = new Update();
 //		update.set("individuals", (List<ContactInfo>) params.optJSONArray("idis"));
 		update.set("chatRooms", (List<ContactInfo>) params.optJSONArray("crs"));
-		
+
 		return mongoTemplate.upsert(query, update, Contact.class).getModifiedCount();
+	}
+
+	/**
+	 * 获取用户联系人
+	 * 
+	 * @param uid
+	 * @return
+	 */
+	public Contact getUserContact(String uid) {
+		return mongoTemplate.findOne(Query.query(Criteria.where("uid").is(uid)), Contact.class);
 	}
 }

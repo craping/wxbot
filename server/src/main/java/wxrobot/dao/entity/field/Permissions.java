@@ -4,8 +4,8 @@ import lombok.Data;
 
   
 /**  
-* @ClassName: Permissions  
-* @Description: 用户权限实体类
+* @ClassName= Permissions  
+* @Description= 用户权限实体类
 * @author Crap  
 * @date 2019年3月5日  
 *    
@@ -13,6 +13,20 @@ import lombok.Data;
     
 @Data
 public class Permissions {
+	
+	public Permissions() {
+		this.zombieTest= false;
+		this.chat= false;
+		this.keyword= false;
+		this.globalKeyword= false;
+		this.timer= false;
+		this.globalTimer= false;
+		this.acceptFriend= false;
+		this.chatRoomFoundTip= false;
+		this.memberJoinTip= false;
+		this.memberLeftTip= false;
+		this.wapSite= false;
+	}
  
 	  
 	/**  

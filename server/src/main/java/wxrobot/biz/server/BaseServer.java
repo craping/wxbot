@@ -25,6 +25,7 @@ import wxrobot.dao.entity.field.UserInfo;
 import wxrobot.server.enums.CustomErrors;
 import wxrobot.server.param.TokenParam;
 import wxrobot.server.utils.RedisUtil;
+import wxrobot.server.utils.Tools;
 
 @Service
 public class BaseServer {
@@ -75,5 +76,22 @@ public class BaseServer {
 		dataResult.setErrcode(Errors.OK);
 		dataResult.setData(new Data(rows, page));
 		return dataResult;
+	}
+	
+	/**
+	 *  判断是否登录
+	 * @param token
+	 * @return
+	 */
+	public Boolean userLogged(String token) {
+		// 用户没有token -> 未登录
+		if (Tools.isStrEmpty(token))
+			return false;
+		// redis 没有查询到 ->未登录
+		String key = "user_" + token;
+		if (!(new RedisUtil().exists(key))) 
+			return false;
+		
+		return true;
 	}
 }

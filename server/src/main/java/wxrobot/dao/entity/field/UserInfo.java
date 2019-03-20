@@ -19,7 +19,7 @@ public class UserInfo {
 		this.userPwd = userPwd;
 		this.phoneNum = phoneNum;
 		this.serverState = true;
-		this.phoneState = true;
+		this.phoneState = false;
 		this.comefrom = 1;
 	}
 
