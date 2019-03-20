@@ -10,25 +10,37 @@ Keyword = {
             delKey:"",
             filterKey:"",
             key:"",
-            value:""
+            type:"text",
+            file:null,
+            text:null
         },
         columns: [{
             title: "关键词",
             key: "key",
+            ellipsis:true,
+            tooltip:true,
+            width:80
+        },{
+            title: "回复",
+            key: "content",
+            ellipsis:true,
             render: (h, params) => {
-                return h('span', [
-                    h('Icon', {
-                        props: {
-                            type: 'ios-paper-outline'
-                        },
-                        style: {
-                            marginRight: '8px'
-                        }
-                    }),
-                    h('span', params.row.key + "：" + params.row.value)
-                ])
+                const typeIcon = ["", "fa-comment-dots", "fa-image", "fa-laugh", "fa-file-video", "fa-file"];
+                return h("Tooltip", {
+                    "class":"text-truncate w-100",
+                    props:{
+                        content:params.row.content,
+                        maxWidth:200,
+                    }
+                }, [h('i', {
+                    style: {
+                        marginRight: "8px",
+                        fontSize:"14px"
+                    },
+                    "class":"far "+typeIcon[params.row.type]
+                }),params.row.content])
             }
-        }, {
+        },{
             title: "操作",
             width:70,
             className:"opt",
@@ -48,7 +60,8 @@ Keyword = {
                                 Keyword.data.form.modal = true;
                                 Keyword.data.form.edit = true;
                                 Keyword.data.form.key = params.row.key;
-                                Keyword.data.form.value = params.row.value;
+                                Keyword.data.form.type = params.row.type == 1?"text":"file";
+                                Keyword.data.form.text = params.row.content;
                             }
                         }
                     }),
@@ -75,17 +88,23 @@ Keyword = {
         keyMap() {
             let me = this;
             return me.filterAll(Object.keys(me.keyword.chatRoomKeyMap).map(key => {
+                const msg = me.keyword.chatRoomKeyMap[key];
                 return {
                     key: key,
-                    value: me.keyword.chatRoomKeyMap[key]
+                    type:msg.type,
+                    content: msg.content
                 };
             }), {
                 key: me.keyword.form.filterKey,
-                value: me.keyword.form.filterKey
+                content: me.keyword.form.filterKey
             });
         }
     },
     methods: {
+        handleKeywordUpload (file) {
+            this.keyword.form.file = file;
+            return false;
+        },
         syncKeywords(){
             let me = this;
             Web.ajax("keyword/getKeywords", {
@@ -124,35 +143,53 @@ Keyword = {
             this.keyword.chatRoomKeyMap = wxbot.getKeyMap(seq);
         },
         editKeyMapOk(){
-            let me = this;
-            let keyMap = {};
-            keyMap[me.keyword.form.key] = me.keyword.form.value;
-            Web.ajax("keyword/set", {
-                data:{
-                    seq:me.keyword.form.seq,
-                    keyMap:keyMap
-                },
+            const me = this;
+            var form = new FormData();
+            form.append("token", Web.user.token);
+            form.append("seq", me.keyword.form.seq);
+            form.append("key", me.keyword.form.key);
+            form.append("content", me.keyword.form.type=="text"?me.keyword.form.text:me.keyword.form.file);
+
+            $.ajax({
+                url: Web.serverURL + "keyword/set?format=json",
+                type: "post",
+                data: form,
+                processData: false,
+                contentType: false,
                 success: function (data) {
-                    me.$set(me.keyword.chatRoomKeyMap, me.keyword.form.key, me.keyword.form.value);
-                    wxbot.setKeyMap(me.keyword.form.seq, me.keyword.form.key, me.keyword.form.value);
-                    me.keyword.form.key = "";
-                    me.keyword.form.value = "";
-                    me.keyword.form.modal = false;
-                    me.keyword.form.modalLoading = false;
-                    me.$Message.success("操作成功!");
+                    if (!data.result) {
+                        me.$set(me.keyword.chatRoomKeyMap, me.keyword.form.key, data.data.info);
+                        wxbot.setKeyMap(me.keyword.form.seq, me.keyword.form.key, data.data.info.type, data.data.info.content);
+                        me.keyword.form.key = "";
+                        me.keyword.form.type = "text";
+                        me.keyword.form.text = null;
+                        me.keyword.form.file = null;
+                        me.keyword.form.modal = false;
+                        me.keyword.form.modalLoading = false;
+                        me.$Message.success("操作成功!");
+                    } else {
+                        me.keyword.form.modalLoading = false;
+                        me.$nextTick(() => {
+                            me.keyword.form.modalLoading = true;
+                        });
+                        me.$Message.error("操作失败："+data.msg);
+                    }
                 },
-                fail: function (data) {
+                error:function(XMLHttpRequest, textStatus, errorThrown){
                     me.keyword.form.modalLoading = false;
                     me.$nextTick(() => {
                         me.keyword.form.modalLoading = true;
                     });
-                    me.$Message.error("操作失败："+data.msg);
+                    me.$Message.error("操作失败:"+textStatus);
+                    console.log(errorThrown);
                 }
             });
         },
         editKeyMapCancel(){
             this.keyword.form.key = "";
-            this.keyword.form.value = "";
+            this.keyword.form.type = "text";
+            this.keyword.form.text = null;
+            this.keyword.form.file = null;
         },
         delKeyMap(){
             let me = this;

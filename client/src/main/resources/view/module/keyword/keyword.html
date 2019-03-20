@@ -1,15 +1,12 @@
 <i-form @submit.native.prevent>
     <form-item class="mb-0">
         <i-button class="float-right" icon="ios-add" size="small" type="primary" @click="keyword.form.modal=true;keyword.form.edit=false;"></i-button>
-        <i-input class="d-block w-auto" style="margin-right:30px" v-model="keyword.form.filterKey" clearable size="small" placeholder="搜索..." prefix="ios-search" />
+        <i-input class="d-block w-auto" style="margin-right:30px" v-model.trim.lazy="keyword.form.filterKey" clearable size="small" placeholder="搜索..." prefix="ios-search" />
     </form-item>
 </i-form>
 <div>
-    <i-table :show-header="false" :columns="keyword.columns" :data="keyMap" :loading="keyword.chatRoomKeyMapLoading" :height="530"></i-table>
+    <i-table :columns="keyword.columns" :data="keyMap" :loading="keyword.chatRoomKeyMapLoading" :height="538"></i-table>
 </div>
-
-
-
 
 
 
@@ -22,9 +19,24 @@
         <i-input placeholder="关键词..." clearable :disabled="keyword.form.edit" v-model="keyword.form.key"/>
     </div>
     <br>
-    <div>
-        <i-input type="textarea" :autosize="{maxRows: 4, minRows: 4}" placeholder="回复内容..." v-model="keyword.form.value"/>
-    </div>
+    <i-form @submit.native.prevent>
+        <form-item label="消息内容" class="mb-0">
+            <radio-group v-model="keyword.form.type">
+                <radio label="text">文本</radio>
+                <radio label="file">文件</radio>
+            </radio-group>
+        </form-item>
+        <div>
+            <i-input v-if="keyword.form.type == 'text'" type="textarea" :autosize="{maxRows: 4, minRows: 4}" placeholder="回复内容..." v-model="keyword.form.text"/>
+            <Upload v-if="keyword.form.type == 'file'" type="drag" :before-upload="handleKeywordUpload" :max-size="10240">
+                <div style="padding: 20px 0">
+                    <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
+                    <p>点击选择文件或拖拽文件到该区域</p>
+                </div>
+            </Upload>
+            <div v-if="keyword.form.file !== null">文件名: {{ keyword.form.file.name }}</div>
+        </div>
+    </i-form>
 </modal>
 <modal v-model="keyword.form.confirm" onselectstart="return false" ondragstart="return false" width="360" :mask-closable="false">
     <p slot="header" class="text-center" style="color:#f60;">

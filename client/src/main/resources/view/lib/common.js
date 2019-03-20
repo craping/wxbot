@@ -10,46 +10,59 @@ var Store = Store||{
 		localStorage.removeItem(key);
 	}
 }
-// var wxbot = {
-// 	getUserInfo(){},
-// 	getDomain(){
-// 		return "http://127.0.0.1"
-// 	},
-// 	getHostUrl(){},
-// 	getIndividuals(){
-// 		let list = [];
-// 		for (let i = 0; i < 5000; i++) {
-// 			list.push({
-// 				NickName:"名称"+i,
-// 				HeadImgUrl:"",
-// 				UserName:"username"+i,
-// 				seq:"seq"+i
-// 			});
-// 		}
-// 		return list;
-// 	},
-// 	getChatRooms(){
-// 		let list = [];
-// 		for (let i = 0; i < 5000; i++) {
-// 			list.push({
-// 				NickName:"名称"+i,
-// 				HeadImgUrl:"",
-// 				UserName:"username"+i,
-// 				seq:"seq"+i
-// 			});
-// 		}
-// 		return list;
-// 	},
-// 	getEmoji(){
-// 		return "";
-// 	},
-// 	getOwnerHeadImgUrl(){
-// 		return "";
-// 	},
-// 	getOwner(){
-// 		return {};
-// 	}
-// };
+
+
+/** ----------------浏览器模式开发时使用-------------*/
+var wxbot = {
+	getUserInfo(){
+		return {
+			userInfo:{}
+		}
+	},
+	getDomain(){
+		return "http://127.0.0.1"
+	},
+	getHostUrl(){},
+	getIndividuals(){
+		let list = [];
+		for (let i = 0; i < 5000; i++) {
+			list.push({
+				NickName:"名称"+i,
+				HeadImgUrl:"",
+				UserName:"username"+i,
+				seq:"seq"+i
+			});
+		}
+		return list;
+	},
+	getChatRooms(){
+		let list = [];
+		for (let i = 0; i < 5000; i++) {
+			list.push({
+				NickName:"名称"+i,
+				HeadImgUrl:"",
+				UserName:"username"+i,
+				seq:"seq"+i
+			});
+		}
+		return list;
+	},
+	getEmoji(){
+		return "";
+	},
+	getOwnerHeadImgUrl(){
+		return "";
+	},
+	getOwner(){
+		return {};
+	},
+	getRootPath(){
+		return "";
+	}
+};
+/** ----------------浏览器模式开发时使用-------------*/
+
+
 var Web = {
 	serverURL: "",
 	wxHost:"",

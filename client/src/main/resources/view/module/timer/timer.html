@@ -85,7 +85,7 @@
         </form-item>
         <div>
             <i-input v-if="timer.form.type == 'text'" type="textarea" :autosize="{maxRows: 4, minRows: 4}" placeholder="回复内容..." v-model="timer.form.text"/>
-            <Upload v-if="timer.form.type == 'file'" type="drag" :before-upload="handleUpload" :max-size="10240">
+            <Upload v-if="timer.form.type == 'file'" type="drag" :before-upload="handleTimerUpload" :max-size="10240">
                 <div style="padding: 20px 0">
                     <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
                     <p>点击选择文件或拖拽文件到该区域</p>

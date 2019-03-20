@@ -72,17 +72,59 @@ public class SettingFunction {
 		}
 	}
 	
-	public void enableForward(String seq){
-		SETTING.getForwards().add(seq);
+	public void enableSeq(String module, String seq){
+		switch (module) {
+		case "turing":
+			SETTING.getTuring().add(seq);
+			break;
+		case "keywords":
+			SETTING.getKeywords().add(seq);
+			break;
+		case "timers":
+			SETTING.getTimers().add(seq);
+			break;
+		case "forwards":
+			SETTING.getForwards().add(seq);
+			break;
+		}
 	}
 	
-	public void disableForward(String seq){
-		SETTING.getForwards().remove(seq);
+	public void disableSeq(String module, String seq){
+		switch (module) {
+		case "turing":
+			SETTING.getTuring().remove(seq);
+			break;
+		case "keywords":
+			SETTING.getKeywords().remove(seq);
+			break;
+		case "timers":
+			SETTING.getTimers().remove(seq);
+			break;
+		case "forwards":
+			SETTING.getForwards().remove(seq);
+			break;
+		}
 	}
 	
-	public void modForward(String oldSeq, String newSeq){
-		if(SETTING.getForwards().remove(oldSeq))
-			SETTING.getForwards().add(newSeq);
+	public void modSeq(String module, String oldSeq, String newSeq){
+		switch (module) {
+		case "turing":
+			if(SETTING.getTuring().remove(oldSeq))
+				SETTING.getTuring().add(newSeq);
+			break;
+		case "keywords":
+			if(SETTING.getKeywords().remove(oldSeq))
+				SETTING.getKeywords().add(newSeq);
+			break;
+		case "timers":
+			if(SETTING.getTimers().remove(oldSeq))
+				SETTING.getTimers().add(newSeq);
+			break;
+		case "forwards":
+			if(SETTING.getForwards().remove(oldSeq))
+				SETTING.getForwards().add(newSeq);
+			break;
+		}
 	}
 	
 	public void syncSwitchs(JSObject syncSwitchs){

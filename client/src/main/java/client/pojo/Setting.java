@@ -8,6 +8,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class Setting {
 	/**  
+	* @Fields 图灵机器人数组[seq]
+	*/  
+	@JsonProperty
+	private ConcurrentLinkedQueue<String> turing = new ConcurrentLinkedQueue<>();
+	/**  
 	* @Fields 关键词数组[seq]
 	*/  
 	@JsonProperty
@@ -44,6 +49,14 @@ public class Setting {
 	private Permissions permissions = new Permissions();
 	
 	
+	public ConcurrentLinkedQueue<String> getTuring() {
+		return turing;
+	}
+
+	public void setTuring(ConcurrentLinkedQueue<String> turing) {
+		this.turing = turing;
+	}
+
 	public ConcurrentLinkedQueue<String> getKeywords() {
 		return keywords;
 	}

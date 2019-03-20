@@ -39,7 +39,17 @@ public class KeywordFunction extends TimerFunction {
 		System.out.println(syncKeyMap);
 		try {
 			KEY_MAP.clear();
-			KEY_MAP.putAll(BaseServer.JSON_MAPPER.readValue(syncKeyMap.toJSONString(), new TypeReference<ConcurrentHashMap<String, ConcurrentHashMap<String, String>>>() {}));
+			ConcurrentHashMap<String, ConcurrentHashMap<String, Msg>> keyMap = 
+					BaseServer.JSON_MAPPER.readValue(syncKeyMap.toJSONString(), new TypeReference<ConcurrentHashMap<String, ConcurrentHashMap<String, Msg>>>() {});
+			keyMap.forEach((k, v) -> {
+				v.forEach((key, msg) -> {
+					if(msg.getType() != 1){
+						System.out.printf("关键词文件[%s]\n", msg.getContent());
+						downloadAttach(msg.getContent());
+					}
+				});
+			});
+			KEY_MAP.putAll(keyMap);
 			System.out.println(KeywordFunction.KEY_MAP);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -48,6 +58,10 @@ public class KeywordFunction extends TimerFunction {
 	
 	public void setKeyMap(String seq, String key, int type, String content){
 		ConcurrentHashMap<String, Msg> map = KEY_MAP.get(seq);
+		if(type != 1){
+			System.out.printf("关键词文件[%s]\n", content);
+			downloadAttach(content);
+		}
 		if(map == null){
 			map = new ConcurrentHashMap<>();
 			KEY_MAP.put(seq, map);

@@ -13,8 +13,14 @@ Forward = {
                 return {
                     seq: e.seq,
                     NickName: e.NickName,
-                    status:me.setting.forwards.indexOf(e.seq) != -1,
-                    loading:false
+                    turing:me.setting.turing.includes(e.seq),
+                    turingLoading:false,
+                    keywords:me.setting.keywords.includes(e.seq),
+                    keywordsLoading:false,
+                    timers:me.setting.timers.includes(e.seq),
+                    timersLoading:false,
+                    forwards:me.setting.forwards.includes(e.seq),
+                    forwardsLoading:false
                 };
             }), {
                 NickName: me.forward.form.filterKey
@@ -34,12 +40,13 @@ Forward = {
             e.loading = true;
             me.$forceUpdate();
 
-            Web.ajax("setting/enableForward", {
+            Web.ajax("setting/enableSeq", {
                 data:{
-                    seq:e.seq
+                    seq:e.seq,
+                    module:"forwards"
                 },
                 success: function (data) {
-                    wxbot.enableForward(e.seq);
+                    wxbot.enableSeq("forwards", e.seq);
                     me.setting.forwards.push(e.seq);
                     me.$Message.success("操作成功!");
                 },
@@ -62,12 +69,13 @@ Forward = {
             e.loading = true;
             me.$forceUpdate();
 
-            Web.ajax("setting/disableForward", {
+            Web.ajax("setting/disableSeq", {
                 data:{
-                    seq:e.seq
+                    seq:e.seq,
+                    module:"forwards"
                 },
                 success: function (data) {
-                    wxbot.disableForward(e.seq);
+                    wxbot.disableSeq("forwards", e.seq);
                     me.setting.forwards.splice(me.setting.forwards.indexOf(e.seq), 1);
                     me.$Message.success("操作成功!");
                 },

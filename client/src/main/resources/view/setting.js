@@ -42,7 +42,7 @@ const constant = {
         },
         forward: {
             icon: "fa-paper-plane",
-            title: "全群转发"
+            title: "分群功能"
         },
         globalTimer: {
             icon: "fa-clock",
@@ -56,7 +56,8 @@ const constant = {
             icon: "fa-info-circle",
             title: "群提示语"
         }
-    }
+    },
+    typeIcon:["", "fa-comment-dots", "fa-image", "fa-laugh", "fa-file-video", "fa-file"]
 };
 $script.ready(["user", "general", "forward", "globalTimer", "globalKeyword", "tips"], function () {
     Web.user = wxbot.getUserInfo();

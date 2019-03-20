@@ -1,13 +1,14 @@
 <i-form @submit.native.prevent>
     <form-item class="mb-0">
         <i-button class="float-right" icon="ios-add" size="small" type="primary" @click="globalKeyword.form.modal=true;globalKeyword.form.edit=false;"></i-button>
-        <i-input class="d-block w-auto" style="margin-right:30px" v-model="globalKeyword.form.filterKey" clearable size="small" placeholder="搜索..." prefix="ios-search" />
+        <i-input class="d-block w-auto" style="margin-right:30px" v-model.trim.lazy="globalKeyword.form.filterKey" clearable size="small" placeholder="搜索..." prefix="ios-search" />
     </form-item>
 </i-form>
 <table class="table table-hover border fixed mb-0">
     <thead>
         <tr>
-            <th>关键词：回复</th>
+            <th>关键词</th>
+            <th>回复</th>
             <th class="text-center" width="90">操作</th>
         </tr>
     </thead>
@@ -15,12 +16,22 @@
         <template v-if="keyMap.length">
             <tr v-for="e in keyMap">
                 <td>
-                    <tooltip :content="e.key+'：'+e.value" class="text-truncate w-100">
-                        {{e.key}}：{{e.value}}
+                    <tooltip :content="e.key" class="text-truncate w-100">
+                        {{e.key}}
+                    </tooltip>
+                </td>
+                <td>
+                    <tooltip :content="e.content" class="text-truncate w-100">
+                        <i class="far" :class="constant.typeIcon[e.type]"></i> {{e.content}}
                     </tooltip>
                 </td>
                 <td class="text-center" width="90">
-                    <i-button icon="ios-create" size="small" type="default" @click="globalKeyword.form.modal=true;globalKeyword.form.key=e.key;globalKeyword.form.edit=true;globalKeyword.form.value=e.value;"></i-button>
+                    <i-button icon="ios-create" size="small" type="default" @click="globalKeyword.form.modal=true;
+                    globalKeyword.form.key=e.key;
+                    globalKeyword.form.edit=true;
+                    globalKeyword.form.type = e.type == 1?'text':'file';
+                    globalKeyword.form.text = e.content;
+                    "></i-button>
                     <i-button icon="ios-remove" size="small" type="primary" @click="globalKeyword.form.confirm=true;globalKeyword.form.delKey=e.key;"></i-button>
                 </td>
             </tr>
@@ -38,9 +49,24 @@
         <i-input placeholder="关键词..." clearable :disabled="globalKeyword.form.edit" v-model="globalKeyword.form.key"/>
     </div>
     <br>
-    <div>
-        <i-input type="textarea" :autosize="{maxRows: 4, minRows: 4}" placeholder="回复内容..." v-model="globalKeyword.form.value"/>
-    </div>
+    <i-form @submit.native.prevent>
+        <form-item label="消息内容" class="mb-0">
+            <radio-group v-model="globalKeyword.form.type">
+                <radio label="text">文本</radio>
+                <radio label="file">文件</radio>
+            </radio-group>
+        </form-item>
+        <div>
+            <i-input v-if="globalKeyword.form.type == 'text'" type="textarea" :autosize="{maxRows: 4, minRows: 4}" placeholder="回复内容..." v-model="globalKeyword.form.text"/>
+            <Upload v-if="globalKeyword.form.type == 'file'" type="drag" :before-upload="handleKeywordUpload" :max-size="10240">
+                <div style="padding: 20px 0">
+                    <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
+                    <p>点击选择文件或拖拽文件到该区域</p>
+                </div>
+            </Upload>
+            <div v-if="globalKeyword.form.file !== null">文件名: {{ globalKeyword.form.file.name }}</div>
+        </div>
+    </i-form>
 </modal>
 <modal v-model="globalKeyword.form.confirm" width="360" :mask-closable="false" class-name="vertical-center-modal">
     <p slot="header" class="text-center" style="color:#f60;">

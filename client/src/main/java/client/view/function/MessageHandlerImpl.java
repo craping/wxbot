@@ -151,16 +151,8 @@ public class MessageHandlerImpl implements MessageHandler {
 			msgTool.receiveGroupMessage(chatRoom, sender, record);
 		}
 		
-		try {
-			System.out.println(BaseServer.JSON_MAPPER.writeValueAsString(message));
-			System.out.println(BaseServer.JSON_MAPPER.writeValueAsString(chatRoom));
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-		}
-		
-		
 		//判断关键词是否开启
-		if (SettingFunction.SETTING.getSwitchs().isGlobalKeyword() && chatRoom != null) {
+		if (SettingFunction.SETTING.getSwitchs().isGlobalKeyword()) {
 			
 			Map<String, Msg> keyMap = null;
 			
@@ -178,7 +170,7 @@ public class MessageHandlerImpl implements MessageHandler {
 			}
 			
 			//判断分群关键词权限
-			if(SettingFunction.SETTING.getPermissions().isKeyword()){
+			if(SettingFunction.SETTING.getPermissions().isKeyword() && chatRoom != null){
 				// 分群关键词自动回复
 				keyMap = KeywordFunction.KEY_MAP.get(chatRoom.getSeq());
 				if (keyMap != null) {

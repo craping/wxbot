@@ -22,7 +22,8 @@ Timer = {
         columns: [{
             title: "时间",
             key: "schedule",
-            width:190,
+            className:"mx-0",
+            width:160,
             render: (h, params) => {
                 const schedule = params.row.schedule.split("|");
                 const type = schedule[0];
@@ -50,7 +51,23 @@ Timer = {
         },{
             title: "内容",
             ellipsis:true,
-            key: "content"
+            key: "content",
+            render: (h, params) => {
+                const typeIcon = ["", "fa-comment-dots", "fa-image", "fa-laugh", "fa-file-video", "fa-file"];
+                return h("Tooltip", {
+                    "class":"text-truncate w-100",
+                    props:{
+                        content:params.row.content,
+                        maxWidth:200,
+                    }
+                }, [h('i', {
+                    style: {
+                        marginRight: "8px",
+                        fontSize:"14px"
+                    },
+                    "class":"far "+typeIcon[params.row.type]
+                }),params.row.content])
+            }
         }, {
             title: "操作",
             width:50,
@@ -80,7 +97,7 @@ Timer = {
     computed: {
     },
     methods: {
-        handleUpload (file) {
+        handleTimerUpload (file) {
             this.timer.form.file = file;
             return false;
         },
@@ -169,6 +186,7 @@ Timer = {
                         wxbot.addMsg(me.timer.form.seq, data.data.info);
                         me.timer.form.modal = false;
                         me.timer.form.modalLoading = false;
+                        me.timer.form.type = "text";
                         me.timer.form.text = null;
                         me.timer.form.file = null;
                         me.timer.form.scheduleType = 1;
@@ -190,10 +208,16 @@ Timer = {
                 },
                 error:function(XMLHttpRequest, textStatus, errorThrown){
                     console.log(errorThrown);
+                    me.timer.form.modalLoading = false;
+                    me.$nextTick(() => {
+                        me.timer.form.modalLoading = true;
+                    });
+                    me.$Message.error("操作失败:"+textStatus);
                 }
             });
         },
         editMsgCancel(){
+            me.timer.form.type = "text";
             this.timer.form.text = null;
             this.timer.form.file = null;
             this.timer.form.scheduleType = 1;

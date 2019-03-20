@@ -173,7 +173,7 @@ public class ChatServer extends BaseServer {
 					if(msg.getMediaCache() == null){
 						msg.setMediaCache(wechatService.uploadMedia(chatRoom.getUserName(), Config.ATTCH_PATH+msg.getContent()));
 					}
-					SendMsgResponse response = wechatService.forwardAttachMsg(chatRoom.getNickName(), msg.getMediaCache(), msgType);
+					SendMsgResponse response = wechatService.forwardAttachMsg(chatRoom.getUserName(), msg.getMediaCache(), msgType);
 					if(msgId == null)
 						msgId = response.getMsgID();
 					//写转发消息聊天记录

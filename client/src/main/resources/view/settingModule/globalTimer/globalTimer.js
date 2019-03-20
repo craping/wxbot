@@ -84,6 +84,7 @@ GlobalTimer = {
             let me = this;
             var form = new FormData();
             form.append("token", Web.user.token);
+            form.append("seq", "global");
             form.append("content", me.globalTimer.form.type=="text"?me.globalTimer.form.text:me.globalTimer.form.file);
             let schedule = [];
 
@@ -115,7 +116,7 @@ GlobalTimer = {
             form.append("schedule", schedule);
 
             $.ajax({
-                url: Web.serverURL + "timer/addGlobalMsg?format=json",
+                url: Web.serverURL + "timer/addMsg?format=json",
                 type: "post",
                 data: form,
                 processData: false,
@@ -169,8 +170,9 @@ GlobalTimer = {
         delMsg(){
             let me = this;
             me.globalTimer.form.confirmLoading = true;
-            Web.ajax("timer/delGlobalMsg", {
+            Web.ajax("timer/delMsg", {
                 data:{
+                    seq:"global",
                     uuid:me.globalTimer.form.uuid
                 },
                 success: function (data) {

@@ -1,4 +1,4 @@
-<i-input v-model="forward.form.filterKey" clearable size="small" placeholder="搜索..." prefix="ios-search" />
+<i-input v-model.trim.lazy="forward.form.filterKey" clearable size="small" placeholder="搜索..." prefix="ios-search" />
 <table class="table table-hover border border-bottom-0 fixed mb-0">
     <thead>
         <tr>

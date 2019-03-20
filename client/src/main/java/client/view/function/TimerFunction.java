@@ -42,8 +42,9 @@ public class TimerFunction extends ChatFunction {
 	public void syncTimers(JSObject syncTimerMap) {
 		try {
 			TIMER_MAP.clear();
-			TIMER_MAP.putAll(BaseServer.JSON_MAPPER.readValue(syncTimerMap.toJSONString(), new TypeReference<ConcurrentHashMap<String, ConcurrentLinkedQueue<ScheduleMsg>>>() {}));
-			TIMER_MAP.forEach((k, v) -> {
+			ConcurrentHashMap<String, ConcurrentLinkedQueue<ScheduleMsg>> timerMap = 
+					BaseServer.JSON_MAPPER.readValue(syncTimerMap.toJSONString(), new TypeReference<ConcurrentHashMap<String, ConcurrentLinkedQueue<ScheduleMsg>>>() {});
+			timerMap.forEach((k, v) -> {
 				v.forEach(msg -> {
 					if(msg.getType() != 1){
 						System.out.printf("定时文件消息[%s]\n", msg.getContent());
@@ -51,6 +52,7 @@ public class TimerFunction extends ChatFunction {
 					}
 				});
 			});
+			TIMER_MAP.putAll(timerMap);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

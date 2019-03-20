@@ -9,7 +9,9 @@ GlobalKeyword = {
             delKey:"",
             filterKey:"",
             key:"",
-            value:""
+            type:"text",
+            file:null,
+            text:null
         },
         chatRoomKeyMap: {},
         chatRoomKeyMapLoading:false
@@ -18,62 +20,58 @@ GlobalKeyword = {
         keyMap() {
             let me = this;
             return me.filterAll(Object.keys(me.globalKeyword.chatRoomKeyMap).map(key => {
+                const msg = me.globalKeyword.chatRoomKeyMap[key];
                 return {
                     key: key,
-                    value: me.globalKeyword.chatRoomKeyMap[key]
+                    type:msg.type,
+                    content: msg.content
                 };
             }), {
                 key: me.globalKeyword.form.filterKey,
-                value: me.globalKeyword.form.filterKey
+                content: me.globalKeyword.form.filterKey
             });
         }
     },
     methods:{
-        // loadKeyMap(){
-        //     let me = this;
-        //     me.globalKeyword.chatRoomKeyMapLoading = true;
-        //     Web.ajax("keyword/getKeywords", {
-        //         data:{
-        //             seq:"global"
-        //         },
-        //         success: function (data) {
-        //             console.log(data)
-        //             if(data.info)
-        //             me.globalKeyword.chatRoomKeyMap = data.info["global"];
-        //             else
-        //             me.globalKeyword.chatRoomKeyMap = {};
-        //             me.globalKeyword.chatRoomKeyMapLoading = false;
-        //         },
-        //         fail: function (data) {
-        //         }
-        //     });
-        // },
+        handleKeywordUpload (file) {
+            this.globalKeyword.form.file = file;
+            return false;
+        },
         getKeyMap(){
             this.globalKeyword.chatRoomKeyMap = wxbot.getKeyMap("global");
         },
         editKeyMapOk(){
-            let me = this;
-            let keyMap = {};
-            keyMap[me.globalKeyword.form.key] = me.globalKeyword.form.value;
-            Web.ajax("keyword/setGlobal", {
-                data:{
-                    keyMap:keyMap
-                },
+            const me = this;
+            var form = new FormData();
+            form.append("token", Web.user.token);
+            form.append("seq", "global");
+            form.append("key", me.globalKeyword.form.key);
+            form.append("content", me.globalKeyword.form.type=="text"?me.globalKeyword.form.text:me.globalKeyword.form.file);
+
+            $.ajax({
+                url: Web.serverURL + "keyword/set?format=json",
+                type: "post",
+                data: form,
+                processData: false,
+                contentType: false,
                 success: function (data) {
-                    me.$set(me.globalKeyword.chatRoomKeyMap, me.globalKeyword.form.key, me.globalKeyword.form.value);
-                    wxbot.setKeyMap("global", me.globalKeyword.form.key, me.globalKeyword.form.value);
-                    me.globalKeyword.form.key = "";
-                    me.globalKeyword.form.value = "";
-                    me.globalKeyword.form.modal = false;
-                    me.globalKeyword.form.modalLoading = false;
-                    me.$Message.success("操作成功!");
-                },
-                fail: function (data) {
-                    me.globalKeyword.form.modalLoading = false;
-                    me.$nextTick(() => {
-                        me.globalKeyword.form.modalLoading = true;
-                    });
-                    me.$Message.error("操作失败："+data.msg);
+                    if (!data.result) {
+                        me.$set(me.globalKeyword.chatRoomKeyMap, me.globalKeyword.form.key, data.data.info);
+                        wxbot.setKeyMap("global", me.globalKeyword.form.key, data.data.info.type, data.data.info.content);
+                        me.globalKeyword.form.key = "";
+                        me.globalKeyword.form.type = "text";
+                        me.globalKeyword.form.text = null;
+                        me.globalKeyword.form.file = null;
+                        me.globalKeyword.form.modal = false;
+                        me.globalKeyword.form.modalLoading = false;
+                        me.$Message.success("操作成功!");
+                    } else {
+                        me.globalKeyword.form.modalLoading = false;
+                        me.$nextTick(() => {
+                            me.globalKeyword.form.modalLoading = true;
+                        });
+                        me.$Message.error("操作失败："+data.msg);
+                    }
                 },
                 error:function(XMLHttpRequest, textStatus, errorThrown){
                     me.globalKeyword.form.modalLoading = false;
@@ -81,18 +79,22 @@ GlobalKeyword = {
                         me.globalKeyword.form.modalLoading = true;
                     });
                     me.$Message.error("操作失败:"+textStatus);
+                    console.log(errorThrown);
                 }
             });
         },
         editKeyMapCancel(){
             this.globalKeyword.form.key = "";
-            this.globalKeyword.form.value = "";
+            this.globalKeyword.form.type = "text";
+            this.globalKeyword.form.text = null;
+            this.globalKeyword.form.file = null;
         },
         delKeyMap(){
             let me = this;
             me.globalKeyword.form.confirmLoading = true;
-            Web.ajax("keyword/delGlobal", {
+            Web.ajax("keyword/del", {
                 data:{
+                    seq:"global",
                     keyList:[me.globalKeyword.form.delKey]
                 },
                 success: function (data) {

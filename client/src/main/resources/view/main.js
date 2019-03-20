@@ -106,8 +106,9 @@ $script.ready(["header", "contacts", "chat", "keyword", "timer", "info"], () => 
             const me = this;
             Web.ajax("setting/getSetting", {
                 success: function (data) {
-                    me.permissions = data.info.permissions;
                     wxbot.syncSetting(data.info);
+                    if(data.info.permissions)
+                        me.permissions = data.info.permissions;
                 },
                 fail: function (data) {
                 }
@@ -164,13 +165,14 @@ $script.ready(["header", "contacts", "chat", "keyword", "timer", "info"], () => 
             info: Info.data
         },
         computed:computed,
+        updated: function () {
+        },
         mounted() {
             this.syncSetting();
+            this.loadContacts();
             this.syncKeywords();
             this.syncTimers();
-            this.handling();
-        },
-        updated: function () {
+            // this.handling();
         },
         methods: methods
     });
