@@ -1,8 +1,6 @@
 package wxrobot.server.pump.admin;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -127,11 +125,8 @@ public class AdminUserPump extends DataPump<JSONObject, FullHttpRequest, Channel
 			//消息放入关键词事件队列
 			SyncMsg msg = new SyncMsg();
 			msg.setBiz(SyncBiz.USER);
-			msg.setAction(SyncAction.MOD);
-			
-			Map<String, Object> data = new HashMap<>();
-			data.put("serverEnd", Tools.dateToStamp(params.getString("server_end"), "yyyy-MM-dd"));
-			msg.setData(data);
+			msg.setAction(SyncAction.SERVER_TIME);
+			msg.setData(Tools.dateToStamp(params.getString("server_end"), "yyyy-MM-dd"));
 			SyncContext.toMsg(user.getToken(), msg);
 		}
 		return new DataResult(Errors.OK);
@@ -153,7 +148,7 @@ public class AdminUserPump extends DataPump<JSONObject, FullHttpRequest, Channel
 			//消息放入关键词事件队列
 			SyncMsg msg = new SyncMsg();
 			msg.setBiz(SyncBiz.USER);
-			msg.setAction(SyncAction.MOD);
+			msg.setAction(SyncAction.LOCK);
 			msg.setData(params.getBoolean("server_state"));
 			SyncContext.toMsg(user.getToken(), msg);
 		}
@@ -176,7 +171,7 @@ public class AdminUserPump extends DataPump<JSONObject, FullHttpRequest, Channel
 			//消息放入关键词事件队列
 			SyncMsg msg = new SyncMsg();
 			msg.setBiz(SyncBiz.USER);
-			msg.setAction(SyncAction.MOD);
+			msg.setAction(SyncAction.DESTROY);
 			msg.setData(params.getBoolean("destroy"));
 			SyncContext.toMsg(user.getToken(), msg);
 		}
@@ -226,11 +221,9 @@ public class AdminUserPump extends DataPump<JSONObject, FullHttpRequest, Channel
 			SyncMsg msg = new SyncMsg();
 			msg.setBiz(SyncBiz.PERMISSIONS);
 			msg.setAction(SyncAction.SET);
-			
 			msg.setData(permissions);
 			SyncContext.toMsg(user.getToken(), msg);
 		}
-		
 		return new DataResult(Errors.OK);
 	}
 }

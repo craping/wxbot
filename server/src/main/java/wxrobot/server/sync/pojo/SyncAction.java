@@ -18,5 +18,11 @@ public enum SyncAction {
 	/**  删除操作 */  
 	DEL,
 	/**  设置操作 */  
-	SET
+	SET,
+	/** 注销用户 */
+	DESTROY,
+	/** 开启关闭机器人 */
+	LOCK,
+	/** 修改服务时间 */
+	SERVER_TIME
 }

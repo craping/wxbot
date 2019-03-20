@@ -90,6 +90,22 @@ public class AdminPump extends DataPump<JSONObject, FullHttpRequest, Channel> {
 		return new DataResult(Errors.OK);
 	}
 	
+//	@Pipe("newAdmin")
+//	@BarScreen(
+//		desc="新增管理员",
+//		params= {
+//			@Parameter(value="user_name",  desc="登录名"),
+//			@Parameter(value="user_pwd",  desc="密码"),
+//		}
+//	)
+//	public Errcode newAdmin(JSONObject params) {
+//		AdminUser user = new AdminUser();
+//		user.setUserName(params.getString("user_name"));
+//		user.setUserPwd(params.getString("user_pwd"));
+//		adminServer.addAdmin(user);
+//		return new DataResult(Errors.OK);
+//	}
+	
 	@Pipe("userInfo")
 	@BarScreen(
 		desc="获取用户信息",
