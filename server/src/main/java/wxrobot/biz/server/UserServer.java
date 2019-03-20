@@ -35,6 +35,20 @@ public class UserServer extends BaseServer{
 	public User find(String id) {
 		return mongoTemplate.findOne(Query.query(Criteria.where("_id").is(id)), User.class);
 	}
+	
+	/**
+	 * 判断用户是否存在 不存在则报错
+	 * @param id
+	 * @return User.class
+	 * @throws ErrcodeException
+	 */
+	public User checkUserExist(String id) throws ErrcodeException {
+		// 判断用户名是否已存在
+		User user = find(id);
+		if (user == null)
+			throw new ErrcodeException(CustomErrors.USER_NOT_EXIST);
+		return user;
+	}
 
 	/**
 	 * 获取用户

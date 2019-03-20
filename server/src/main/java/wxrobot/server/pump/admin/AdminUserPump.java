@@ -1,6 +1,8 @@
 package wxrobot.server.pump.admin;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,6 +33,10 @@ import wxrobot.dao.entity.User;
 import wxrobot.dao.entity.field.Permissions;
 import wxrobot.dao.entity.field.UserInfo;
 import wxrobot.server.param.AdminTokenParam;
+import wxrobot.server.sync.SyncContext;
+import wxrobot.server.sync.pojo.SyncAction;
+import wxrobot.server.sync.pojo.SyncBiz;
+import wxrobot.server.sync.pojo.SyncMsg;
 import wxrobot.server.utils.Tools;
 
 @Pump("admin")
@@ -114,8 +120,20 @@ public class AdminUserPump extends DataPump<JSONObject, FullHttpRequest, Channel
 			@Parameter(value="server_end",  desc="服务时间")
 		}
 	)
-	public Errcode extension (JSONObject params) {
+	public Errcode extension (JSONObject params) throws ErrcodeException {
+		User user = userServer.checkUserExist(params.getString("id"));
 		adminServer.extension(params);
+		if (userServer.userLogged(user.getToken())) {
+			//消息放入关键词事件队列
+			SyncMsg msg = new SyncMsg();
+			msg.setBiz(SyncBiz.USER);
+			msg.setAction(SyncAction.MOD);
+			
+			Map<String, Object> data = new HashMap<>();
+			data.put("serverEnd", Tools.dateToStamp(params.getString("server_end"), "yyyy-MM-dd"));
+			msg.setData(data);
+			SyncContext.toMsg(user.getToken(), msg);
+		}
 		return new DataResult(Errors.OK);
 	}
 	
@@ -128,8 +146,20 @@ public class AdminUserPump extends DataPump<JSONObject, FullHttpRequest, Channel
 			@Parameter(value="server_state",  desc="服务状态")
 		}
 	)
-	public Errcode lock (JSONObject params) {
+	public Errcode lock (JSONObject params) throws ErrcodeException {
+		User user = userServer.checkUserExist(params.getString("id"));
 		adminServer.lockUser(params);
+		if (userServer.userLogged(user.getToken())) {
+			//消息放入关键词事件队列
+			SyncMsg msg = new SyncMsg();
+			msg.setBiz(SyncBiz.USER);
+			msg.setAction(SyncAction.MOD);
+			
+			Map<String, Object> data = new HashMap<>();
+			data.put("serverState", params.getBoolean("server_state"));
+			msg.setData(data);
+			SyncContext.toMsg(user.getToken(), msg);
+		}
 		return new DataResult(Errors.OK);
 	}
 	
@@ -142,8 +172,20 @@ public class AdminUserPump extends DataPump<JSONObject, FullHttpRequest, Channel
 			@Parameter(value="destroy", desc="注销标识")
 		}
 	)
-	public Errcode destroy(JSONObject params) {
+	public Errcode destroy(JSONObject params) throws ErrcodeException {
+		User user = userServer.checkUserExist(params.getString("id"));
 		adminServer.destroy(params);
+		if (userServer.userLogged(user.getToken())) {
+			//消息放入关键词事件队列
+			SyncMsg msg = new SyncMsg();
+			msg.setBiz(SyncBiz.USER);
+			msg.setAction(SyncAction.MOD);
+			
+			Map<String, Object> data = new HashMap<>();
+			data.put("destroy", params.getBoolean("destroy"));
+			msg.setData(data);
+			SyncContext.toMsg(user.getToken(), msg);
+		}
 		return new DataResult(Errors.OK);
 	}
 	
@@ -155,9 +197,9 @@ public class AdminUserPump extends DataPump<JSONObject, FullHttpRequest, Channel
 			@Parameter(value="id",  desc="用户id")
 		}
 	)
-	public Errcode getPermissions (JSONObject params) {
-		UserInfo userInfo = userServer.find(params.getString("id")).getUserInfo();
-		Setting setting = settingServer.getSetting(userInfo.getUserName());
+	public Errcode getPermissions (JSONObject params) throws ErrcodeException {
+		User user = userServer.checkUserExist(params.getString("id"));
+		Setting setting = settingServer.getSetting(user.getUserInfo().getUserName());
 		if (setting == null) {
 			return new DataResult(Errors.OK, new Data(new Permissions()));
 		} else {
@@ -175,7 +217,7 @@ public class AdminUserPump extends DataPump<JSONObject, FullHttpRequest, Channel
 		}
 	)
 	public Errcode syncPermissions(JSONObject params) throws ErrcodeException {
-		UserInfo userInfo = userServer.find(params.getString("id")).getUserInfo();
+		User user = userServer.checkUserExist(params.getString("id"));
 		Permissions permissions = null;
 		try {
 			permissions = BaseServer.JSON_MAPPER.readValue(params.getString("permissions"), Permissions.class);
@@ -183,7 +225,20 @@ public class AdminUserPump extends DataPump<JSONObject, FullHttpRequest, Channel
 			e.printStackTrace();
 			return new Result(Errors.PARAM_FORMAT_ERROR);
 		}
-		settingServer.setPermissions(userInfo.getUserName(), permissions);
+		settingServer.setPermissions(user.getUserInfo().getUserName(), permissions);
+		
+		if (userServer.userLogged(user.getToken())) {
+			//消息放入关键词事件队列
+			SyncMsg msg = new SyncMsg();
+			msg.setBiz(SyncBiz.PERMISSIONS);
+			msg.setAction(SyncAction.SET);
+			
+			Map<String, Object> data = new HashMap<>();
+			data.put("permissions", permissions);
+			msg.setData(data);
+			SyncContext.toMsg(user.getToken(), msg);
+		}
+		
 		return new DataResult(Errors.OK);
 	}
 }
