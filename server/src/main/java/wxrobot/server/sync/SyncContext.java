@@ -1,8 +1,9 @@
 package wxrobot.server.sync;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedTransferQueue;
@@ -57,6 +58,26 @@ public class SyncContext implements SchedulingConfigurer {
 	}
 	
 	  
+	  
+	/**  
+	* @Title: putGlobalMsg  
+	* @Description: 全局消息通知队列
+	* @param @param msg    参数  
+	* @return void    返回类型  
+	* @throws  
+	*/  
+	    
+	public static void putGlobalMsg(SyncMsg msg){
+		Set<String> queues = redisUtil.keys("queue_*");
+		queues.forEach(key -> {
+			try {
+				redisUtil.rpush(key, MAPPER.writeValueAsString(msg));
+			} catch (JsonProcessingException e) {
+				e.printStackTrace();
+			}
+		});
+	}
+	
 	/**  
 	* @Title: putMsg  
 	* @Description: 发送给出当前token以外会话 
@@ -67,11 +88,6 @@ public class SyncContext implements SchedulingConfigurer {
 	*/  
 	    
 	public static void putMsg(String token, SyncMsg msg){
-//		try {
-//			redisUtil.rpush("queue_"+token, MAPPER.writeValueAsString(msg));
-//		} catch (JsonProcessingException e1) {
-//			e1.printStackTrace();
-//		}
 		token = token.contains("_m")?token.split("_")[0]:token+"_m";
 		try {
 			redisUtil.rpush("queue_"+token, MAPPER.writeValueAsString(msg));
@@ -107,7 +123,7 @@ public class SyncContext implements SchedulingConfigurer {
 		while ((session = CONTEXT.peek()) != null) {
 			currentTime = System.currentTimeMillis();
 			String msg = null;
-			List<SyncMsg> msgs = new ArrayList<>();
+			List<SyncMsg> msgs = new LinkedList<>();
 			for (int i = 0; i < 100 && (msg = redisUtil.lpop("queue_"+session.getToken())) != null; i++) {
 				try {
 					msgs.add(MAPPER.readValue(msg, SyncMsg.class));
@@ -126,19 +142,6 @@ public class SyncContext implements SchedulingConfigurer {
 				CONTEXT.poll();
 			}
 		}
-//			List<SyncMsg> msgs = new ArrayList<>();
-//			int count = session.getMsg().drainTo(msgs, 100);
-//			
-//			if(count > 0 || currentTime - session.getTime() > 30000){
-//				String json = null;
-//				try {
-//					json = MAPPER.writeValueAsString(msgs);
-//				} catch (JsonProcessingException e) {
-//					e.printStackTrace();
-//				}
-//				writeResponse(session, json);
-//				CONTEXT.remove(token);
-//			}
 	}
 	
 	@Override

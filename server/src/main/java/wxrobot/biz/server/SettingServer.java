@@ -11,6 +11,7 @@ import wxrobot.dao.entity.Setting;
 import wxrobot.dao.entity.field.Permissions;
 import wxrobot.dao.entity.field.Switchs;
 import wxrobot.dao.entity.field.Tips;
+import wxrobot.dao.enums.SettingModule;
 
   
 /**  
@@ -62,58 +63,67 @@ public class SettingServer extends BaseServer {
 		mongoTemplate.insert(set);
 	}
 	  
+	  
 	/**  
-	* @Title: addForward  
-	* @Description: 添加转发群
+	* @Title: addSeq  
+	* @Description: 通用seq列表增加
 	* @param @param userName
+	* @param @param module
 	* @param @param seq
 	* @param @return    参数  
 	* @return long    返回类型  
 	* @throws  
 	*/  
-	public long addForward(String userName, String seq){
+	    
+	public long addSeq(String userName, SettingModule module, String seq){
 		Query query = new Query(Criteria.where("userName").is(userName));
 		
 		Update update = new Update();
-		update.addToSet("forwards", seq);
+		update.addToSet(module.getModule(), seq);
 		
 		return mongoTemplate.upsert(query, update, Setting.class).getModifiedCount();
 	}
 	
 	    
+	  
 	/**  
-	* @Title: modForward  
-	* @Description: 更新转发群seq
+	* @Title: modSeq  
+	* @Description: 通用seq列表修改
 	* @param @param userName
+	* @param @param module
 	* @param @param oldSeq
 	* @param @param newSeq
 	* @param @return    参数  
 	* @return long    返回类型  
 	* @throws  
 	*/  
-	public long modForward(String userName, String oldSeq, String newSeq){
-		Query query = new Query(Criteria.where("userName").is(userName).and("forwards").is(oldSeq));
+	    
+	public long modSeq(String userName, SettingModule module, String oldSeq, String newSeq){
+		Query query = new Query(Criteria.where("userName").is(userName).and(module.getModule()).is(oldSeq));
 		
-		Update update = Update.update("forwards.$", newSeq);
+		Update update = Update.update(module.getModule()+".$", newSeq);
 		
 		return mongoTemplate.updateFirst(query, update, Setting.class).getModifiedCount();
 	}
 	  
 	
+	  
 	/**  
-	* @Title: delForward  
-	* @Description: 删除转发群
+	* @Title: delSeq  
+	* @Description: 通用seq列表删除
 	* @param @param userName
+	* @param @param module
 	* @param @param seq
 	* @param @return    参数  
 	* @return long    返回类型  
 	* @throws  
 	*/  
-	public long delForward(String userName, String seq){
+	    
+	public long delSeq(String userName, SettingModule module, String seq){
 		Query query = new Query(Criteria.where("userName").is(userName));
 		
 		Update update = new Update();
-		update.pull("forwards", seq);
+		update.pull(module.getModule(), seq);
 		
 		return mongoTemplate.updateFirst(query, update, Setting.class).getModifiedCount();
 	}

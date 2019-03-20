@@ -27,8 +27,10 @@ import wxrobot.dao.entity.Setting;
 import wxrobot.dao.entity.field.Switchs;
 import wxrobot.dao.entity.field.Tips;
 import wxrobot.dao.entity.field.UserInfo;
+import wxrobot.dao.enums.SettingModule;
 import wxrobot.server.enums.CustomErrors;
 import wxrobot.server.param.TokenParam;
+import wxrobot.server.param.enums.SettingModuleEParam;
 
 @Pump("setting")
 @Component
@@ -55,36 +57,37 @@ public class SettingPump extends DataPump<JSONObject, FullHttpRequest, Channel> 
 		return new DataResult(Errors.OK, new Data(setting));
 	}
 	
-	@Pipe("enableForward")
+	@Pipe("enableSeq")
 	@BarScreen(
-		desc="开启群转发",
+		desc="开启seq",
 		params= {
 			@Parameter(type=TokenParam.class),
-			@Parameter(value="seq", desc="seq")
+			@Parameter(value="seq", desc="seq"),
+			@Parameter(type=SettingModuleEParam.class, value="module", desc="设置模块")
 		}
 	)
 	public Errcode enableForward (JSONObject params) throws ErrcodeException {
 		
 		UserInfo userInfo = settingServer.getUserInfo(params);
-		
-		settingServer.addForward(userInfo.getUserName(), params.getString("seq"));
+		settingServer.addSeq(userInfo.getUserName(), SettingModule.valueOf(params.getString("module")), params.getString("seq"));
 		
 		return new DataResult(Errors.OK);
 	}
 	
-	@Pipe("disableForward")
+	@Pipe("disableSeq")
 	@BarScreen(
-		desc="关闭群转发",
+		desc="关闭seq",
 		params= {
 			@Parameter(type=TokenParam.class),
-			@Parameter(value="seq", desc="seq")
+			@Parameter(value="seq", desc="seq"),
+			@Parameter(type=SettingModuleEParam.class, value="module", desc="设置模块")
 		}
 	)
 	public Errcode disableForward (JSONObject params) throws ErrcodeException {
 		
 		UserInfo userInfo = settingServer.getUserInfo(params);
 		
-		long mod = settingServer.delForward(userInfo.getUserName(), params.getString("seq"));
+		long mod = settingServer.delSeq(userInfo.getUserName(), SettingModule.valueOf(params.getString("module")), params.getString("seq"));
 		
 		return new DataResult(mod > 0?Errors.OK:CustomErrors.USER_OPR_ERR);
 	}

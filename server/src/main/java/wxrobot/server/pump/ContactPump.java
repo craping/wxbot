@@ -29,6 +29,7 @@ import wxrobot.biz.server.KeywordServer;
 import wxrobot.biz.server.SettingServer;
 import wxrobot.biz.server.TimerServer;
 import wxrobot.dao.entity.field.UserInfo;
+import wxrobot.dao.enums.SettingModule;
 import wxrobot.server.enums.CustomErrors;
 import wxrobot.server.param.TokenParam;
 import wxrobot.server.utils.RedisUtil;
@@ -95,8 +96,10 @@ public class ContactPump extends DataPump<JSONObject, FullHttpRequest, Channel> 
 			keywordServer.modKeyword(userInfo.getUserName(), k, v);
 			//更新定时消息seq
 			timerServer.modTimer(userInfo.getUserName(), k, v);
-			//更新群转发seq
-			settingServer.modForward(userInfo.getUserName(), k, v);
+			//更新所有seq设置
+			for (SettingModule module : SettingModule.values()) {
+				settingServer.modSeq(userInfo.getUserName(), module, k, v);
+			}
 		});
 		return new DataResult(Errors.OK);
 	}
