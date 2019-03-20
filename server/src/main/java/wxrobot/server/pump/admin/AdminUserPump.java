@@ -154,10 +154,7 @@ public class AdminUserPump extends DataPump<JSONObject, FullHttpRequest, Channel
 			SyncMsg msg = new SyncMsg();
 			msg.setBiz(SyncBiz.USER);
 			msg.setAction(SyncAction.MOD);
-			
-			Map<String, Object> data = new HashMap<>();
-			data.put("serverState", params.getBoolean("server_state"));
-			msg.setData(data);
+			msg.setData(params.getBoolean("server_state"));
 			SyncContext.toMsg(user.getToken(), msg);
 		}
 		return new DataResult(Errors.OK);
@@ -180,10 +177,7 @@ public class AdminUserPump extends DataPump<JSONObject, FullHttpRequest, Channel
 			SyncMsg msg = new SyncMsg();
 			msg.setBiz(SyncBiz.USER);
 			msg.setAction(SyncAction.MOD);
-			
-			Map<String, Object> data = new HashMap<>();
-			data.put("destroy", params.getBoolean("destroy"));
-			msg.setData(data);
+			msg.setData(params.getBoolean("destroy"));
 			SyncContext.toMsg(user.getToken(), msg);
 		}
 		return new DataResult(Errors.OK);
@@ -234,8 +228,7 @@ public class AdminUserPump extends DataPump<JSONObject, FullHttpRequest, Channel
 			msg.setAction(SyncAction.SET);
 			
 			Map<String, Object> data = new HashMap<>();
-			data.put("permissions", permissions);
-			msg.setData(data);
+			msg.setData(permissions);
 			SyncContext.toMsg(user.getToken(), msg);
 		}
 		
