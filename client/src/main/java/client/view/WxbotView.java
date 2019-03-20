@@ -1,6 +1,5 @@
 package client.view;
 
-import java.awt.Point;
 import java.io.DataInputStream;
 import java.io.InputStream;
 import java.net.URL;
@@ -11,8 +10,6 @@ import org.apache.logging.log4j.Logger;
 
 import com.teamdev.jxbrowser.chromium.Browser;
 import com.teamdev.jxbrowser.chromium.BrowserContext;
-import com.teamdev.jxbrowser.chromium.ContextMenuHandler;
-import com.teamdev.jxbrowser.chromium.ContextMenuParams;
 import com.teamdev.jxbrowser.chromium.JSValue;
 import com.teamdev.jxbrowser.chromium.Notification;
 import com.teamdev.jxbrowser.chromium.NotificationHandler;
@@ -35,19 +32,13 @@ import client.Launch;
 import client.utils.FileUtil;
 import client.view.function.Wxbot;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.geometry.Point2D;
 import javafx.scene.Scene;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
   
@@ -177,8 +168,7 @@ public final class WxbotView extends AnchorPane  {
             	value.asObject().setProperty("wxbot", Launch.context.getBean(Wxbot.class));
             }
         });
-		if(this.debug)
-			browser.setContextMenuHandler(new MyContextMenuHandler(browserView));
+        
         browser.addDisposeListener(event -> {
         	System.out.println("disposed event = "+event);
         	System.exit(0);
@@ -396,72 +386,6 @@ public final class WxbotView extends AnchorPane  {
 			logger.error(e);
 		}
 	}
-	
-	private static class MyContextMenuHandler implements ContextMenuHandler {
-
-        private final Pane pane;
-
-        private MyContextMenuHandler(Pane paren) {
-            this.pane = paren;
-        }
-
-        private static MenuItem createMenuItem(String title, final Runnable action) {
-            MenuItem menuItem = new MenuItem(title);
-            menuItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    action.run();
-                }
-            });
-            return menuItem;
-        }
-
-        public void showContextMenu(final ContextMenuParams params) {
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    createAndDisplayContextMenu(params);
-                }
-            });
-        }
-
-        private void createAndDisplayContextMenu(final ContextMenuParams params) {
-            final ContextMenu contextMenu = new ContextMenu();
-
-            // Since context menu doesn't auto hide, listen mouse scroll events
-            // on BrowserView and hide context menu on mouse click
-            pane.setOnScroll(new EventHandler<ScrollEvent>() {
-                @Override
-                public void handle(ScrollEvent event) {
-                    contextMenu.hide();
-                }
-            });
-
-            // If there's link under mouse pointer, create and add
-            // the "Open link in new window" menu item to our context menu
-            if (!params.getLinkText().isEmpty()) {
-                contextMenu.getItems().add(createMenuItem(
-                        "Open link in new window", new Runnable() {
-                            public void run() {
-                                String linkURL = params.getLinkURL();
-                                System.out.println("linkURL = " + linkURL);
-                            }
-                        }));
-            }
-
-            // Create and add "Reload" menu item to our context menu
-            contextMenu.getItems().add(createMenuItem("重新加载", new Runnable() {
-                public void run() {
-                    params.getBrowser().reload();
-                }
-            }));
-
-            // Display context menu at required location on screen
-            Point location = params.getLocation();
-            Point2D screenLocation = pane.localToScreen(location.x, location.y);
-            contextMenu.show(pane, screenLocation.getX(), screenLocation.getY());
-        }
-    }
 
 	public Browser getBrowser() {
 		return browser;

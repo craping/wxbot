@@ -63,7 +63,7 @@ public class ContactsFunction extends SettingFunction {
 	 * @return
 	 */
 	public String getOwnerHeadImgUrl() {
-		return getHostUrl() + cacheService.getOwner().getHeadImgUrl();
+		return cacheService.getHostUrl() + cacheService.getOwner().getHeadImgUrl();
 	}
 	
 	/**

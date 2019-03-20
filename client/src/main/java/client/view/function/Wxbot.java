@@ -131,16 +131,17 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 
 	@Scheduled(fixedRate=1000)
     private void work() {
-		//判断定时消息是否开启
+		//定时消息功能是否开启
 		if(SettingFunction.SETTING.getSwitchs().isGlobalTimer() && TIMER_MAP != null){
 			Date now = new Date();
 			
 			TIMER_MAP.forEach((seq, msgs) -> {
-				//判断全群定时消息权限
-				if(Config.GLOBA_SEQ.equals(seq) && !SettingFunction.SETTING.getPermissions().isGlobalTimer())
+				//如果是“全群”定时消息 并且 (无“全群”定时消息权限 或者 “全群”定时消息开关关闭) 则跳出
+				if(Config.GLOBA_SEQ.equals(seq) && (!SettingFunction.SETTING.getPermissions().isGlobalTimer() || !SettingFunction.SETTING.getTimers().contains(Config.GLOBA_SEQ)))
 					return;
-				//判断分群定时消息权限
-				if(!Config.GLOBA_SEQ.equals(seq) && !SettingFunction.SETTING.getPermissions().isTimer())
+				
+				//如果是“分群”定时消息 并且 (无“分群”定时消息权限 或者 “分群”定时消息开关关闭) 则跳出
+				if(!Config.GLOBA_SEQ.equals(seq) && (!SettingFunction.SETTING.getPermissions().isTimer() || !SettingFunction.SETTING.getTimers().contains(seq)))
 					return;
 				
 				msgs.forEach(msg -> {

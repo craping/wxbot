@@ -14,6 +14,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.teamdev.jxbrowser.chromium.JSONString;
 import com.teamdev.jxbrowser.chromium.JSObject;
 
+import client.pojo.Permissions;
 import client.pojo.Setting;
 import client.pojo.Switchs;
 import client.pojo.Tips;
@@ -141,6 +142,16 @@ public class SettingFunction {
 		if(syncTips != null && syncTips.toJSONString() != null && !syncTips.toJSONString().isEmpty()){
 			try {
 				SETTING.setTips(BaseServer.JSON_MAPPER.readValue(syncTips.toJSONString(), Tips.class));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void syncPermissions(JSObject syncPermissions){
+		if(syncPermissions != null && syncPermissions.toJSONString() != null && !syncPermissions.toJSONString().isEmpty()){
+			try {
+				SETTING.setPermissions(BaseServer.JSON_MAPPER.readValue(syncPermissions.toJSONString(), Permissions.class));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

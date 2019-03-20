@@ -151,27 +151,27 @@ public class MessageHandlerImpl implements MessageHandler {
 			msgTool.receiveGroupMessage(chatRoom, sender, record);
 		}
 		
-		//判断关键词是否开启
+		//关键词功能是否开启
 		if (SettingFunction.SETTING.getSwitchs().isGlobalKeyword()) {
 			
 			Map<String, Msg> keyMap = null;
 			
-			//判断全群关键词权限
-			if(SettingFunction.SETTING.getPermissions().isGlobalKeyword()){
-				// 全群关键词自动回复
+			//是否有“全群”关键词权限 并且 “全群”关键词开关开启
+			if(SettingFunction.SETTING.getPermissions().isGlobalKeyword() && SettingFunction.SETTING.getKeywords().contains(Config.GLOBA_SEQ)){
+				// “全群”关键词自动回复
 				keyMap = KeywordFunction.KEY_MAP.get(Config.GLOBA_SEQ);
 				if (keyMap != null) {
 					keyMap.forEach((k, v) -> {
 						if (content.contains(k)) {
-							chatServer.sendGloba(cacheService.getChatRooms(), v);
+							chatServer.sendGloba(Arrays.asList(chatRoom), v);
 						}
 					});
 				}
 			}
 			
-			//判断分群关键词权限
-			if(SettingFunction.SETTING.getPermissions().isKeyword() && chatRoom != null){
-				// 分群关键词自动回复
+			//是否有“分群”关键词权限 并且 “分群”关键词开关开启
+			if(SettingFunction.SETTING.getPermissions().isKeyword() && SettingFunction.SETTING.getKeywords().contains(chatRoom.getSeq())){
+				// “分群”关键词自动回复
 				keyMap = KeywordFunction.KEY_MAP.get(chatRoom.getSeq());
 				if (keyMap != null) {
 					keyMap.forEach((k, v) -> {

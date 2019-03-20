@@ -36,7 +36,6 @@ public class KeywordFunction extends TimerFunction {
 	}
 	
 	public void syncKeywords(JSObject syncKeyMap) {
-		System.out.println(syncKeyMap);
 		try {
 			KEY_MAP.clear();
 			ConcurrentHashMap<String, ConcurrentHashMap<String, Msg>> keyMap = 

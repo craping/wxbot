@@ -18,10 +18,10 @@ public class Config {
 	//测试环境
 //	public static final String DOMAIN = "http://39.105.37.169";
 	public static final String CHAT_RECORD_PATH = "resource/chat/";
-	public static final String USERINFO_URL = String.format("%s:9527/user/getUserInfo?format=json", DOMAIN);
-	public static final String REGISTER_URL = String.format("%s:9527/user/register?format=json", DOMAIN);
-	public static final String LOGIN_URL = String.format("%s:9527/user/login?format=json", DOMAIN);
-	public static final String LOGOUT_URL = String.format("%s:9527/user/logout?format=json", DOMAIN);
+	public static final String USERINFO_URL = String.format("%s/user/getUserInfo?format=json", DOMAIN);
+	public static final String REGISTER_URL = String.format("%s/user/register?format=json", DOMAIN);
+	public static final String LOGIN_URL = String.format("%s/user/login?format=json", DOMAIN);
+	public static final String LOGOUT_URL = String.format("%s/user/logout?format=json", DOMAIN);
 	
 	public static final String ATTACH_URL = String.format("%s:8888/", DOMAIN);
 	
