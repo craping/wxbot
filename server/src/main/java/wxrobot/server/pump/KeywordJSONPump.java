@@ -39,9 +39,9 @@ import wxrobot.server.sync.pojo.SyncMsg;
 
 @Pump("keyword")
 @Component
-public class KeywordPump extends DataPump<JSONObject, FullHttpRequest, Channel> {
+public class KeywordJSONPump extends DataPump<JSONObject, FullHttpRequest, Channel> {
 	
-	public static final Logger log = LogManager.getLogger(KeywordPump.class);
+	public static final Logger log = LogManager.getLogger(KeywordJSONPump.class);
 	
 	@Autowired
 	private KeywordServer keywordServer;
@@ -116,82 +116,9 @@ public class KeywordPump extends DataPump<JSONObject, FullHttpRequest, Channel> 
 //	}
 	
 	
-	@Pipe("setGlobal")
-	@BarScreen(
-		desc="设置全局群关键词",
-		params= {
-			@Parameter(type=TokenParam.class),
-			@Parameter(value="keyMap",  desc="关键词Map 格式：{key:value, ...}")
-		}
-	)
-	public Errcode setGlobal (JSONObject params) throws ErrcodeException {
-		
-		UserInfo userInfo = keywordServer.getUserInfo(params);
-		
-		Map<String, Msg> keyMap = null;
-		try {
-			keyMap = BaseServer.JSON_MAPPER.readValue(params.getString("keyMap"), new TypeReference<Map<String, Msg>>() {});
-		} catch (IOException e) {
-			e.printStackTrace();
-			return new Result(Errors.PARAM_FORMAT_ERROR);
-		}
-		
-		keywordServer.addOrMod(userInfo.getUserName(), "global", keyMap);
-		//消息放入关键词事件队列
-		SyncMsg msg = new SyncMsg();
-		msg.setBiz(SyncBiz.KEYWORD);
-		msg.setAction(SyncAction.SET);
-		
-		Map<String, Object> data = new HashMap<>();
-		data.put("seq", "global");
-		data.put("keyMap", keyMap);
-		msg.setData(data);
-		
-		SyncContext.putMsg(params.getString("token"), msg);
-		
-		return new DataResult(Errors.OK);
-	}
-	
-	@Pipe("delGlobal")
-	@BarScreen(
-		desc="删除全局群关键词",
-		params= {
-			@Parameter(type=TokenParam.class),
-			@Parameter(value="keyList",  desc="关键词ID列表 格式：[key,key,...]")
-		}
-	)
-	public Errcode delGlobal (JSONObject params) throws ErrcodeException {
-		
-		UserInfo userInfo = keywordServer.getUserInfo(params);
-		
-		List<String> keyList = null;
-		try {
-			keyList = BaseServer.JSON_MAPPER.readValue(params.getString("keyList"), new TypeReference<List<String>>() {});
-		} catch (IOException e) {
-			e.printStackTrace();
-			return new Result(Errors.PARAM_FORMAT_ERROR);
-		}
-		
-		long mod = keywordServer.del(userInfo.getUserName(), "global", keyList);
-		//消息放入关键词事件队列
-		if (mod > 0) {
-			SyncMsg msg = new SyncMsg();
-			msg.setBiz(SyncBiz.KEYWORD);
-			msg.setAction(SyncAction.DEL);
-			
-			Map<String, Object> data = new HashMap<>();
-			data.put("seq", "global");
-			data.put("keyList", keyList);
-			msg.setData(data);
-			
-			SyncContext.putMsg(params.getString("token"), msg);
-		}
-		return new DataResult(mod > 0?Errors.OK:CustomErrors.USER_OPR_ERR);
-	}
-	
 	@Pipe("set")
 	@BarScreen(
-		desc="设置分群关键词",
+		desc="设置群关键词",
 		params= {
 			@Parameter(type=TokenParam.class),
 			@Parameter(value="seq",  desc="seq"),
@@ -228,7 +155,7 @@ public class KeywordPump extends DataPump<JSONObject, FullHttpRequest, Channel> 
 	
 	@Pipe("del")
 	@BarScreen(
-		desc="删除分群关键词",
+		desc="删除群关键词",
 		params= {
 			@Parameter(type=TokenParam.class),
 			@Parameter(value="seq",  desc="seq"),

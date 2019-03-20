@@ -39,57 +39,6 @@ public class TimerMapPump extends DataPump<Map<?, ?>, FullHttpRequest, Channel> 
 	@Autowired
 	private TimerServer timerServer;
 	
-	@Pipe("addGlobalMsg")
-	@BarScreen(
-		desc="添加全局群定时消息",
-		params= {
-			@Parameter(type=TokenParam.class),
-			@Parameter(type=PartParam.class, value="content", desc="消息内容"),
-			@Parameter(value="schedule", desc="计划方案")
-		}
-	)
-	public Errcode addGlobalMsg (Map<?, ?> params) throws ErrcodeException {
-		
-		UserInfo userInfo = timerServer.getUserInfo(params);
-		String uuid = StringUtil.uuid();
-		ScheduleMsg msg = new ScheduleMsg();
-		msg.setUuid(uuid);
-		msg.setSchedule(params.get("schedule").toString());
-		Object content = params.get("content");
-		if(content instanceof Part){
-			Part part = (Part)content;
-			String ext = part.getFilename().substring(part.getFilename().lastIndexOf(".")+1);
-			String path = "attach/"+userInfo.getUserName() + "/"+ uuid+"."+ext;
-			String mimeType = null;
-			try {
-				part.write(path);
-				mimeType = Files.probeContentType(new File(path).toPath());
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
-			msg.setContent(uuid+"."+ext);
-			msg.setType(5);
-			if("gif".equals(ext))
-				msg.setType(3);
-			else if(mimeType != null){
-				switch (mimeType.split("/")[0]) {
-				case "image":
-					msg.setType(2);
-					break;
-				case "video":
-					msg.setType(4);
-					break;
-				}
-			}
-		} else {
-			msg.setContent(content.toString());
-			msg.setType(1);
-		}
-		timerServer.addMsg(userInfo.getUserName(), "global", msg);
-		
-		return new DataResult(Errors.OK, new Data(msg));
-	}
-	
 	@Pipe("addMsg")
 	@BarScreen(
 		desc="添加分群定时消息",

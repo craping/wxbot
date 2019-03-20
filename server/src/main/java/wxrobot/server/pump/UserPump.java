@@ -48,7 +48,7 @@ public class UserPump extends DataPump<JSONObject, FullHttpRequest, Channel> {
 	@Pipe("register")
 	@BarScreen(
 		desc="用户注册",
-		//security=true,
+		security=true,
 		params= {
 			@Parameter(value="user_name",  desc="登录名", type=MobileParam.class),
 			@Parameter(value="user_pwd",  desc="密码"),
