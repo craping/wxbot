@@ -7,9 +7,9 @@
     </menu-item>
     <menu-item class="text-center px-3">
         <i-button type="info" class="py-0 px-2" style="font-size: 20px" @click="wxbot.openSetting('forward')">
-            
+            <i class="fas fa-toggle-on"></i>
         </i-button>
-        <div>分群功能</div>
+        <div>分群开关</div>
     </menu-item>
     <menu-item class="text-center px-3">
         <i-button type="info" class="py-0 px-2" style="font-size: 20px" @click="wxbot.openSetting('globalTimer')">
@@ -29,7 +29,7 @@
         </i-button>
         <div>群提示语</div>
     </menu-item>
-    <menu-item class="text-center px-3" v-if="permissions.zombieTest || true">
+    <menu-item class="text-center px-3" v-if="permissions.zombieTest">
         <Poptip trigger="hover">
             <button @click="checkFriend" type="button" class="py-0 px-2 ivu-btn ivu-btn-info ivu-btn-icon-only" style="font-size: 20px;">
                 <i class="fas fa-filter" :class="[!header.checkLoading?'fas fa-filter':'ivu-load-loop ivu-icon ivu-icon-ios-loading']"></i>
@@ -74,7 +74,7 @@
             </div>
         </Poptip>
     </menu-item>
-    <menu-item class="text-center px-3" v-if="permissions.wapSite || true">
+    <menu-item class="text-center px-3" v-if="permissions.wapSite">
         <i-button type="info" class="py-0 px-2" style="font-size: 20px">
             <i class="fas fa-mobile-alt"></i>
         </i-button>

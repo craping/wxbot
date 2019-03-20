@@ -110,7 +110,8 @@ Keyword = {
             Web.ajax("keyword/getKeywords", {
                 success: function (data) {
                     console.log(data.info)
-                    wxbot.syncKeywords(data.info);
+                    if(data.info)
+                        wxbot.syncKeywords(data.info);
                 },
                 fail: function (data) {
                 }

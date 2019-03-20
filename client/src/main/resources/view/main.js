@@ -31,11 +31,6 @@ $script.ready(["vue-plugs", "jquery", "crypto", "common"], () => {
 })
 var app;
 $script.ready(["header", "contacts", "chat", "keyword", "timer", "info"], () => {
-    Web.user = wxbot.getUserInfo();
-    Web.serverURL = wxbot.getDomain()+":9527/";
-    Web.root = wxbot.getRootPath();
-    Web.wxHost = wxbot.getHostUrl();
-    Web.owner = wxbot.getOwner();
     Chat.data.ownerHeadImg = Web.wxHost + Web.owner.HeadImgUrl;
 
     let methods = Object.assign({
@@ -106,9 +101,11 @@ $script.ready(["header", "contacts", "chat", "keyword", "timer", "info"], () => 
             const me = this;
             Web.ajax("setting/getSetting", {
                 success: function (data) {
-                    wxbot.syncSetting(data.info);
-                    if(data.info.permissions)
-                        me.permissions = data.info.permissions;
+                    if(data.info){
+                        wxbot.syncSetting(data.info);
+                        if(data.info.permissions)
+                            me.permissions = data.info.permissions;
+                    }
                 },
                 fail: function (data) {
                 }
@@ -134,10 +131,22 @@ $script.ready(["header", "contacts", "chat", "keyword", "timer", "info"], () => 
             return deferred.promise();
         },
         handling(){
+            const me = this;
             this.sync().then(data => {
                 console.log("resolve");
                 console.log(data);
-                
+                data.forEach(msg => {
+                    const data = msg.data;
+                    switch (msg.biz) {
+                        case "PERMISSIONS":
+                            me.permissions = data;
+                            wxbot.syncPermissions(data);
+                            break;
+                    
+                        default:
+                            break;
+                    }
+                })
                 this.handling();
             },() => {
                 console.log("reject");
@@ -169,10 +178,10 @@ $script.ready(["header", "contacts", "chat", "keyword", "timer", "info"], () => 
         },
         mounted() {
             this.syncSetting();
-            this.loadContacts();
+            // this.loadContacts();
             this.syncKeywords();
             this.syncTimers();
-            // this.handling();
+            this.handling();
         },
         methods: methods
     });

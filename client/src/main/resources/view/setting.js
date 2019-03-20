@@ -16,8 +16,8 @@ $script.ready(["vue-plugs", "bootstrap", "crypto", "common"], function () {
     $("#general").load("settingModule/general/general.html", {}, function () {
         $script("settingModule/general/general.js", "general");
     });
-    $("#forward").load("settingModule/forward/forward.html", {}, function () {
-        $script("settingModule/forward/forward.js", "forward");
+    $("#seqs").load("settingModule/seqs/seqs.html", {}, function () {
+        $script("settingModule/seqs/seqs.js", "seqs");
     });
     $("#globalTimer").load("settingModule/globalTimer/globalTimer.html", {}, function () {
         $script("settingModule/globalTimer/globalTimer.js", "globalTimer");
@@ -40,16 +40,16 @@ const constant = {
             icon: "fa-cog",
             title: "通用"
         },
-        forward: {
-            icon: "fa-paper-plane",
-            title: "分群功能"
+        seqs: {
+            icon: "fa-toggle-on",
+            title: "分群开关"
         },
         globalTimer: {
             icon: "fa-clock",
             title: "全群定时"
         },
         globalKeyword: {
-            icon: "fa-book",
+            icon: "fa-comment-dots",
             title: "全群回复"
         },
         tips: {
@@ -59,18 +59,12 @@ const constant = {
     },
     typeIcon:["", "fa-comment-dots", "fa-image", "fa-laugh", "fa-file-video", "fa-file"]
 };
-$script.ready(["user", "general", "forward", "globalTimer", "globalKeyword", "tips"], function () {
-    Web.user = wxbot.getUserInfo();
-    Web.serverURL = wxbot.getDomain()+":9527/";
-    Web.root = wxbot.getRootPath();
-    Web.wxHost = wxbot.getHostUrl();
-    Web.owner = wxbot.getOwner();
-
+$script.ready(["user", "general", "seqs", "globalTimer", "globalKeyword", "tips"], function () {
     let data = Object.assign({
         header:{},
         setting:{},
         chatRooms:[]
-    }, {user:User.data}, {general:General.data}, {forward:Forward.data}, {globalTimer:GlobalTimer.data}, {globalKeyword:GlobalKeyword.data}, {tips:Tips.data});
+    }, {user:User.data}, {general:General.data}, {seqs:Seqs.data}, {globalTimer:GlobalTimer.data}, {globalKeyword:GlobalKeyword.data}, {tips:Tips.data});
     let methods = Object.assign({
         filterAll(data, argumentObj) {
             return data.filter(d => {
@@ -109,8 +103,8 @@ $script.ready(["user", "general", "forward", "globalTimer", "globalKeyword", "ti
         onMembersSeqChanged(seqMap){
             app.modKeywords(seqMap);
         }
-    }, User.methods, General.methods, Forward.methods, GlobalTimer.methods, GlobalKeyword.methods, Tips.methods);
-    let computed = Object.assign({}, User.computed, General.computed, Forward.computed, GlobalTimer.computed, GlobalKeyword.computed, Tips.computed);
+    }, User.methods, General.methods, Seqs.methods, GlobalTimer.methods, GlobalKeyword.methods, Tips.methods);
+    let computed = Object.assign({}, User.computed, General.computed, Seqs.computed, GlobalTimer.computed, GlobalKeyword.computed, Tips.computed);
     app = new Vue({
         el: "#app",
         data: data,

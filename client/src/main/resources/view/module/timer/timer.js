@@ -106,7 +106,8 @@ Timer = {
             Web.ajax("timer/getTimers", {
                 success: function (data) {
                     console.log(data.info)
-                    wxbot.syncTimers(data.info);
+                    if(data.info)
+                        wxbot.syncTimers(data.info);
                 },
                 fail: function (data) {
                 }

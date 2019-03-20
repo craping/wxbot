@@ -6,7 +6,6 @@ $script("lib/md5.min.js", "md5");
 $script("lib/common.js", "common");
 var app;
 $script.ready(["vue", "iview", "jquery", "crypto", "md5", "common"], function () {
-    Web.serverURL = wxbot.getDomain()+":9527/";
     Web.ajax("api/getPublicKey", {
         success: function (data) {
             Crypto.setRSAPublicKey(data.info.n);

@@ -34,8 +34,8 @@
 				<i-col id="right" span="9" onselectstart="return false" ondragstart="return false">
 					<card dis-hover="true" class="p-0 bg-gray rounded-0">
 						<tabs v-model="rightTab" :animated="false" class="right" @on-click="autoLoadChatRoomMember">
-							<tab-pane v-if="permissions.keyword" :disabled="!chat.userName || !chat.userName.includes('@@')" label="关键词" name="keyword" id="keyword" class="keyword"></tab-pane>
-							<tab-pane v-if="permissions.timer" :disabled="!chat.userName || !chat.userName.includes('@@')" label="定时消息" name="timer" id="timer" class="timer"></tab-pane>
+							<tab-pane v-if="permissions.keyword" :disabled="!chat.userName || !chat.userName.includes('@@')" label="分群关键词" name="keyword" id="keyword" class="keyword"></tab-pane>
+							<tab-pane v-if="permissions.timer" :disabled="!chat.userName || !chat.userName.includes('@@')" label="分群定时" name="timer" id="timer" class="timer"></tab-pane>
 							<tab-pane label="详细信息" name="info" id="info" class="info"></tab-pane>
 						</tabs>
 					</card>
