@@ -227,7 +227,6 @@ public class AdminUserPump extends DataPump<JSONObject, FullHttpRequest, Channel
 			msg.setBiz(SyncBiz.PERMISSIONS);
 			msg.setAction(SyncAction.SET);
 			
-			Map<String, Object> data = new HashMap<>();
 			msg.setData(permissions);
 			SyncContext.toMsg(user.getToken(), msg);
 		}

@@ -30,7 +30,6 @@ import wxrobot.dao.entity.field.UserInfo;
 import wxrobot.dao.enums.SettingModule;
 import wxrobot.server.enums.CustomErrors;
 import wxrobot.server.param.TokenParam;
-import wxrobot.server.param.enums.SettingModuleEParam;
 
 @Pump("setting")
 @Component
@@ -63,13 +62,23 @@ public class SettingPump extends DataPump<JSONObject, FullHttpRequest, Channel> 
 		params= {
 			@Parameter(type=TokenParam.class),
 			@Parameter(value="seq", desc="seq"),
-			@Parameter(type=SettingModuleEParam.class, value="module", desc="设置模块")
+			@Parameter(value="module", desc="设置模块")
 		}
 	)
-	public Errcode enableForward (JSONObject params) throws ErrcodeException {
+	public Errcode enableSeq (JSONObject params) throws ErrcodeException {
 		
 		UserInfo userInfo = settingServer.getUserInfo(params);
-		settingServer.addSeq(userInfo.getUserName(), SettingModule.valueOf(params.getString("module")), params.getString("seq"));
+		String m = params.getString("module");
+		SettingModule module;
+		if(SettingModule.FORWARDS.getModule().equalsIgnoreCase(m))
+			module = SettingModule.FORWARDS;
+		else if(SettingModule.KEYWORDS.getModule().equalsIgnoreCase(m))
+			module = SettingModule.KEYWORDS;
+		else if(SettingModule.TIMERS.getModule().equalsIgnoreCase(m))
+			module = SettingModule.TIMERS;
+		else
+			module = SettingModule.TURING;
+		settingServer.addSeq(userInfo.getUserName(), module, params.getString("seq"));
 		
 		return new DataResult(Errors.OK);
 	}
@@ -80,36 +89,26 @@ public class SettingPump extends DataPump<JSONObject, FullHttpRequest, Channel> 
 		params= {
 			@Parameter(type=TokenParam.class),
 			@Parameter(value="seq", desc="seq"),
-			@Parameter(type=SettingModuleEParam.class, value="module", desc="设置模块")
+			@Parameter(value="module", desc="设置模块")
 		}
 	)
-	public Errcode disableForward (JSONObject params) throws ErrcodeException {
+	public Errcode disableSeq (JSONObject params) throws ErrcodeException {
 		
 		UserInfo userInfo = settingServer.getUserInfo(params);
-		
-		long mod = settingServer.delSeq(userInfo.getUserName(), SettingModule.valueOf(params.getString("module")), params.getString("seq"));
+		String m = params.getString("module");
+		SettingModule module;
+		if(SettingModule.FORWARDS.getModule().equalsIgnoreCase(m))
+			module = SettingModule.FORWARDS;
+		else if(SettingModule.KEYWORDS.getModule().equalsIgnoreCase(m))
+			module = SettingModule.KEYWORDS;
+		else if(SettingModule.TIMERS.getModule().equalsIgnoreCase(m))
+			module = SettingModule.TIMERS;
+		else
+			module = SettingModule.TURING;
+		long mod = settingServer.delSeq(userInfo.getUserName(), module, params.getString("seq"));
 		
 		return new DataResult(mod > 0?Errors.OK:CustomErrors.USER_OPR_ERR);
 	}
-	
-//	@Pipe("modForward")
-//	@BarScreen(
-//		desc="修改群转发",
-//		params= {
-//			@Parameter(type=TokenParam.class),
-//			@Parameter(value="oldSeq", desc="oldSeq"),
-//			@Parameter(value="newSeq", desc="newSeq")
-//		}
-//	)
-//	public Errcode modForward (JSONObject params) throws ErrcodeException {
-//		
-//		UserInfo userInfo = settingServer.getUserInfo(params);
-//		
-//		long mod = settingServer.modForward(userInfo.getUserName(), params.getString("oldSeq"), params.getString("newSeq"));
-//		
-//		return new DataResult(mod > 0?Errors.OK:CustomErrors.USER_OPR_ERR);
-//	}
-	
 	
 	@Pipe("setSwitchs")
 	@BarScreen(
