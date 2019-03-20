@@ -17,6 +17,15 @@ import wxrobot.server.utils.Tools;
 
 @Service
 public class AdminServer extends BaseServer {
+	
+	/**
+	 * 新增管理员帐号
+	 * @param user
+	 * @return
+	 */
+	public AdminUser addAdmin(AdminUser user) {
+		return mongoTemplate.insert(user);
+	}
 
 	/**
 	 * 获取用户

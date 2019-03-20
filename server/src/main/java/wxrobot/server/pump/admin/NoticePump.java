@@ -21,6 +21,10 @@ import net.sf.json.JSONObject;
 import wxrobot.biz.server.NoticeServer;
 import wxrobot.dao.entity.Notice;
 import wxrobot.server.param.AdminTokenParam;
+import wxrobot.server.sync.SyncContext;
+import wxrobot.server.sync.pojo.SyncAction;
+import wxrobot.server.sync.pojo.SyncBiz;
+import wxrobot.server.sync.pojo.SyncMsg;
 import wxrobot.server.utils.Tools;
 
 @Pump("admin")
@@ -61,6 +65,14 @@ public class NoticePump extends DataPump<JSONObject, FullHttpRequest, Channel> {
 		notice.setSendTime(Tools.dateUTCToStamp(params.getString("sendTime")));
 		notice.setState(params.getBoolean("state"));
 		notice = noticeServer.insert(notice);
+		
+		//消息放入关键词事件队列
+		SyncMsg msg = new SyncMsg();
+		msg.setBiz(SyncBiz.NOTICE);
+		msg.setAction(SyncAction.ADD);
+		msg.setData(notice);
+		SyncContext.putGlobalMsg(msg);
+		
 		return new DataResult(Errors.OK);
 	}
 	
