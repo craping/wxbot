@@ -1,5 +1,7 @@
 package wxrobot.biz.server;
 
+import java.util.LinkedList;
+
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -36,6 +38,29 @@ public class SettingServer extends BaseServer {
 		return mongoTemplate.findOne(Query.query(Criteria.where("userName").is(userName)), Setting.class);
 	}
 	
+	
+	  
+	/**  
+	* @Title: initSetting  
+	* @Description: 根据权限初始化设置
+	* @param @param userName
+	* @param @param permissions    参数  
+	* @return void    返回类型  
+	* @throws  
+	*/  
+	    
+	public void initSetting(String userName, Permissions permissions){
+		Setting set = new Setting();
+		set.setUserName(userName);
+		set.setTuring(new LinkedList<String>());
+		set.setKeywords(new LinkedList<String>());
+		set.setTimers(new LinkedList<String>());
+		set.setForwards(new LinkedList<String>());
+		set.setTips(new Tips());
+		set.setSwitchs(new Switchs());
+		set.setPermissions(permissions);
+		mongoTemplate.insert(set);
+	}
 	  
 	/**  
 	* @Title: addForward  

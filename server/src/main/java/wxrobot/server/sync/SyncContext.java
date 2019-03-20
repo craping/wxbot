@@ -56,6 +56,16 @@ public class SyncContext implements SchedulingConfigurer {
 	public SyncContext() {
 	}
 	
+	  
+	/**  
+	* @Title: putMsg  
+	* @Description: 发送给出当前token以外会话 
+	* @param @param token
+	* @param @param msg    参数  
+	* @return void    返回类型  
+	* @throws  
+	*/  
+	    
 	public static void putMsg(String token, SyncMsg msg){
 //		try {
 //			redisUtil.rpush("queue_"+token, MAPPER.writeValueAsString(msg));
@@ -63,6 +73,24 @@ public class SyncContext implements SchedulingConfigurer {
 //			e1.printStackTrace();
 //		}
 		token = token.contains("_m")?token.split("_")[0]:token+"_m";
+		try {
+			redisUtil.rpush("queue_"+token, MAPPER.writeValueAsString(msg));
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	  
+	/**  
+	* @Title: toMsg  
+	* @Description: 发送给指定token会话
+	* @param @param token
+	* @param @param msg    参数  
+	* @return void    返回类型  
+	* @throws  
+	*/  
+	    
+	public static void toMsg(String token, SyncMsg msg){
 		try {
 			redisUtil.rpush("queue_"+token, MAPPER.writeValueAsString(msg));
 		} catch (JsonProcessingException e) {
