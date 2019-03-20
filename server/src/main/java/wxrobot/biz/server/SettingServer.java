@@ -58,7 +58,11 @@ public class SettingServer extends BaseServer {
 		set.setTimers(new LinkedList<String>());
 		set.setForwards(new LinkedList<String>());
 		set.setTips(new Tips());
-		set.setSwitchs(new Switchs());
+		Switchs switchs =new Switchs();
+		switchs.setAutoAcceptFriend(false);
+		switchs.setGlobalKeyword(false);
+		switchs.setGlobalTimer(false);
+		set.setSwitchs(switchs);
 		set.setPermissions(permissions);
 		mongoTemplate.insert(set);
 	}
