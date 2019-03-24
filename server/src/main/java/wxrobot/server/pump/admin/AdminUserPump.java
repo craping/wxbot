@@ -105,7 +105,7 @@ public class AdminUserPump extends DataPump<JSONObject, FullHttpRequest, Channel
 			e.printStackTrace();
 			return new Result(Errors.PARAM_FORMAT_ERROR);
 		}
-		settingServer.setPermissions(userName, permissions);
+		settingServer.initSetting(userName, permissions);
 		return new DataResult(Errors.OK);
 	}
 	

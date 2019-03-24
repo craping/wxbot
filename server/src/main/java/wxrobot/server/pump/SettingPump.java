@@ -1,6 +1,9 @@
 package wxrobot.server.pump;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,8 +16,10 @@ import org.crap.jrain.core.bean.result.Result;
 import org.crap.jrain.core.bean.result.criteria.Data;
 import org.crap.jrain.core.bean.result.criteria.DataResult;
 import org.crap.jrain.core.error.support.Errors;
+import org.crap.jrain.core.util.StringUtil;
 import org.crap.jrain.core.validate.annotation.BarScreen;
 import org.crap.jrain.core.validate.annotation.Parameter;
+import org.crap.jrain.mvc.netty.decoder.Part;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -24,11 +29,15 @@ import net.sf.json.JSONObject;
 import wxrobot.biz.server.BaseServer;
 import wxrobot.biz.server.SettingServer;
 import wxrobot.dao.entity.Setting;
+import wxrobot.dao.entity.field.Msg;
 import wxrobot.dao.entity.field.Switchs;
 import wxrobot.dao.entity.field.Tips;
 import wxrobot.dao.entity.field.UserInfo;
 import wxrobot.dao.enums.SettingModule;
+import wxrobot.dao.enums.TipsType;
 import wxrobot.server.enums.CustomErrors;
+import wxrobot.server.param.PartParam;
+import wxrobot.server.param.TipsTypeParam;
 import wxrobot.server.param.TokenParam;
 
 @Pump("setting")
@@ -140,23 +149,60 @@ public class SettingPump extends DataPump<JSONObject, FullHttpRequest, Channel> 
 		desc="提示语设置",
 		params= {
 			@Parameter(type=TokenParam.class),
-			@Parameter(value="tips", desc="Tips实体类")
+			@Parameter(type=TipsTypeParam.class, value="tipType", desc="提示语类型"),
+			@Parameter(type=PartParam.class, value="content", desc="消息内容")
 		}
 	)
-	public Errcode setTips(JSONObject params) throws ErrcodeException {
-		
+	public Errcode setTips(Map<?, ?> params) throws ErrcodeException {
 		UserInfo userInfo = settingServer.getUserInfo(params);
-		
-		Tips tips = null;
-		try {
-			tips = BaseServer.JSON_MAPPER.readValue(params.getString("tips"), Tips.class);
-		} catch (IOException e) {
-			e.printStackTrace();
-			return new Result(Errors.PARAM_FORMAT_ERROR);
+		String uuid = StringUtil.uuid();
+		Msg msg = new Msg();
+		Object content = params.get("content");
+		if(content instanceof Part){
+			Part part = (Part)content;
+			String ext = part.getFilename().substring(part.getFilename().lastIndexOf(".")+1);
+			String path = "attach/"+userInfo.getUserName() + "/"+ uuid+"."+ext;
+			String mimeType = null;
+			try {
+				part.write(path);
+				mimeType = Files.probeContentType(new File(path).toPath());
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+			msg.setContent(uuid+"."+ext);
+			msg.setType(5);
+			if("gif".equals(ext))
+				msg.setType(3);
+			else if(mimeType != null){
+				switch (mimeType.split("/")[0]) {
+				case "image":
+					msg.setType(2);
+					break;
+				case "video":
+					msg.setType(4);
+					break;
+				}
+			}
+		} else {
+			msg.setContent(content.toString());
+			msg.setType(1);
 		}
 		
+		Tips tips = settingServer.getSetting(userInfo.getUserName()).getTips();
+		switch (TipsType.getTipsType(params.get("tipType").toString())) {
+			case CHATROOMFOUND:
+				tips.setChatRoomFoundTip(msg);
+				break;
+			case MEMBERJOIN:
+				tips.setMemberJoinTip(msg);
+				break;
+			case MEMBERLEFT:
+				tips.setMemberLeftTip(msg);
+				break;
+			default:
+				break;
+		}
 		settingServer.setTips(userInfo.getUserName(), tips);
-		
 		return new DataResult(Errors.OK);
 	}
 }

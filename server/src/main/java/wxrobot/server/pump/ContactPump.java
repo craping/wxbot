@@ -58,6 +58,32 @@ public class ContactPump extends DataPump<JSONObject, FullHttpRequest, Channel> 
 	@Autowired
 	private StringRedisTemplate redisTemplate;
 	
+	@Pipe("test")
+	@BarScreen(
+		desc="测试群聊",
+		params= {
+			@Parameter(type=TokenParam.class)
+		}
+	)
+	public Errcode test(JSONObject params) throws ErrcodeException {
+		String key = "user_" + params.getString("token");
+		if (!(new RedisUtil().exists(key))) 
+			return new Result(CustomErrors.USER_NOT_LOGIN);
+		
+		Map<Object, Object> userMap = redisTemplate.opsForHash().entries(key);
+		String uid = userMap.get("uid").toString();
+		List<ContactInfo> chatRooms = contactServer.getUserContact(uid).getChatRooms();
+		
+		ContactInfo contact = chatRooms.get(0);
+		for (int i = 0; i <= 500; i++) {
+			chatRooms.add(contact);
+		}
+		
+		contactServer.addContact(uid, chatRooms);
+		
+		return new DataResult(Errors.OK, new Data(chatRooms));
+	}
+	
 	@Pipe("getContacts")
 	@BarScreen(
 		desc="获取群聊",
