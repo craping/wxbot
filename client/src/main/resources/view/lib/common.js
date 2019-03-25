@@ -13,91 +13,91 @@ var Store = Store||{
 
 
 /** ----------------浏览器模式开发时使用-------------*/
-var wxbot = {
-	getUserInfo(){
-		return {
-			userInfo:{}
-		}
-	},
-	getDomain(){
-		return "http://127.0.0.1"
-	},
-	getHostUrl(){},
-	getIndividuals(){
-		let list = [];
-		for (let i = 0; i < 50; i++) {
-			list.push({
-				NickName:"名称"+i,
-				HeadImgUrl:"",
-				UserName:"username"+i,
-				seq:"seq"+i
-			});
-		}
-		return list;
-	},
-	getChatRooms(callback){
-		let list = [];
-		for (let i = 0; i < 500; i++) {
-			list.push({
-				NickName:"名称<span class=\"emoji emoji1f495\"></span><span class=\"emoji emoji1f48d\"></span>🦋燕燕"+i,
-				HeadImgUrl:"",
-				UserName:"username"+i,
-				seq:"seq"+i
-			});
-		}
-		callback(list);
-	},
-	getSetting(){
-		return {
-			"timers": [
-				"664197556"
-			],
-			"keywords": [
-				"664176954",
-				"664176791",
-				"664197556"
-			],
-			"forwards": [
-				"664175594",
-				"664176785",
-				"664176954",
-				"664176791",
-				"664197556"
-			],
-			"turing": [ ],
-			"permissions": {
-				"zombieTest": true,
-				"chat": null,
-				"keyword": true,
-				"globalKeyword": true,
-				"timer": true,
-				"globalTimer": true,
-				"acceptFriend": null,
-				"chatRoomFoundTip": null,
-				"memberJoinTip": null,
-				"memberLeftTip": null,
-				"wapSite": true
-			},
-			"switchs": {
-				"autoAcceptFriend": false,
-				"globalKeyword": false,
-				"globalTimer": false
-			}
-		};
-	},
-	getEmoji(){
-		return "";
-	},
-	getOwnerHeadImgUrl(){
-		return "";
-	},
-	getOwner(){
-		return {};
-	},
-	getRootPath(){
-		return "";
-	}
-};
+// var wxbot = {
+// 	getUserInfo(){
+// 		return {
+// 			userInfo:{}
+// 		}
+// 	},
+// 	getDomain(){
+// 		return "http://127.0.0.1"
+// 	},
+// 	getHostUrl(){},
+// 	getIndividuals(){
+// 		let list = [];
+// 		for (let i = 0; i < 50; i++) {
+// 			list.push({
+// 				NickName:"名称"+i,
+// 				HeadImgUrl:"",
+// 				UserName:"username"+i,
+// 				seq:"seq"+i
+// 			});
+// 		}
+// 		return list;
+// 	},
+// 	getChatRooms(callback){
+// 		let list = [];
+// 		for (let i = 0; i < 500; i++) {
+// 			list.push({
+// 				NickName:"名称<span class=\"emoji emoji1f495\"></span><span class=\"emoji emoji1f48d\"></span>🦋燕燕"+i,
+// 				HeadImgUrl:"",
+// 				UserName:"username"+i,
+// 				seq:"seq"+i
+// 			});
+// 		}
+// 		callback(list);
+// 	},
+// 	getSetting(){
+// 		return {
+// 			"timers": [
+// 				"664197556"
+// 			],
+// 			"keywords": [
+// 				"664176954",
+// 				"664176791",
+// 				"664197556"
+// 			],
+// 			"forwards": [
+// 				"664175594",
+// 				"664176785",
+// 				"664176954",
+// 				"664176791",
+// 				"664197556"
+// 			],
+// 			"turing": [ ],
+// 			"permissions": {
+// 				"zombieTest": true,
+// 				"chat": null,
+// 				"keyword": true,
+// 				"globalKeyword": true,
+// 				"timer": true,
+// 				"globalTimer": true,
+// 				"acceptFriend": null,
+// 				"chatRoomFoundTip": null,
+// 				"memberJoinTip": null,
+// 				"memberLeftTip": null,
+// 				"wapSite": true
+// 			},
+// 			"switchs": {
+// 				"autoAcceptFriend": false,
+// 				"globalKeyword": false,
+// 				"globalTimer": false
+// 			}
+// 		};
+// 	},
+// 	getEmoji(){
+// 		return "";
+// 	},
+// 	getOwnerHeadImgUrl(){
+// 		return "";
+// 	},
+// 	getOwner(){
+// 		return {};
+// 	},
+// 	getRootPath(){
+// 		return "";
+// 	}
+// };
 /** ----------------浏览器模式开发时使用-------------*/
 
 

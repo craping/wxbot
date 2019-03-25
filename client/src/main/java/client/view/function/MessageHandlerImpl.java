@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
@@ -13,6 +12,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.cherry.jeeves.domain.shared.Contact;
 import com.cherry.jeeves.domain.shared.FriendInvitationContent;
 import com.cherry.jeeves.domain.shared.Member;
@@ -42,6 +43,7 @@ import client.pojo.Msg;
 import client.pojo.WxMessage;
 import client.utils.Config;
 import client.utils.EmojiUtil;
+import client.utils.HttpUtil;
 import client.utils.WxMessageTool;
 import client.view.QRView;
 import client.view.WxbotView;
@@ -142,7 +144,7 @@ public class MessageHandlerImpl implements MessageHandler {
 	
 	@Override
 	public void onReceivingChatRoomTextMessage(Message message) {
-		String content = EmojiUtil.formatFace(MessageUtils.getChatRoomTextMessageContent(message.getContent()));
+		String content = MessageUtils.getChatRoomTextMessageContent(message.getContent());
 		String userName = MessageUtils.getSenderOfChatRoomTextMessage(message.getContent());
 		logger.debug("群聊文本消息");
 		logger.debug("from chatroom: " + message.getFromUserName());
@@ -153,9 +155,8 @@ public class MessageHandlerImpl implements MessageHandler {
 		chatServer.writeReceiveRecord(message, MessageType.TEXT, null, null);
 		
 		//关键词功能是否开启
+		final Contact chatRoom = cacheService.getChatRoom(message.getFromUserName().contains("@@")?message.getFromUserName():message.getToUserName());
 		if (SettingFunction.SETTING.getSwitchs().isGlobalKeyword()) {
-			
-			final Contact chatRoom = cacheService.getChatRoom(message.getFromUserName().contains("@@")?message.getFromUserName():message.getToUserName());
 			
 			Map<String, Msg> keyMap = null;
 			
@@ -183,6 +184,34 @@ public class MessageHandlerImpl implements MessageHandler {
 						}
 					});
 				}
+			}
+		}
+		
+		//图灵机器人自动回复
+		if(SettingFunction.SETTING.getTuring().contains(chatRoom.getSeq()) && SettingFunction.TURING_KEY !=  null && !SettingFunction.TURING_KEY.isEmpty()){
+			String userId = message.getFromUserName().contains("@@")?message.getToUserName():message.getFromUserName();
+			String json = "{'reqType':0,'perception': {'inputText': {'text': '"+content+"'}},'userInfo': {'apiKey': '"+SettingFunction.TURING_KEY+"','userId': '"+userId.replace("@", "")+"','groupId':'"+chatRoom.getUserName()+"'}}";
+			String result = HttpUtil.doPost("http://openapi.tuling123.com/openapi/api/v2", json);
+			JSONObject jsonResult = JSONObject.parseObject(result);
+			if(jsonResult.containsKey("results")) {
+				JSONArray results = jsonResult.getJSONArray("results");
+				String type;
+				String value;
+				for (int i = 0; i < results.size(); i++) {
+					JSONObject r = results.getJSONObject(i);
+					type = r.getString("resultType");
+					value = r.getJSONObject("values").getString(type);
+					switch (type) {
+					case "text":
+					case "url":
+						chatServer.sendGloba(Arrays.asList(chatRoom), new Msg(MessageType.TEXT, value));
+						break;
+
+					default:
+						
+						break;
+					}
+				} 
 			}
 		}
 	}
@@ -407,11 +436,28 @@ public class MessageHandlerImpl implements MessageHandler {
 	public void onChatRoomMembersChanged(Contact chatRoom, Set<Contact> membersJoined, Set<Contact> membersLeft) {
 		logger.debug("群成员变动消息");
 		logger.debug("群ID:" + chatRoom.getUserName());
-		if (membersJoined != null && membersJoined.size() > 0) {
-			logger.debug("新加入成员:" + String.join(",", membersJoined.stream().map(Contact::getNickName).collect(Collectors.toList())));
+//		if (membersJoined != null && membersJoined.size() > 0) {
+//			logger.debug("新加入成员:" + String.join(",", membersJoined.stream().map(Contact::getNickName).collect(Collectors.toList())));
+//		}
+//		if (membersLeft != null && membersLeft.size() > 0) {
+//			logger.debug("离开成员:" + String.join(",", membersLeft.stream().map(Contact::getNickName).collect(Collectors.toList())));
+//		}
+		Msg joinTip = SettingFunction.SETTING.getTips().getMemberJoinTip();
+		if(membersJoined != null && membersJoined.size() > 0 && joinTip != null){
+			StringBuffer members = new StringBuffer();
+			if (joinTip.getMsgType() == MessageType.TEXT) {
+				membersJoined.forEach(c -> {
+					members.append("@").append(c.getNickName()).append(" ");
+				});
+				chatServer.sendGloba(Arrays.asList(chatRoom), new Msg(MessageType.TEXT, joinTip.getContent().replace("[user]", members.toString())));
+			} else {
+				chatServer.sendGloba(Arrays.asList(chatRoom), new Msg(MessageType.TEXT, members.toString()));
+				chatServer.sendGloba(Arrays.asList(chatRoom), joinTip);
+			}
 		}
-		if (membersLeft != null && membersLeft.size() > 0) {
-			logger.debug("离开成员:" + String.join(",", membersLeft.stream().map(Contact::getNickName).collect(Collectors.toList())));
+		
+		if(membersLeft != null && membersLeft.size() > 0 && SettingFunction.SETTING.getTips().getMemberLeftTip() != null){
+			chatServer.sendGloba(Arrays.asList(chatRoom), SettingFunction.SETTING.getTips().getMemberLeftTip());
 		}
 	}
 
@@ -420,6 +466,12 @@ public class MessageHandlerImpl implements MessageHandler {
 		logger.debug("发现新群消息");
 		chatRooms.forEach(x -> logger.debug(x.getUserName()));
 		msgTool.execContactsChanged(chatRooms, ChangeType.ADD.getCode());
+		
+		if(SettingFunction.SETTING.getTips().getChatRoomFoundTip() != null){
+			chatRooms.forEach(chatRoom -> {
+				chatServer.sendGloba(Arrays.asList(chatRoom), SettingFunction.SETTING.getTips().getChatRoomFoundTip());
+			});
+		}
 	}
 	@Override
 	public void onChatRoomsModify(Set<Contact> chatRooms) {

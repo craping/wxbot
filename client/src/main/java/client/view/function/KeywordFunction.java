@@ -38,8 +38,7 @@ public class KeywordFunction extends TimerFunction {
 	public void syncKeywords(JSObject syncKeyMap) {
 		try {
 			KEY_MAP.clear();
-			ConcurrentHashMap<String, ConcurrentHashMap<String, Msg>> keyMap = 
-					BaseServer.JSON_MAPPER.readValue(syncKeyMap.toJSONString(), new TypeReference<ConcurrentHashMap<String, ConcurrentHashMap<String, Msg>>>() {});
+			ConcurrentHashMap<String, ConcurrentHashMap<String, Msg>> keyMap = BaseServer.JSON_MAPPER.readValue(syncKeyMap.toJSONString(), new TypeReference<ConcurrentHashMap<String, ConcurrentHashMap<String, Msg>>>() {});
 			keyMap.forEach((k, v) -> {
 				v.forEach((key, msg) -> {
 					if(msg.getType() != 1){

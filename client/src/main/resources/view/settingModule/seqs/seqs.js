@@ -70,6 +70,7 @@ Seqs = {
                     wxbot.enableSeq(e.module, e.seq);
                     me.setting[e.module].push(e.seq);
                     me.$Message.success("操作成功!");
+                    e.loading = false;
                 },
                 fail: function (data) {
                     me.$Message.error("操作失败："+data.msg);
@@ -100,6 +101,7 @@ Seqs = {
                     wxbot.disableSeq(e.module, e.seq);
                     me.setting[e.module].splice(me.setting[e.module].findIndex(x => x == e.seq), 1);
                     me.$Message.success("操作成功!");
+                    e.loading = false;
                 },
                 fail: function (data) {
                     me.$Message.error("操作失败："+data.msg);

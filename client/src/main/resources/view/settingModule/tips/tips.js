@@ -38,7 +38,7 @@ Tips = {
             this.tips.file = null;
         },
         getType(mode){
-            return this.tips.form[mode].type;
+            return this.tips.form[mode]?this.tips.form[mode].type:"";
         },
         editOk() {
             const me = this;
@@ -82,7 +82,8 @@ Tips = {
             });
         },
         showTipContent(mode) {
-            if (this.tips.form[mode].content == null){
+            const tip = this.tips.form[mode];
+            if (!tip || tip.content == null){
                 return '未设置';
             }
             return this.tips.form[mode].content

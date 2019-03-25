@@ -155,6 +155,9 @@ Contacts = {
         getBase64Image(imgSrc) {
             var image = new Image();
             image.crossOrigin = '';
+            image.onerror = function(){
+                deferred.reject();
+            }
             image.src = imgSrc;
             var deferred = $.Deferred();
             image.onload = function () {
@@ -173,15 +176,21 @@ Contacts = {
             let promises = [];
 
             this.contacts.chatRooms.forEach(e => {
-                promises.push(Promise.resolve(e).then(c => {
-                    return Contacts.methods.getBase64Image(Web.wxHost + e.HeadImgUrl).then(base64 => {
+                promises.push(
+                    Contacts.methods.getBase64Image(Web.wxHost + e.HeadImgUrl).then(base64 => {
                         crs.push({
-                            seq: c.seq,
+                            seq: e.seq,
                             headImgUrl: base64,
-                            nickName: c.NickName
+                            nickName: e.NickName
+                        });
+                    }, () => {
+                        crs.push({
+                            seq: e.seq,
+                            headImgUrl: null,
+                            nickName: e.NickName
                         });
                     })
-                }));
+                );
             });
             
             Promise.all(promises).then(() => {

@@ -75,13 +75,13 @@
         </Poptip>
     </menu-item>
     <menu-item class="text-center px-3" v-if="permissions.wapSite">
-        <i-button type="info" class="py-0 px-2" style="font-size: 20px">
+        <i-button type="info" class="py-0 px-2" style="font-size: 20px" @click="header.wapSite.modal = true;">
             <i class="fas fa-mobile-alt"></i>
         </i-button>
         <div>移动端管理</div>
     </menu-item>
     <menu-item class="text-center px-3">
-        <i-button type="info" class="py-0 px-2" style="font-size: 20px">
+        <i-button type="info" class="py-0 px-2" style="font-size: 20px" @click="wxbot.openSetting('general')">
             <i class="fas fa-robot"></i>
         </i-button>
         <div>机器人</div>
@@ -97,9 +97,9 @@
 </i-menu>
 
 <Drawer title="公告" :mask-closable="false" :width="40" v-model="header.notice.drawer" :styles="{padding:0,'overflow-y':'auto'}">
-    <Collapse simple accordion class="border-top-0" v-if="header.notice.msgs.length > 0" @on-change="notifyCheck">
+    <Collapse simple accordion class="border-top-0" v-if="header.notice.msgs.length > 0" @on-change="noticeRead">
         <Panel :name="msg.id+''" v-for="msg in header.notice.msgs">
-            {{msg.title}} {{new Date(parseInt(msg.sendTime)).format("yyyy-MM-dd")}}
+            {{msg.title}} - [{{new Date(parseInt(msg.sendTime)).format("yyyy-MM-dd")}}] <Badge v-if="!msg.read" status="error" />
             <p slot="content" v-html="msg.content"></p>
         </Panel>
     </Collapse>
@@ -107,3 +107,14 @@
         暂无公告
     </div>
 </Drawer>
+
+<modal v-model="header.wapSite.modal" onselectstart="return false" ondragstart="return false" width="300">
+    <p slot="header" class="text-center">
+        移动端管理地址
+    </p>
+    <div class="text-center">
+        <div id="wapSite"></div>
+        <i-input :value="header.wapSite.url" :readonly="true" style="width:256px">
+    </div>
+    <div slot="footer"></div>
+</modal>
