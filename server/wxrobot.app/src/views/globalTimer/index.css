@@ -1,0 +1,57 @@
+.timer_desc {
+    font-size: 12px;
+    color: red;
+    padding: 0px 0px 10px 10px;
+}
+.p_timer_desc {
+    font-size: 12px;
+    color: #009999;
+    padding: 0px 0px 10px 10px;
+}
+.van-swipe-cell__right {
+    display: inline-block;
+    width: 65px;
+    height: 44px;
+    font-size: 15px;
+    line-height: 44px;
+    color: #fff;
+    text-align: center;
+    background-color: #f44;
+}
+.timer_type_desc {
+    font-weight: bold;
+    color: #1989fa;
+    white-space:nowrap
+}
+.file_txt{
+    display: inline-block; 
+    padding:0px 0px 10px 8px
+}
+.img_icon{
+    padding-left:8px; 
+    display: inline-block; 
+    vertical-align: middle;
+}
+.uploader {
+    text-align:center;
+    border:1px dashed #1989fa; 
+    background:#fff;
+    padding-top:10px;
+    margin:10px;
+}
+.ivu-icon {
+    font-size: 52px;
+    color: rgb(51, 153, 255);
+    display: inline-block;
+    font-family: Ionicons;
+    font-style: normal;
+    font-weight: 400;
+    font-variant: normal;
+    text-transform: none;
+    text-rendering: auto;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    vertical-align: middle;
+    text-align: center;
+}
