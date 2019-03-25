@@ -29,7 +29,7 @@ import wxrobot.server.utils.Tools;
 
 @Pump("admin")
 @Component
-public class NoticePump extends DataPump<JSONObject, FullHttpRequest, Channel> {
+public class NoticePump extends DataPump<FullHttpRequest, Channel> {
 	
 	public static final Logger log = LogManager.getLogger(NoticePump.class);
 	

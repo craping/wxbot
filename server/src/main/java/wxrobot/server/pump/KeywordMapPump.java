@@ -37,7 +37,7 @@ import wxrobot.server.sync.pojo.SyncMsg;
 
 @Pump("keyword")
 @Component
-public class KeywordMapPump extends DataPump<Map<?, ?>, FullHttpRequest, Channel> {
+public class KeywordMapPump extends DataPump<FullHttpRequest, Channel> {
 	
 	public static final Logger log = LogManager.getLogger(KeywordMapPump.class);
 	

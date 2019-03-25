@@ -3,6 +3,7 @@ package wxrobot.server.pump;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
@@ -29,10 +30,13 @@ import wxrobot.dao.entity.field.ScheduleMsg;
 import wxrobot.dao.entity.field.UserInfo;
 import wxrobot.server.param.PartParam;
 import wxrobot.server.param.TokenParam;
+import wxrobot.server.sync.pojo.SyncAction;
+import wxrobot.server.sync.pojo.SyncBiz;
+import wxrobot.server.sync.pojo.SyncMsg;
 
 @Pump("timer")
 @Component
-public class TimerMapPump extends DataPump<Map<?, ?>, FullHttpRequest, Channel> {
+public class TimerMapPump extends DataPump<FullHttpRequest, Channel> {
 	
 	public static final Logger log = LogManager.getLogger(TimerMapPump.class);
 	
@@ -88,7 +92,16 @@ public class TimerMapPump extends DataPump<Map<?, ?>, FullHttpRequest, Channel> 
 			msg.setType(1);
 		}
 		timerServer.addMsg(userInfo.getUserName(), params.get("seq").toString(), msg);
+		//消息放入关键词事件队列
+		SyncMsg event = new SyncMsg();
+		event.setBiz(SyncBiz.TIMER);
+		event.setAction(SyncAction.ADD);
 		
+		Map<String, Object> data = new HashMap<>();
+		data.put("seq", params.get("seq").toString());
+		data.put("timer", msg);
+		event.setData(data);
+				
 		return new DataResult(Errors.OK, new Data(msg));
 	}
 }

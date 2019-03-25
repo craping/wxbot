@@ -39,7 +39,7 @@ import wxrobot.server.sync.pojo.SyncMsg;
 
 @Pump("keyword")
 @Component
-public class KeywordJSONPump extends DataPump<JSONObject, FullHttpRequest, Channel> {
+public class KeywordJSONPump extends DataPump<FullHttpRequest, Channel> {
 	
 	public static final Logger log = LogManager.getLogger(KeywordJSONPump.class);
 	
@@ -114,44 +114,6 @@ public class KeywordJSONPump extends DataPump<JSONObject, FullHttpRequest, Chann
 //		
 //		return new DataResult(mod > 0?Errors.OK:CustomErrors.USER_OPR_ERR);
 //	}
-	
-	
-	@Pipe("set")
-	@BarScreen(
-		desc="设置群关键词",
-		params= {
-			@Parameter(type=TokenParam.class),
-			@Parameter(value="seq",  desc="seq"),
-			@Parameter(value="keyMap",  desc="关键词Map 格式：{key:value, ...}")
-		}
-	)
-	public Errcode add (JSONObject params) throws ErrcodeException {
-		
-		UserInfo userInfo = keywordServer.getUserInfo(params);
-		
-		Map<String, Msg> keyMap = null;
-		try {
-			keyMap = BaseServer.JSON_MAPPER.readValue(params.getString("keyMap"), new TypeReference<Map<String, Msg>>() {});
-		} catch (IOException e) {
-			e.printStackTrace();
-			return new Result(Errors.PARAM_FORMAT_ERROR);
-		}
-		
-		keywordServer.addOrMod(userInfo.getUserName(), params.getString("seq"), keyMap);
-		//消息放入关键词事件队列
-		SyncMsg msg = new SyncMsg();
-		msg.setBiz(SyncBiz.KEYWORD);
-		msg.setAction(SyncAction.SET);
-		
-		Map<String, Object> data = new HashMap<>();
-		data.put("seq", params.getString("seq"));
-		data.put("keyMap", keyMap);
-		msg.setData(data);
-		
-		SyncContext.putMsg(params.getString("token"), msg);
-				
-		return new DataResult(Errors.OK);
-	}
 	
 	@Pipe("del")
 	@BarScreen(

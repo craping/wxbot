@@ -21,6 +21,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
+import wxrobot.dao.entity.User;
 import wxrobot.dao.entity.field.UserInfo;
 import wxrobot.server.enums.CustomErrors;
 import wxrobot.server.param.TokenParam;
@@ -47,12 +48,27 @@ public class BaseServer {
 	protected StringRedisTemplate redisTemplate;
 	
 	
+	public User getUser(Map<?, ?> params) throws ValidationException{
+		if(!params.containsKey(new TokenParam().getValue()))
+			throw new ValidationException(CustomErrors.USER_PARAM_NULL.setArgs("token"));
+		
+		String token = params.get("token").toString().split("_")[0];
+		String key = "user_"+token;
+		
+		if(!redisUtil.exists(key)) 
+			throw new ValidationException(CustomErrors.USER_NOT_LOGIN);
+		
+		User user = new User();
+		user.setId(redisUtil.hget(key, "uid"));
+		user.setToken(token);
+		return user;
+	}
+	
 	public UserInfo getUserInfo(Map<?, ?> params) throws ValidationException{
 		if(!params.containsKey(new TokenParam().getValue()))
 			throw new ValidationException(CustomErrors.USER_PARAM_NULL.setArgs("token"));
-		String key = "user_"+params.get("token").toString();
-		String userInfoJson = redisUtil.hget(key, "userInfo");
 		
+		String userInfoJson = redisUtil.hget("user_"+params.get("token").toString().split("_")[0], "userInfo");
 		try {
 			return JSON_MAPPER.readValue(userInfoJson, UserInfo.class);
 		} catch (IOException e) {

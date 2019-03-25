@@ -40,7 +40,7 @@ import wxrobot.server.utils.Tools;
 
 @Pump("user")
 @Component
-public class UserPump extends DataPump<JSONObject, FullHttpRequest, Channel> {
+public class UserPump extends DataPump<FullHttpRequest, Channel> {
 	
 	public static final Logger log = LogManager.getLogger(UserPump.class);
 	
@@ -135,13 +135,16 @@ public class UserPump extends DataPump<JSONObject, FullHttpRequest, Channel> {
 	
 	@Pipe("getUserInfo")
 	@BarScreen(
-		desc="获取用户信息"
+		desc="获取用户信息",
+		params = {
+			@Parameter(type=TokenParam.class)
+		}
 	)
 	public Errcode getUserInfo (JSONObject params) {
 		if (Tools.isStrEmpty(params.optString("token")))
 			return new Result(CustomErrors.USER_PARAM_NULL.setArgs("token"));
 		
-		String key = "user_" + params.getString("token");
+		String key = "user_" + params.getString("token").split("_")[0];
 		if (!(new RedisUtil().exists(key))) 
 			return new Result(CustomErrors.USER_NOT_LOGIN);
 		
@@ -153,10 +156,13 @@ public class UserPump extends DataPump<JSONObject, FullHttpRequest, Channel> {
 	
 	@Pipe("logout")
 	@BarScreen(
-		desc="用户退出"
+		desc="用户退出",
+		params = {
+			@Parameter(type=TokenParam.class)
+		}
 	)
 	public Errcode logout (JSONObject params) {
-		String key = "user_" + params.getString("token");
+		String key = "user_" + params.getString("token").split("_")[0];
 		redisTemplate.delete(key); // 删除缓存
 		return new DataResult(Errors.OK);
 	}

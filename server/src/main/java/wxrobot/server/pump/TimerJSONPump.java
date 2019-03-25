@@ -1,5 +1,6 @@
 package wxrobot.server.pump;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,10 +27,13 @@ import wxrobot.dao.entity.field.ScheduleMsg;
 import wxrobot.dao.entity.field.UserInfo;
 import wxrobot.server.enums.CustomErrors;
 import wxrobot.server.param.TokenParam;
+import wxrobot.server.sync.pojo.SyncAction;
+import wxrobot.server.sync.pojo.SyncBiz;
+import wxrobot.server.sync.pojo.SyncMsg;
 
 @Pump("timer")
 @Component
-public class TimerJSONPump extends DataPump<JSONObject, FullHttpRequest, Channel> {
+public class TimerJSONPump extends DataPump<FullHttpRequest, Channel> {
 	
 	public static final Logger log = LogManager.getLogger(TimerJSONPump.class);
 	
@@ -53,22 +57,22 @@ public class TimerJSONPump extends DataPump<JSONObject, FullHttpRequest, Channel
 		return new DataResult(Errors.OK, new Data(timerMap));
 	}
 	
-	@Pipe("addTimer")
-	@BarScreen(
-		desc="添加定时计划",
-		params= {
-			@Parameter(type=TokenParam.class),
-			@Parameter(value="seq", desc="seq")
-		}
-	)
-	public Errcode addTimer (JSONObject params) throws ErrcodeException {
-		
-		UserInfo userInfo = timerServer.getUserInfo(params);
-		
-		long mod = timerServer.addTimer(userInfo.getUserName(), params.getString("seq"));
-		
-		return new DataResult(mod > 0?Errors.OK:CustomErrors.USER_OPR_ERR);
-	}
+//	@Pipe("addTimer")
+//	@BarScreen(
+//		desc="添加定时计划",
+//		params= {
+//			@Parameter(type=TokenParam.class),
+//			@Parameter(value="seq", desc="seq")
+//		}
+//	)
+//	public Errcode addTimer (JSONObject params) throws ErrcodeException {
+//		
+//		UserInfo userInfo = timerServer.getUserInfo(params);
+//		
+//		long mod = timerServer.addTimer(userInfo.getUserName(), params.getString("seq"));
+//		
+//		return new DataResult(mod > 0?Errors.OK:CustomErrors.USER_OPR_ERR);
+//	}
 	
 //	@Pipe("modTimer")
 //	@BarScreen(
@@ -88,40 +92,22 @@ public class TimerJSONPump extends DataPump<JSONObject, FullHttpRequest, Channel
 //		return new DataResult(mod > 0?Errors.OK:CustomErrors.USER_OPR_ERR);
 //	}
 	
-	@Pipe("delTimer")
-	@BarScreen(
-		desc="删除定时计划",
-		params= {
-			@Parameter(type=TokenParam.class),
-			@Parameter(value="seq", desc="seq")
-		}
-	)
-	public Errcode delTimer (JSONObject params) throws ErrcodeException {
-		
-		UserInfo userInfo = timerServer.getUserInfo(params);
-		
-		long mod = timerServer.delTimer(userInfo.getUserName(), params.getString("seq"));
-		
-		return new DataResult(mod > 0?Errors.OK:CustomErrors.USER_OPR_ERR);
-	}
-	
-	@Pipe("delGlobalMsg")
-	@BarScreen(
-		desc="删除全局群定时消息",
-		params= {
-			@Parameter(type=TokenParam.class),
-			@Parameter(value="uuid",  desc="定时消息uuid")
-		}
-	)
-	public Errcode delGlobalMsg (JSONObject params) throws ErrcodeException {
-		
-		UserInfo userInfo = timerServer.getUserInfo(params);
-		
-		long mod = timerServer.delMsg(userInfo.getUserName(), "global", params.getString("uuid"));
-		
-		return new DataResult(mod > 0?Errors.OK:CustomErrors.USER_OPR_ERR);
-	}
-	
+//	@Pipe("delTimer")
+//	@BarScreen(
+//		desc="删除定时计划",
+//		params= {
+//			@Parameter(type=TokenParam.class),
+//			@Parameter(value="seq", desc="seq")
+//		}
+//	)
+//	public Errcode delTimer (JSONObject params) throws ErrcodeException {
+//		
+//		UserInfo userInfo = timerServer.getUserInfo(params);
+//		
+//		long mod = timerServer.delTimer(userInfo.getUserName(), params.getString("seq"));
+//		
+//		return new DataResult(mod > 0?Errors.OK:CustomErrors.USER_OPR_ERR);
+//	}
 	
 	@Pipe("delMsg")
 	@BarScreen(
@@ -137,7 +123,17 @@ public class TimerJSONPump extends DataPump<JSONObject, FullHttpRequest, Channel
 		UserInfo userInfo = timerServer.getUserInfo(params);
 		
 		long mod = timerServer.delMsg(userInfo.getUserName(), params.getString("seq"), params.getString("uuid"));
-		
+		if(mod < 0){
+			//消息放入关键词事件队列
+			SyncMsg event = new SyncMsg();
+			event.setBiz(SyncBiz.TIMER);
+			event.setAction(SyncAction.DEL);
+			
+			Map<String, Object> data = new HashMap<>();
+			data.put("seq", params.getString("seq"));
+			data.put("uuid", params.getString("uuid"));
+			event.setData(data);
+		}
 		return new DataResult(mod > 0?Errors.OK:CustomErrors.USER_OPR_ERR);
 	}
 }

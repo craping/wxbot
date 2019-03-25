@@ -42,7 +42,7 @@ import wxrobot.server.param.TokenParam;
 
 @Pump("setting")
 @Component
-public class SettingPump extends DataPump<JSONObject, FullHttpRequest, Channel> {
+public class SettingPump extends DataPump<FullHttpRequest, Channel> {
 	
 	public static final Logger log = LogManager.getLogger(SettingPump.class);
 	

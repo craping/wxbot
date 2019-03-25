@@ -33,7 +33,7 @@ import wxrobot.server.sync.pojo.SyncMsg;
 
 @Pump("api")
 @Component
-public class ApiPump extends DataPump<JSONObject, FullHttpRequest, Channel> {
+public class ApiPump extends DataPump<FullHttpRequest, Channel> {
 	
 	public static final Logger log = LogManager.getLogger(ApiPump.class);
 	

@@ -68,10 +68,10 @@ public class SyncContext implements SchedulingConfigurer {
 	*/  
 	    
 	public static void putGlobalMsg(SyncMsg msg){
-		Set<String> queues = redisUtil.keys("queue_*");
-		queues.forEach(key -> {
+		Set<String> tokens = redisUtil.keys("user_*");
+		tokens.forEach(key -> {
 			try {
-				redisUtil.rpush(key, MAPPER.writeValueAsString(msg));
+				redisUtil.rpush("queue_"+key.split("_")[1], MAPPER.writeValueAsString(msg));
 			} catch (JsonProcessingException e) {
 				e.printStackTrace();
 			}

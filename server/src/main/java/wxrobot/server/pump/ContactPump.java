@@ -30,6 +30,7 @@ import wxrobot.biz.server.ContactServer;
 import wxrobot.biz.server.KeywordServer;
 import wxrobot.biz.server.SettingServer;
 import wxrobot.biz.server.TimerServer;
+import wxrobot.dao.entity.User;
 import wxrobot.dao.entity.field.ContactInfo;
 import wxrobot.dao.entity.field.UserInfo;
 import wxrobot.dao.enums.SettingModule;
@@ -39,7 +40,7 @@ import wxrobot.server.utils.RedisUtil;
 
 @Pump("contact")
 @Component
-public class ContactPump extends DataPump<JSONObject, FullHttpRequest, Channel> {
+public class ContactPump extends DataPump<FullHttpRequest, Channel> {
 	
 	public static final Logger log = LogManager.getLogger(ContactPump.class);
 	
@@ -92,13 +93,8 @@ public class ContactPump extends DataPump<JSONObject, FullHttpRequest, Channel> 
 		}
 	)
 	public Errcode getContacts(JSONObject params) throws ErrcodeException {
-		String key = "user_" + params.getString("token");
-		if (!(new RedisUtil().exists(key))) 
-			return new Result(CustomErrors.USER_NOT_LOGIN);
-		
-		Map<Object, Object> userMap = redisTemplate.opsForHash().entries(key);
-		String uid = userMap.get("uid").toString();
-		List<ContactInfo> chatRooms = contactServer.getUserContact(uid).getChatRooms();
+		User user = contactServer.getUser(params);
+		List<ContactInfo> chatRooms = contactServer.getUserContact(user.getId()).getChatRooms();
 		return new DataResult(Errors.OK, new Data(chatRooms));
 	}
 	
@@ -111,12 +107,8 @@ public class ContactPump extends DataPump<JSONObject, FullHttpRequest, Channel> 
 		}
 	)
 	public Errcode syncContacts(JSONObject params) throws ErrcodeException {
-		String key = "user_" + params.getString("token");
-		if (!(new RedisUtil().exists(key))) 
-			return new Result(CustomErrors.USER_NOT_LOGIN);
-		
-		Map<Object, Object> userMap = redisTemplate.opsForHash().entries(key);
-		contactServer.syncContacts(userMap.get("uid").toString(), params);
+		User user = contactServer.getUser(params);
+		contactServer.syncContacts(user.getId(), params);
 		return new DataResult(Errors.OK);
 	}
 	
