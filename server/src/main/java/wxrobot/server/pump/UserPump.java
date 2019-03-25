@@ -26,6 +26,7 @@ import org.springframework.stereotype.Component;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.FullHttpRequest;
 import net.sf.json.JSONObject;
+import wxrobot.biz.server.NoticeServer;
 import wxrobot.biz.server.SettingServer;
 import wxrobot.biz.server.UserServer;
 import wxrobot.dao.entity.User;
@@ -33,6 +34,7 @@ import wxrobot.dao.entity.field.Permissions;
 import wxrobot.dao.entity.field.UserInfo;
 import wxrobot.server.enums.CustomErrors;
 import wxrobot.server.param.MobileParam;
+import wxrobot.server.param.TokenParam;
 import wxrobot.server.utils.RedisUtil;
 import wxrobot.server.utils.Tools;
 
@@ -48,6 +50,19 @@ public class UserPump extends DataPump<JSONObject, FullHttpRequest, Channel> {
 	private SettingServer settingServer;
 	@Autowired
 	private StringRedisTemplate redisTemplate;
+	@Autowired
+	private NoticeServer noticeServer;
+	
+	@Pipe("noticeList")
+	@BarScreen(
+		desc="公告列表",
+		params= {
+			@Parameter(type=TokenParam.class),
+		}
+	)
+	public Errcode noticeList(JSONObject params) {
+		return noticeServer.getNoticeList(params);
+	}
 	
 	@Pipe("register")
 	@BarScreen(
