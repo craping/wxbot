@@ -29,7 +29,7 @@ Chat = {
                 return false;
             }
             setTimeout(() => {
-                wxbot.openAppFile(this.chat.seq, this.chat.title, this.chat.userName);
+                wxbot.openAppFile(this.chat.userName);
             }, 5);
         },
         // 发送文本消息
@@ -88,7 +88,7 @@ Chat = {
                 if(msg.msgType == 34)
                     msg.played = false;
                 this.chat.chatRecord.push(msg);
-                this.scrollToBottom();
+                this.scrollToBottom(true);
             } else {
                 this.setCount(userName);
                 $("#msgAudio")[0].play();
@@ -104,13 +104,9 @@ Chat = {
         imgHeightOrWidth(path, type) {
             return wxbot.getImgHeightOrWidth(path, type);
         },
-        // 播放视频
-        mediaPlay(path) {
-            wxbot.mediaPlay(path);
-        },
-        //播放语音
-        voicePlay(item, path) {
-            wxbot.voicePlay(path);
+        // 多媒体播放
+        mediaPlay(item) {
+            wxbot.mediaPlay(item);
             item.played = true;
             this.$forceUpdate();
         },
@@ -119,9 +115,14 @@ Chat = {
             return wxbot.getRealUrl(path);
         },
         // 聊天窗口滚动条自动底部
-        scrollToBottom: function () {
+        scrollToBottom: function (scrolling) {
             this.$nextTick(() => {
-                this.$refs.chatScroller.$el.scrollTop = this.$refs.chatScroller.$el.scrollHeight;
+                if(scrolling){
+                    if((this.$refs.chatScroller.$el.scrollTop + 410) >= (this.$refs.chatScroller.$el.scrollHeight - 410))
+                        this.$refs.chatScroller.$el.scrollTop = this.$refs.chatScroller.$el.scrollHeight;
+                }else{
+                    this.$refs.chatScroller.$el.scrollTop = this.$refs.chatScroller.$el.scrollHeight;
+                }
                 // this.$refs.chatScroller.scrollToBottom();
             })
         },

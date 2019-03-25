@@ -90,39 +90,41 @@ Contacts = {
             });
             this.syncChatRooms();
         },
+        modContact(contacts){
+            contacts.forEach(e => {
+                const contacts = e.UserName.includes("@@")?this.contacts.chatRooms:this.contacts.individuals;
+                let index = -1;
+                let contact = contacts.find((c, i) => {
+                    index = i;
+                    return c.UserName == e.UserName;
+                });
+                if(contact){
+                    e.count = contact.count;
+                    contacts.splice(index, 1, e);
+                }
+            });
+            this.syncChatRooms();
+        },
         delContact(contacts){
             contacts.forEach(e => {
-                if(e.UserName.includes("@@")){
-                    const index = this.contacts.chatRooms.findIndex(e1 => e.UserName == e1.UserName);
-                    if(index != -1)
-                    this.contacts.chatRooms.splice(index, 1);
-                } else {
-                    const index = this.contacts.individuals.findIndex(e1 => e.UserName == e1.UserName);
-                    if(index != -1)
-                    this.contacts.individuals.splice(index, 1);
-                }
+                const contacts = userName.includes("@@")?this.contacts.chatRooms:this.contacts.individuals;
+                const index = contacts.findIndex(c => c.UserName == e.UserName);
+                if(index != -1)
+                    contacts.splice(index, 1);
             });
             this.syncChatRooms();
         },
         //联系人置顶
         setContactToTop(userName){
-            let index;
-            let contact = this.contacts.individuals.find((e, i) => {
+            const contacts = userName.includes("@@")?this.contacts.chatRooms:this.contacts.individuals;
+            let index = -1;
+            let contact = contacts.find((e, i) => {
                 index = i;
                 return e.UserName == userName;
             });
-            if (contact && index != 0) {
-                this.contacts.individuals.splice(index, 1);
-                this.contacts.individuals.splice(0, 0, contact);
-            } else {
-                contact = this.contacts.chatRooms.find((e, i) => {
-                    index = i;
-                    return e.UserName == userName;
-                });
-                if(contact && index != 0){
-                    this.contacts.chatRooms.splice(index, 1);
-                    this.contacts.chatRooms.splice(0, 0, contact);
-                }
+            if (contact) {
+                contacts.splice(index, 1);
+                contacts.splice(0, 0, contact);
             }
         },
         setCount(userName, count){

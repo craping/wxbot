@@ -15,7 +15,7 @@
     <template v-slot="{item}">
         <div class="d-flex align-items-center border-bottom" style="height:46px">
             <div class="px-2" style="width:70px">{{item.seq}}</div>
-            <div class="px-2 flex-fill" v-html="item.NickName"></div>
+            <div class="px-2 text-truncate" style="width:439px" v-html="item.NickName"></div>
             <div class="px-2 text-center" style="width:80px">
                 <i-switch v-model="item.turing.state" :loading="item.turing.loading" size="large" @on-change="changeSeq(item.turing)">
                     <span slot="open">开启</span>
@@ -49,16 +49,42 @@
         <tr>
             <th width="70">群ID</th>
             <th>群名称</th>
-            <th class="text-center" width="80">状态</th>
+            <th class="text-center" width="80">图灵AI</th>
+            <th class="text-center" width="80">群转发</th>
+            <th class="text-center" width="80">关键词</th>
+            <th class="text-center" width="80">定时消息</th>
         </tr>
     </thead>
     <tbody style="height: 375px;">
-        <template v-if="forwards.length">
-            <tr v-for="e in forwards">
-                <td width="70">{{e.seq}}</td>
-                <td>{{e.NickName}}</td>
-                <td class="text-center" width="80">
-                    <i-switch v-model="e.status" :loading="e.loading" size="large" @on-change="changeForward(e)">
+        <template v-if="seqData.length">
+            <tr v-for="item in seqData">
+                <td class="px-2" style="width:70px">{{item.seq}}</td>
+                <td class="px-2" style="width:409px">
+                    <tooltip :content="item.NickName" class="text-truncate w-100">
+                        <div slot="content" v-html="item.NickName"></div>
+                        <div v-html="item.NickName"></div>
+                    </tooltip>
+                </td>
+                <td class="px-2 text-center" style="width:80px">
+                    <i-switch v-model="item.turing.state" :loading="item.turing.loading" size="large" @on-change="changeSeq(item.turing)">
+                        <span slot="open">开启</span>
+                        <span slot="close">关闭</span>
+                    </i-switch>
+                </td>
+                <td class="px-2 text-center" style="width:80px">
+                    <i-switch v-model="item.forwards.state" :loading="item.forwards.loading" size="large" @on-change="changeSeq(item.forwards)">
+                        <span slot="open">开启</span>
+                        <span slot="close">关闭</span>
+                    </i-switch>
+                </td>
+                <td class="px-2 text-center" style="width:80px">
+                    <i-switch v-model="item.keywords.state" :loading="item.keywords.loading" size="large" @on-change="changeSeq(item.keywords)">
+                        <span slot="open">开启</span>
+                        <span slot="close">关闭</span>
+                    </i-switch>
+                </td>
+                <td class="px-2 text-center" style="width:80px">
+                    <i-switch v-model="item.timers.state" :loading="item.timers.loading" size="large" @on-change="changeSeq(item.timers)">
                         <span slot="open">开启</span>
                         <span slot="close">关闭</span>
                     </i-switch>

@@ -13,7 +13,6 @@ import javax.swing.filechooser.FileSystemView;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -22,6 +21,7 @@ import com.cherry.jeeves.enums.MessageType;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.teamdev.jxbrowser.chromium.JSFunction;
 import com.teamdev.jxbrowser.chromium.JSONString;
+import com.teamdev.jxbrowser.chromium.JSObject;
 
 import client.enums.Direction;
 import client.pojo.WxMessage;
@@ -29,7 +29,6 @@ import client.pojo.WxMessageBody;
 import client.utils.Config;
 import client.utils.FileUtil;
 import client.utils.Tools;
-import client.utils.WxMessageTool;
 import client.view.WxbotView;
 import client.view.server.BaseServer;
 import client.view.server.ChatServer;
@@ -60,9 +59,8 @@ public abstract class ChatFunction extends ContactsFunction {
 	private final static String PREFIX_GIF = "image/gif";
 	private final static long MAX_FILE_SIZE = 104857600;
 	private final static long MAX_VIDEO_SIZE = 26214400;
-
-	@Autowired
-	private WxMessageTool msgTool;
+	
+	private MediaPlayer mplayer;
 	
 	public ChatFunction() {
 		super();
@@ -80,7 +78,7 @@ public abstract class ChatFunction extends ContactsFunction {
 	* @throws  
 	*/  
 	    
-	public void openAppFile(String seq, String nickName, String userName){
+	public void openAppFile(String userName){
 		Platform.runLater(() -> {
 			if (lastSendFile != null && lastSendFile.isFile())
 				sendChooser.setInitialDirectory(lastSendFile.getParentFile());
@@ -88,7 +86,7 @@ public abstract class ChatFunction extends ContactsFunction {
 			lastSendFile = sendChooser.showOpenDialog(WxbotView.getInstance().getViewStage());
 			if (lastSendFile == null)
 				return;
-			sendApp(seq, nickName, userName, lastSendFile);
+			sendApp(userName, lastSendFile);
 		});
 	}
 	/**
@@ -99,28 +97,19 @@ public abstract class ChatFunction extends ContactsFunction {
 	 * @throws
 	 */
 
-	public void sendApp(String seq, String nickName, String userName, File file) {
+	public void sendApp(String userName, File file) {
         String contentType = null;  
         try {  
             contentType = Files.probeContentType(file.toPath());
 	        
-	        WxMessage message = new WxMessage();
+	        SendMsgResponse response;
 	        // 发送表情
 	        if (contentType != null && contentType.contains(PREFIX_GIF)) {
-	        	wechatService.sendEmoticon(userName == null ? cacheService.getOwner().getUserName() : userName, file.getPath());
-	        	message.setMsgType(MessageType.EMOTICON.getCode());
-	        	message.setBody(new WxMessageBody(file.getPath()));
+	        	response = wechatService.sendEmoticon(userName, file.getPath());
 	        }
 	        // 发送图片
 	        else if (contentType != null && contentType.contains(PREFIX_IMG)) {
-	        	SendMsgResponse response = wechatService.sendImage(userName == null ? cacheService.getOwner().getUserName() : userName, file.getPath());
-	        	String thumbImageUrl = String.format(WECHAT_URL_GET_MSG_IMG, cacheService.getHostUrl(), response.getMsgID(), cacheService.getsKey()) + "&type=slave";
-	        	String fullImageUrl = String.format(WECHAT_URL_GET_MSG_IMG, cacheService.getHostUrl(), response.getMsgID(), cacheService.getsKey());
-	        	fullImageUrl = wechatService.download(fullImageUrl, response.getMsgID()+".jpg", MessageType.VIDEO);
-        		thumbImageUrl = wechatService.download(thumbImageUrl, response.getMsgID()+"_thumb.jpg", MessageType.VIDEO);
-        		
-	        	message.setMsgType(MessageType.IMAGE.getCode());
-	        	message.setBody(new WxMessageBody(fullImageUrl, thumbImageUrl));
+	        	response = wechatService.sendImage(userName, file.getPath());
 	        }
 	        // 发送视频
 	        else if (contentType != null && contentType.contains(PREFIX_VIDEO)) {
@@ -129,37 +118,17 @@ public abstract class ChatFunction extends ContactsFunction {
 					WxbotView.getInstance().executeScript("app.$Message.error('发送的视频文件不能大于25M');");
 					return;
 				}
-	        	
-	        	SendMsgResponse response = wechatService.sendVideo(userName == null ? cacheService.getOwner().getUserName() : userName, file.getPath());
-	        	// 下载发送视频 缩略图
-        		String thumbImageUrl = String.format(WECHAT_URL_GET_MSG_IMG, cacheService.getHostUrl(), response.getMsgID(), cacheService.getsKey()) + "&type=slave";
-        		thumbImageUrl = wechatService.download(thumbImageUrl, response.getMsgID()+".jpg", MessageType.VIDEO);
-	        	
-	        	message.setMsgType(MessageType.VIDEO.getCode());
-	        	message.setBody(new WxMessageBody(file.getPath(), thumbImageUrl));
+				response = wechatService.sendVideo(userName, file.getPath());
 	        } else {
 	        	// 文件超限 100MB
 				if (file.length() > MAX_FILE_SIZE) {
 					WxbotView.getInstance().executeScript("app.$Message.error('发送的文件不能大于100M');");
 					return;
 				}
-				
-	        	wechatService.sendApp(userName == null ? cacheService.getOwner().getUserName() : userName, file.getPath());
-	        	message.setMsgType(MessageType.APP.getCode());
-	        	message.setBody(new WxMessageBody(file.getPath(), file.getName(), FileUtil.getFileSizeString(file.length())));
+				response = wechatService.sendApp(userName, file.getPath());
 	        }
-
-			String timestamp = Tools.getTimestamp();
-			message.setTimestamp(timestamp);
-			message.setTo(nickName);
-			message.setFrom(cacheService.getOwner().getNickName());
-			message.setDirection(Direction.SEND.getCode());
-			message.setChatType(userName.startsWith("@@")?2:1);
-			String json = BaseServer.JSON_MAPPER.writeValueAsString(message);
-			
-			String filePath = Config.CHAT_RECORD_PATH + seq;
-			FileUtil.writeFile(filePath, Tools.getSysDate() + ".txt", json);
-			msgTool.avatarBadge(userName, json);
+	        
+	        chatServer.writeSendAppRecord(userName.contains("@@")?cacheService.getChatRoom(userName):cacheService.getContact(userName), file.getAbsolutePath(), response.getMsgID(), true);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}  catch (IOException e) {
@@ -245,28 +214,39 @@ public abstract class ChatFunction extends ContactsFunction {
 	 * 
 	 * @param path
 	 */
-	public void mediaPlay(String path) {
-		File file = new File(path);
-		if (!file.exists()) {
-			logger.error("mediaPlay:目录[" + path + "]不存在");
-			return;
+	public void mediaPlay(JSObject jsonMsg) {
+		try {
+			WxMessage msg = BaseServer.JSON_MAPPER.readValue(jsonMsg.toJSONString(), WxMessage.class);
+			File file;
+			if(msg.msgType == MessageType.VIDEO.getCode()){
+				file = new File(msg.getBody().getFileName());
+				if (!file.exists()) {
+					logger.debug("视频[" + file + "]不存在 下载");
+					wechatService.download(msg.getBody().getContent(), msg.getMsgId()+".mp4", MessageType.VIDEO);
+				}
+				Tools.openFileByOs(file.toURI().toString());
+			} else if(msg.msgType == MessageType.VOICE.getCode()){
+				file = new File(msg.getBody().getFileName());
+				if (!file.exists()) {
+					logger.debug("音频[" + file + "]不存在 下载");
+					wechatService.download(msg.getBody().getContent(), msg.getMsgId()+".mp3", MessageType.VOICE);
+				}
+				Media media = new Media(file.toURI().toString());
+				if(mplayer != null)
+					mplayer.stop();
+				mplayer = new MediaPlayer(media);
+				mplayer.play();
+			} else {
+				file = new File(msg.getBody().getThumbImageUrl());
+				if (!file.exists()) {
+					logger.debug("文件[" + file + "]不存在 下载");
+					wechatService.download(msg.getBody().getContent(), msg.getMsgId()+"_"+msg.getBody().getFileName(), MessageType.APP);
+				}
+				Tools.openFileByOs(file.toURI().toString());
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		Tools.openFileByOs(file.toURI().toString());
-	}
-	
-	/**
-	 * 语音播放
-	 * @param path
-	 */
-	public void voicePlay(String path) {
-		File file = new File(path);
-		if (!file.exists()) {
-			logger.error("voicePlay:目录[" + path + "]不存在");
-			return;
-		}
-		Media media = new Media(file.toURI().toString());
-		MediaPlayer mplayer = new MediaPlayer(media);
-		mplayer.play();
 	}
 	
 	public static void main(String args[]) throws FileNotFoundException, IOException {

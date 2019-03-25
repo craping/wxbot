@@ -9,12 +9,79 @@ Header = {
             deleteMapNull: true,
             blacklistMap: {},
             blacklistMapNull: true
+        },
+        notice:{
+            drawer:false,
+            msgs:[]
         }
     },
     computed: {
-
+        noticeCount(){
+            // let readNotices = localStorage.getItem("readNotices");
+            // if(readNotices)
+            //     readNotices = readNotices.split(",");
+            // else
+            //     readNotices = [];
+            // return this.header.notice.msgs.filter(m => !readNotices.includes(m.id+"")).length;
+            return this.header.notice.msgs.filter(m => !m.read).length;
+        }
     },
     methods: {
+        notify(msg){
+            const me = this;
+            me.header.notice.count++;
+            me.header.notice.msgs.push(msg);
+            me.$Notice.info({
+                title: "公告消息",
+                name:msg.id,
+                render: h => {
+                    return [
+                        h('span', {
+                            "class":"text-truncate",
+                            style:{
+                                maxWidth:"200px",
+                                display:"inline-block",
+                                verticalAlign: "middle"
+                            }
+                        }, msg.title), 
+                        h("a", {
+                            "class":"ml-1",
+                            style:{
+                                display:"inline-block",
+                                verticalAlign: "middle"
+                            },
+                            attrs:{
+                                href:"javascript:;"
+                            },
+                            on:{
+                                click(){
+                                    me.header.notice.drawer = true;
+                                    me.$Notice.close(msg.id);
+                                }
+                            }
+                        }, "查看")
+                    ]
+                },
+                duration: 0
+            });
+        },
+        notifyCheck(id){
+            if(id[0]){
+                let readNotices = localStorage.getItem("readNotices");
+                if(readNotices)
+                    readNotices = readNotices.split(",");
+                else
+                    readNotices = [];
+                const msg = this.header.notice.msgs.find(m => m.id == id);
+                if(msg){
+                    msg.read = true;
+                    if(readNotices.findIndex(e => e == id+"") == -1){
+                        readNotices.push(id);
+                        localStorage.setItem("readNotices", readNotices.join(","));
+                    }
+                }
+            }
+        },
         deleteEvt(contactMap) {
             let me = this;
             me.header.checkProgress.deleteMapNull = false;

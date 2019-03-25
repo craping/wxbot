@@ -15,13 +15,17 @@ import org.springframework.stereotype.Component;
 
 import com.cherry.jeeves.domain.response.SendMsgResponse;
 import com.cherry.jeeves.domain.shared.Contact;
+import com.cherry.jeeves.domain.shared.Message;
 import com.cherry.jeeves.enums.MessageType;
+import com.cherry.jeeves.utils.MessageUtils;
 
+import client.enums.ChatType;
 import client.enums.Direction;
 import client.pojo.Msg;
 import client.pojo.WxMessage;
 import client.pojo.WxMessageBody;
 import client.utils.Config;
+import client.utils.EmojiUtil;
 import client.utils.FileUtil;
 import client.utils.Tools;
 import client.utils.WxMessageTool;
@@ -44,6 +48,142 @@ public class ChatServer extends BaseServer {
 	private WxMessageTool msgTool;
 	
 	public static Long POINT = null;
+	
+	public WxMessage createReceiveMsg(Message message, MessageType msgType, String fullImageUrl, String thumbImageUrl){
+		boolean isChatRoom = (message.getFromUserName() != null && message.getFromUserName().startsWith("@@"))
+				|| (message.getToUserName() != null && message.getToUserName().startsWith("@@"));
+		WxMessage msg;
+		String content;
+		if (isChatRoom) {
+			content = MessageUtils.getChatRoomTextMessageContent(message.getContent());
+		} else {
+			content = message.getContent();
+		}
+		switch (msgType) {
+		// 文本
+		case TEXT:
+			msg = new WxMessage(msgType.getCode(), new WxMessageBody(EmojiUtil.formatFace(content)));
+			break;
+		// 图片
+		case IMAGE:
+			// 下载图片文件 到本地
+//			fullImageUrl = wechatHttpService.download(fullImageUrl, message.getMsgId() + ".jpg", MessageType.IMAGE);
+//			thumbImageUrl = wechatHttpService.download(thumbImageUrl, message.getMsgId() + "_thumb.jpg", MessageType.IMAGE);
+			msg = new WxMessage(msgType.getCode(), new WxMessageBody(fullImageUrl, thumbImageUrl));
+			msg.getBody().setFileName(Config.IMG_PATH + message.getMsgId() + ".jpg");
+			break;
+		// 表情
+		case EMOTICON:
+			// 下载表情文件 到本地
+//			emoticonUrl = wechatHttpService.download(emoticonUrl, message.getMsgId() + ".gif", MessageType.EMOTICON);
+			if (content == null || content.trim().isEmpty()) {
+				msg = new WxMessage(MessageType.TEXT.getCode(), new WxMessageBody("[发送了一个表情，请在手机上查看]"));
+			} else {
+				msg = new WxMessage(msgType.getCode(), new WxMessageBody(fullImageUrl));
+				msg.getBody().setFileName(Config.IMG_PATH + message.getMsgId() + ".gif");
+			}
+			break;
+		// 语音
+		case VOICE:
+			// 下载语音文件 到本地
+//			voiceUrl = wechatHttpService.download(voiceUrl, message.getMsgId() + ".mp3", MessageType.VOICE);
+			msg = new WxMessage(msgType.getCode(), new WxMessageBody(fullImageUrl, message.getVoiceLength()));
+			msg.getBody().setFileName(Config.VOICE + message.getMsgId() + ".mp3");
+			break;
+		// 视频
+		case VIDEO:
+//			videoUrl = wechatHttpService.download(videoUrl, message.getMsgId() + ".mp4", MessageType.VIDEO);
+//			thumbImageUrl = wechatHttpService.download(thumbImageUrl, message.getMsgId() + ".jpg", MessageType.VIDEO);
+			msg = new WxMessage(msgType.getCode(), new WxMessageBody(fullImageUrl, thumbImageUrl));
+			msg.getBody().setFileName(Config.FILE_PATH + message.getMsgId() + ".mp4");
+			break;
+		// 多媒体
+		default:
+			// 下载文件
+//			mediaUrl = wechatHttpService.download(mediaUrl, message.getMsgId() + "_" + message.getFileName(), MessageType.APP);
+			msg = new WxMessage(MessageType.APP.getCode(), new WxMessageBody(fullImageUrl, message.getFileName(), FileUtil.getFileSizeString(Long.valueOf(message.getFileSize()))));
+			msg.getBody().setThumbImageUrl(Config.FILE_PATH +message.getMsgId() + "_" + message.getFileName());
+			break;
+		}
+		msg.setMsgId(message.getMsgId());
+		
+		return msg;
+	}
+	
+	public void writeReceiveRecord(Message message, WxMessage msg){
+		boolean isChatRoom = (message.getFromUserName() != null && message.getFromUserName().startsWith("@@"))
+				|| (message.getToUserName() != null && message.getToUserName().startsWith("@@"));
+		
+		Contact contact;
+		
+		if(isChatRoom){
+			if (message.getFromUserName().equals(cacheService.getOwner().getUserName())) {
+				contact = cacheService.getChatRoom(message.getToUserName());
+				if(contact != null)
+					msgTool.sendMessage(contact, msg, cacheService.getOwner().getNickName(), ChatType.GROUPCHAT.getCode());
+			} else {
+				contact = cacheService.getChatRoom(message.getFromUserName());
+				if(contact != null){
+					Contact sender = cacheService.searchContact(contact.getMemberList(), MessageUtils.getSenderOfChatRoomTextMessage(message.getContent()));
+					msgTool.receiveGroupMessage(contact, sender, msg);
+				}
+			}
+		} else {
+			if (message.getFromUserName().equals(cacheService.getOwner().getUserName())) {
+				contact = cacheService.getContact(message.getToUserName());
+				if(contact != null)
+					msgTool.sendMessage(contact, msg, cacheService.getOwner().getNickName(), ChatType.CHAT.getCode());
+			} else {
+				contact = cacheService.getContact(message.getFromUserName());
+				if(contact != null)
+					msgTool.receiveMessage(contact, cacheService.getOwner(), msg);
+			}
+		}
+	}
+	/**  
+	* @Title: writeReceiveRecord  
+	* @Description: 通用写接收聊天记录
+	* @param @param message
+	* @param @param msgType
+	* @param @param fullImageUrl
+	* @param @param thumbImageUrl    参数  
+	* @return void    返回类型  
+	* @throws  
+	*/  
+	    
+	public void writeReceiveRecord(Message message, MessageType msgType, String fullImageUrl, String thumbImageUrl){
+		boolean isChatRoom = (message.getFromUserName() != null && message.getFromUserName().startsWith("@@"))
+				|| (message.getToUserName() != null && message.getToUserName().startsWith("@@"));
+		
+		WxMessage msg = createReceiveMsg(message, msgType, fullImageUrl, thumbImageUrl);
+		
+		Contact contact;
+		
+		if(isChatRoom){
+			if (message.getFromUserName().equals(cacheService.getOwner().getUserName())) {
+				contact = cacheService.getChatRoom(message.getToUserName());
+				if(contact != null)
+					msgTool.sendMessage(contact, msg, cacheService.getOwner().getNickName(), ChatType.GROUPCHAT.getCode());
+			} else {
+				contact = cacheService.getChatRoom(message.getFromUserName());
+				if(contact != null){
+					Contact sender = cacheService.searchContact(contact.getMemberList(), MessageUtils.getSenderOfChatRoomTextMessage(message.getContent()));
+					msgTool.receiveGroupMessage(contact, sender, msg);
+				}
+			}
+		} else {
+			if (message.getFromUserName().equals(cacheService.getOwner().getUserName())) {
+				contact = cacheService.getContact(message.getToUserName());
+				if(contact != null)
+					msgTool.sendMessage(contact, msg, cacheService.getOwner().getNickName(), ChatType.CHAT.getCode());
+			} else {
+				contact = cacheService.getContact(message.getFromUserName());
+				if(contact != null)
+					msgTool.receiveMessage(contact, cacheService.getOwner(), msg);
+			}
+		}
+	}
+	
 	/**  
 	* @Title: writeSendTextRecord  
 	* @Description: 发送文本聊天记录
@@ -53,9 +193,10 @@ public class ChatServer extends BaseServer {
 	* @throws  
 	*/  
 	    
-	public void writeSendTextRecord(Contact contact, String content){
+	public void writeSendTextRecord(Contact contact, String content, String msgId){
 		try {
 	        WxMessage message = new WxMessage();
+	        message.setMsgId(msgId);
 	        message.setBody(new WxMessageBody(content));
 	        message.setMsgType(MessageType.TEXT.getCode());
 			message.setTo(contact.getUserName());
@@ -82,45 +223,60 @@ public class ChatServer extends BaseServer {
 	* @throws  
 	*/  
 	    
-	public void writeSendAppRecord(Contact contact, String localFileUrl, String msgId){
+	public void writeSendAppRecord(Contact contact, String localFileUrl, String msgId, boolean absolute){
 		try {
 	        WxMessage message = new WxMessage();
+	        message.setMsgId(msgId);
         	File file = new File(localFileUrl);
         	String contentType = Files.probeContentType(file.toPath());
         	//表情
 	        if (contentType != null && contentType.contains(PREFIX_GIF)) {
 	        	message.setMsgType(MessageType.EMOTICON.getCode());
-	        	message.setBody(new WxMessageBody(localFileUrl));
+	        	message.setBody(new WxMessageBody(localFileUrl, localFileUrl));
+	        	message.getBody().setFileName(localFileUrl);
 	        }
 	        //图片
 	        else if (contentType != null && contentType.contains(PREFIX_IMG)) {
 	        	message.setMsgType(MessageType.IMAGE.getCode());
 	        	message.setBody(new WxMessageBody(localFileUrl, localFileUrl));
+	        	message.getBody().setFileName(localFileUrl);
 	        }
 	        //视频
 	        else if (contentType != null && contentType.contains(PREFIX_VIDEO)) {
 	        	//缩略图本地路径
-        		String thumbImageName = "/img/"+msgId+".jpg";
+        		String thumbImageName = Config.IMG_PATH + msgId + ".jpg";
         		String thumbImageUrl = null;
         		//缩略图不存在则下载
         		if(!new File(thumbImageName).exists()){
         			thumbImageUrl = String.format(WECHAT_URL_GET_MSG_IMG, cacheService.getHostUrl(), msgId, cacheService.getsKey()) + "&type=slave";
         			thumbImageUrl = wechatService.download(thumbImageUrl, msgId+".jpg", MessageType.IMAGE);
         		}
-        		message.setMsgType(MessageType.IMAGE.getCode());
+        		message.setMsgType(MessageType.VIDEO.getCode());
         		message.setBody(new WxMessageBody(localFileUrl, thumbImageUrl));
+        		message.getBody().setFileName(localFileUrl);
 	        }
 	        //附件
 	        else {
+	        	message.setMsgType(MessageType.APP.getCode());
 	        	message.setBody(new WxMessageBody(localFileUrl, file.getName(), FileUtil.getFileSizeString(file.length())));
+	        	message.getBody().setThumbImageUrl(localFileUrl);
 	        }
-			message.setTo(contact.getUserName());
+	        message.getBody().setAbsolute(absolute);
+			message.setTo(contact.getNickName());
 			message.setFrom(cacheService.getOwner().getNickName());
 			message.setDirection(Direction.SEND.getCode());
 			message.setTimestamp(Tools.getTimestamp());
 			message.setChatType(contact.getUserName().startsWith("@@")?2:1);
 			String json = JSON_MAPPER.writeValueAsString(message);
 			FileUtil.writeFile(Config.CHAT_RECORD_PATH + contact.getSeq(), Tools.getSysDate() + ".txt", json);
+			if(!absolute){
+				String root = System.getProperty("user.dir")+"/";
+				message.getBody().setContent(root + localFileUrl);
+				message.getBody().setThumbImageUrl(root + message.getBody().getThumbImageUrl());
+				if(message.msgType != MessageType.APP.getCode())
+					message.getBody().setFileName(root + localFileUrl);
+				json = JSON_MAPPER.writeValueAsString(message);
+			}
 			msgTool.avatarBadge(contact.getUserName(), json);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -160,11 +316,12 @@ public class ChatServer extends BaseServer {
 		}
 		
 		String msgId = null;
+		SendMsgResponse response = null;
 		for (Contact chatRoom : contacts) {
 			if (msgType == MessageType.TEXT) {
 				try {
-					wechatService.sendText(chatRoom.getUserName(), msg.getContent());
-					writeSendTextRecord(chatRoom, msg.getContent());
+					response = wechatService.sendText(chatRoom.getUserName(), msg.getContent());
+					writeSendTextRecord(chatRoom, msg.getContent(), response.getMsgID());
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -173,11 +330,11 @@ public class ChatServer extends BaseServer {
 					if(msg.getMediaCache() == null){
 						msg.setMediaCache(wechatService.uploadMedia(chatRoom.getUserName(), Config.ATTCH_PATH+msg.getContent()));
 					}
-					SendMsgResponse response = wechatService.forwardAttachMsg(chatRoom.getUserName(), msg.getMediaCache(), msgType);
+					response = wechatService.forwardAttachMsg(chatRoom.getUserName(), msg.getMediaCache(), msgType);
 					if(msgId == null)
 						msgId = response.getMsgID();
 					//写转发消息聊天记录
-					writeSendAppRecord(chatRoom, Config.ATTCH_PATH+msg.getContent(), msgId);
+					writeSendAppRecord(chatRoom, Config.ATTCH_PATH+msg.getContent(), msgId, false);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -196,6 +353,8 @@ public class ChatServer extends BaseServer {
 		}
 
 		RandomAccessFile rf = null;
+		WxMessage msg;
+		String root = System.getProperty("user.dir")+"/";
 		try {
 			rf = new RandomAccessFile(path, "r");
 			long len = rf.length();
@@ -210,7 +369,14 @@ public class ChatServer extends BaseServer {
 				c = rf.read();
 				if (c == '\n' || c == '\r') {
 					if(line.length() > 0) {
-						link.addFirst(BaseServer.JSON_MAPPER.readValue(new String(line.toString().getBytes("ISO-8859-1"), "utf-8"), WxMessage.class));
+						msg = BaseServer.JSON_MAPPER.readValue(new String(line.toString().getBytes("ISO-8859-1"), "utf-8"), WxMessage.class);
+						if(msg.direction == Direction.SEND.getCode() && msg.msgType != MessageType.TEXT.getCode() && !msg.getBody().isAbsolute()){
+							msg.getBody().setContent(root + msg.getBody().getContent());
+							msg.getBody().setThumbImageUrl(root + msg.getBody().getThumbImageUrl());
+							if(msg.msgType != MessageType.APP.getCode())
+								msg.getBody().setFileName(root + msg.getBody().getContent());
+						}
+						link.addFirst(msg);
 						line.setLength(0);
 						count++;
 					}
@@ -222,7 +388,14 @@ public class ChatServer extends BaseServer {
 				rf.seek(POINT);
 				if (POINT == 0) {// 当文件指针退至文件开始处，输出第一行
 					line.insert(0, (char)rf.read());
-					link.addFirst(BaseServer.JSON_MAPPER.readValue(new String(line.toString().getBytes("ISO-8859-1"), "utf-8"), WxMessage.class));
+					msg = BaseServer.JSON_MAPPER.readValue(new String(line.toString().getBytes("ISO-8859-1"), "utf-8"), WxMessage.class);
+					if(msg.direction == Direction.SEND.getCode() && msg.msgType != MessageType.TEXT.getCode() && !msg.getBody().isAbsolute()){
+						msg.getBody().setContent(root + msg.getBody().getContent());
+						msg.getBody().setThumbImageUrl(root + msg.getBody().getThumbImageUrl());
+						if(msg.msgType != MessageType.APP.getCode())
+							msg.getBody().setFileName(root + msg.getBody().getContent());
+					}
+					link.addFirst(msg);
 				}
 				if(count == 30)
 					break;

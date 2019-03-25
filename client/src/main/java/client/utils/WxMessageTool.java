@@ -1,6 +1,5 @@
 package client.utils;
 
-import java.io.File;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -10,7 +9,6 @@ import org.springframework.stereotype.Component;
 
 import com.cherry.jeeves.domain.shared.Contact;
 import com.cherry.jeeves.domain.shared.Owner;
-import com.cherry.jeeves.enums.MessageType;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.teamdev.jxbrowser.chromium.JSONString;
 import com.teamdev.jxbrowser.chromium.JSObject;
@@ -107,17 +105,22 @@ public class WxMessageTool extends BaseServer {
 		msg.setFrom(sender.getNickName());
 		msg.setDirection(Direction.RECEIVE.getCode());
 		
-		if(sender.getSeq() == null){
+//		if(sender.getSeq() == null){
+//			Contact member = wechatService.getChatRoomMemberInfo(chatRoom.getUserName(), sender.getUserName());
+//			if(member != null)
+//				sender.setHeadImgUrl(member.getHeadImgUrl());
+//		}
+//		File avatar = new File(Config.IMG_PATH + sender.getSeq()+".jpg");
+//		msg.setAvatar(avatar.getPath());
+//		if(!avatar.exists() && sender.getHeadImgUrl() != null && !sender.getHeadImgUrl().isEmpty()) {
+//			wechatService.download(cacheService.getHostUrl() + sender.getHeadImgUrl(), sender.getSeq()+".jpg", MessageType.IMAGE);
+//		}
+		if(sender.getHeadImgUrl() == null){
 			Contact member = wechatService.getChatRoomMemberInfo(chatRoom.getUserName(), sender.getUserName());
 			if(member != null)
 				sender.setHeadImgUrl(member.getHeadImgUrl());
 		}
-		File avatar = new File(Config.IMG_PATH + sender.getSeq()+".jpg");
-		msg.setAvatar(avatar.getPath());
-		if(!avatar.exists() && sender.getHeadImgUrl() != null && !sender.getHeadImgUrl().isEmpty()) {
-			wechatService.download(cacheService.getHostUrl() + sender.getHeadImgUrl(), sender.getSeq()+".jpg", MessageType.IMAGE);
-		}
-		
+		msg.setAvatar(cacheService.getHostUrl() + sender.getHeadImgUrl());
 		String jsonStr = "";
 		try {
 			jsonStr = JSON_MAPPER.writeValueAsString(msg);
@@ -201,11 +204,14 @@ public class WxMessageTool extends BaseServer {
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
-		if(type == 1){
+		if (type == 1) {
 			JSValue addContact = app.getProperty("addContact");
 			addContact.asFunction().invokeAsync(app, new JSONString(json));
-		}else{
+		} else if (type == 2) {
 			JSValue delContact = app.getProperty("delContact");
+			delContact.asFunction().invokeAsync(app, new JSONString(json));
+		} else {
+			JSValue delContact = app.getProperty("modContact");
 			delContact.asFunction().invokeAsync(app, new JSONString(json));
 		}
 	}

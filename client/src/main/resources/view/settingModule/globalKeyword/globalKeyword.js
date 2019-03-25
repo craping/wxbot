@@ -33,6 +33,70 @@ GlobalKeyword = {
         }
     },
     methods:{
+        changeKeyword(status){
+            if(status)
+                this.enableSeq(status);
+            else
+                this.disableSeq(e);
+        },
+        enableKeyword(e){
+            const me = this;
+            e.loading = true;
+            me.$forceUpdate();
+
+            Web.ajax("setting/enableSeq", {
+                data:{
+                    seq:e.seq,
+                    module:e.module
+                },
+                success: function (data) {
+                    wxbot.enableSeq(e.module, e.seq);
+                    me.setting[e.module].push(e.seq);
+                    me.$Message.success("操作成功!");
+                },
+                fail: function (data) {
+                    me.$Message.error("操作失败："+data.msg);
+                    e.state = !e.state;
+                    e.loading = false;
+                    me.$forceUpdate();
+                },
+                error:function(XMLHttpRequest, textStatus, errorThrown){
+                    me.$Message.error("操作失败:"+textStatus);
+                    e.state = !e.state;
+                    e.loading = false;
+                    me.$forceUpdate();
+                }
+            });
+        },
+        disableKeyword(e){
+            const me = this;
+            e.loading = true;
+            me.$forceUpdate();
+
+            Web.ajax("setting/disableSeq", {
+                data:{
+                    seq:e.seq,
+                    module:e.module
+                },
+                success: function (data) {
+                    wxbot.disableSeq(e.module, e.seq);
+                    me.setting[e.module].splice(me.setting[e.module].indexOf(e.seq), 1);
+                    me.$Message.success("操作成功!");
+                },
+                fail: function (data) {
+                    me.$Message.error("操作失败："+data.msg);
+                    e.state = !e.state;
+                    e.loading = false;
+                    me.$forceUpdate();
+                },
+                error:function(XMLHttpRequest, textStatus, errorThrown){
+                    me.$Message.error("操作失败:"+textStatus);
+                    e.state = !e.state;
+                    e.loading = false;
+                    me.$forceUpdate();
+                }
+            });
+        },
         handleKeywordUpload (file) {
             this.globalKeyword.form.file = file;
             return false;

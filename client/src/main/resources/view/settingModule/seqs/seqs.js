@@ -17,24 +17,28 @@ Seqs = {
                         seq: e.seq,
                         module:"turing",
                         state: me.setting.turing.includes(e.seq),
+                        result:me.setting.turing.includes(e.seq),
                         loading: false,
                     },
                     keywords: {
                         seq: e.seq,
                         module:"keywords",
                         state: me.setting.keywords.includes(e.seq),
+                        result:me.setting.keywords.includes(e.seq),
                         loading: false,
                     },
                     timers: {
                         seq: e.seq,
                         module:"timers",
                         state: me.setting.timers.includes(e.seq),
+                        result:me.setting.timers.includes(e.seq),
                         loading: false,
                     },
                     forwards: {
                         seq: e.seq,
                         module:"forwards",
                         state: me.setting.forwards.includes(e.seq),
+                        result:me.setting.forwards.includes(e.seq),
                         loading: false
                     }
                 };
@@ -62,6 +66,7 @@ Seqs = {
                     module:e.module
                 },
                 success: function (data) {
+                    e.result = e.state;
                     wxbot.enableSeq(e.module, e.seq);
                     me.setting[e.module].push(e.seq);
                     me.$Message.success("操作成功!");
@@ -91,8 +96,9 @@ Seqs = {
                     module:e.module
                 },
                 success: function (data) {
+                    e.result = e.state;
                     wxbot.disableSeq(e.module, e.seq);
-                    me.setting[e.module].splice(me.setting[e.module].indexOf(e.seq), 1);
+                    me.setting[e.module].splice(me.setting[e.module].findIndex(x => x == e.seq), 1);
                     me.$Message.success("操作成功!");
                 },
                 fail: function (data) {

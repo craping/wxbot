@@ -86,4 +86,24 @@
         </i-button>
         <div>机器人</div>
     </menu-item>
+    <menu-item class="text-center px-3">
+        <Badge :count="noticeCount" overflow-count="99">
+            <i-button type="info" class="py-0 px-2" style="font-size: 20px" @click="header.notice.drawer = true">
+                <i class="fas fa-bullhorn"></i>
+            </i-button>
+        </Badge>
+        <div>公告</div>
+    </menu-item>
 </i-menu>
+
+<Drawer title="公告" :mask-closable="false" :width="40" v-model="header.notice.drawer" :styles="{padding:0,'overflow-y':'auto'}">
+    <Collapse simple accordion class="border-top-0" v-if="header.notice.msgs.length > 0" @on-change="notifyCheck">
+        <Panel :name="msg.id+''" v-for="msg in header.notice.msgs">
+            {{msg.title}} {{new Date(parseInt(msg.sendTime)).format("yyyy-MM-dd")}}
+            <p slot="content" v-html="msg.content"></p>
+        </Panel>
+    </Collapse>
+    <div v-else class="h-100 d-flex justify-content-center align-items-center">
+        暂无公告
+    </div>
+</Drawer>

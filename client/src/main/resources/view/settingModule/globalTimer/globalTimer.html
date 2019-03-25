@@ -1,39 +1,39 @@
-
-<i-form inline @submit.native.prevent>
-    <form-item class="mb-0">
-        <i-button icon="ios-add" size="small" type="primary" @click="globalTimer.form.modal=true">添加定时群发</i-button>
-    </form-item>
-</i-form>
-<table class="table table-hover border fixed mb-0">
-    <thead>
-        <tr>
-            <th width="190">时间</th>
-            <th>内容</th>
-            <th class="text-center" width="70">操作</th>
-        </tr>
-    </thead>
-    <tbody style="height: 367px;">
-        <template v-if="globalTimer.msgs.length">
-            <tr v-for="e in globalTimer.msgs">
-                <td width="190">
-                    <timer-schedule :schedule="e.schedule"></timer-schedule>
-                </td>
-                <td>
-                    <tooltip :content="e.content" class="text-truncate w-100">
-                        {{e.content}}asdfasdf65w1fe65a1w6f15a6f1a65w1fe
-                    </tooltip>
-                </td>
-                <td class="text-center" width="70">
-                    <i-button size="small" @click="globalTimer.form.confirm = true;globalTimer.form.uuid = e.uuid;">删除</i-button>
-                </td>
+<div v-show="switchTimer.result">
+    <i-form inline @submit.native.prevent>
+        <form-item class="mb-0">
+            <i-button icon="ios-add" size="small" type="primary" @click="globalTimer.form.modal=true">添加定时群发</i-button>
+        </form-item>
+    </i-form>
+    <table class="table table-hover border fixed mb-0">
+        <thead>
+            <tr>
+                <th width="190">时间</th>
+                <th>内容</th>
+                <th class="text-center" width="70">操作</th>
             </tr>
-        </template>
-        <tr v-else class="h-100">
-            <td class="text-center align-middle">暂无数据</td>
-        </tr>
-    </tbody>
-</table>
-
+        </thead>
+        <tbody style="height: 367px;">
+            <template v-if="globalTimer.msgs.length">
+                <tr v-for="e in globalTimer.msgs">
+                    <td width="190">
+                        <timer-schedule :schedule="e.schedule"></timer-schedule>
+                    </td>
+                    <td>
+                        <tooltip :content="e.content" class="text-truncate w-100">
+                            {{e.content}}asdfasdf65w1fe65a1w6f15a6f1a65w1fe
+                        </tooltip>
+                    </td>
+                    <td class="text-center" width="70">
+                        <i-button size="small" @click="globalTimer.form.confirm = true;globalTimer.form.uuid = e.uuid;">删除</i-button>
+                    </td>
+                </tr>
+            </template>
+            <tr v-else class="h-100">
+                <td class="text-center align-middle">暂无数据</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
 
 <modal v-model="globalTimer.form.modal" title="添加全群定时消息" width="440" :mask-closable="false" :loading="globalTimer.form.modalLoading" class-name="vertical-center-modal"
 onselectstart="return false" ondragstart="return false" @on-ok="editMsgOk" @on-cancel="editMsgCancel">

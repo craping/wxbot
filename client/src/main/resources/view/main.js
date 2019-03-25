@@ -181,7 +181,13 @@ $script.ready(["header", "contacts", "chat", "keyword", "timer", "info"], () => 
             // this.loadContacts();
             this.syncKeywords();
             this.syncTimers();
-            this.handling();
+            // this.handling();
+            this.$Notice.config({
+                top: 545
+            });
+            for (let i = 0; i < 10; i++) {
+                this.notify({id:123+i,title:"测试标题"+i,content:"asdf2as1fasfasdf", sendTime:"1553438336023", read:false});
+            }
         },
         methods: methods
     });

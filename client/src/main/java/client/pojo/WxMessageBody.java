@@ -15,16 +15,18 @@ import client.utils.Arith;
 @JsonIgnoreProperties(ignoreUnknown=true)
 @JsonInclude(Include.NON_NULL)
 public class WxMessageBody {
-
-	/** 文本消息 */
+	
+	/** 文本消息或微信地址 */
 	public String content;
 
-	/** 缩略图 */
+	/** 缩略图或者本地路径 */
 	public String thumbImageUrl;
-	
+	/** 文件名或本地路径 */
 	public String fileName;
 	/** 文件大小 */
 	public String fileSize;
+	/** 是否绝对路径 */
+	public boolean absolute;
 
 	public WxMessageBody() {
 	};
@@ -105,5 +107,14 @@ public class WxMessageBody {
 	public void setFileSize(String fileSize) {
 		this.fileSize = fileSize;
 	}
+
+	public boolean isAbsolute() {
+		return absolute;
+	}
+
+	public void setAbsolute(boolean absolute) {
+		this.absolute = absolute;
+	}
+	
 	
 }

@@ -1,47 +1,48 @@
-<i-form @submit.native.prevent>
-    <form-item class="mb-0">
-        <i-button class="float-right" icon="ios-add" size="small" type="primary" @click="globalKeyword.form.modal=true;globalKeyword.form.edit=false;"></i-button>
-        <i-input class="d-block w-auto" style="margin-right:30px" v-model.trim.lazy="globalKeyword.form.filterKey" clearable size="small" placeholder="搜索..." prefix="ios-search" />
-    </form-item>
-</i-form>
-<table class="table table-hover border fixed mb-0">
-    <thead>
-        <tr>
-            <th>关键词</th>
-            <th>回复</th>
-            <th class="text-center" width="90">操作</th>
-        </tr>
-    </thead>
-    <tbody style="height: 375px;">
-        <template v-if="keyMap.length">
-            <tr v-for="e in keyMap">
-                <td>
-                    <tooltip :content="e.key" class="text-truncate w-100">
-                        {{e.key}}
-                    </tooltip>
-                </td>
-                <td>
-                    <tooltip :content="e.content" class="text-truncate w-100">
-                        <i class="far" :class="constant.typeIcon[e.type]"></i> {{e.content}}
-                    </tooltip>
-                </td>
-                <td class="text-center" width="90">
-                    <i-button icon="ios-create" size="small" type="default" @click="globalKeyword.form.modal=true;
-                    globalKeyword.form.key=e.key;
-                    globalKeyword.form.edit=true;
-                    globalKeyword.form.type = e.type == 1?'text':'file';
-                    globalKeyword.form.text = e.content;
-                    "></i-button>
-                    <i-button icon="ios-remove" size="small" type="primary" @click="globalKeyword.form.confirm=true;globalKeyword.form.delKey=e.key;"></i-button>
-                </td>
+<div v-show="switchKeyword.result">
+    <i-form @submit.native.prevent>
+        <form-item class="mb-0">
+            <i-button class="float-right" icon="ios-add" size="small" type="primary" @click="globalKeyword.form.modal=true;globalKeyword.form.edit=false;"></i-button>
+            <i-input class="d-block w-auto" style="margin-right:30px" v-model.trim.lazy="globalKeyword.form.filterKey" clearable size="small" placeholder="搜索..." prefix="ios-search" />
+        </form-item>
+    </i-form>
+    <table class="table table-hover border fixed mb-0">
+        <thead>
+            <tr>
+                <th>关键词</th>
+                <th>回复</th>
+                <th class="text-center" width="90">操作</th>
             </tr>
-        </template>
-        <tr v-else class="h-100">
-            <td class="text-center align-middle">暂无数据</td>
-        </tr>
-    </tbody>
-</table>
-
+        </thead>
+        <tbody style="height: 375px;">
+            <template v-if="keyMap.length">
+                <tr v-for="e in keyMap">
+                    <td>
+                        <tooltip :content="e.key" class="text-truncate w-100">
+                            {{e.key}}
+                        </tooltip>
+                    </td>
+                    <td>
+                        <tooltip :content="e.content" class="text-truncate w-100">
+                            <i class="far" :class="constant.typeIcon[e.type]"></i> {{e.content}}
+                        </tooltip>
+                    </td>
+                    <td class="text-center" width="90">
+                        <i-button icon="ios-create" size="small" type="default" @click="globalKeyword.form.modal=true;
+                        globalKeyword.form.key=e.key;
+                        globalKeyword.form.edit=true;
+                        globalKeyword.form.type = e.type == 1?'text':'file';
+                        globalKeyword.form.text = e.content;
+                        "></i-button>
+                        <i-button icon="ios-remove" size="small" type="primary" @click="globalKeyword.form.confirm=true;globalKeyword.form.delKey=e.key;"></i-button>
+                    </td>
+                </tr>
+            </template>
+            <tr v-else class="h-100">
+                <td class="text-center align-middle">暂无数据</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
 
 <modal v-model="globalKeyword.form.modal" title="全群关键词" width="400" :mask-closable="false" :loading="globalKeyword.form.modalLoading" class-name="vertical-center-modal"
 @on-ok="editKeyMapOk" @on-cancel="editKeyMapCancel">

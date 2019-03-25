@@ -63,7 +63,9 @@ $script.ready(["user", "general", "seqs", "globalTimer", "globalKeyword", "tips"
     let data = Object.assign({
         header:{},
         setting:{},
-        chatRooms:[]
+        chatRooms:[],
+        switchTimer:{},
+        switchKeyword:{}
     }, {user:User.data}, {general:General.data}, {seqs:Seqs.data}, {globalTimer:GlobalTimer.data}, {globalKeyword:GlobalKeyword.data}, {tips:Tips.data});
     let methods = Object.assign({
         filterAll(data, argumentObj) {
@@ -95,10 +97,24 @@ $script.ready(["user", "general", "seqs", "globalTimer", "globalKeyword", "tips"
             wxbot.getChatRooms(data => {
                 this.chatRooms = data;
             });
-            this.generalReset();
-            this.getMsgs();
-            this.getKeyMap();
-            this.tipsReset();
+            // this.generalReset();
+            // this.getMsgs();
+            // this.getKeyMap();
+            // this.tipsReset();
+            this.switchTimer = {
+                seq: "global",
+                module:"timers",
+                state: this.setting.timers.includes("global"),
+                result: this.setting.timers.includes("global"),
+                loading: false,
+            };
+            this.switchKeyword = {
+                seq: "global",
+                module:"keywords",
+                state: this.setting.keywords.includes("global"),
+                result: this.setting.keywords.includes("global"),
+                loading: false,
+            };
         },
         onMembersSeqChanged(seqMap){
             app.modKeywords(seqMap);
@@ -110,7 +126,7 @@ $script.ready(["user", "general", "seqs", "globalTimer", "globalKeyword", "tips"
         data: data,
         computed:computed,
         mounted() {
-            // this.syncSetting("user");
+            this.syncSetting("user");
         },
         methods: methods
     });

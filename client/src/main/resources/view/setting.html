@@ -38,12 +38,20 @@
 		</header>
 		<main class="col-9 offset-3">
 			<div class="page-header border-bottom py-2">
-				<h5>
+				<h5 class="d-flex align-items-center">
 					<i class="fas" :class="header.icon"></i> {{header.title}}
-					<i-switch size="large">
+					<i-switch v-model="switchTimer.state" size="large" class="ml-3" v-show="header.title == constant.header.globalTimer.title" :loading="switchTimer.loading" @on-change="changeSeq(switchTimer)">
 						<span slot="open">开启</span>
 						<span slot="close">关闭</span>
 					</i-switch>
+					<i-switch v-model="switchKeyword.state" size="large" class="ml-3" v-show="header.title == constant.header.globalKeyword.title":loading="switchKeyword.loading" @on-change="changeSeq(switchKeyword)">
+						<span slot="open">开启</span>
+						<span slot="close">关闭</span>
+					</i-switch>
+					<!-- <i-switch size="large" class="ml-3" v-show="header.title == constant.header.tips.title">
+						<span slot="open">开启</span>
+						<span slot="close">关闭</span>
+					</i-switch> -->
 				</h5>
 			</div>
 			<div class="tab-content pt-5">

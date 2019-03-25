@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 @JsonIgnoreProperties(ignoreUnknown=true)
 @JsonInclude(Include.NON_NULL)
 public class WxMessage {
-
+	public String msgId;
 	public String timestamp;// 操作时间戳
 	public String to; // 接收人的username或者接收group的ID
 	public String from; // 发送人username
@@ -32,6 +32,15 @@ public class WxMessage {
 	public WxMessage(int msgType, WxMessageBody body) {
 		this.msgType = msgType;
 		this.body = body;
+	}
+
+	
+	public String getMsgId() {
+		return msgId;
+	}
+
+	public void setMsgId(String msgId) {
+		this.msgId = msgId;
 	}
 
 	public String getTimestamp() {
