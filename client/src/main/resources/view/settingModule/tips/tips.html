@@ -1,21 +1,78 @@
-<div style="padding-bottom:10px;">
-    <i-button type="primary" :loading="tips.loading" @click="tipsSubmit">应用选项</i-button>
-    <i-button @click="tipsReset" class="ml-2">重置选项</i-button>
-</div>
-<Collapse>
-    <Panel name="1" title="当被拉入群自动发送设置的回复文本">
-        加群自动消息设置
-        <p slot="content"><textarea wrap="soft" autocomplete="off" spellcheck="false" placeholder="当被拉入群自动发送设置的回复文本"
-                rows="4" class="ivu-input cye-lm-tag" v-model="tips.form.chatRoomFoundTip"></textarea></p>
-    </Panel>
-    <Panel name="2" title="有新成员入群自动发送设置的回复文本">
-        进群欢迎语设置
-        <p slot="content"><textarea wrap="soft" autocomplete="off" spellcheck="false" placeholder="有新成员入群自动发送设置的回复文本"
-                rows="4" class="ivu-input cye-lm-tag" v-model="tips.form.memberJoinTip"></textarea></p>
-    </Panel>
-    <Panel name="3" title="有成员退出群自动发送设置的回复文本">
-        退群提示语设置
-        <p slot="content"><textarea wrap="soft" autocomplete="off" spellcheck="false" placeholder="有成员退出群自动发送设置的回复文本"
-                rows="4" class="ivu-input cye-lm-tag" v-model="tips.form.memberLeftTip"></textarea></p>
-    </Panel>
-</Collapse>
+<table class="table table-hover border fixed mb-0" style="height: 300px;">
+    <thead>
+        <tr>
+            <th>功能描述</th>
+            <th>回复内容</th>
+            <th class="text-center" width="90">操作</th>
+        </tr>
+    </thead>
+    <tbody style="height: 375px;">
+        <tr>
+            <td>加群自动消息设置</td>
+            <td>
+                <tooltip :content="showTipContent('chatRoomFoundTip')" class="text-truncate w-100">
+                    <i class="far" :class="constant.typeIcon[getType('chatRoomFoundTip')]"></i>
+                    {{showTipContent('chatRoomFoundTip')}}
+                </tooltip>
+                
+            </td>
+            <td class="text-center" width="90">
+                
+                <i-button icon="ios-settings" size="small" type="primary" 
+                    @click="showMoadl('chatRoomFoundTip','加群自动消息设置')"></i-button>
+            </td>
+        </tr>
+        <tr>
+            <td>进群欢迎语设置</td>
+            <td>
+                <tooltip :content="showTipContent('memberJoinTip')" class="text-truncate w-100">
+                    <i class="far" :class="constant.typeIcon[getType('memberJoinTip')]"></i>
+                    {{showTipContent('memberJoinTip')}}
+                </tooltip>
+            </td>
+            <td class="text-center" width="90">
+                
+                <i-button icon="ios-settings" size="small" type="primary" 
+                    @click="showMoadl('memberJoinTip','进群欢迎语设置')"></i-button>
+            </td>
+        </tr>
+        <tr>
+            <td>退群提示语设置</td>
+            <td>
+                <tooltip :content="showTipContent('memberLeftTip')" class="text-truncate w-100">
+                    <i class="far" :class="constant.typeIcon[getType('memberLeftTip')]"></i>
+                    {{showTipContent('memberLeftTip')}}
+                </tooltip>
+                
+            </td>
+            <td class="text-center" width="90">
+                
+                <i-button icon="ios-settings" size="small" type="primary" 
+                    @click="showMoadl('memberLeftTip','退群提示语设置')" title="设定"></i-button>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<modal v-model="tips.modal" :title="tips.title" width="400" :mask-closable="false" :loading="tips.loading" 
+    class-name="vertical-center-modal"
+    @on-ok="editOk" @on-cancel="editCancel">
+    <i-form @submit.native.prevent>
+        <form-item label="消息内容" class="mb-0">
+            <radio-group v-model="tips.type">
+                <radio label="text">文本</radio>
+                <radio label="file">文件</radio>
+            </radio-group>
+        </form-item>
+        <div>
+            <i-input v-if="tips.type == 'text'" type="textarea" :autosize="{maxRows: 4, minRows: 4}" placeholder="回复内容..." v-model="tips.text"/>
+            <Upload v-if="tips.type == 'file'" type="drag" :before-upload="handleKeywordUpload" :max-size="10240">
+                <div style="padding: 20px 0">
+                    <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
+                    <p>点击选择文件或拖拽文件到该区域</p>
+                </div>
+            </Upload>
+            <div v-if="tips.file !== null">文件名: {{ tips.file.name }}</div>
+        </div>
+    </i-form>
+</modal>

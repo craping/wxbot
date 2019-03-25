@@ -3,66 +3,57 @@ package client.pojo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-  
-/**  
-* @ClassName: Tips  
-* @Description: 提示语实体类
-* @author Crap  
-* @date 2019年3月5日  
-*    
-*/  
-    
-@JsonIgnoreProperties(ignoreUnknown=true)
+/**
+ * @ClassName: Tips
+ * @Description: 提示语实体类
+ * @author Crap
+ * @date 2019年3月5日
+ * 
+ */
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Tips {
-	
-	/**  
-	* @Fields 发现新群提示语
-	*/  
-	@JsonProperty
-	private String chatRoomFoundTip;
-	
-	  
-	/**  
-	* @Fields 成员加入提示语
-	*/  
-	@JsonProperty
-	private String memberJoinTip;
-	
-	  
-	/**  
-	* @Fields 成员退出提示语
-	*/  
-	@JsonProperty
-	private String memberLeftTip;
 
+	/**
+	 * @Fields 发现新群提示语
+	 */
+	@JsonProperty
+	private Msg chatRoomFoundTip;
 
-	public String getChatRoomFoundTip() {
+	/**
+	 * @Fields 成员加入提示语
+	 */
+	@JsonProperty
+	private Msg memberJoinTip;
+
+	/**
+	 * @Fields 成员退出提示语
+	 */
+	@JsonProperty
+	private Msg memberLeftTip;
+
+	public Msg getChatRoomFoundTip() {
 		return chatRoomFoundTip;
 	}
 
-
-	public void setChatRoomFoundTip(String chatRoomFoundTip) {
+	public void setChatRoomFoundTip(Msg chatRoomFoundTip) {
 		this.chatRoomFoundTip = chatRoomFoundTip;
 	}
 
-
-	public String getMemberJoinTip() {
+	public Msg getMemberJoinTip() {
 		return memberJoinTip;
 	}
 
-
-	public void setMemberJoinTip(String memberJoinTip) {
+	public void setMemberJoinTip(Msg memberJoinTip) {
 		this.memberJoinTip = memberJoinTip;
 	}
 
-
-	public String getMemberLeftTip() {
+	public Msg getMemberLeftTip() {
 		return memberLeftTip;
 	}
 
-
-	public void setMemberLeftTip(String memberLeftTip) {
+	public void setMemberLeftTip(Msg memberLeftTip) {
 		this.memberLeftTip = memberLeftTip;
 	}
-	
+
 }
