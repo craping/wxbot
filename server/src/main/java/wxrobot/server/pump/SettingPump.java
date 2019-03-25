@@ -203,6 +203,6 @@ public class SettingPump extends DataPump<JSONObject, FullHttpRequest, Channel> 
 				break;
 		}
 		settingServer.setTips(userInfo.getUserName(), tips);
-		return new DataResult(Errors.OK);
+		return new DataResult(Errors.OK, new Data(tips));
 	}
 }
