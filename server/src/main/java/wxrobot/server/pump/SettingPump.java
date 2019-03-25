@@ -39,6 +39,10 @@ import wxrobot.server.enums.CustomErrors;
 import wxrobot.server.param.PartParam;
 import wxrobot.server.param.TipsTypeParam;
 import wxrobot.server.param.TokenParam;
+import wxrobot.server.sync.SyncContext;
+import wxrobot.server.sync.pojo.SyncAction;
+import wxrobot.server.sync.pojo.SyncBiz;
+import wxrobot.server.sync.pojo.SyncMsg;
 
 @Pump("setting")
 @Component
@@ -89,6 +93,12 @@ public class SettingPump extends DataPump<FullHttpRequest, Channel> {
 			module = SettingModule.TURING;
 		settingServer.addSeq(userInfo.getUserName(), module, params.getString("seq"));
 		
+		//消息放入事件队列
+		SyncMsg event = new SyncMsg();
+		event.setBiz(SyncBiz.SETTING);
+		event.setAction(SyncAction.SET);
+		SyncContext.putMsg(params.get("token").toString(), event);
+		
 		return new DataResult(Errors.OK);
 	}
 	
@@ -116,6 +126,12 @@ public class SettingPump extends DataPump<FullHttpRequest, Channel> {
 			module = SettingModule.TURING;
 		long mod = settingServer.delSeq(userInfo.getUserName(), module, params.getString("seq"));
 		
+		//消息放入事件队列
+		SyncMsg event = new SyncMsg();
+		event.setBiz(SyncBiz.SETTING);
+		event.setAction(SyncAction.SET);
+		SyncContext.putMsg(params.get("token").toString(), event);
+				
 		return new DataResult(mod > 0?Errors.OK:CustomErrors.USER_OPR_ERR);
 	}
 	
@@ -140,7 +156,12 @@ public class SettingPump extends DataPump<FullHttpRequest, Channel> {
 		}
 		
 		settingServer.setSwitchs(userInfo.getUserName(), switchs);
-		
+		//消息放入事件队列
+		SyncMsg event = new SyncMsg();
+		event.setBiz(SyncBiz.SWITCHS);
+		event.setAction(SyncAction.SET);
+		SyncContext.putMsg(params.get("token").toString(), event);
+				
 		return new DataResult(Errors.OK);
 	}
 	
@@ -203,6 +224,12 @@ public class SettingPump extends DataPump<FullHttpRequest, Channel> {
 				break;
 		}
 		settingServer.setTips(userInfo.getUserName(), tips);
+		//消息放入事件队列
+		SyncMsg event = new SyncMsg();
+		event.setBiz(SyncBiz.TIPS);
+		event.setAction(SyncAction.SET);
+		SyncContext.putMsg(params.get("token").toString(), event);
+				
 		return new DataResult(Errors.OK, new Data(tips));
 	}
 }

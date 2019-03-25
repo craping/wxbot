@@ -103,7 +103,8 @@ public class KeywordMapPump extends DataPump<FullHttpRequest, Channel> {
 		
 		Map<String, Object> data = new HashMap<>();
 		data.put("seq", params.get("seq").toString());
-		data.put("keyMap", keyMap);
+		data.put("key", params.get("key").toString());
+		data.put("msg", msg);
 		event.setData(data);
 		
 		SyncContext.putMsg(params.get("token").toString(), event);

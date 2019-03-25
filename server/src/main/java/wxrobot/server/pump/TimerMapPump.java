@@ -92,7 +92,8 @@ public class TimerMapPump extends DataPump<FullHttpRequest, Channel> {
 			msg.setType(1);
 		}
 		timerServer.addMsg(userInfo.getUserName(), params.get("seq").toString(), msg);
-		//消息放入关键词事件队列
+		
+		//消息放入事件队列
 		SyncMsg event = new SyncMsg();
 		event.setBiz(SyncBiz.TIMER);
 		event.setAction(SyncAction.ADD);

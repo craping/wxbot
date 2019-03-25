@@ -22,8 +22,8 @@ public enum SyncBiz {
 	TIMER,
 	/**  联系人事件 */ 
 	CONTACT,
-	/**  群转发事件 */ 
-	FORWARD,
+	/**  设置事件 */ 
+	SETTING,
 	/**  状态控制事件 */ 
 	SWITCHS,
 	/**  提示语事件 */ 
