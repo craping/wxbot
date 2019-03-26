@@ -98,42 +98,44 @@ public abstract class ChatFunction extends ContactsFunction {
 	 */
 
 	public void sendApp(String userName, File file) {
-        String contentType = null;  
-        try {  
-            contentType = Files.probeContentType(file.toPath());
-	        
-	        SendMsgResponse response;
-	        // 发送表情
-	        if (contentType != null && contentType.contains(PREFIX_GIF)) {
-	        	response = wechatService.sendEmoticon(userName, file.getPath());
-	        }
-	        // 发送图片
-	        else if (contentType != null && contentType.contains(PREFIX_IMG)) {
-	        	response = wechatService.sendImage(userName, file.getPath());
-	        }
-	        // 发送视频
-	        else if (contentType != null && contentType.contains(PREFIX_VIDEO)) {
-	        	// 文件超限 25MB
-				if (file.length() > MAX_VIDEO_SIZE) {
-					WxbotView.getInstance().executeScript("app.$Message.error('发送的视频文件不能大于25M');");
-					return;
-				}
-				response = wechatService.sendVideo(userName, file.getPath());
-	        } else {
-	        	// 文件超限 100MB
-				if (file.length() > MAX_FILE_SIZE) {
-					WxbotView.getInstance().executeScript("app.$Message.error('发送的文件不能大于100M');");
-					return;
-				}
-				response = wechatService.sendApp(userName, file.getPath());
-	        }
-	        
-	        chatServer.writeSendAppRecord(userName.contains("@@")?cacheService.getChatRoom(userName):cacheService.getContact(userName), file.getAbsolutePath(), response.getMsgID(), true);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-		}  catch (IOException e) {
-			e.printStackTrace();
-		}
+		new Thread(() -> {
+	        String contentType = null;  
+	        try {  
+	            contentType = Files.probeContentType(file.toPath());
+		        
+		        SendMsgResponse response;
+		        // 发送表情
+		        if (contentType != null && contentType.contains(PREFIX_GIF)) {
+		        	response = wechatService.sendEmoticon(userName, file.getPath());
+		        }
+		        // 发送图片
+		        else if (contentType != null && contentType.contains(PREFIX_IMG)) {
+		        	response = wechatService.sendImage(userName, file.getPath());
+		        }
+		        // 发送视频
+		        else if (contentType != null && contentType.contains(PREFIX_VIDEO)) {
+		        	// 文件超限 25MB
+					if (file.length() > MAX_VIDEO_SIZE) {
+						WxbotView.getInstance().executeScript("app.$Message.error('发送的视频文件不能大于25M');");
+						return;
+					}
+					response = wechatService.sendVideo(userName, file.getPath());
+		        } else {
+		        	// 文件超限 100MB
+					if (file.length() > MAX_FILE_SIZE) {
+						WxbotView.getInstance().executeScript("app.$Message.error('发送的文件不能大于100M');");
+						return;
+					}
+					response = wechatService.sendApp(userName, file.getPath());
+		        }
+		        
+		        chatServer.writeSendAppRecord(userName.contains("@@")?cacheService.getChatRoom(userName):cacheService.getContact(userName), file.getAbsolutePath(), response.getMsgID(), true);
+			} catch (JsonProcessingException e) {
+				e.printStackTrace();
+			}  catch (IOException e) {
+				e.printStackTrace();
+			}
+		}).start();
 	}
 	
 	/**
@@ -197,6 +199,19 @@ public abstract class ChatFunction extends ContactsFunction {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void noticeForward(String content){
+		//转发给群
+		new Thread(() -> {
+			cacheService.getChatRooms().stream().filter(c -> SettingFunction.SETTING.getForwards().contains(c.getSeq())).forEach(c -> {
+				try {
+					chatServer.writeSendTextRecord(c, content, wechatService.sendText(c.getUserName(), content).getMsgID());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			});
+		}).start();
 	}
 
 	/**

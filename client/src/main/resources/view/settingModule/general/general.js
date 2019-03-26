@@ -3,9 +3,9 @@ General = {
         form:{
             autoAcceptFriend:null,
             globalKeyword:null,
-            globalTimer:null,
-            turingKey:localStorage.getItem("turingKey")
+            globalTimer:null
         },
+        turingKey:localStorage.getItem("turingKey")?"":localStorage.getItem("turingKey"),
         loading:false
     },
     methods:{
@@ -20,8 +20,8 @@ General = {
                     me.setting.switchs = Object.assign({}, me.general.form);
                     wxbot.syncSwitchs(me.general.form);
 
-                    me.syncTuringKey(me.general.form.turingKey);
-                    localStorage.setItem("turingKey", me.general.form.turingKey);
+                    me.syncTuringKey(me.general.turingKey);
+                    localStorage.setItem("turingKey", me.general.turingKey);
                     
                     me.general.loading = false;
                     me.$Message.success("操作成功!");
