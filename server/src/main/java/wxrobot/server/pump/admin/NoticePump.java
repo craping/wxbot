@@ -55,15 +55,22 @@ public class NoticePump extends DataPump<FullHttpRequest, Channel> {
 			@Parameter(value="title",  desc="公告标题"),
 			@Parameter(value="content",  desc="公告内容"),
 			@Parameter(value="state",  desc="发布状态", required=false),
-			@Parameter(value="sendTime",  desc="发布时间", required=false)
+			@Parameter(value="sendTime",  desc="发布时间", required=false, empty=true)
 		}
 	)
 	public Errcode addNotice(JSONObject params) throws ErrcodeException {
 		Notice notice = new Notice();
 		notice.setTitle(params.getString("title"));
 		notice.setContent(params.getString("content"));
-		notice.setSendTime(Tools.dateUTCToStamp(params.getString("sendTime")));
 		notice.setState(params.getBoolean("state"));
+		
+		// 如果勾选发布，并且发布时间为未设定时间 则设定时间为当前时间
+		if (params.getBoolean("state")) {
+			notice.setSendTime(Tools.isStrEmpty(params.optString("sendTime")) ? Tools.getTimestamp() : Tools.dateUTCToStamp(params.getString("sendTime")));
+		} else {
+			notice.setSendTime(Tools.isStrEmpty(params.optString("sendTime")) ? "" : Tools.dateUTCToStamp(params.getString("sendTime")));
+		}
+		
 		notice = noticeServer.insert(notice);
 		
 		//消息放入关键词事件队列
@@ -84,12 +91,23 @@ public class NoticePump extends DataPump<FullHttpRequest, Channel> {
 			@Parameter(value="id",  desc="公告id"),
 			@Parameter(value="title",  desc="公告标题"),
 			@Parameter(value="content",  desc="公告内容"),
-			@Parameter(value="state",  desc="发布状态"),
-			@Parameter(value="sendTime",  desc="发布时间")
+			@Parameter(value="state",  desc="发布状态", required=false),
+			@Parameter(value="sendTime",  desc="发布时间", required=false, empty=true)
 		}
 	)
 	public Errcode updNotice(JSONObject params) {
 		noticeServer.update(params);
+		
+		String id = params.getString("id");
+		if (params.getBoolean("state")) {
+			Notice notice = noticeServer.find(id);
+			
+			SyncMsg msg = new SyncMsg();
+			msg.setBiz(SyncBiz.NOTICE);
+			msg.setAction(SyncAction.ADD);
+			msg.setData(notice);
+			SyncContext.putGlobalMsg(msg);
+		}
 		return new DataResult(Errors.OK);
 	}
 	
@@ -104,6 +122,17 @@ public class NoticePump extends DataPump<FullHttpRequest, Channel> {
 	)
 	public Errcode updNoticeState(JSONObject params) {
 		noticeServer.updateState(params);
+		
+		String id = params.getString("id");
+		if (params.getBoolean("state")) {
+			Notice notice = noticeServer.find(id);
+			
+			SyncMsg msg = new SyncMsg();
+			msg.setBiz(SyncBiz.NOTICE);
+			msg.setAction(SyncAction.ADD);
+			msg.setData(notice);
+			SyncContext.putGlobalMsg(msg);
+		}
 		return new DataResult(Errors.OK);
 	}
 	

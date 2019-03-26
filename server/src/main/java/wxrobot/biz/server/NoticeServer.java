@@ -103,7 +103,16 @@ public class NoticeServer extends BaseServer {
 		update.set("title", params.getString("title"));
 		update.set("content", params.getString("content"));
 		update.set("state", params.getBoolean("state"));
-		update.set("sendTime", Tools.dateUTCToStamp(params.getString("sendTime")));
+		
+		// 如果勾选发布，并且发布时间为未设定时间 则设定时间为当前时间
+		String sendTime = "";
+		if (params.getBoolean("state")) {
+			sendTime = Tools.isStrEmpty(params.optString("sendTime")) ? Tools.getTimestamp() : Tools.dateUTCToStamp(params.getString("sendTime"));
+		} else {
+			sendTime = Tools.isStrEmpty(params.optString("sendTime")) ? "" : Tools.dateUTCToStamp(params.getString("sendTime"));
+		}
+		
+		update.set("sendTime", sendTime);
 		return mongoTemplate.upsert(query, update, Notice.class).getModifiedCount();
 	}
 }
