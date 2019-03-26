@@ -114,7 +114,7 @@ public class SyncContext implements SchedulingConfigurer {
 		}
 	}
 	
-	@Scheduled(fixedDelay=3000)
+	@Scheduled(fixedDelay=1000)
     private void run() {
 		long currentTime;
 		
