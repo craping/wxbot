@@ -105,7 +105,7 @@ export default {
             
             this.loading = true;
             let param = new FormData();
-            param.append('token', this.token);
+            param.append('token', this.token + "_m");
             param.append('tipType', this.tipType);
             param.append('content', this.radio=="1" ? this.tipsTxt : this.tipFile);
             this.$http.post("setting/setTips?format=json",  param) .then(response => {

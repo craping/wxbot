@@ -15,16 +15,18 @@ export default {
             token: ''
         }
     },
+    computed: {
+        keyMap() {
+            return this.chatRooms.filter(e => 
+                e.nickName.indexOf(this.keyword.trim()) >= 0
+            );
+        }
+    },
     mounted() {
         this.token = getParams(window.location.href).token;
         this.getContacts();
     },
     methods: {
-        onSearch() {
-            this.chatRooms = this.chatRooms.filter(e => 
-                e.nickName.indexOf(this.keyword.trim()) >= 0
-            );
-        },
         goSetting(seq) {
             this.$config.active = null;
             this.$router.push({

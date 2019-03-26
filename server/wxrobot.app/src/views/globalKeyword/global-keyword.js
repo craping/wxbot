@@ -137,7 +137,7 @@ export default {
                 return;
             }
             var param = new FormData();
-            param.append('token', this.token);
+            param.append('token', this.token + "_m");
             param.append("seq", "global");
             param.append("key", this.popupItem.keyword);
             param.append("content", this.radio=="1" ? this.popupItem.content : this.popupItem.contentFile);

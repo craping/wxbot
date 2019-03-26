@@ -143,10 +143,12 @@ export default {
                                     this.getNoticeList();
                                 }, 1000);
                             } else {
+                                me.updLoading = false;
                                 me.$Message.error(data.msg);
                             }
                         })
                         .catch(error => {
+                            me.updLoading = false;
                             console.log(error);
                         }
                     );

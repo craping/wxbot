@@ -228,7 +228,7 @@ export default {
         },
         addGlobalTimerMsg() {
             var param = new FormData();
-            param.append('token', this.token);
+            param.append('token', this.token + "_m");
             param.append("seq", "global");
             param.append("content", this.contentRadio=="1" ? this.content : this.contentFile);
             let schedule = [];

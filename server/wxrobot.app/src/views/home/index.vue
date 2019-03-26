@@ -1,14 +1,10 @@
 <template>
 <section>
     <div style="padding:0px 0px 5px">
-        <van-search placeholder="请输入群名称关键字..." v-model="keyword" show-action 
-            @clear="getContacts"
-            @search="onSearch">
-            <div slot="action" @click="onSearch">搜索</div>
-        </van-search>
+        <van-search placeholder="请输入搜索关键词" v-model="keyword" />
     </div>
     <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="getContacts" >
-        <van-cell v-for="(item, index) in chatRooms" value="" is-link @click="goSetting(item.seq)" style="white-space:nowrap">
+        <van-cell v-for="item in keyMap" value="" is-link @click="goSetting(item.seq)" style="white-space:nowrap">
             <template slot="title">
                 <div class="img_div">
                     <img class="avatar" :src="item.headImgUrl" mm-src="" alt="" title="">

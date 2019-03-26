@@ -1,5 +1,5 @@
 import axios from 'axios';
-import _config from '@/config'
+//import _config from '@/config'
 import { Toast } from 'vant'
 //import router from '../router'
 
@@ -23,7 +23,7 @@ http.interceptors.request.use(
     config => {
         //const token = _config.token;
         //console.log(config.data.token);
-        config.data.token = onfig.data.token + "_m";
+        config.data.token = config.data.token + "_m";
         return config;
     },
     err => {

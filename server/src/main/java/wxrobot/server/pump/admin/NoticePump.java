@@ -67,19 +67,17 @@ public class NoticePump extends DataPump<FullHttpRequest, Channel> {
 		// 如果勾选发布，并且发布时间为未设定时间 则设定时间为当前时间
 		if (params.getBoolean("state")) {
 			notice.setSendTime(Tools.isStrEmpty(params.optString("sendTime")) ? Tools.getTimestamp() : Tools.dateUTCToStamp(params.getString("sendTime")));
+			//消息放入关键词事件队列
+			SyncMsg msg = new SyncMsg();
+			msg.setBiz(SyncBiz.NOTICE);
+			msg.setAction(SyncAction.ADD);
+			msg.setData(notice);
+			SyncContext.putGlobalMsg(msg);
 		} else {
 			notice.setSendTime(Tools.isStrEmpty(params.optString("sendTime")) ? "" : Tools.dateUTCToStamp(params.getString("sendTime")));
 		}
 		
 		notice = noticeServer.insert(notice);
-		
-		//消息放入关键词事件队列
-		SyncMsg msg = new SyncMsg();
-		msg.setBiz(SyncBiz.NOTICE);
-		msg.setAction(SyncAction.ADD);
-		msg.setData(notice);
-		SyncContext.putGlobalMsg(msg);
-		
 		return new DataResult(Errors.OK);
 	}
 	

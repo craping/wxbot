@@ -45,7 +45,11 @@ export default {
             this.$config.active = null;
             this.$router.push({
                 path: '/tips',
-                query: { tipType: tipType, title: title }
+                query: { 
+                    tipType: tipType, 
+                    title: title,
+                    token: this.token
+                }
             })
         },
         goGlobalTimer() {
