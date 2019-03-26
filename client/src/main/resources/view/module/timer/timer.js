@@ -112,9 +112,6 @@ Timer = {
                 fail: function (data) {
                 }
             });
-            if(me.timer.form.seq){
-                me.getMsgs();
-            }
         },
         // loadMsgs(){
         //     let me = this;

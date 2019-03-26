@@ -97,10 +97,10 @@ $script.ready(["user", "general", "seqs", "globalTimer", "globalKeyword", "tips"
             wxbot.getChatRooms(data => {
                 this.chatRooms = data;
             });
-            // this.generalReset();
-            // this.getMsgs();
-            // this.getKeyMap();
-            // this.tipsReset();
+            this.generalReset();
+            this.getMsgs();
+            this.getKeyMap();
+            this.tipsReset();
             this.switchTimer = {
                 seq: "global",
                 module:"timers",
@@ -126,7 +126,7 @@ $script.ready(["user", "general", "seqs", "globalTimer", "globalKeyword", "tips"
         data: data,
         computed:computed,
         mounted() {
-            this.syncSetting("user");
+            // this.syncSetting("user");
         },
         methods: methods
     });

@@ -124,7 +124,7 @@ public class TimerJSONPump extends DataPump<FullHttpRequest, Channel> {
 		
 		long mod = timerServer.delMsg(userInfo.getUserName(), params.getString("seq"), params.getString("uuid"));
 		if(mod < 0){
-			//消息放入关键词事件队列
+			//消息放入事件队列
 			SyncMsg event = new SyncMsg();
 			event.setBiz(SyncBiz.TIMER);
 			event.setAction(SyncAction.DEL);

@@ -116,9 +116,6 @@ Keyword = {
                 fail: function (data) {
                 }
             });
-            if(me.keyword.form.seq){
-                me.getKeyMap();
-            }
         },
         // loadKeyMap(){
         //     let me = this;

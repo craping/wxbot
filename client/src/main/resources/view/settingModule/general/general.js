@@ -3,7 +3,8 @@ General = {
         form:{
             autoAcceptFriend:null,
             globalKeyword:null,
-            globalTimer:null
+            globalTimer:null,
+            turingKey:localStorage.getItem("turingKey")
         },
         loading:false
     },
@@ -18,6 +19,10 @@ General = {
                 success: function (data) {
                     me.setting.switchs = Object.assign({}, me.general.form);
                     wxbot.syncSwitchs(me.general.form);
+
+                    me.syncTuringKey(me.general.form.turingKey);
+                    localStorage.setItem("turingKey", me.general.form.turingKey);
+                    
                     me.general.loading = false;
                     me.$Message.success("操作成功!");
                 },
@@ -32,6 +37,9 @@ General = {
                     me.$Message.error("操作失败:"+textStatus);
                 }
             });
+        },
+        syncTuringKey(){
+            wxbot.syncTuringKey(localStorage.getItem("turingKey"));
         },
         generalReset() {
             this.general.form = Object.assign({}, this.setting.switchs);

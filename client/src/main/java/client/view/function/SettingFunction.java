@@ -48,6 +48,8 @@ public class SettingFunction {
 		SETTING.setForwards(new ConcurrentLinkedQueue<>());
 	}
 	
+	public static String TURING_KEY;
+	
 	public void openSetting(String menu){
 		Platform.runLater(() -> {
 			WxbotView.getInstance().openSetting(menu);
@@ -71,6 +73,10 @@ public class SettingFunction {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	public void syncTuringKey(String key){
+		TURING_KEY = key;
 	}
 	
 	public void enableSeq(String module, String seq){

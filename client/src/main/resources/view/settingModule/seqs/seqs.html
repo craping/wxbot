@@ -15,7 +15,7 @@
     <template v-slot="{item}">
         <div class="d-flex align-items-center border-bottom" style="height:46px">
             <div class="px-2" style="width:70px">{{item.seq}}</div>
-            <div class="px-2 text-truncate" style="width:439px" v-html="item.NickName"></div>
+            <div class="px-2 text-truncate" style="width:115px" v-html="item.NickName"></div>
             <div class="px-2 text-center" style="width:80px">
                 <i-switch v-model="item.turing.state" :loading="item.turing.loading" size="large" @on-change="changeSeq(item.turing)">
                     <span slot="open">开启</span>

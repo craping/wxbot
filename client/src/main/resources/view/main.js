@@ -5,11 +5,12 @@ $script("lib/vue/vue.js", "vue", () => {
     "lib/iview-3/iview.min.js"], "vue-plugs");
 });
 $script('lib/jquery/jquery-3.3.1.min.js', 'jquery', () => {
+    $script(["lib/qrcode.min.js"], "jquery-plugs");
     // $script(['lib/bootstrap-4.2.1-dist/js/popper.min.js', 'lib/bootstrap-4.2.1-dist/js/bootstrap.min.js'], 'bootstrap');
 });
 $script("lib/crypto.min.js", "crypto");
 $script("lib/common.js", "common");
-$script.ready(["vue-plugs", "jquery", "crypto", "common"], () => {
+$script.ready(["vue-plugs", "jquery-plugs", "crypto", "common"], () => {
     $("#header").load("module/header/header.html", {}, () => {
         $script("module/header/header.js", "header");
     });
@@ -132,17 +133,50 @@ $script.ready(["header", "contacts", "chat", "keyword", "timer", "info"], () => 
         },
         handling(){
             const me = this;
-            this.sync().then(data => {
+            this.sync().then(events => {
                 console.log("resolve");
-                console.log(data);
-                data.forEach(msg => {
+                console.log(events);
+                events.forEach(msg => {
                     const data = msg.data;
                     switch (msg.biz) {
+                        case "SETTING":
+                        case "SWITCHS":
+                            me.syncSetting();
+                            break;
                         case "PERMISSIONS":
                             me.permissions = data;
                             wxbot.syncPermissions(data);
                             break;
-                    
+                        case "KEYWORD":
+                            switch (msg.action) {
+                                case "DEL":
+                                    wxbot.delKeyMap(data.seq, data.keyList[0]);
+                                    break;
+                                default:
+                                    wxbot.setKeyMap(data.seq, data.key, data.msg.type, data.msg.content);
+                                    break;
+                            }
+                            if(data.seq == me.keyword.form.seq){
+                                me.getKeyMap(data.seq);
+                            }
+                            break;
+                        case "TIMER":
+                            switch (msg.action) {
+                                case "DEL":
+                                    wxbot.delMsg(data.seq, data.uuid);
+                                    break;
+                                default:
+                                    wxbot.addMsg(data.se, data.timer);
+                                    break;
+                            }
+                            if(data.seq == me.timer.form.seq){
+                                me.getMsgs(data.seq);
+                            }
+                            break;
+                        case "NOTICE":
+                            data.read = false;
+                            me.notify(data);
+                            break;
                         default:
                             break;
                     }
@@ -181,13 +215,9 @@ $script.ready(["header", "contacts", "chat", "keyword", "timer", "info"], () => 
             // this.loadContacts();
             this.syncKeywords();
             this.syncTimers();
-            // this.handling();
-            this.$Notice.config({
-                top: 545
-            });
-            for (let i = 0; i < 10; i++) {
-                this.notify({id:123+i,title:"测试标题"+i,content:"asdf2as1fasfasdf", sendTime:"1553438336023", read:false});
-            }
+            this.handling();
+            this.noticeList();
+            new QRCode(document.getElementById("wapSite"), this.header.wapSite.url);
         },
         methods: methods
     });

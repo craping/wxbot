@@ -13,6 +13,10 @@ Header = {
         notice:{
             drawer:false,
             msgs:[]
+        },
+        wapSite:{
+            modal:false,
+            url:"http://39.105.37.169:88/#/home?token="+Web.user.token
         }
     },
     computed: {
@@ -27,6 +31,31 @@ Header = {
         }
     },
     methods: {
+        noticeList(){
+            const me = this;
+            me.$Notice.config({
+                top: 545
+            });
+            Web.ajax("user/noticeList", {
+                success: function (data) {
+                    if(data.info){
+                        let readNotices = localStorage.getItem("readNotices");
+                        if(readNotices)
+                            readNotices = readNotices.split(",");
+                        else
+                            readNotices = [];
+                        me.header.notice.msgs = data.info.map(n => {
+                            n.read = readNotices.includes(n.id+"");
+                            return n;
+                        });
+                    }
+                },
+                fail: function (data) {
+                },
+                error:function(XMLHttpRequest, textStatus, errorThrown){
+                }
+            });
+        },
         notify(msg){
             const me = this;
             me.header.notice.count++;
@@ -65,7 +94,7 @@ Header = {
                 duration: 0
             });
         },
-        notifyCheck(id){
+        noticeRead(id){
             if(id[0]){
                 let readNotices = localStorage.getItem("readNotices");
                 if(readNotices)

@@ -296,25 +296,7 @@ public class ChatServer extends BaseServer {
 	*/  
 	    
 	public void sendGloba(Collection<Contact> contacts, Msg msg) {
-		MessageType msgType;
-		switch (msg.getType()) {
-		case 1:
-			msgType = MessageType.TEXT;
-			break;
-		case 2:
-			msgType = MessageType.IMAGE;
-			break;
-		case 3:
-			msgType = MessageType.EMOTICON;
-			break;
-		case 4:
-			msgType = MessageType.VIDEO;
-			break;
-		default:
-			msgType = MessageType.APP;
-			break;
-		}
-		
+		MessageType msgType = msg.getMsgType();
 		String msgId = null;
 		SendMsgResponse response = null;
 		for (Contact chatRoom : contacts) {
