@@ -14,7 +14,7 @@ Tips = {
         tipType: ''
     },
     methods: {
-        showMoadl(mode, title) {
+        showTipMoadl(mode, title) {
             this.tips.title = title;
             this.tips.tipType = mode;
             if (Object.keys(this.tips.form[mode]).length > 0) {
@@ -32,15 +32,15 @@ Tips = {
             this.tips.file = file;
             return false;
         },
-        editCancel(){
+        tipsCancel(){
             this.tips.type = "text";
             this.tips.text = null;
             this.tips.file = null;
         },
-        getType(mode){
+        getTipType(mode){
             return this.tips.form[mode]?this.tips.form[mode].type:"";
         },
-        editOk() {
+        tipsOk() {
             const me = this;
             me.tips.loading = true;
             var form = new FormData();
@@ -59,7 +59,7 @@ Tips = {
                             me.tips.form = data.data.info;
                             wxbot.syncTips(me.tips.form);
                         }
-                        me.editCancel();
+                        me.tipsCancel();
                         me.tips.modal = false;
                         me.tips.loading = false;
                         me.$Message.success("操作成功!");

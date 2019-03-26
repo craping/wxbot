@@ -11,7 +11,7 @@
             <td>加群自动消息设置</td>
             <td>
                 <tooltip :content="showTipContent('chatRoomFoundTip')" class="text-truncate w-100">
-                    <i class="far" :class="constant.typeIcon[getType('chatRoomFoundTip')]"></i>
+                    <i class="far" :class="constant.typeIcon[getTipType('chatRoomFoundTip')]"></i>
                     {{showTipContent('chatRoomFoundTip')}}
                 </tooltip>
                 
@@ -19,28 +19,28 @@
             <td class="text-center" width="90">
                 
                 <i-button icon="ios-settings" size="small" type="primary" 
-                    @click="showMoadl('chatRoomFoundTip','加群自动消息设置')"></i-button>
+                    @click="showTipMoadl('chatRoomFoundTip','加群自动消息设置')"></i-button>
             </td>
         </tr>
         <tr>
             <td>进群欢迎语设置</td>
             <td>
                 <tooltip :content="showTipContent('memberJoinTip')" class="text-truncate w-100">
-                    <i class="far" :class="constant.typeIcon[getType('memberJoinTip')]"></i>
+                    <i class="far" :class="constant.typeIcon[getTipType('memberJoinTip')]"></i>
                     {{showTipContent('memberJoinTip')}}
                 </tooltip>
             </td>
             <td class="text-center" width="90">
                 
                 <i-button icon="ios-settings" size="small" type="primary" 
-                    @click="showMoadl('memberJoinTip','进群欢迎语设置')"></i-button>
+                    @click="showTipMoadl('memberJoinTip','进群欢迎语设置')"></i-button>
             </td>
         </tr>
         <tr>
             <td>退群提示语设置</td>
             <td>
                 <tooltip :content="showTipContent('memberLeftTip')" class="text-truncate w-100">
-                    <i class="far" :class="constant.typeIcon[getType('memberLeftTip')]"></i>
+                    <i class="far" :class="constant.typeIcon[getTipType('memberLeftTip')]"></i>
                     {{showTipContent('memberLeftTip')}}
                 </tooltip>
                 
@@ -48,7 +48,7 @@
             <td class="text-center" width="90">
                 
                 <i-button icon="ios-settings" size="small" type="primary" 
-                    @click="showMoadl('memberLeftTip','退群提示语设置')" title="设定"></i-button>
+                    @click="showTipMoadl('memberLeftTip','退群提示语设置')" title="设定"></i-button>
             </td>
         </tr>
     </tbody>
@@ -56,7 +56,7 @@
 
 <modal v-model="tips.modal" :title="tips.title" width="400" :mask-closable="false" :loading="tips.loading" 
     class-name="vertical-center-modal"
-    @on-ok="editOk" @on-cancel="editCancel">
+    @on-ok="tipsOk" @on-cancel="tipsCancel">
     <i-form @submit.native.prevent>
         <form-item label="消息内容" class="mb-0">
             <radio-group v-model="tips.type">
