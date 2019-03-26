@@ -107,7 +107,7 @@ Contacts = {
         },
         delContact(contacts){
             contacts.forEach(e => {
-                const contacts = userName.includes("@@")?this.contacts.chatRooms:this.contacts.individuals;
+                const contacts = e.UserName.includes("@@")?this.contacts.chatRooms:this.contacts.individuals;
                 const index = contacts.findIndex(c => c.UserName == e.UserName);
                 if(index != -1)
                     contacts.splice(index, 1);

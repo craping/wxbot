@@ -9,6 +9,8 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -32,6 +34,7 @@ import client.utils.WxMessageTool;
 
 @Component
 public class ChatServer extends BaseServer {
+	private static final Logger logger = LoggerFactory.getLogger(ChatServer.class);
 	
 	@Value("${wechat.url.get_msg_img}")
     private String WECHAT_URL_GET_MSG_IMG;
@@ -101,7 +104,8 @@ public class ChatServer extends BaseServer {
 		default:
 			// 下载文件
 //			mediaUrl = wechatHttpService.download(mediaUrl, message.getMsgId() + "_" + message.getFileName(), MessageType.APP);
-			msg = new WxMessage(MessageType.APP.getCode(), new WxMessageBody(fullImageUrl, message.getFileName(), FileUtil.getFileSizeString(Long.valueOf(message.getFileSize()))));
+			long fileSize = message.getFileSize() == null || message.getFileSize().isEmpty()?0:Long.valueOf(message.getFileSize());
+			msg = new WxMessage(MessageType.APP.getCode(), new WxMessageBody(fullImageUrl, message.getFileName(), FileUtil.getFileSizeString(fileSize)));
 			msg.getBody().setThumbImageUrl(Config.FILE_PATH +message.getMsgId() + "_" + message.getFileName());
 			break;
 		}
@@ -115,7 +119,7 @@ public class ChatServer extends BaseServer {
 				|| (message.getToUserName() != null && message.getToUserName().startsWith("@@"));
 		
 		Contact contact;
-		
+		logger.debug("[writeReceiveRecord]");
 		if(isChatRoom){
 			if (message.getFromUserName().equals(cacheService.getOwner().getUserName())) {
 				contact = cacheService.getChatRoom(message.getToUserName());
@@ -139,6 +143,7 @@ public class ChatServer extends BaseServer {
 					msgTool.receiveMessage(contact, cacheService.getOwner(), msg);
 			}
 		}
+		logger.debug("[writeReceiveRecord done]");
 	}
 	/**  
 	* @Title: writeReceiveRecord  
@@ -158,7 +163,7 @@ public class ChatServer extends BaseServer {
 		WxMessage msg = createReceiveMsg(message, msgType, fullImageUrl, thumbImageUrl);
 		
 		Contact contact;
-		
+		logger.debug("[writeReceiveRecord]");
 		if(isChatRoom){
 			if (message.getFromUserName().equals(cacheService.getOwner().getUserName())) {
 				contact = cacheService.getChatRoom(message.getToUserName());
@@ -182,6 +187,7 @@ public class ChatServer extends BaseServer {
 					msgTool.receiveMessage(contact, cacheService.getOwner(), msg);
 			}
 		}
+		logger.debug("[writeReceiveRecord done]");
 	}
 	
 	/**  

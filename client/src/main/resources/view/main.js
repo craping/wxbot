@@ -134,9 +134,8 @@ $script.ready(["header", "contacts", "chat", "keyword", "timer", "info"], () => 
         handling(){
             const me = this;
             this.sync().then(events => {
-                console.log("resolve");
-                console.log(events);
                 events.forEach(msg => {
+                    console.log(msg);
                     const data = msg.data;
                     switch (msg.biz) {
                         case "SETTING":

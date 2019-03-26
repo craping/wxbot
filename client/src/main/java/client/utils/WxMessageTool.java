@@ -178,7 +178,22 @@ public class WxMessageTool extends BaseServer {
 					TimerFunction.TIMER_MAP.put(v, queue);
 			}
 			
-			//同步群转发seq
+			//同步群列表seq
+			if(SettingFunction.SETTING != null && SettingFunction.SETTING.getTuring() != null){
+				if(SettingFunction.SETTING.getTuring().remove(k))
+					SettingFunction.SETTING.getTuring().add(v);
+			}
+			
+			if(SettingFunction.SETTING != null && SettingFunction.SETTING.getKeywords() != null){
+				if(SettingFunction.SETTING.getKeywords().remove(k))
+					SettingFunction.SETTING.getKeywords().add(v);
+			}
+			
+			if(SettingFunction.SETTING != null && SettingFunction.SETTING.getTimers() != null){
+				if(SettingFunction.SETTING.getTimers().remove(k))
+					SettingFunction.SETTING.getTimers().add(v);
+			}
+			
 			if(SettingFunction.SETTING != null && SettingFunction.SETTING.getForwards() != null){
 				if(SettingFunction.SETTING.getForwards().remove(k))
 					SettingFunction.SETTING.getForwards().add(v);

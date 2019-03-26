@@ -192,36 +192,6 @@ public class FileUtil {
 	}
 
 	/**
-	 * 获取文件内容
-	 * 
-	 * @param name
-	 * @return
-	 */
-	public static String getString(String name) {
-		String s = "";
-		try {
-			String encoding = "UTF-8"; // 字符编码(可解决中文乱码问题 )
-			File file = new File(name);
-
-			if (file.isFile() && file.exists()) {
-				InputStreamReader read = new InputStreamReader(new FileInputStream(file), encoding);
-				BufferedReader bufferedReader = new BufferedReader(read);
-				String lineTXT = null;
-				while ((lineTXT = bufferedReader.readLine()) != null) {
-					s += lineTXT.toString();
-				}
-				read.close();
-			} else {
-				System.out.println("找不到指定的文件！");
-			}
-		} catch (Exception e) {
-			System.out.println("读取文件内容操作出错");
-			e.printStackTrace();
-		}
-		return s;
-	}
-
-	/**
 	 * 查询文件夹
 	 * 
 	 * @param path 目录

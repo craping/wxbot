@@ -467,12 +467,13 @@ public class MessageHandlerImpl implements MessageHandler {
 		chatRooms.forEach(x -> logger.debug(x.getUserName()));
 		msgTool.execContactsChanged(chatRooms, ChangeType.ADD.getCode());
 		
-		if(SettingFunction.SETTING.getTips().getChatRoomFoundTip() != null){
+		if(chatRooms != null && chatRooms.size() >0 && SettingFunction.SETTING.getTips().getChatRoomFoundTip() != null){
 			chatRooms.forEach(chatRoom -> {
 				chatServer.sendGloba(Arrays.asList(chatRoom), SettingFunction.SETTING.getTips().getChatRoomFoundTip());
 			});
 		}
 	}
+	
 	@Override
 	public void onChatRoomsModify(Set<Contact> chatRooms) {
 		logger.debug("群信息变动");
