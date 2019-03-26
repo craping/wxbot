@@ -175,6 +175,7 @@ $script.ready(["header", "contacts", "chat", "keyword", "timer", "info"], () => 
                         case "NOTICE":
                             data.read = false;
                             me.notify(data);
+                            wxbot.noticeForward(data.content);
                             break;
                         default:
                             break;
