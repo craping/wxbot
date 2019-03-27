@@ -103,13 +103,22 @@ public class UserPump extends DataPump<FullHttpRequest, Channel> {
 		String userName = params.getString("login_name");
 		String userPwd = params.getString("login_pwd");
 		User user = userServer.getUser(userName, userPwd);
-		if (user == null) //判断用户是否存在
+		// 判断用户是否存在
+		if (user == null) 
 			return new Result(CustomErrors.USER_ACC_ERR);
-		
+		// 已登录 则删除当前登录状态，和所有队列的通知消息
 		if (!Tools.isStrEmpty(user.getToken())) {
-			redisTemplate.delete("user_" + user.getToken()); //  删除当前缓存
+			redisTemplate.delete("user_" + user.getToken()); 
+			redisTemplate.delete("queue_" + user.getToken()); 
+			redisTemplate.delete("queue_" + user.getToken() + "_m"); 
 		}
-		
+		// 已注销，不可登录
+		if (user.getUserInfo().getDestroy()) 
+			return new Result(CustomErrors.USER_DESTROY);
+		// 用户服务状态已过期
+		if (Tools.isOverTime(Long.valueOf(user.getUserInfo().getServerEnd()), 1))
+			return new Result(CustomErrors.USER_SERVER_END);
+			
 		// 生成新的用户token 并持久化
 		String new_token = StringUtil.uuid(); 	
 		user.setToken(new_token);

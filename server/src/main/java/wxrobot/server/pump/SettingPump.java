@@ -165,6 +165,38 @@ public class SettingPump extends DataPump<FullHttpRequest, Channel> {
 		return new DataResult(Errors.OK);
 	}
 	
+	@Pipe("cancelTips")
+	@BarScreen(
+		desc="提示语设置",
+		params= {
+			@Parameter(type=TokenParam.class),
+			@Parameter(type=TipsTypeParam.class, value="tipType", desc="提示语类型")
+		}
+	)
+	public Errcode cancelTips(JSONObject params) throws ErrcodeException {
+		UserInfo userInfo = settingServer.getUserInfo(params);
+		Tips tips = settingServer.getSetting(userInfo.getUserName()).getTips();
+		if (tips == null) {
+			return new DataResult(Errors.OK, new Data(tips));
+		}
+			
+		switch (TipsType.getTipsType(params.get("tipType").toString())) {
+			case CHATROOMFOUND:
+				tips.setChatRoomFoundTip(null);
+				break;
+			case MEMBERJOIN:
+				tips.setMemberJoinTip(null);
+				break;
+			case MEMBERLEFT:
+				tips.setMemberLeftTip(null);
+				break;
+			default:
+				break;
+		}
+		settingServer.setTips(userInfo.getUserName(), tips);
+		return new DataResult(Errors.OK, new Data(tips));
+	}
+	
 	@Pipe("setTips")
 	@BarScreen(
 		desc="提示语设置",
@@ -210,6 +242,8 @@ public class SettingPump extends DataPump<FullHttpRequest, Channel> {
 		}
 		
 		Tips tips = settingServer.getSetting(userInfo.getUserName()).getTips();
+		if (tips == null) 
+			tips = new Tips();
 		switch (TipsType.getTipsType(params.get("tipType").toString())) {
 			case CHATROOMFOUND:
 				tips.setChatRoomFoundTip(msg);
