@@ -173,7 +173,7 @@ Timer = {
             form.append("schedule", schedule);
 
             $.ajax({
-                url: Web.serverURL + "timer/addMsg?format=json",
+                url: Web.serverURL + "/timer/addMsg?format=json",
                 type: "post",
                 data: form,
                 processData: false,
@@ -184,6 +184,9 @@ Timer = {
                         wxbot.addMsg(me.timer.form.seq, data.data.info);
                         me.timer.form.modal = false;
                         me.timer.form.modalLoading = false;
+                        me.$nextTick(() => {
+                            me.timer.form.modalLoading = true;
+                        });
                         me.timer.form.type = "text";
                         me.timer.form.text = null;
                         me.timer.form.file = null;

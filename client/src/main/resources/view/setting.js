@@ -115,6 +115,7 @@ $script.ready(["user", "general", "seqs", "globalTimer", "globalKeyword", "tips"
                 result: this.setting.keywords.includes("global"),
                 loading: false,
             };
+            this.general.turingKey = localStorage.getItem("turingKey")?localStorage.getItem("turingKey"):"";
         },
         onMembersSeqChanged(seqMap){
             app.modKeywords(seqMap);

@@ -1,6 +1,6 @@
 <card v-if="chat.title !=' '" style="height: inherit;" dis-hover="true" class="p-0 bg-gray h-100 rounded-0">
     <p slot="title" v-html="chat.title"></p>
-    <Dynamic-Scroller :items="chat.chatRecord" ref="chatScroller" :min-item-size="71" style="height: 410px;" type-field="msgType" key-field="msgId">
+    <Dynamic-Scroller :items="chat.chatRecord" ref="chatScroller" :min-item-size="71" style="height: 410px;" type-field="msgType" key-field="timestamp">
         <template #before v-if="chat.hasMore">
             <div class="text-center">
                 <Spin v-show="chat.loading">
@@ -23,7 +23,7 @@
                         <!-- 图片消息 -->
                         <div class="popover-body" v-else-if="item.msgType==3" >
                             <a :href="item.body.content" target="_blank">
-                                <img :src="item.body.thumbImageUrl" style="max-height:100px;cursor: pointer;" />
+                                <img :src="item.body.thumbImageUrl" style="max-height:100px;max-width: 200px;cursor: pointer;" />
                             </a>
                         </div>
                         <!-- 语音消息 -->
@@ -41,14 +41,14 @@
                         </div>
                         <!-- 视频消息 -->
                         <div class="popover-body" v-else-if="item.msgType==43" @click="mediaPlay(item)">
-                            <video name="media" v-bind:poster="item.body.thumbImageUrl" style="max-height:200px;cursor: pointer;">
+                            <video name="media" v-bind:poster="item.body.thumbImageUrl" style="max-height:200px;max-width: 200px;cursor: pointer;">
                                 <source v-bind:src="item.body.content" type="video/mp4">
                             </video>
                             <i data-playPause class="playPause fa fa-play ui-icon"><span></span></i>
                         </div>
                         <!-- 表情消息 -->
                         <div class="popover-body" v-else-if="item.msgType==47">
-                            <img :src="item.body.content" style="max-height:100px;" />
+                            <img :src="item.body.content" style="max-height:100px;max-width: 200px;" />
                         </div>
                         <!-- 多媒体消息 -->
                         <div class="popover-body" v-else-if="item.msgType==49">

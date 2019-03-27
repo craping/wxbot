@@ -16,7 +16,7 @@ Header = {
         },
         wapSite:{
             modal:false,
-            url:"http://39.105.37.169:88/#/home?token="+Web.user.token
+            url:Web.serverURL+":88/#/home?token="+Web.user.token
         }
     },
     computed: {
@@ -31,6 +31,9 @@ Header = {
         }
     },
     methods: {
+        syncTuringKey(){
+            wxbot.syncTuringKey(localStorage.getItem("turingKey"));
+        },
         noticeList(){
             const me = this;
             me.$Notice.config({

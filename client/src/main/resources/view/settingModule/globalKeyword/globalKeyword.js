@@ -110,10 +110,18 @@ GlobalKeyword = {
             form.append("token", Web.user.token);
             form.append("seq", "global");
             form.append("key", me.globalKeyword.form.key);
-            form.append("content", me.globalKeyword.form.type=="text"?me.globalKeyword.form.text:me.globalKeyword.form.file);
-
+            const content = me.globalKeyword.form.type=="text"?me.globalKeyword.form.text:me.globalKeyword.form.file;
+            form.append("content", content);
+            if(!me.globalKeyword.form.key || me.globalKeyword.form.key == "" || !content || content == null || content == ""){
+                me.$Message.error("信息不完整");
+                me.globalKeyword.form.modalLoading = false;
+                me.$nextTick(() => {
+                    me.globalKeyword.form.modalLoading = true;
+                });
+                return;
+            }
             $.ajax({
-                url: Web.serverURL + "keyword/set?format=json",
+                url: Web.serverURL + "/keyword/set?format=json",
                 type: "post",
                 data: form,
                 processData: false,
@@ -128,6 +136,9 @@ GlobalKeyword = {
                         me.globalKeyword.form.file = null;
                         me.globalKeyword.form.modal = false;
                         me.globalKeyword.form.modalLoading = false;
+                        me.$nextTick(() => {
+                            me.globalKeyword.form.modalLoading = true;
+                        });
                         me.$Message.success("操作成功!");
                     } else {
                         me.globalKeyword.form.modalLoading = false;

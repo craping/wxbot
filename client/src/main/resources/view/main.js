@@ -217,6 +217,7 @@ $script.ready(["header", "contacts", "chat", "keyword", "timer", "info"], () => 
             this.syncTimers();
             this.handling();
             this.noticeList();
+            this.syncTuringKey();
             new QRCode(document.getElementById("wapSite"), this.header.wapSite.url);
         },
         methods: methods

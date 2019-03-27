@@ -146,10 +146,19 @@ Keyword = {
             form.append("token", Web.user.token);
             form.append("seq", me.keyword.form.seq);
             form.append("key", me.keyword.form.key);
-            form.append("content", me.keyword.form.type=="text"?me.keyword.form.text:me.keyword.form.file);
+            const content = me.keyword.form.type=="text"?me.keyword.form.text:me.keyword.form.file;
+            form.append("content", content);
+            if(!me.keyword.form.key || me.keyword.form.key == "" || !content || content == null || content == ""){
+                me.$Message.error("信息不完整");
+                me.keyword.form.modalLoading = false;
+                me.$nextTick(() => {
+                    me.keyword.form.modalLoading = true;
+                });
+                return;
+            }
 
             $.ajax({
-                url: Web.serverURL + "keyword/set?format=json",
+                url: Web.serverURL + "/keyword/set?format=json",
                 type: "post",
                 data: form,
                 processData: false,
@@ -164,6 +173,9 @@ Keyword = {
                         me.keyword.form.file = null;
                         me.keyword.form.modal = false;
                         me.keyword.form.modalLoading = false;
+                        me.$nextTick(() => {
+                            me.keyword.form.modalLoading = true;
+                        });
                         me.$Message.success("操作成功!");
                     } else {
                         me.keyword.form.modalLoading = false;

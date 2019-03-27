@@ -116,7 +116,7 @@ GlobalTimer = {
             form.append("schedule", schedule);
 
             $.ajax({
-                url: Web.serverURL + "timer/addMsg?format=json",
+                url: Web.serverURL + "/timer/addMsg?format=json",
                 type: "post",
                 data: form,
                 processData: false,
@@ -127,6 +127,9 @@ GlobalTimer = {
                         wxbot.addMsg("global", data.data.info);
                         me.globalTimer.form.modal = false;
                         me.globalTimer.form.modalLoading = false;
+                        me.$nextTick(() => {
+                            me.globalTimer.form.modalLoading = true;
+                        });
                         me.globalTimer.form.text = null;
                         me.globalTimer.form.file = null;
                         me.globalTimer.form.scheduleType = 1;

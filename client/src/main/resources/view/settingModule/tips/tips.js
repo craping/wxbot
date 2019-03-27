@@ -48,7 +48,7 @@ Tips = {
             form.append("tipType", me.tips.tipType);
             form.append("content", me.tips.type=="text"?me.tips.text:me.tips.file);
             $.ajax({
-                url: Web.serverURL + "setting/setTips?format=json",
+                url: Web.serverURL + "/setting/setTips?format=json",
                 type: "post",
                 data: form,
                 processData: false,

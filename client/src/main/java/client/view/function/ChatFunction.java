@@ -148,7 +148,7 @@ public abstract class ChatFunction extends ContactsFunction {
 			try {
 				String path = Config.CHAT_RECORD_PATH + seq + "/" + date.replace("-", "") + ".txt";
 				List<WxMessage> link = chatServer.readRecord(path);
-				function.invokeAsync(function, new JSONString(BaseServer.JSON_MAPPER.writeValueAsString(link)));
+				function.invoke(function, new JSONString(BaseServer.JSON_MAPPER.writeValueAsString(link)));
 			} catch (JsonProcessingException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
@@ -163,7 +163,7 @@ public abstract class ChatFunction extends ContactsFunction {
 				String path = Config.CHAT_RECORD_PATH + seq + "/" + date.replace("-", "") + ".txt";
 				ChatServer.POINT = null;
 				List<WxMessage> link = chatServer.readRecord(path);
-				function.invokeAsync(function, new JSONString(BaseServer.JSON_MAPPER.writeValueAsString(link)));
+				function.invoke(function, new JSONString(BaseServer.JSON_MAPPER.writeValueAsString(link)));
 			} catch (JsonProcessingException e) {
 				e.printStackTrace();
 			} catch (IOException e) {

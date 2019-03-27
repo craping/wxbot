@@ -102,7 +102,7 @@ var Store = Store||{
 
 
 var Web = {
-	serverURL: wxbot.getDomain()+"/",
+	serverURL: wxbot.getDomain(),
 	wxHost:wxbot.getHostUrl(),
 	root:wxbot.getRootPath(),
     owner:wxbot.getOwner(),
@@ -120,7 +120,7 @@ var Web = {
 			data: {
 				token:  Web.user?Web.user.token:null,
 			},
-			url: Web.serverURL,
+			url: Web.serverURL+"/",
 			success: function () { },
 			fail: function () { },
 			error: function () { }
