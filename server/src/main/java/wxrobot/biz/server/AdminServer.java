@@ -74,7 +74,7 @@ public class AdminServer extends BaseServer {
 	public long extension(JSONObject params) {
 		Query query = new Query();
 		query.addCriteria(Criteria.where("_id").is(params.optString("id")));
-		Update update = Update.update("userInfo.serverEnd", Tools.dateToStamp(params.getString("server_end"), "yyyy-MM-dd"));
+		Update update = Update.update("userInfo.serverEnd", Tools.dateToStamp(params.getString("server_end"), "yyyy-MM-dd HH:mm"));
 		return mongoTemplate.updateFirst(query, update, User.class).getModifiedCount();
 	}
 

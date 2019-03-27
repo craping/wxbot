@@ -11,13 +11,15 @@ Tips = {
         type:'text',
         text:'',
         file:null,
-        tipType: ''
+        tipType: '',
+        cancelModal: false,
+        cancelLoading: false
     },
     methods: {
         showTipMoadl(mode, title) {
             this.tips.title = title;
             this.tips.tipType = mode;
-            if (Object.keys(this.tips.form[mode]).length > 0) {
+            if (this.tips.form[mode] != null) {
                 const tip = this.tips.form[mode];
                 if (tip.type == 1 || tip.type == 0) {
                     this.tips.type = 'text';
@@ -27,6 +29,36 @@ Tips = {
                 this.tips.text = tip.content;
             }
             this.tips.modal = true;
+        },
+        cancelTipMoadl(mode, title) {
+            this.tips.title = title;
+            this.tips.tipType = mode;
+            this.tips.cancelModal = true;
+        },
+        cancelTips(){
+            let me = this;
+            me.tips.cancelLoading = true;
+            Web.ajax("setting/cancelTips", {
+                data:{ tipType: me.tips.tipType },
+                success: function (data) {
+                    me.tips.cancelLoading = false;
+                    me.tips.cancelModal = false;
+                    console.log(data);
+                    me.tips.form = data.info;
+                    wxbot.syncTips(me.tips.form);
+                    me.$Message.success("操作成功!");
+                },
+                fail: function (data) {
+                    me.tips.cancelLoading = false;
+                    me.tips.cancelModal = false;
+                    me.$Message.error("操作失败："+data.msg);
+                },
+                error:function(XMLHttpRequest, textStatus, errorThrown){
+                    me.tips.cancelLoading = false;
+                    me.tips.cancelModal = false;
+                    me.$Message.error("操作失败:"+textStatus);
+                }
+            });
         },
         handleKeywordUpload (file) {
             this.tips.file = file;

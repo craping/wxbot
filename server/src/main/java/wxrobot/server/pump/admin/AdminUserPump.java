@@ -152,6 +152,13 @@ public class AdminUserPump extends DataPump<FullHttpRequest, Channel> {
 			msg.setData(params.getBoolean("server_state"));
 			SyncContext.toMsg(user.getToken(), msg);
 		}
+		
+		// 关机机器人，修改用户权限 -> 只能聊天
+		if (!params.getBoolean("server_state")) {
+			Permissions permissions = new Permissions();
+			permissions.setChat(true);
+			settingServer.setPermissions(user.getUserInfo().getUserName(), permissions);
+		}
 		return new DataResult(Errors.OK);
 	}
 	

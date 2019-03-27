@@ -8,7 +8,6 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import wxrobot.dao.entity.Setting;
-import wxrobot.dao.entity.field.Msg;
 import wxrobot.dao.entity.field.Permissions;
 import wxrobot.dao.entity.field.Switchs;
 import wxrobot.dao.entity.field.Tips;
@@ -58,11 +57,7 @@ public class SettingServer extends BaseServer {
 		set.setKeywords(new LinkedList<String>());
 		set.setTimers(new LinkedList<String>());
 		set.setForwards(new LinkedList<String>());
-		Tips tips = new Tips();
-		tips.setChatRoomFoundTip(new Msg());
-		tips.setMemberJoinTip(new Msg());
-		tips.setMemberLeftTip(new Msg());
-		set.setTips(tips);
+		set.setTips(null);
 		Switchs switchs =new Switchs();
 		switchs.setAutoAcceptFriend(false);
 		switchs.setGlobalKeyword(false);
