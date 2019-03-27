@@ -443,7 +443,7 @@ public class MessageHandlerImpl implements MessageHandler {
 //			logger.debug("离开成员:" + String.join(",", membersLeft.stream().map(Contact::getNickName).collect(Collectors.toList())));
 //		}
 		Msg joinTip = SettingFunction.SETTING.getTips().getMemberJoinTip();
-		if(membersJoined != null && membersJoined.size() > 0 && joinTip != null){
+		if(membersJoined != null && membersJoined.size() > 0 && joinTip != null && joinTip.getType() != 0){
 			StringBuffer members = new StringBuffer();
 			if (joinTip.getMsgType() == MessageType.TEXT) {
 				membersJoined.forEach(c -> {
@@ -456,8 +456,18 @@ public class MessageHandlerImpl implements MessageHandler {
 			}
 		}
 		
-		if(membersLeft != null && membersLeft.size() > 0 && SettingFunction.SETTING.getTips().getMemberLeftTip() != null){
-			chatServer.sendGloba(Arrays.asList(chatRoom), SettingFunction.SETTING.getTips().getMemberLeftTip());
+		Msg letfTip = SettingFunction.SETTING.getTips().getMemberLeftTip();
+		if(membersLeft != null && membersLeft.size() > 0 && letfTip != null && letfTip.getType() != 0){
+			StringBuffer members = new StringBuffer();
+			if (letfTip.getMsgType() == MessageType.TEXT) {
+				membersLeft.forEach(c -> {
+					members.append("@").append(c.getNickName()).append(" ");
+				});
+				chatServer.sendGloba(Arrays.asList(chatRoom), new Msg(MessageType.TEXT, letfTip.getContent().replace("[user]", members.toString())));
+			} else {
+				chatServer.sendGloba(Arrays.asList(chatRoom), new Msg(MessageType.TEXT, members.toString()));
+				chatServer.sendGloba(Arrays.asList(chatRoom), letfTip);
+			}
 		}
 	}
 
@@ -467,7 +477,7 @@ public class MessageHandlerImpl implements MessageHandler {
 		chatRooms.forEach(x -> logger.debug(x.getUserName()));
 		msgTool.execContactsChanged(chatRooms, ChangeType.ADD.getCode());
 		
-		if(chatRooms != null && chatRooms.size() >0 && SettingFunction.SETTING.getTips().getChatRoomFoundTip() != null){
+		if(chatRooms != null && chatRooms.size() >0 && SettingFunction.SETTING.getTips().getChatRoomFoundTip() != null && SettingFunction.SETTING.getTips().getChatRoomFoundTip().getType() != 0){
 			chatRooms.forEach(chatRoom -> {
 				chatServer.sendGloba(Arrays.asList(chatRoom), SettingFunction.SETTING.getTips().getChatRoomFoundTip());
 			});
