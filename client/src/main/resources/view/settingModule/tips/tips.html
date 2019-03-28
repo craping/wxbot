@@ -7,7 +7,7 @@
         </tr>
     </thead>
     <tbody style="height: 375px;">
-        <tr>
+        <tr v-if="setting.permissions.chatRoomFoundTip">
             <td>加群自动消息设置</td>
             <td>
                 <tooltip :content="showTipContent('chatRoomFoundTip')" class="text-truncate w-100">
@@ -23,7 +23,7 @@
                     @click="cancelTipMoadl('chatRoomFoundTip','加群自动消息设置')" title="取消设定"></i-button>
             </td>
         </tr>
-        <tr>
+        <tr v-if="setting.permissions.memberJoinTip">
             <td>进群欢迎语设置</td>
             <td>
                 <tooltip :content="showTipContent('memberJoinTip')" class="text-truncate w-100">
@@ -38,7 +38,7 @@
                     @click="cancelTipMoadl('memberJoinTip','进群欢迎语设置')" title="取消设定"></i-button>
             </td>
         </tr>
-        <tr>
+        <tr v-if="setting.permissions.memberLeftTip">
             <td>退群提示语设置</td>
             <td>
                 <tooltip :content="showTipContent('memberLeftTip')" class="text-truncate w-100">
@@ -82,7 +82,7 @@
         </form-item>
         <div>
             <i-input v-if="tips.type == 'text'" type="textarea" :autosize="{maxRows: 4, minRows: 4}" placeholder="回复内容..." v-model="tips.text"/>
-            <Upload v-if="tips.type == 'file'" type="drag" :before-upload="handleKeywordUpload" :max-size="10240">
+            <Upload v-if="tips.type == 'file'" type="drag" :before-upload="handleTipsUpload" :max-size="10240">
                 <div style="padding: 20px 0">
                     <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
                     <p>点击选择文件或拖拽文件到该区域</p>

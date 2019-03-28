@@ -139,8 +139,10 @@ $script.ready(["header", "contacts", "chat", "keyword", "timer", "info"], () => 
                     const data = msg.data;
                     switch (msg.biz) {
                         case "SETTING":
-                        case "SWITCHS":
                             me.syncSetting();
+                            break;
+                        case "SWITCHS":
+                            me.syncSwitchs(data);
                             break;
                         case "PERMISSIONS":
                             me.permissions = data;
@@ -171,6 +173,9 @@ $script.ready(["header", "contacts", "chat", "keyword", "timer", "info"], () => 
                             if(data.seq == me.timer.form.seq){
                                 me.getMsgs(data.seq);
                             }
+                            break;
+                        case "TIPS":
+                            wxbot.syncTips(data);
                             break;
                         case "NOTICE":
                             data.read = false;

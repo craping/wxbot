@@ -1,6 +1,5 @@
 package client.view.function;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -13,8 +12,6 @@ import com.teamdev.jxbrowser.chromium.JSONString;
 import com.teamdev.jxbrowser.chromium.JSObject;
 
 import client.pojo.ScheduleMsg;
-import client.utils.Config;
-import client.utils.HttpUtil;
 import client.view.server.BaseServer;
 
 @Component
@@ -81,14 +78,5 @@ public class TimerFunction extends ChatFunction {
 		ConcurrentLinkedQueue<ScheduleMsg> msgs = TIMER_MAP.get(seq);
 		if (msgs != null)
 			msgs.removeIf(e -> e.getUuid().equals(uuid));
-	}
-	
-	public void downloadAttach(String fileName){
-		File attach = new File(Config.ATTCH_PATH+fileName);
-		if(!attach.exists()){
-			System.out.printf("文件[%s]不存在 从云端获取...\n", fileName);
-			HttpUtil.download(Config.ATTACH_URL + user.getProperty("userInfo").asObject().getProperty("userName") + "/" + fileName, attach.getPath());
-			System.out.printf("文件[%s]下载完毕\n", fileName);
-		}
 	}
 }

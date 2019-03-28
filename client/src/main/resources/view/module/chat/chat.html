@@ -99,7 +99,7 @@
                 </a>
             </Date-Picker>
         </div>
-        <textarea id="chatText" class="w-100 border-0 px-2 bg-transparent" @keydown.ctrl.enter="sendText" @keydown.alt.83="sendText" type="textarea" rows="3" style="resize:none;outline: none"></textarea>
+        <textarea id="chatText" class="w-100 border-0 px-2 bg-transparent" @keydown.ctrl.enter="sendText" :disable="!permissions.chat" @keydown.alt.83="sendText" type="textarea" rows="3" style="resize:none;outline: none"></textarea>
         <div class="text-right w-100 p-2">
             <i-button type="info" size="small" @click="sendText">发 送(S)</i-button>
         </div>

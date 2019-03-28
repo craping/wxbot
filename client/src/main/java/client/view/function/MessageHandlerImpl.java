@@ -147,6 +147,7 @@ public class MessageHandlerImpl implements MessageHandler {
 	public void onReceivingChatRoomTextMessage(Message message) {
 		String content = MessageUtils.getChatRoomTextMessageContent(message.getContent());
 		String userName = MessageUtils.getSenderOfChatRoomTextMessage(message.getContent());
+		userName = message.getFromUserName().contains("@@")?userName:message.getFromUserName();
 		logger.debug("群聊文本消息");
 		logger.debug("from chatroom: " + message.getFromUserName());
 		logger.debug("from person: " + userName);
@@ -192,7 +193,10 @@ public class MessageHandlerImpl implements MessageHandler {
 		if(SettingFunction.SETTING.getTuring().contains(chatRoom.getSeq()) 
 				&& SettingFunction.TURING_KEY !=  null && !SettingFunction.TURING_KEY.isEmpty() && content.contains("@"+cacheService.getOwner().getNickName())
 		){
-			String userId = message.getFromUserName().contains("@@")?Coder.encryptMD5(userName):Coder.encryptMD5(message.getFromUserName());
+			String userId = Coder.encryptMD5(userName);
+			Contact member = cacheService.searchContact(chatRoom.getMemberList(), userName);
+			String nickName = member == null?"":member.getNickName();
+			
 			String json = "{'reqType':0,'perception': {'inputText': {'text': '"+content+"'}},'userInfo': {'apiKey': '"+SettingFunction.TURING_KEY+"','userId': '"+userId.replace("@", "")+"','groupId':'"+chatRoom.getUserName()+"'}}";
 			String result = HttpUtil.doPost("http://openapi.tuling123.com/openapi/api/v2", json);
 			JSONObject jsonResult = JSONObject.parseObject(result);
@@ -207,7 +211,7 @@ public class MessageHandlerImpl implements MessageHandler {
 					switch (type) {
 					case "text":
 					case "url":
-						chatServer.sendGloba(Arrays.asList(chatRoom), new Msg(MessageType.TEXT, value));
+						chatServer.sendGloba(Arrays.asList(chatRoom), new Msg(MessageType.TEXT, "@"+nickName+" "+ value));
 						break;
 
 					default:

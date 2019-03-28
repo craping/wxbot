@@ -14,13 +14,16 @@ var Store = Store||{
 
 /** ----------------浏览器模式开发时使用-------------*/
 // var wxbot = {
+// 	showLogin(){
+
+// 	},
 // 	getUserInfo(){
 // 		return {
 // 			userInfo:{}
 // 		}
 // 	},
 // 	getDomain(){
-// 		return "http://127.0.0.1"
+// 		return "http://tv.kmring.com"
 // 	},
 // 	getHostUrl(){},
 // 	getIndividuals(){
