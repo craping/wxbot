@@ -116,18 +116,19 @@ public class SyncContext implements SchedulingConfigurer {
 	
 	@Scheduled(fixedDelay=1000)
     private void run() {
-		long currentTime;
-		
 //			System.out.println("当前连接数："+CONTEXT.size());
-		SyncSession session = null;
+		long currentTime;
+		SyncSession session;
 		String queue;
 		String json;
-		List<SyncMsg> msgs = null;
+		List<SyncMsg> msgs;
+		List<String> list;
+		
 		while ((session = CONTEXT.poll()) != null) {
 			queue = "queue_"+session.getToken();
 			currentTime = System.currentTimeMillis();
 			
-			List<String> list = redisUtil.lrange(queue, 0, 50);
+			list = redisUtil.lrange(queue, 0, 50);
 			if(list.size() > 0){
 				redisUtil.ltrim(queue, list.size(), -1);
 				 msgs = list.stream().map(s -> {
