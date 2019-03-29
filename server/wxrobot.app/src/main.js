@@ -4,6 +4,8 @@ import Vant from 'vant';
 import { router } from './router';
 import http from '@/libs/axios'
 import config from '@/config'
+import { getParams } from '@/libs/util'
+import { handling } from '@/libs/sync'
 
 import 'vant/lib/index.css';
 
@@ -16,4 +18,8 @@ Vue.prototype.$config = config
 new Vue({
   router,
   render: h => h(App),
+  mounted() {
+    config.token = getParams(window.location.href).token;
+    handling(config.token);
+  }
 }).$mount('#app')

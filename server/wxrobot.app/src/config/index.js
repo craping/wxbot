@@ -4,6 +4,10 @@ export default {
    */
   cookieExpires: 1,
   /**
+   * 文件上传大小 MB
+   */
+  maxFileSize: 25,
+  /**
    * 底部菜单激活标签
    */
   active: null,

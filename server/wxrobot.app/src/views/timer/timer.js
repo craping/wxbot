@@ -156,13 +156,14 @@ export default {
         },
         onRead(event) {
             // 通过DOM取文件数据
+            const maxSize = this.$config.maxFileSize;
             let inputDOM = this.$refs.uploader;
             let file = inputDOM.files[0];
             if (file == undefined) return;
             this.imageVal = null;   
             let size = Math.floor(file.size / 1024);
-            if (size > 80*1024) {
-                Toast('请选择80M以内的文件！');
+            if (size > maxSize*1024) {
+                Toast('请选择'+ maxSize +'M以内的文件！');
                 return false
             }
             

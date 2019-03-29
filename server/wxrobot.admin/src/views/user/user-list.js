@@ -41,7 +41,8 @@ export default {
                 phoneState: "",
                 destroy: ""
             },
-            p_modal : false,
+            p_modal: false,
+            p_loading: false,
             p_columns: [
                 { title: "功能描述", key: "name" },
                 { title: "操作", align: 'center', render: (h, params) => {
@@ -49,7 +50,7 @@ export default {
                             props: { size: 'large', value: params.row.value},
                             on: { 'on-change': (value) => { 
                                     this.permissions[''+params.row.target+''] = value;
-                                    this.syncPermissions();
+                                    //this.syncPermissions();
                                 } 
                             },
                         }, 
@@ -107,7 +108,7 @@ export default {
                                     props: { type: 'error', size: 'small', },
                                     style: { marginRight: '5px' },
                                     on: { click: () => { this.destroy(params.row, false) } }
-                                }, '激活')
+                                }, '激活账户')
                             );
                         } else {
                             btns.push(
@@ -161,7 +162,7 @@ export default {
                                     props: { type: 'success', size: 'small', },
                                     style: { marginRight: '5px' },
                                     on: { click: () => { this.destroy(params.row, true) } }
-                                }, '注销')
+                                }, '注销账户')
                             );
                         }
                         return h("div", btns);
@@ -177,6 +178,7 @@ export default {
     methods: {
         syncPermissions() {
             const me = this;
+            me.p_loading = true;
             const data = {
                 id : me.user.id,
                 permissions: JSON.stringify(me.permissions)
@@ -184,13 +186,18 @@ export default {
             me.$http.post("/admin/syncPermissions?format=json", data)
                 .then(response => {
                     const data = response.data;
+                    me.p_loading = false;
                     if (!data.result) {
-                        me.$Message.success("操作成功!");
+                        me.$Message.success(data.msg);
+                        setTimeout(() => {
+                            me.p_modal = false;
+                        }, 500); 
                     } else {
                         me.$Message.error(data.msg);
                     }
                 })
                 .catch(error => {
+                    me.p_loading = false;
                     console.log(error);
                 }
             );
@@ -299,11 +306,11 @@ export default {
         lock(params, state) {
             const me = this;
             let title = '关闭机器人：';
-            let content = '<p>关闭机器人则用户微信登录的机器人功能失效，确定?</p>';
+            let content = '<p>关闭机器人后用户只有聊天功能，确定?</p>';
             let okText = '确定关闭';
             if (state) {
                 title = '开启用户：';
-                content = '<p>开启机器人则用户微信登录的机器人功能生效</p>';
+                content = '<p>确定开启？</p>';
                 okText = '确定开启';
             }
             me.$Modal.confirm({

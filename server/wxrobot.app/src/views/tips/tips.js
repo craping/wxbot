@@ -17,6 +17,8 @@ export default {
             radio: '1',
             imageVal: null,
             loading: false,
+            cloading: false,
+            isShow: false,
             token: ''
         }
     },
@@ -58,18 +60,46 @@ export default {
                 console.log(error);
             });
         },
+        beforeClose(action, done) {
+            if (action == "cancel")
+                done();
+            if (action == "confirm") {
+                const params = {
+                    token: this.token,
+                    tipType: this.tipType
+                }
+                this.$http.post("setting/cancelTips?format=json", params).then(response => {
+                    const data = response.data;
+                    done();
+                    if (!data.result) {
+                        this.$config.setting.tips = data.data.info;
+                        Toast(data.msg);
+                        setTimeout(() => {
+                            Object.assign(this.$data, this.$options.data());
+                            this.$router.go(-1);
+                        }, 1000);
+                    } else {
+                        Toast.fail(data.msg);
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+            }
+        },
         showImg() {
             ImagePreview(['' + this.imageVal + '']);
         },
         onRead(event) {
             // 通过DOM取文件数据
+            const maxSize = this.$config.maxFileSize;
             let inputDOM = this.$refs.uploader;
             let file = inputDOM.files[0];
             if (file == undefined) return;
             this.imageVal = null;   
             let size = Math.floor(file.size / 1024);
-            if (size > 80*1024) {
-                Toast('请选择80M以内的文件！');
+            if (size > maxSize*1024) {
+                Toast('请选择'+ maxSize +'M以内的文件！');
                 return false
             }
 
