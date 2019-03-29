@@ -128,9 +128,9 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 	 * @throws
 	 */
 	public void stop() {
+		jeeves.stop();
 		if (wxbotThread != null){
 			wxbotThread.interrupt();
-			jeeves.stop();
 		}
 		Platform.runLater(() -> {
 			WxbotView.exit();
@@ -139,6 +139,10 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 	}
 
 	public void exit(String title, String msg) {
+		jeeves.stop();
+		if (wxbotThread != null){
+			wxbotThread.interrupt();
+		}
 		Platform.runLater(() -> {
 			Alert alert = new Alert(Alert.AlertType.ERROR);
 			alert.setTitle(title);
@@ -146,10 +150,6 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 			alert.setContentText(msg);
 			Optional<ButtonType> result = alert.showAndWait();
 			if(result.isPresent() && result.get() == ButtonType.OK){
-				if (wxbotThread != null){
-					wxbotThread.interrupt();
-					jeeves.stop();
-				}
 				WxbotView.exit();
 				LoginView.exit();
 			}

@@ -98,9 +98,7 @@ $script.ready(["user", "general", "seqs", "globalTimer", "globalKeyword", "tips"
                 $("a[name='"+menu+"']").tab("show");
             }
             this.setting = wxbot.getSetting();
-            wxbot.getChatRooms(data => {
-                this.chatRooms = data;
-            });
+            this.notifyChatRooms();
             this.getMsgs();
             this.getKeyMap();
             this.notifySetting();
@@ -127,6 +125,12 @@ $script.ready(["user", "general", "seqs", "globalTimer", "globalKeyword", "tips"
         },
         notifyUser(user){
             Web.user = user;
+            this.$forceUpdate();
+        },
+        notifyChatRooms(){
+            wxbot.getChatRooms(data => {
+                this.chatRooms = data;
+            });
         },
         onMembersSeqChanged(seqMap){
             app.modKeywords(seqMap);

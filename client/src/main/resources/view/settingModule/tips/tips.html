@@ -76,8 +76,9 @@
     <i-form @submit.native.prevent>
         <form-item label="消息内容" class="mb-0">
             <radio-group v-model="tips.type">
-                <radio label="text">文本</radio>
-                <radio label="file">文件</radio>
+                <radio class="mb-0" label="text">文本</radio>
+                <radio class="mb-0" label="file">文件</radio>
+                <div v-show="tips.type == 'text'" class="text-muted">[user] 标签为用户昵称占位符</div>
             </radio-group>
         </form-item>
         <div>

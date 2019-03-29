@@ -161,6 +161,7 @@ $script.ready(["header", "contacts", "chat", "keyword", "timer", "info"], () => 
                                 case "LOCK":
                                     Web.user.userInfo.serverState = data;
                                     wxbot.syncServerState(data);
+                                    me.$forceUpdate();
                                     break;
                                 case "DESTROY":
                                     wxbot.exit("提示", "您已的账号已被注销，请联系管理员");
@@ -180,6 +181,7 @@ $script.ready(["header", "contacts", "chat", "keyword", "timer", "info"], () => 
                         case "PERMISSIONS":
                             me.permissions = data;
                             wxbot.syncPermissions(data);
+                            me.$forceUpdate();
                             break;
                         case "KEYWORD":
                             switch (msg.action) {
@@ -200,7 +202,7 @@ $script.ready(["header", "contacts", "chat", "keyword", "timer", "info"], () => 
                                     wxbot.delMsg(data.seq, data.uuid);
                                     break;
                                 default:
-                                    wxbot.addMsg(data.se, data.timer);
+                                    wxbot.addMsg(data.seq, data.timer);
                                     break;
                             }
                             if(data.seq == me.timer.form.seq){

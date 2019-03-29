@@ -16,6 +16,9 @@ $script.ready(["vue", "iview", "jquery", "crypto", "md5", "common"], function ()
                 data: {
                     skin: "dark",
                     modal:false,
+                    user:{},
+                    users:[],
+                    remember:false,
                     Login:{
                         mobile:"",
                         password:"",
@@ -58,10 +61,55 @@ $script.ready(["vue", "iview", "jquery", "crypto", "md5", "common"], function ()
                 computed:{
                 },
                 mounted() {
+                    let users = localStorage.getItem("users");
+                    users = users?JSON.parse(users):[];
+                    this.users = users;
+                    const user = users[0];
+                    if(user){
+                        this.Login.mobile = user.mobile;
+                        this.Login.password = user.pwd;
+                        this.remember = user.remember;
+                    }
                 },
                 updated() {
                 },
                 methods:{
+                    search(event){
+                        const keyCode = event.keyCode;
+                        if(keyCode == 13){
+                            event.target.setSelectionRange(-1, -1);
+                            this.Login.mobile = event.target.value;
+                            this.$nextTick(() => {
+                                this.loginSubmit();
+                            });
+                        }
+                        if(((keyCode >= 48 && keyCode <= 57) || (keyCode >= 96 && keyCode <= 105))) {
+                            if(window.getSelection().toString() != "")
+                                return;
+                            if(event.target.value){
+                                const user = this.users.find(u => u.mobile.indexOf(event.target.value) == 0);
+                                if(user){
+                                    const l = event.target.value.length;
+                                    event.target.value = user.mobile;
+                                    event.target.setSelectionRange(l, -1);
+                                    this.Login.password = user.pwd;
+                                    this.remember = user.remember;
+                                } else {
+                                    this.Login.password = "";
+                                    this.remember = false;
+                                }
+                            } else {
+                                this.Login.password = "";
+                                this.remember = false;
+                            }
+                        }
+                    },
+                    selectUser(name) {
+                        this.Login.mobile = name;
+                        const user = this.users.find(u => u.mobile == name);
+                        this.Login.password = user.pwd;
+                        this.remember = user.remember;
+                    },
                     loginSubmit(){
                         const me = this;
                         if(me.Login.loading)
@@ -76,6 +124,21 @@ $script.ready(["vue", "iview", "jquery", "crypto", "md5", "common"], function ()
                                         login_pwd:md5(me.Login.password)
                                     },
                                     success: function (data) {
+                                        const user = {
+                                            mobile:me.Login.mobile,
+                                            pwd:me.remember?me.Login.password:"",
+                                            remember:me.remember
+                                        };
+
+                                        let users = localStorage.getItem("users");
+                                        users = users?JSON.parse(users):[];
+                                        const index = users.findIndex(u => u.mobile == user.mobile);
+                                        if(index != -1){
+                                            users.splice(index, 1);
+                                        }
+                                        users.unshift(user);
+                                        localStorage.setItem("users", JSON.stringify(users));
+
                                         wxbot.start(data.info);
                                     },
                                     fail: function (data) {
@@ -93,6 +156,7 @@ $script.ready(["vue", "iview", "jquery", "crypto", "md5", "common"], function ()
                     },
                     registerSubmit(){
                         const me = this;
+                        // me.Login.mobile = me.$refs.mobile.value;
                         if(me.Register.loading)
                             return;
                         me.$refs.Register.validate((valid) => {

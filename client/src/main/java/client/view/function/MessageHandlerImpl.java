@@ -46,6 +46,7 @@ import client.utils.Config;
 import client.utils.EmojiUtil;
 import client.utils.HttpUtil;
 import client.utils.WxMessageTool;
+import client.view.LoginView;
 import client.view.QRView;
 import client.view.WxbotView;
 import client.view.server.BaseServer;
@@ -135,6 +136,7 @@ public class MessageHandlerImpl implements MessageHandler {
 		logger.debug("用户名：" + member.getNickName());
 		Platform.runLater(() -> {
 			WxbotView.exit();
+			LoginView.exit();
 		});
 	}
 	
@@ -495,6 +497,7 @@ public class MessageHandlerImpl implements MessageHandler {
 		logger.debug("发现新群消息");
 		chatRooms.forEach(x -> logger.debug(x.getUserName()));
 		msgTool.execContactsChanged(chatRooms, ChangeType.ADD.getCode());
+		WxbotView.getInstance().executeSettingScript("app.notifyChatRooms()");
 		
 		if(SettingFunction.isWorking() && SettingFunction.SETTING.getPermissions().isChatRoomFoundTip() && chatRooms != null && chatRooms.size() >0 && SettingFunction.SETTING.getTips().getChatRoomFoundTip() != null && SettingFunction.SETTING.getTips().getChatRoomFoundTip().getType() != 0){
 			chatRooms.forEach(chatRoom -> {
@@ -508,6 +511,7 @@ public class MessageHandlerImpl implements MessageHandler {
 		logger.debug("群信息变动");
 		chatRooms.forEach(x -> logger.debug(x.getUserName()));
 		msgTool.execContactsChanged(chatRooms, ChangeType.MOD.getCode());
+		WxbotView.getInstance().executeSettingScript("app.notifyChatRooms()");
 	}
 	
 	@Override
@@ -515,6 +519,7 @@ public class MessageHandlerImpl implements MessageHandler {
 		logger.debug("群被删除消息");
 		chatRooms.forEach(x -> logger.debug(x.getUserName()));
 		msgTool.execContactsChanged(chatRooms, ChangeType.DEL.getCode());
+		WxbotView.getInstance().executeSettingScript("app.notifyChatRooms()");
 	}
 
 	@Override
@@ -610,6 +615,7 @@ public class MessageHandlerImpl implements MessageHandler {
 	@Override
 	public void onStatusNotifySyncConv(Message message) {
 		WxbotView.getInstance().executeScript("app.updateChatRooms()");
+		WxbotView.getInstance().executeSettingScript("app.notifyChatRooms()");
 	}
 
 	@Override
