@@ -17,6 +17,7 @@ import org.crap.jrain.core.validate.annotation.BarScreen;
 import org.crap.jrain.core.validate.annotation.Parameter;
 import org.crap.jrain.core.validate.security.component.Coder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 import io.netty.channel.Channel;
@@ -49,6 +50,8 @@ public class AdminUserPump extends DataPump<FullHttpRequest, Channel> {
 	private AdminServer adminServer;
 	@Autowired
 	private SettingServer settingServer;
+	@Autowired
+	private StringRedisTemplate redisTemplate;
 	
 	@Pipe("list")
 	@BarScreen(
@@ -128,6 +131,10 @@ public class AdminUserPump extends DataPump<FullHttpRequest, Channel> {
 			msg.setAction(SyncAction.SERVER_TIME);
 			msg.setData(Tools.dateToStamp(params.getString("server_end"), "yyyy-MM-dd"));
 			SyncContext.toMsg(user.getToken(), msg);
+			
+			user = userServer.find(params.getString("id"));
+			String key = "user_" + user.getToken();
+			redisTemplate.opsForHash().put(key, "userInfo", JSONObject.fromObject(user.getUserInfo()).toString());
 		}
 		return new DataResult(Errors.OK);
 	}
