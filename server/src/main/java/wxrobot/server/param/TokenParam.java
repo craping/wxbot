@@ -48,7 +48,7 @@ public class TokenParam extends StringParam implements SingleParam {
 				return new Result(CustomErrors.USER_NOT_LOGIN);
 			}
 			//判断是否过期
-			UserInfo userInfo = BaseServer.JSON_MAPPER.readValue(jedis.hget("key", "userInfo"), UserInfo.class);
+			UserInfo userInfo = BaseServer.JSON_MAPPER.readValue(jedis.hget(key, "userInfo"), UserInfo.class);
 			if(Long.valueOf(userInfo.getServerEnd()) <= System.currentTimeMillis())
 				return new Result(CustomErrors.USER_SERVER_END);
 			

@@ -1,12 +1,12 @@
 package wxrobot.server.sync;
 
 import java.io.IOException;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedTransferQueue;
+import java.util.stream.Collectors;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -120,26 +120,36 @@ public class SyncContext implements SchedulingConfigurer {
 		
 //			System.out.println("当前连接数："+CONTEXT.size());
 		SyncSession session = null;
-		while ((session = CONTEXT.peek()) != null) {
+		String queue;
+		String json;
+		List<SyncMsg> msgs = null;
+		while ((session = CONTEXT.poll()) != null) {
+			queue = "queue_"+session.getToken();
 			currentTime = System.currentTimeMillis();
-			String msg = null;
-			List<SyncMsg> msgs = new LinkedList<>();
-			for (int i = 0; i < 100 && (msg = redisUtil.lpop("queue_"+session.getToken())) != null; i++) {
-				try {
-					msgs.add(MAPPER.readValue(msg, SyncMsg.class));
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			if(msgs.size() > 0 || currentTime - session.getTime() > 30000){
-				String json = "[]";
+			
+			List<String> list = redisUtil.lrange(queue, 0, 50);
+			if(list.size() > 0){
+				redisUtil.ltrim(queue, list.size(), -1);
+				 msgs = list.stream().map(s -> {
+					try {
+						return MAPPER.readValue(s, SyncMsg.class);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					return new SyncMsg();
+				}).collect(Collectors.toList());
+				
+				json = "[]";
 				try {
 					json = MAPPER.writeValueAsString(msgs);
 				} catch (JsonProcessingException e) {
 					e.printStackTrace();
 				}
 				writeResponse(session, json);
-				CONTEXT.poll();
+			} else if(currentTime - session.getTime() > 30000){
+				writeResponse(session, "[]");
+			} else {
+				CONTEXT.put(session);
 			}
 		}
 	}
