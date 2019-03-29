@@ -60,7 +60,7 @@ Tips = {
                 }
             });
         },
-        handleKeywordUpload (file) {
+        handleTipsUpload (file) {
             this.tips.file = file;
             return false;
         },
@@ -78,9 +78,19 @@ Tips = {
             var form = new FormData();
             form.append("token", Web.user.token);
             form.append("tipType", me.tips.tipType);
-            form.append("content", me.tips.type=="text"?me.tips.text:me.tips.file);
+            const content =  me.tips.type=="text"?me.tips.text:me.tips.file;
+            form.append("content", content);
+
+            if(!content || content == null || content == ""){
+                me.$Message.error("信息不完整");
+                me.tips.loading = false;
+                me.$nextTick(() => {
+                    me.tips.loading = true;
+                });
+                return;
+            }
             $.ajax({
-                url: Web.serverURL + "setting/setTips?format=json",
+                url: Web.serverURL + "/setting/setTips?format=json",
                 type: "post",
                 data: form,
                 processData: false,
@@ -94,6 +104,9 @@ Tips = {
                         me.tipsCancel();
                         me.tips.modal = false;
                         me.tips.loading = false;
+                        me.$nextTick(() => {
+                            me.tips.loading = true;
+                        });
                         me.$Message.success("操作成功!");
                     } else {
                         me.tips.loading = false;

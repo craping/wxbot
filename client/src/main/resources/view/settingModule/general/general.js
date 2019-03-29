@@ -5,7 +5,7 @@ General = {
             globalKeyword:null,
             globalTimer:null
         },
-        turingKey:localStorage.getItem("turingKey")?"":localStorage.getItem("turingKey"),
+        turingKey:"",
         loading:false
     },
     methods:{
@@ -20,7 +20,7 @@ General = {
                     me.setting.switchs = Object.assign({}, me.general.form);
                     wxbot.syncSwitchs(me.general.form);
 
-                    me.syncTuringKey(me.general.turingKey);
+                    wxbot.syncTuringKey(me.general.turingKey);
                     localStorage.setItem("turingKey", me.general.turingKey);
                     
                     me.general.loading = false;
@@ -37,9 +37,6 @@ General = {
                     me.$Message.error("操作失败:"+textStatus);
                 }
             });
-        },
-        syncTuringKey(){
-            wxbot.syncTuringKey(localStorage.getItem("turingKey"));
         },
         generalReset() {
             this.general.form = Object.assign({}, this.setting.switchs);

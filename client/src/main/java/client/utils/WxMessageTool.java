@@ -115,7 +115,7 @@ public class WxMessageTool extends BaseServer {
 //		if(!avatar.exists() && sender.getHeadImgUrl() != null && !sender.getHeadImgUrl().isEmpty()) {
 //			wechatService.download(cacheService.getHostUrl() + sender.getHeadImgUrl(), sender.getSeq()+".jpg", MessageType.IMAGE);
 //		}
-		if(sender.getHeadImgUrl() == null){
+		if(sender.getHeadImgUrl() == null || "0".equals(sender.getSeq())){
 			Contact member = wechatService.getChatRoomMemberInfo(chatRoom.getUserName(), sender.getUserName());
 			if(member != null)
 				sender.setHeadImgUrl(member.getHeadImgUrl());

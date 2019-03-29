@@ -218,6 +218,7 @@ public final class LoginView extends AnchorPane  {
 		if(this.debug) {
 			Browser debugBrowser = new Browser();
 			BrowserView debugBrowserView = new BrowserView(debugBrowser);
+			System.out.println(browser.getRemoteDebuggingURL());
 	        debugBrowser.loadURL(browser.getRemoteDebuggingURL());
 	        Scene debugScene = new Scene(debugBrowserView, 790, 790);
 	        Stage debugStage = new Stage();

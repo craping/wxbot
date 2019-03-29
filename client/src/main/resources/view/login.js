@@ -76,7 +76,6 @@ $script.ready(["vue", "iview", "jquery", "crypto", "md5", "common"], function ()
                                         login_pwd:md5(me.Login.password)
                                     },
                                     success: function (data) {
-                                        me.Login.loading = false;
                                         wxbot.start(data.info);
                                     },
                                     fail: function (data) {

@@ -14,7 +14,7 @@
 
 
 
-<modal v-model="keyword.form.modal" title="关键词" width="400" :mask-closable="false" :loading="keyword.form.modalLoading" onselectstart="return false" ondragstart="return false" @on-ok="editKeyMapOk" @on-cancel="editKeyMapCancel">
+<modal v-model="keyword.form.modal" title="关键词" width="400" :mask-closable="false" :closable="false" :loading="keyword.form.modalLoading" onselectstart="return false" ondragstart="return false" @on-ok="editKeyMapOk" @on-cancel="editKeyMapCancel">
     <div>
         <i-input placeholder="关键词..." clearable :disabled="keyword.form.edit" v-model="keyword.form.key"/>
     </div>
@@ -28,7 +28,7 @@
         </form-item>
         <div>
             <i-input v-if="keyword.form.type == 'text'" type="textarea" :autosize="{maxRows: 4, minRows: 4}" placeholder="回复内容..." v-model="keyword.form.text"/>
-            <Upload v-if="keyword.form.type == 'file'" type="drag" :before-upload="handleKeywordUpload" :max-size="10240">
+            <Upload v-if="keyword.form.type == 'file'" type="drag" :before-upload="handleKeywordUpload" :max-size="25600">
                 <div style="padding: 20px 0">
                     <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
                     <p>点击选择文件或拖拽文件到该区域</p>

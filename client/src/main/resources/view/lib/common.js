@@ -14,13 +14,16 @@ var Store = Store||{
 
 /** ----------------浏览器模式开发时使用-------------*/
 // var wxbot = {
+// 	showLogin(){
+
+// 	},
 // 	getUserInfo(){
 // 		return {
 // 			userInfo:{}
 // 		}
 // 	},
 // 	getDomain(){
-// 		return "http://127.0.0.1"
+// 		return "http://tv.kmring.com"
 // 	},
 // 	getHostUrl(){},
 // 	getIndividuals(){
@@ -102,7 +105,7 @@ var Store = Store||{
 
 
 var Web = {
-	serverURL: wxbot.getDomain()+"/",
+	serverURL: wxbot.getDomain(),
 	wxHost:wxbot.getHostUrl(),
 	root:wxbot.getRootPath(),
     owner:wxbot.getOwner(),
@@ -120,7 +123,7 @@ var Web = {
 			data: {
 				token:  Web.user?Web.user.token:null,
 			},
-			url: Web.serverURL,
+			url: Web.serverURL+"/",
 			success: function () { },
 			fail: function () { },
 			error: function () { }

@@ -387,6 +387,14 @@ public final class WxbotView extends AnchorPane  {
 		}
 	}
 
+	public void executeSettingScript(String javaScript) {
+		try{
+			browser.executeJavaScript(javaScript);
+		}catch (Exception e) {
+			logger.error(e);
+		}
+	}
+	
 	public Browser getBrowser() {
 		return browser;
 	}
@@ -417,6 +425,22 @@ public final class WxbotView extends AnchorPane  {
 
 	public void setDebug(boolean debug) {
 		this.debug = debug;
+	}
+
+	public Browser getSettingBrowser() {
+		return settingBrowser;
+	}
+
+	public void setSettingBrowser(Browser settingBrowser) {
+		this.settingBrowser = settingBrowser;
+	}
+
+	public BrowserView getSettingBrowserView() {
+		return settingBrowserView;
+	}
+
+	public void setSettingBrowserView(BrowserView settingBrowserView) {
+		this.settingBrowserView = settingBrowserView;
 	}
 	
 	

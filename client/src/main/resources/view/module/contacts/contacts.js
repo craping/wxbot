@@ -80,6 +80,19 @@ Contacts = {
                 this.syncChatRooms();
             })
         },
+        //同步群聊
+        updateChatRooms(){
+            wxbot.getChatRooms(data => {
+                data.forEach(e => {
+                    e.count = 0;
+                    e.HeadImgUrl += "r="+Date.now();
+                    e.MMOrderSymbol = this.getContactOrderSymbol(e);
+                    if(this.contacts.chatRooms.findIndex(c => c.UserName == e.UserName) == -1)
+                        this.contacts.chatRooms.push(e);
+                });
+                this.syncChatRooms();
+            })
+        },
         addContact(contacts){
             contacts.forEach(e => {
                 e.count = 0;

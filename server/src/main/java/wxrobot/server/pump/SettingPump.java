@@ -160,6 +160,7 @@ public class SettingPump extends DataPump<FullHttpRequest, Channel> {
 		SyncMsg event = new SyncMsg();
 		event.setBiz(SyncBiz.SWITCHS);
 		event.setAction(SyncAction.SET);
+		event.setData(switchs);
 		SyncContext.putMsg(params.get("token").toString(), event);
 				
 		return new DataResult(Errors.OK);
@@ -194,6 +195,11 @@ public class SettingPump extends DataPump<FullHttpRequest, Channel> {
 				break;
 		}
 		settingServer.setTips(userInfo.getUserName(), tips);
+		SyncMsg event = new SyncMsg();
+		event.setBiz(SyncBiz.TIPS);
+		event.setAction(SyncAction.SET);
+		event.setData(tips);
+		SyncContext.putMsg(params.get("token").toString(), event);
 		return new DataResult(Errors.OK, new Data(tips));
 	}
 	
@@ -262,6 +268,7 @@ public class SettingPump extends DataPump<FullHttpRequest, Channel> {
 		SyncMsg event = new SyncMsg();
 		event.setBiz(SyncBiz.TIPS);
 		event.setAction(SyncAction.SET);
+		event.setData(tips);
 		SyncContext.putMsg(params.get("token").toString(), event);
 				
 		return new DataResult(Errors.OK, new Data(tips));

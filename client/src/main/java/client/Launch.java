@@ -42,7 +42,7 @@ public class Launch extends Application {
 	    } catch (Exception e1) {
 	        e1.printStackTrace();
 	    }
-	    BrowserPreferences.setChromiumSwitches("--disable-web-security", "--user-data-dir", "--allow-file-access-from-files", "--remote-debugging-port=9222");
+	    BrowserPreferences.setChromiumSwitches("--disable-google-traffic", "--disable-web-security", "--user-data-dir", "--allow-file-access-from-files", "--remote-debugging-port=9222");
 	}
 	
 	@Override

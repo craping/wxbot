@@ -123,6 +123,7 @@ public class ChatServer extends BaseServer {
 		if(isChatRoom){
 			if (message.getFromUserName().equals(cacheService.getOwner().getUserName())) {
 				contact = cacheService.getChatRoom(message.getToUserName());
+				msg.getBody().setAbsolute(true);
 				if(contact != null)
 					msgTool.sendMessage(contact, msg, cacheService.getOwner().getNickName(), ChatType.GROUPCHAT.getCode());
 			} else {
@@ -135,6 +136,7 @@ public class ChatServer extends BaseServer {
 		} else {
 			if (message.getFromUserName().equals(cacheService.getOwner().getUserName())) {
 				contact = cacheService.getContact(message.getToUserName());
+				msg.getBody().setAbsolute(true);
 				if(contact != null)
 					msgTool.sendMessage(contact, msg, cacheService.getOwner().getNickName(), ChatType.CHAT.getCode());
 			} else {
@@ -157,37 +159,7 @@ public class ChatServer extends BaseServer {
 	*/  
 	    
 	public void writeReceiveRecord(Message message, MessageType msgType, String fullImageUrl, String thumbImageUrl){
-		boolean isChatRoom = (message.getFromUserName() != null && message.getFromUserName().startsWith("@@"))
-				|| (message.getToUserName() != null && message.getToUserName().startsWith("@@"));
-		
-		WxMessage msg = createReceiveMsg(message, msgType, fullImageUrl, thumbImageUrl);
-		
-		Contact contact;
-		logger.debug("[writeReceiveRecord]");
-		if(isChatRoom){
-			if (message.getFromUserName().equals(cacheService.getOwner().getUserName())) {
-				contact = cacheService.getChatRoom(message.getToUserName());
-				if(contact != null)
-					msgTool.sendMessage(contact, msg, cacheService.getOwner().getNickName(), ChatType.GROUPCHAT.getCode());
-			} else {
-				contact = cacheService.getChatRoom(message.getFromUserName());
-				if(contact != null){
-					Contact sender = cacheService.searchContact(contact.getMemberList(), MessageUtils.getSenderOfChatRoomTextMessage(message.getContent()));
-					msgTool.receiveGroupMessage(contact, sender, msg);
-				}
-			}
-		} else {
-			if (message.getFromUserName().equals(cacheService.getOwner().getUserName())) {
-				contact = cacheService.getContact(message.getToUserName());
-				if(contact != null)
-					msgTool.sendMessage(contact, msg, cacheService.getOwner().getNickName(), ChatType.CHAT.getCode());
-			} else {
-				contact = cacheService.getContact(message.getFromUserName());
-				if(contact != null)
-					msgTool.receiveMessage(contact, cacheService.getOwner(), msg);
-			}
-		}
-		logger.debug("[writeReceiveRecord done]");
+		writeReceiveRecord(message, createReceiveMsg(message, msgType, fullImageUrl, thumbImageUrl));
 	}
 	
 	/**  

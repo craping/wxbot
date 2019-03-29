@@ -19,7 +19,6 @@ import org.springframework.stereotype.Component;
 
 import com.cherry.jeeves.domain.shared.Contact;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.teamdev.jxbrowser.chromium.JSFunction;
 import com.teamdev.jxbrowser.chromium.JSONString;
 import com.teamdev.jxbrowser.chromium.JSObject;
 import com.teamdev.jxbrowser.chromium.JSValue;
@@ -228,14 +227,9 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 		JSObject app = wxbotView.getBrowser().executeJavaScriptAndReturnValue("app").asObject();
 		JSValue onMembersSeqChanged = app.getProperty("onMembersSeqChanged");
 		try {
-			onMembersSeqChanged.asFunction().invoke(app, new JSONString(BaseServer.JSON_MAPPER.writeValueAsString(seqMap)));
+			onMembersSeqChanged.asFunction().invokeAsync(app, new JSONString(BaseServer.JSON_MAPPER.writeValueAsString(seqMap)));
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
-	}
-	
-	public void call(JSFunction function) {
-		System.out.println(function);
-		function.invokeAsync(function, "123");
 	}
 }

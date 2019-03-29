@@ -62,7 +62,9 @@ const constant = {
 $script.ready(["user", "general", "seqs", "globalTimer", "globalKeyword", "tips"], function () {
     let data = Object.assign({
         header:{},
-        setting:{},
+        setting:{
+            permissions:{}
+        },
         chatRooms:[],
         switchTimer:{},
         switchKeyword:{}
@@ -91,8 +93,10 @@ $script.ready(["user", "general", "seqs", "globalTimer", "globalKeyword", "tips"
             return res;
         },
         syncSetting(menu){
-            this.header = constant.header[menu];
-            $("a[name='"+menu+"']").tab("show");
+            if(menu){
+                this.header = constant.header[menu];
+                $("a[name='"+menu+"']").tab("show");
+            }
             this.setting = wxbot.getSetting();
             wxbot.getChatRooms(data => {
                 this.chatRooms = data;
@@ -115,6 +119,7 @@ $script.ready(["user", "general", "seqs", "globalTimer", "globalKeyword", "tips"
                 result: this.setting.keywords.includes("global"),
                 loading: false,
             };
+            this.general.turingKey = localStorage.getItem("turingKey")?localStorage.getItem("turingKey"):"";
         },
         onMembersSeqChanged(seqMap){
             app.modKeywords(seqMap);

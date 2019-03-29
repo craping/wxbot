@@ -24,6 +24,7 @@ import com.cherry.jeeves.service.CacheService;
 import com.cherry.jeeves.service.MessageHandler;
 import com.cherry.jeeves.service.WechatHttpService;
 import com.cherry.jeeves.service.disruptor.MsgEvent;
+import com.cherry.jeeves.utils.Coder;
 import com.cherry.jeeves.utils.MessageUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -146,6 +147,7 @@ public class MessageHandlerImpl implements MessageHandler {
 	public void onReceivingChatRoomTextMessage(Message message) {
 		String content = MessageUtils.getChatRoomTextMessageContent(message.getContent());
 		String userName = MessageUtils.getSenderOfChatRoomTextMessage(message.getContent());
+		userName = message.getFromUserName().contains("@@")?userName:message.getFromUserName();
 		logger.debug("群聊文本消息");
 		logger.debug("from chatroom: " + message.getFromUserName());
 		logger.debug("from person: " + userName);
@@ -188,8 +190,13 @@ public class MessageHandlerImpl implements MessageHandler {
 		}
 		
 		//图灵机器人自动回复
-		if(SettingFunction.SETTING.getTuring().contains(chatRoom.getSeq()) && SettingFunction.TURING_KEY !=  null && !SettingFunction.TURING_KEY.isEmpty()){
-			String userId = message.getFromUserName().contains("@@")?message.getToUserName():message.getFromUserName();
+		if(SettingFunction.SETTING.getTuring().contains(chatRoom.getSeq()) 
+				&& SettingFunction.TURING_KEY !=  null && !SettingFunction.TURING_KEY.isEmpty() && content.contains("@"+cacheService.getOwner().getNickName())
+		){
+			String userId = Coder.encryptMD5(userName);
+			Contact member = cacheService.searchContact(chatRoom.getMemberList(), userName);
+			String nickName = member == null?"":member.getNickName();
+			
 			String json = "{'reqType':0,'perception': {'inputText': {'text': '"+content+"'}},'userInfo': {'apiKey': '"+SettingFunction.TURING_KEY+"','userId': '"+userId.replace("@", "")+"','groupId':'"+chatRoom.getUserName()+"'}}";
 			String result = HttpUtil.doPost("http://openapi.tuling123.com/openapi/api/v2", json);
 			JSONObject jsonResult = JSONObject.parseObject(result);
@@ -204,7 +211,7 @@ public class MessageHandlerImpl implements MessageHandler {
 					switch (type) {
 					case "text":
 					case "url":
-						chatServer.sendGloba(Arrays.asList(chatRoom), new Msg(MessageType.TEXT, value));
+						chatServer.sendGloba(Arrays.asList(chatRoom), new Msg(MessageType.TEXT, "@"+nickName+" "+ value));
 						break;
 
 					default:
@@ -289,7 +296,7 @@ public class MessageHandlerImpl implements MessageHandler {
 		if(cacheService.getOwner().getUserName().equals(message.getFromUserName()) && cacheService.getOwner().getUserName().equals(message.getToUserName())){
 			cacheService.getChatRooms().stream().filter(c -> SettingFunction.SETTING.getForwards().contains(c.getSeq())).forEach(c -> {
 				try {
-					chatServer.writeSendTextRecord(c, content, wechatHttpService.forwardMsg(c.getUserName(), message).getMsgID());
+					chatServer.writeSendTextRecord(c, content, wechatHttpService.sendText(c.getUserName(), message.getContent()).getMsgID());
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -590,7 +597,7 @@ public class MessageHandlerImpl implements MessageHandler {
 
 	@Override
 	public void onStatusNotifySyncConv(Message message) {
-		WxbotView.getInstance().executeScript("app.loadChatRooms()");
+		WxbotView.getInstance().executeScript("app.updateChatRooms()");
 	}
 
 	@Override
@@ -603,7 +610,7 @@ public class MessageHandlerImpl implements MessageHandler {
 		JSValue deleteEvt = app.getProperty("deleteEvt");
 		try {
 			contactMap.put(contact.getSeq(), contact);
-			deleteEvt.asFunction().invoke(app, new JSONString(BaseServer.JSON_MAPPER.writeValueAsString(contactMap)));
+			deleteEvt.asFunction().invokeAsync(app, new JSONString(BaseServer.JSON_MAPPER.writeValueAsString(contactMap)));
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
@@ -619,7 +626,7 @@ public class MessageHandlerImpl implements MessageHandler {
 		JSValue blacklistEvt = app.getProperty("blacklistEvt");
 		try {
 			contactMap.put(contact.getSeq(), contact);
-			blacklistEvt.asFunction().invoke(app, new JSONString(BaseServer.JSON_MAPPER.writeValueAsString(contactMap)));
+			blacklistEvt.asFunction().invokeAsync(app, new JSONString(BaseServer.JSON_MAPPER.writeValueAsString(contactMap)));
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}

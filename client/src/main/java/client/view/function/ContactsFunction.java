@@ -30,7 +30,7 @@ public class ContactsFunction extends SettingFunction {
 	public void getIndividuals(JSFunction function) {
 		new Thread(() -> {
 			try {
-				function.invokeAsync(function, new JSONString(BaseServer.JSON_MAPPER.writeValueAsString(cacheService.getIndividuals())));
+				function.invoke(function, new JSONString(BaseServer.JSON_MAPPER.writeValueAsString(cacheService.getIndividuals())));
 			} catch (JsonProcessingException e) {
 				e.printStackTrace();
 			}
@@ -93,7 +93,7 @@ public class ContactsFunction extends SettingFunction {
 	public void getChatRooms(JSFunction function) {
 		new Thread(() -> {
 			try {
-				function.invokeAsync(function, new JSONString(BaseServer.JSON_MAPPER.writeValueAsString(cacheService.getChatRooms())));
+				function.invoke(function, new JSONString(BaseServer.JSON_MAPPER.writeValueAsString(cacheService.getChatRooms())));
 			} catch (JsonProcessingException e) {
 				e.printStackTrace();
 			}
@@ -109,8 +109,7 @@ public class ContactsFunction extends SettingFunction {
 		new Thread(() -> {
 			try {
 				ConcurrentLinkedQueue<Contact> members = wechatService.getChatRoomInfo(chatRoomName).getMemberList();
-				function.invokeAsync(function, new JSONString(BaseServer.JSON_MAPPER.writeValueAsString(members)));
-//				return new JSONString(jsonMapper.writeValueAsString(members));
+				function.invoke(function, new JSONString(BaseServer.JSON_MAPPER.writeValueAsString(members)));
 			} catch (JsonProcessingException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
