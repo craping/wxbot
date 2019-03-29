@@ -34,7 +34,7 @@ public class RedisUtil {
 		RedisUtil.jedisPool = jedisPool;
 	}
 
-	private static Jedis getJedis() {
+	public static Jedis getJedis() {
 		Jedis jedis = null;
 		try {
 			jedis = jedisPool.getResource();

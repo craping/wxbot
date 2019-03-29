@@ -7,6 +7,9 @@ import org.crap.jrain.core.validate.exception.ValidationException;
 import org.crap.jrain.core.validate.support.param.SingleParam;
 import org.crap.jrain.core.validate.support.param.StringParam;
 
+import redis.clients.jedis.Jedis;
+import wxrobot.biz.server.BaseServer;
+import wxrobot.dao.entity.field.UserInfo;
 import wxrobot.server.enums.CustomErrors;
 import wxrobot.server.utils.RedisUtil;
 import wxrobot.server.utils.Tools;
@@ -37,9 +40,24 @@ public class TokenParam extends StringParam implements SingleParam {
 			return new Result(CustomErrors.USER_PARAM_NULL.setArgs("token"));
 		
 		String key = "user_" + token.split("_")[0];
-		if (!(new RedisUtil().exists(key))) {
-			return new Result(CustomErrors.USER_NOT_LOGIN);
+		Jedis jedis = null;
+		try {
+			jedis = RedisUtil.getJedis();
+			if (!jedis.exists(key)) {
+				return new Result(CustomErrors.USER_NOT_LOGIN);
+			}
+			
+			UserInfo userInfo = BaseServer.JSON_MAPPER.readValue(jedis.hget("key", "userInfo"), UserInfo.class);
+			if(Long.valueOf(userInfo.getServerEnd()) <= System.currentTimeMillis())
+				return new Result(CustomErrors.USER_SERVER_END);
+			
+		} catch (Exception e) {
+			return new Result(Errors.EXCEPTION_UNKNOW, e.getMessage());
+		} finally {
+			if (jedis != null)
+				jedis.close();
 		}
+		
 		
 //		if (!(new RedisUtil().hget(key, "locked").equals("0"))) {
 //			return new Result(CustomErrors.USER_LOCKED);
