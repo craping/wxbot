@@ -17,6 +17,8 @@ public class Permissions {
 	public Permissions() {
 		this.zombieTest= false;
 		this.chat= false;
+		this.turing = false;
+		this.forward = false;
 		this.keyword= false;
 		this.globalKeyword= false;
 		this.timer= false;
@@ -42,7 +44,18 @@ public class Permissions {
 	    
 	private Boolean chat;
 	
-	  
+	/**  
+	* @Fields 图灵
+	*/  
+	    
+	private Boolean turing;
+	
+	/**  
+	* @Fields 群转发
+	*/  
+	    
+	private Boolean forward;
+	
 	/**  
 	* @Fields 分群关键词
 	*/  
