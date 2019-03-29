@@ -195,7 +195,7 @@ public class TimerPump extends DataPump<FullHttpRequest, Channel> {
 		UserInfo userInfo = timerServer.getUserInfo(params);
 		
 		long mod = timerServer.delMsg(userInfo.getUserName(), params.getString("seq"), params.getString("uuid"));
-		if(mod < 0){
+		if(mod > 0){
 			//消息放入事件队列
 			SyncMsg event = new SyncMsg();
 			event.setBiz(SyncBiz.TIMER);
