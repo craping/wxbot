@@ -146,10 +146,10 @@ $script.ready(["vue", "iview", "jquery", "crypto", "md5", "common"], function ()
             wxbot.showLogin();
         },
         fail: function (data) {
-            wxbot.shutdown("机器人始化失败："+data.msg);
+            wxbot.exit("错误", "机器人始化失败："+data.msg);
         },
         error:function(XMLHttpRequest, textStatus, errorThrown){
-            wxbot.shutdown("程序启动失败，请检查网络是否连接");
+            wxbot.exit("错误", "程序启动失败，请检查网络是否连接");
         }
     });
 })

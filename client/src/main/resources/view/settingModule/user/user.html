@@ -1,6 +1,6 @@
 <i-form :label-width="120" label-position="left">
     <form-item label="用户名" class="mb-0">
-        {{Web.user.userInfo.userName}} <badge :text="Web.user.userInfo.serverState?'正常':'冻结'" :type="Web.user.userInfo.serverState?'success':'normal'"> </badge>
+        {{Web.user.userInfo.userName}} <badge :text="Web.user.userInfo.serverState?'正常':'关闭'" :type="Web.user.userInfo.serverState?'success':'normal'"> </badge>
     </form-item>
     <form-item label="注册时间" class="mb-0">
         {{new Date(parseInt(Web.user.userInfo.regTime)).format("yyyy-MM-dd HH:mm:ss")}}

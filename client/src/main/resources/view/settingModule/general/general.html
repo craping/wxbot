@@ -1,5 +1,5 @@
 <i-form ref="formGeneral" :label-width="120" label-position="left">
-    <form-item label="被动加好友功能">
+    <form-item v-show="Web.user.userInfo.serverState && setting.permissions.acceptFriend" label="被动加好友功能">
         <i-switch v-model="general.form.autoAcceptFriend" size="large">
             <span slot="open">开启</span>
             <span slot="close">关闭</span>
@@ -17,7 +17,7 @@
             <span slot="close">关闭</span>
         </i-switch>
     </form-item>
-    <form-item label="图灵机器人">
+    <form-item v-show="Web.user.userInfo.serverState && setting.permissions.turing" label="图灵机器人">
         <i-input v-model="general.turingKey" placeholder="请填写apikey..." style="width:250px"/>
     </form-item>
     <form-item>

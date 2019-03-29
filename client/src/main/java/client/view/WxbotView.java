@@ -32,7 +32,6 @@ import client.Launch;
 import client.utils.FileUtil;
 import client.view.function.Wxbot;
 import javafx.application.Platform;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -72,8 +71,6 @@ public final class WxbotView extends AnchorPane  {
 	private Stage settingStage;
 	
 	private boolean debug;
-	
-	private EventHandler<Event> close;
 	
 	public static WxbotView getInstance() {
 		if(INSTANCE == null)
@@ -169,10 +166,10 @@ public final class WxbotView extends AnchorPane  {
             }
         });
         
-        browser.addDisposeListener(event -> {
-        	System.out.println("disposed event = "+event);
-        	System.exit(0);
-        });
+//        browser.addDisposeListener(event -> {
+//        	System.out.println("disposed event = "+event);
+//        	System.exit(0);
+//        });
         
         browser.addConsoleListener(e -> {
         	String level = e.getLevel().name();
@@ -199,11 +196,11 @@ public final class WxbotView extends AnchorPane  {
 		viewStage.setIconified(false);
 		viewStage.setScene(viewScene);
 		viewStage.setOnCloseRequest(e -> {
-			new Thread(() -> {
-				System.out.println("wxbotView is disposed = " + browser.dispose(true));
-			}).start();
-			if(close !=null)
-				close.handle(e);
+//			new Thread(() -> {
+//				System.out.println("wxbotView is disposed = " + browser.dispose(true));
+//			}).start();
+			executeScript("app.exit();");
+			e.consume();
 		});
 		setting();
 	}
@@ -349,27 +346,24 @@ public final class WxbotView extends AnchorPane  {
 	* @throws  
 	*/  
 	public void close() {
-		if(viewStage != null)
+		if(viewStage != null){
 			viewStage.close();
-		if(settingStage != null)
+			new Thread(() -> {
+				System.out.println("wxbotView is disposed = " + browser.dispose(true));
+			}).start();
+		}
+		if(settingStage != null){
 			settingStage.close();
-		new Thread(() -> {
-			System.out.println("wxbotView is disposed = " + browser.dispose(true));
-		}).start();
+			new Thread(() -> {
+				System.out.println("settingView is disposed = " + settingBrowser.dispose(true));
+			}).start();
+		}
 	}
 	
-	  
-	/**  
-	* @Title: onClose  
-	* @Description: 关闭事件处理
-	* @param @param event    
-	* @return void    返回类型  
-	* @throws  
-	*/  
-	public void onClose(EventHandler<Event> event) {
-		close = event;
+	public static void exit(){
+		if(INSTANCE != null)
+			INSTANCE.close();
 	}
-	
 	  
 	/**  
 	* @Title: executeScript  
@@ -389,7 +383,7 @@ public final class WxbotView extends AnchorPane  {
 
 	public void executeSettingScript(String javaScript) {
 		try{
-			browser.executeJavaScript(javaScript);
+			settingBrowser.executeJavaScript(javaScript);
 		}catch (Exception e) {
 			logger.error(e);
 		}

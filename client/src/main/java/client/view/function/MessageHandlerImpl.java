@@ -134,7 +134,7 @@ public class MessageHandlerImpl implements MessageHandler {
 		logger.debug("用ID：" + member.getUserName());
 		logger.debug("用户名：" + member.getNickName());
 		Platform.runLater(() -> {
-			WxbotView.getInstance().close();
+			WxbotView.exit();
 		});
 	}
 	
@@ -156,69 +156,73 @@ public class MessageHandlerImpl implements MessageHandler {
 		
 		chatServer.writeReceiveRecord(message, MessageType.TEXT, null, null);
 		
-		//关键词功能是否开启
-		final Contact chatRoom = cacheService.getChatRoom(message.getFromUserName().contains("@@")?message.getFromUserName():message.getToUserName());
-		if (SettingFunction.SETTING.getSwitchs().isGlobalKeyword()) {
+		//判断账户状态
+		if(SettingFunction.isWorking()){
 			
-			Map<String, Msg> keyMap = null;
-			
-			//是否有“全群”关键词权限 并且 “全群”关键词开关开启
-			if(SettingFunction.SETTING.getPermissions().isGlobalKeyword() && SettingFunction.SETTING.getKeywords().contains(Config.GLOBA_SEQ)){
-				// “全群”关键词自动回复
-				keyMap = KeywordFunction.KEY_MAP.get(Config.GLOBA_SEQ);
-				if (keyMap != null) {
-					keyMap.forEach((k, v) -> {
-						if (content.contains(k)) {
-							chatServer.sendGloba(Arrays.asList(chatRoom), v);
-						}
-					});
-				}
-			}
-			
-			//是否有“分群”关键词权限 并且 “分群”关键词开关开启
-			if(SettingFunction.SETTING.getPermissions().isKeyword() && SettingFunction.SETTING.getKeywords().contains(chatRoom.getSeq())){
-				// “分群”关键词自动回复
-				keyMap = KeywordFunction.KEY_MAP.get(chatRoom.getSeq());
-				if (keyMap != null) {
-					keyMap.forEach((k, v) -> {
-						if (content.contains(k)) {
-							chatServer.sendGloba(Arrays.asList(chatRoom), v);
-						}
-					});
-				}
-			}
-		}
-		
-		//图灵机器人自动回复
-		if(SettingFunction.SETTING.getTuring().contains(chatRoom.getSeq()) 
-				&& SettingFunction.TURING_KEY !=  null && !SettingFunction.TURING_KEY.isEmpty() && content.contains("@"+cacheService.getOwner().getNickName())
-		){
-			String userId = Coder.encryptMD5(userName);
-			Contact member = cacheService.searchContact(chatRoom.getMemberList(), userName);
-			String nickName = member == null?"":member.getNickName();
-			
-			String json = "{'reqType':0,'perception': {'inputText': {'text': '"+content+"'}},'userInfo': {'apiKey': '"+SettingFunction.TURING_KEY+"','userId': '"+userId.replace("@", "")+"','groupId':'"+chatRoom.getUserName()+"'}}";
-			String result = HttpUtil.doPost("http://openapi.tuling123.com/openapi/api/v2", json);
-			JSONObject jsonResult = JSONObject.parseObject(result);
-			if(jsonResult.containsKey("results")) {
-				JSONArray results = jsonResult.getJSONArray("results");
-				String type;
-				String value;
-				for (int i = 0; i < results.size(); i++) {
-					JSONObject r = results.getJSONObject(i);
-					type = r.getString("resultType");
-					value = r.getJSONObject("values").getString(type);
-					switch (type) {
-					case "text":
-					case "url":
-						chatServer.sendGloba(Arrays.asList(chatRoom), new Msg(MessageType.TEXT, "@"+nickName+" "+ value));
-						break;
-
-					default:
-						
-						break;
+			//关键词功能是否开启
+			final Contact chatRoom = cacheService.getChatRoom(message.getFromUserName().contains("@@")?message.getFromUserName():message.getToUserName());
+			if (SettingFunction.SETTING.getSwitchs().isGlobalKeyword()) {
+				
+				Map<String, Msg> keyMap = null;
+				
+				//是否有“全群”关键词权限 并且 “全群”关键词开关开启
+				if(SettingFunction.SETTING.getPermissions().isGlobalKeyword() && SettingFunction.SETTING.getKeywords().contains(Config.GLOBA_SEQ)){
+					// “全群”关键词自动回复
+					keyMap = KeywordFunction.KEY_MAP.get(Config.GLOBA_SEQ);
+					if (keyMap != null) {
+						keyMap.forEach((k, v) -> {
+							if (content.contains(k)) {
+								chatServer.sendGloba(Arrays.asList(chatRoom), v);
+							}
+						});
 					}
-				} 
+				}
+				
+				//是否有“分群”关键词权限 并且 “分群”关键词开关开启
+				if(SettingFunction.SETTING.getPermissions().isKeyword() && SettingFunction.SETTING.getKeywords().contains(chatRoom.getSeq())){
+					// “分群”关键词自动回复
+					keyMap = KeywordFunction.KEY_MAP.get(chatRoom.getSeq());
+					if (keyMap != null) {
+						keyMap.forEach((k, v) -> {
+							if (content.contains(k)) {
+								chatServer.sendGloba(Arrays.asList(chatRoom), v);
+							}
+						});
+					}
+				}
+			}
+			
+			//图灵机器人自动回复
+			if(SettingFunction.SETTING.getPermissions().isTuring() && SettingFunction.SETTING.getTuring().contains(chatRoom.getSeq()) 
+					&& SettingFunction.TURING_KEY !=  null && !SettingFunction.TURING_KEY.isEmpty() && content.contains("@"+cacheService.getOwner().getNickName())
+			){
+				String userId = Coder.encryptMD5(userName);
+				Contact member = cacheService.searchContact(chatRoom.getMemberList(), userName);
+				String nickName = member == null?"":member.getNickName();
+				
+				String json = "{'reqType':0,'perception': {'inputText': {'text': '"+content+"'}},'userInfo': {'apiKey': '"+SettingFunction.TURING_KEY+"','userId': '"+userId.replace("@", "")+"','groupId':'"+chatRoom.getUserName()+"'}}";
+				String result = HttpUtil.doPost("http://openapi.tuling123.com/openapi/api/v2", json);
+				JSONObject jsonResult = JSONObject.parseObject(result);
+				if(jsonResult.containsKey("results")) {
+					JSONArray results = jsonResult.getJSONArray("results");
+					String type;
+					String value;
+					for (int i = 0; i < results.size(); i++) {
+						JSONObject r = results.getJSONObject(i);
+						type = r.getString("resultType");
+						value = r.getJSONObject("values").getString(type);
+						switch (type) {
+						case "text":
+						case "url":
+							chatServer.sendGloba(Arrays.asList(chatRoom), new Msg(MessageType.TEXT, "@"+nickName+" "+ value));
+							break;
+	
+						default:
+							
+							break;
+						}
+					} 
+				}
 			}
 		}
 	}
@@ -293,7 +297,7 @@ public class MessageHandlerImpl implements MessageHandler {
 		chatServer.writeReceiveRecord(message, MessageType.TEXT, null, null);
 		
 		//转发给群
-		if(cacheService.getOwner().getUserName().equals(message.getFromUserName()) && cacheService.getOwner().getUserName().equals(message.getToUserName())){
+		if(SettingFunction.isWorking() && SettingFunction.SETTING.getPermissions().isForward() && cacheService.getOwner().getUserName().equals(message.getFromUserName()) && cacheService.getOwner().getUserName().equals(message.getToUserName())){
 			cacheService.getChatRooms().stream().filter(c -> SettingFunction.SETTING.getForwards().contains(c.getSeq())).forEach(c -> {
 				try {
 					chatServer.writeSendTextRecord(c, content, wechatHttpService.sendText(c.getUserName(), message.getContent()).getMsgID());
@@ -314,7 +318,7 @@ public class MessageHandlerImpl implements MessageHandler {
 		chatServer.writeReceiveRecord(message, msg);
 		
 		//转发给群
-		if(cacheService.getOwner().getUserName().equals(message.getFromUserName()) && cacheService.getOwner().getUserName().equals(message.getToUserName())){
+		if(SettingFunction.isWorking() && SettingFunction.SETTING.getPermissions().isForward() && cacheService.getOwner().getUserName().equals(message.getFromUserName()) && cacheService.getOwner().getUserName().equals(message.getToUserName())){
 			cacheService.getChatRooms().stream().filter(c -> SettingFunction.SETTING.getForwards().contains(c.getSeq())).forEach(c -> {
 				try {
 					wechatHttpService.forwardMsg(c.getUserName(), message);
@@ -335,7 +339,7 @@ public class MessageHandlerImpl implements MessageHandler {
 		chatServer.writeReceiveRecord(message, msg);
 		
 		//转发给群
-		if(message.getContent() != null && !message.getContent().isEmpty()) {
+		if(SettingFunction.isWorking() && SettingFunction.SETTING.getPermissions().isForward() && message.getContent() != null && !message.getContent().isEmpty()) {
 			if(cacheService.getOwner().getUserName().equals(message.getFromUserName()) && cacheService.getOwner().getUserName().equals(message.getToUserName())){
 				cacheService.getChatRooms().stream().filter(c -> SettingFunction.SETTING.getForwards().contains(c.getSeq())).forEach(c -> {
 					try {
@@ -358,7 +362,7 @@ public class MessageHandlerImpl implements MessageHandler {
 		chatServer.writeReceiveRecord(message, msg);
 		
 		//转发给群
-		if(cacheService.getOwner().getUserName().equals(message.getFromUserName()) && cacheService.getOwner().getUserName().equals(message.getToUserName())){
+		if(SettingFunction.isWorking() && SettingFunction.SETTING.getPermissions().isForward() && cacheService.getOwner().getUserName().equals(message.getFromUserName()) && cacheService.getOwner().getUserName().equals(message.getToUserName())){
 			cacheService.getChatRooms().stream().filter(c -> SettingFunction.SETTING.getForwards().contains(c.getSeq())).forEach(c -> {
 				try {
 					wechatHttpService.forwardMsg(c.getUserName(), message);
@@ -380,7 +384,7 @@ public class MessageHandlerImpl implements MessageHandler {
 		chatServer.writeReceiveRecord(message, msg);
 		
 		//转发给群
-		if(cacheService.getOwner().getUserName().equals(message.getFromUserName()) && cacheService.getOwner().getUserName().equals(message.getToUserName())){
+		if(SettingFunction.isWorking() && SettingFunction.SETTING.getPermissions().isForward() && cacheService.getOwner().getUserName().equals(message.getFromUserName()) && cacheService.getOwner().getUserName().equals(message.getToUserName())){
 			cacheService.getChatRooms().stream().filter(c -> SettingFunction.SETTING.getForwards().contains(c.getSeq())).forEach(c -> {
 				try {
 					wechatHttpService.forwardMsg(c.getUserName(), message);
@@ -401,7 +405,7 @@ public class MessageHandlerImpl implements MessageHandler {
 		chatServer.writeReceiveRecord(message, msg);
 		
 		//转发给群
-		if(cacheService.getOwner().getUserName().equals(message.getFromUserName()) && cacheService.getOwner().getUserName().equals(message.getToUserName())){
+		if(SettingFunction.isWorking() && SettingFunction.SETTING.getPermissions().isForward() && cacheService.getOwner().getUserName().equals(message.getFromUserName()) && cacheService.getOwner().getUserName().equals(message.getToUserName())){
 			cacheService.getChatRooms().stream().filter(c -> SettingFunction.SETTING.getForwards().contains(c.getSeq())).forEach(c -> {
 				try {
 					wechatHttpService.forwardMsg(c.getUserName(), message);
@@ -449,31 +453,39 @@ public class MessageHandlerImpl implements MessageHandler {
 //		if (membersLeft != null && membersLeft.size() > 0) {
 //			logger.debug("离开成员:" + String.join(",", membersLeft.stream().map(Contact::getNickName).collect(Collectors.toList())));
 //		}
-		Msg joinTip = SettingFunction.SETTING.getTips().getMemberJoinTip();
-		if(membersJoined != null && membersJoined.size() > 0 && joinTip != null && joinTip.getType() != 0){
-			StringBuffer members = new StringBuffer();
-			if (joinTip.getMsgType() == MessageType.TEXT) {
-				membersJoined.forEach(c -> {
-					members.append("@").append(c.getNickName()).append(" ");
-				});
-				chatServer.sendGloba(Arrays.asList(chatRoom), new Msg(MessageType.TEXT, joinTip.getContent().replace("[user]", members.toString())));
-			} else {
-				chatServer.sendGloba(Arrays.asList(chatRoom), new Msg(MessageType.TEXT, members.toString()));
-				chatServer.sendGloba(Arrays.asList(chatRoom), joinTip);
+		if(SettingFunction.isWorking()){
+			
+			if(SettingFunction.SETTING.getPermissions().isMemberJoinTip()){
+				Msg joinTip = SettingFunction.SETTING.getTips().getMemberJoinTip();
+				if(membersJoined != null && membersJoined.size() > 0 && joinTip != null && joinTip.getType() != 0){
+					StringBuffer members = new StringBuffer();
+					if (joinTip.getMsgType() == MessageType.TEXT) {
+						membersJoined.forEach(c -> {
+							members.append("@").append(c.getNickName()).append(" ");
+						});
+						chatServer.sendGloba(Arrays.asList(chatRoom), new Msg(MessageType.TEXT, joinTip.getContent().replace("[user]", members.toString())));
+					} else {
+						chatServer.sendGloba(Arrays.asList(chatRoom), new Msg(MessageType.TEXT, members.toString()));
+						chatServer.sendGloba(Arrays.asList(chatRoom), joinTip);
+					}
+				}
 			}
-		}
-		
-		Msg letfTip = SettingFunction.SETTING.getTips().getMemberLeftTip();
-		if(membersLeft != null && membersLeft.size() > 0 && letfTip != null && letfTip.getType() != 0){
-			StringBuffer members = new StringBuffer();
-			if (letfTip.getMsgType() == MessageType.TEXT) {
-				membersLeft.forEach(c -> {
-					members.append("@").append(c.getNickName()).append(" ");
-				});
-				chatServer.sendGloba(Arrays.asList(chatRoom), new Msg(MessageType.TEXT, letfTip.getContent().replace("[user]", members.toString())));
-			} else {
-				chatServer.sendGloba(Arrays.asList(chatRoom), new Msg(MessageType.TEXT, members.toString()));
-				chatServer.sendGloba(Arrays.asList(chatRoom), letfTip);
+			
+			if(SettingFunction.SETTING.getPermissions().isMemberLeftTip()) {
+				
+				Msg letfTip = SettingFunction.SETTING.getTips().getMemberLeftTip();
+				if(membersLeft != null && membersLeft.size() > 0 && letfTip != null && letfTip.getType() != 0){
+					StringBuffer members = new StringBuffer();
+					if (letfTip.getMsgType() == MessageType.TEXT) {
+						membersLeft.forEach(c -> {
+							members.append("@").append(c.getNickName()).append(" ");
+						});
+						chatServer.sendGloba(Arrays.asList(chatRoom), new Msg(MessageType.TEXT, letfTip.getContent().replace("[user]", members.toString())));
+					} else {
+						chatServer.sendGloba(Arrays.asList(chatRoom), new Msg(MessageType.TEXT, members.toString()));
+						chatServer.sendGloba(Arrays.asList(chatRoom), letfTip);
+					}
+				}
 			}
 		}
 	}
@@ -484,7 +496,7 @@ public class MessageHandlerImpl implements MessageHandler {
 		chatRooms.forEach(x -> logger.debug(x.getUserName()));
 		msgTool.execContactsChanged(chatRooms, ChangeType.ADD.getCode());
 		
-		if(chatRooms != null && chatRooms.size() >0 && SettingFunction.SETTING.getTips().getChatRoomFoundTip() != null && SettingFunction.SETTING.getTips().getChatRoomFoundTip().getType() != 0){
+		if(SettingFunction.isWorking() && SettingFunction.SETTING.getPermissions().isChatRoomFoundTip() && chatRooms != null && chatRooms.size() >0 && SettingFunction.SETTING.getTips().getChatRoomFoundTip() != null && SettingFunction.SETTING.getTips().getChatRoomFoundTip().getType() != 0){
 			chatRooms.forEach(chatRoom -> {
 				chatServer.sendGloba(Arrays.asList(chatRoom), SettingFunction.SETTING.getTips().getChatRoomFoundTip());
 			});

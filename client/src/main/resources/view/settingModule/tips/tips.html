@@ -7,7 +7,7 @@
         </tr>
     </thead>
     <tbody style="height: 375px;">
-        <tr v-if="setting.permissions.chatRoomFoundTip">
+        <tr v-if="Web.user.userInfo.serverState && setting.permissions.chatRoomFoundTip">
             <td>加群自动消息设置</td>
             <td>
                 <tooltip :content="showTipContent('chatRoomFoundTip')" class="text-truncate w-100">
@@ -23,7 +23,7 @@
                     @click="cancelTipMoadl('chatRoomFoundTip','加群自动消息设置')" title="取消设定"></i-button>
             </td>
         </tr>
-        <tr v-if="setting.permissions.memberJoinTip">
+        <tr v-if="Web.user.userInfo.serverState && setting.permissions.memberJoinTip">
             <td>进群欢迎语设置</td>
             <td>
                 <tooltip :content="showTipContent('memberJoinTip')" class="text-truncate w-100">
@@ -38,7 +38,7 @@
                     @click="cancelTipMoadl('memberJoinTip','进群欢迎语设置')" title="取消设定"></i-button>
             </td>
         </tr>
-        <tr v-if="setting.permissions.memberLeftTip">
+        <tr v-if="Web.user.userInfo.serverState && setting.permissions.memberLeftTip">
             <td>退群提示语设置</td>
             <td>
                 <tooltip :content="showTipContent('memberLeftTip')" class="text-truncate w-100">

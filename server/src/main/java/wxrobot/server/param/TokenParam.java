@@ -43,10 +43,11 @@ public class TokenParam extends StringParam implements SingleParam {
 		Jedis jedis = null;
 		try {
 			jedis = RedisUtil.getJedis();
+			//判断缓存是否存在
 			if (!jedis.exists(key)) {
 				return new Result(CustomErrors.USER_NOT_LOGIN);
 			}
-			
+			//判断是否过期
 			UserInfo userInfo = BaseServer.JSON_MAPPER.readValue(jedis.hget("key", "userInfo"), UserInfo.class);
 			if(Long.valueOf(userInfo.getServerEnd()) <= System.currentTimeMillis())
 				return new Result(CustomErrors.USER_SERVER_END);

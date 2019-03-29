@@ -101,9 +101,14 @@ $script.ready(["user", "general", "seqs", "globalTimer", "globalKeyword", "tips"
             wxbot.getChatRooms(data => {
                 this.chatRooms = data;
             });
-            this.generalReset();
             this.getMsgs();
             this.getKeyMap();
+            this.notifySetting();
+            this.general.turingKey = localStorage.getItem("turingKey")?localStorage.getItem("turingKey"):"";
+        },
+        notifySetting(){
+            this.setting = wxbot.getSetting();
+            this.generalReset();
             this.tipsReset();
             this.switchTimer = {
                 seq: "global",
@@ -119,7 +124,9 @@ $script.ready(["user", "general", "seqs", "globalTimer", "globalKeyword", "tips"
                 result: this.setting.keywords.includes("global"),
                 loading: false,
             };
-            this.general.turingKey = localStorage.getItem("turingKey")?localStorage.getItem("turingKey"):"";
+        },
+        notifyUser(user){
+            Web.user = user;
         },
         onMembersSeqChanged(seqMap){
             app.modKeywords(seqMap);

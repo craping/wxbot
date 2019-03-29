@@ -25,10 +25,10 @@
 				<a class="nav-link" name="seqs" data-toggle="tab" href="#seqs" role="tab" aria-controls="seqs" @click="header = constant.header[$event.target.name]">
 					<i class="fas fa-toggle-on"></i> {{constant.header.seqs.title}}
 				</a>
-				<a class="nav-link" v-show="setting.permissions.globalTimer" name="globalTimer" data-toggle="tab" href="#globalTimer" role="tab" aria-controls="globalTimer" @click="header = constant.header[$event.target.name]">
+				<a class="nav-link" v-show="Web.user.userInfo.serverState && setting.permissions.globalTimer" name="globalTimer" data-toggle="tab" href="#globalTimer" role="tab" aria-controls="globalTimer" @click="header = constant.header[$event.target.name]">
 					<i class="fas fa-clock"></i> {{constant.header.globalTimer.title}}
 				</a>
-				<a class="nav-link" v-show="setting.permissions.globalKeyword" name="globalKeyword" data-toggle="tab" href="#globalKeyword" role="tab" aria-controls="globalKeyword" @click="header = constant.header[$event.target.name]">
+				<a class="nav-link" v-show="Web.user.userInfo.serverState && setting.permissions.globalKeyword" name="globalKeyword" data-toggle="tab" href="#globalKeyword" role="tab" aria-controls="globalKeyword" @click="header = constant.header[$event.target.name]">
 					<i class="fas fa-comment-dots"></i> {{constant.header.globalKeyword.title}}
 				</a>
 				<a class="nav-link" name="tips" data-toggle="tab" href="#tips" role="tab" aria-controls="tips" @click="header = constant.header[$event.target.name]">
@@ -58,8 +58,8 @@
 				<div class="tab-pane" id="user" role="tabpanel" aria-labelledby="user-tab"></div>
 				<div class="tab-pane" id="general" role="tabpanel" aria-labelledby="general-tab"></div>
 				<div class="tab-pane" id="seqs" role="tabpanel" aria-labelledby="seqs-tab"></div>
-				<div class="tab-pane" v-show="setting.permissions.globalTimer" id="globalTimer" role="tabpanel" aria-labelledby="globalTimer-tab"></div>
-				<div class="tab-pane" v-show="setting.permissions.globalKeyword" id="globalKeyword" role="tabpanel" aria-labelledby="globalKeyword-tab"></div>
+				<div class="tab-pane" v-show="Web.user.userInfo.serverState && setting.permissions.globalTimer" id="globalTimer" role="tabpanel" aria-labelledby="globalTimer-tab"></div>
+				<div class="tab-pane" v-show="Web.user.userInfo.serverState && setting.permissions.globalKeyword" id="globalKeyword" role="tabpanel" aria-labelledby="globalKeyword-tab"></div>
 				<div class="tab-pane" id="tips" role="tabpanel" aria-labelledby="tips-tab"></div>
 			</div>
 		</main>

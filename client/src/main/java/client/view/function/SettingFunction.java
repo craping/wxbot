@@ -35,7 +35,6 @@ public class SettingFunction {
 
 	protected SimpleDateFormat dateFormat = new SimpleDateFormat("M,d,H,m,s");
 	
-	protected JSObject user;
 	
 	@Autowired
 	protected WechatHttpService wechatService;
@@ -45,6 +44,14 @@ public class SettingFunction {
 	
 	@Autowired
 	protected ChatServer chatServer;
+	
+	public static JSObject USER;
+	
+	public static boolean isWorking(){
+		if(USER != null)
+			return USER.getProperty("userInfo").asObject().getProperty("serverState").getBooleanValue();
+		return false;
+	}
 	
 	public static Setting SETTING = new Setting();
 	static {
@@ -75,7 +82,7 @@ public class SettingFunction {
 				Tips tips = setting.getTips();
 				downloadTips(tips);
 				SETTING = setting;
-				WxbotView.getInstance().executeSettingScript("app.syncSetting()");
+				WxbotView.getInstance().executeSettingScript("app.notifySetting()");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -145,7 +152,7 @@ public class SettingFunction {
 		if(syncSwitchs != null && syncSwitchs.toJSONString() != null && !syncSwitchs.toJSONString().isEmpty()){
 			try {
 				SETTING.setSwitchs(BaseServer.JSON_MAPPER.readValue(syncSwitchs.toJSONString(), Switchs.class));
-				WxbotView.getInstance().executeSettingScript("app.syncSetting()");
+				WxbotView.getInstance().executeSettingScript("app.notifySetting()");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -158,7 +165,7 @@ public class SettingFunction {
 				Tips tips = BaseServer.JSON_MAPPER.readValue(syncTips.toJSONString(), Tips.class);
 				downloadTips(tips);
 				SETTING.setTips(tips);
-				WxbotView.getInstance().executeSettingScript("app.syncSetting()");
+				WxbotView.getInstance().executeSettingScript("app.notifySetting()");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -169,7 +176,7 @@ public class SettingFunction {
 		if(syncPermissions != null && syncPermissions.toJSONString() != null && !syncPermissions.toJSONString().isEmpty()){
 			try {
 				SETTING.setPermissions(BaseServer.JSON_MAPPER.readValue(syncPermissions.toJSONString(), Permissions.class));
-				WxbotView.getInstance().executeSettingScript("app.syncSetting()");
+				WxbotView.getInstance().executeSettingScript("app.notifySetting()");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -199,7 +206,7 @@ public class SettingFunction {
 		File attach = new File(Config.ATTCH_PATH+fileName);
 		if(!attach.exists()){
 			System.out.printf("文件[%s]不存在 从云端获取...\n", fileName);
-			HttpUtil.download(Config.ATTACH_URL + user.getProperty("userInfo").asObject().getProperty("userName") + "/" + fileName, attach.getPath());
+			HttpUtil.download(Config.ATTACH_URL + USER.getProperty("userInfo").asObject().getProperty("userName") + "/" + fileName, attach.getPath());
 			System.out.printf("文件[%s]下载完毕\n", fileName);
 		}
 	}

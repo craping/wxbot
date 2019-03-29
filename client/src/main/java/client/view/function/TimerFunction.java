@@ -12,6 +12,8 @@ import com.teamdev.jxbrowser.chromium.JSONString;
 import com.teamdev.jxbrowser.chromium.JSObject;
 
 import client.pojo.ScheduleMsg;
+import client.utils.Config;
+import client.view.WxbotView;
 import client.view.server.BaseServer;
 
 @Component
@@ -37,22 +39,25 @@ public class TimerFunction extends ChatFunction {
 	}
 	
 	public void syncTimers(JSObject syncTimerMap) {
-		try {
-			TIMER_MAP.clear();
-			ConcurrentHashMap<String, ConcurrentLinkedQueue<ScheduleMsg>> timerMap = 
-					BaseServer.JSON_MAPPER.readValue(syncTimerMap.toJSONString(), new TypeReference<ConcurrentHashMap<String, ConcurrentLinkedQueue<ScheduleMsg>>>() {});
-			timerMap.forEach((k, v) -> {
-				v.forEach(msg -> {
-					if(msg.getType() != 1){
-						System.out.printf("定时文件消息[%s]\n", msg.getContent());
-						downloadAttach(msg.getContent());
-					}
+		new Thread(() -> {
+			try {
+				TIMER_MAP.clear();
+				ConcurrentHashMap<String, ConcurrentLinkedQueue<ScheduleMsg>> timerMap = 
+						BaseServer.JSON_MAPPER.readValue(syncTimerMap.toJSONString(), new TypeReference<ConcurrentHashMap<String, ConcurrentLinkedQueue<ScheduleMsg>>>() {});
+				timerMap.forEach((k, v) -> {
+					v.forEach(msg -> {
+						if(msg.getType() != 1){
+							System.out.printf("定时文件消息[%s]\n", msg.getContent());
+							downloadAttach(msg.getContent());
+						}
+					});
 				});
-			});
-			TIMER_MAP.putAll(timerMap);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+				TIMER_MAP.putAll(timerMap);
+				WxbotView.getInstance().executeSettingScript("app.getMsgs()");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}).start();
 	}
 	
 	public void addMsg(String seq, JSObject addMsg){
@@ -69,6 +74,8 @@ public class TimerFunction extends ChatFunction {
 				TIMER_MAP.put(seq, msgs);
 			}
 			msgs.add(msg);
+			if(Config.GLOBA_SEQ.equals(seq))
+				WxbotView.getInstance().executeSettingScript("app.getMsgs()");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -78,5 +85,8 @@ public class TimerFunction extends ChatFunction {
 		ConcurrentLinkedQueue<ScheduleMsg> msgs = TIMER_MAP.get(seq);
 		if (msgs != null)
 			msgs.removeIf(e -> e.getUuid().equals(uuid));
+		
+		if(Config.GLOBA_SEQ.equals(seq))
+			WxbotView.getInstance().executeSettingScript("app.getMsgs()");
 	}
 }

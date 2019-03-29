@@ -29,6 +29,17 @@ public class Permissions {
 	@JsonProperty
 	private boolean chat;
 	
+	/**  
+	* @Fields 图灵机器人
+	*/  
+	@JsonProperty
+	private boolean turing;
+	
+	/**  
+	* @Fields 群转发
+	*/  
+	@JsonProperty
+	private boolean forward;
 	  
 	/**  
 	* @Fields 分群关键词
@@ -199,6 +210,24 @@ public class Permissions {
 	public void setWapSite(boolean wapSite) {
 		this.wapSite = wapSite;
 	}
-	
-	
+
+
+	public boolean isTuring() {
+		return turing;
+	}
+
+
+	public void setTuring(boolean turing) {
+		this.turing = turing;
+	}
+
+
+	public boolean isForward() {
+		return forward;
+	}
+
+
+	public void setForward(boolean forward) {
+		this.forward = forward;
+	}
 }

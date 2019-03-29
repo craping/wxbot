@@ -4,10 +4,10 @@
         <tr>
             <th width="70">群ID</th>
             <th>群名称</th>
-            <th class="text-center" width="80">图灵AI</th>
-            <th class="text-center" width="80">群转发</th>
-            <th class="text-center" width="80">关键词</th>
-            <th class="text-center" width="80">定时消息</th>
+            <th v-if="Web.user.userInfo.serverState && setting.permissions.turing" class="text-center" width="80">图灵AI</th>
+            <th v-if="Web.user.userInfo.serverState && setting.permissions.forward" class="text-center" width="80">群转发</th>
+            <th v-if="Web.user.userInfo.serverState && setting.permissions.keyword" class="text-center" width="80">关键词</th>
+            <th v-if="Web.user.userInfo.serverState && setting.permissions.timer" class="text-center" width="80">定时消息</th>
         </tr>
     </thead>
 </table>
@@ -16,25 +16,25 @@
         <div class="d-flex align-items-center border-bottom" style="height:46px">
             <div class="px-2" style="width:70px">{{item.seq}}</div>
             <div class="px-2 text-truncate" style="width:115px" v-html="item.NickName"></div>
-            <div class="px-2 text-center" style="width:80px">
+            <div v-if="Web.user.userInfo.serverState && setting.permissions.turing" class="px-2 text-center" style="width:80px">
                 <i-switch v-model="item.turing.state" :loading="item.turing.loading" size="large" @on-change="changeSeq(item.turing)">
                     <span slot="open">开启</span>
                     <span slot="close">关闭</span>
                 </i-switch>
             </div>
-            <div class="px-2 text-center" style="width:80px">
+            <div v-if="Web.user.userInfo.serverState && setting.permissions.forward" class="px-2 text-center" style="width:80px">
                 <i-switch v-model="item.forwards.state" :loading="item.forwards.loading" size="large" @on-change="changeSeq(item.forwards)">
                     <span slot="open">开启</span>
                     <span slot="close">关闭</span>
                 </i-switch>
             </div>
-            <div class="px-2 text-center" style="width:80px">
+            <div v-if="Web.user.userInfo.serverState && setting.permissions.keyword" class="px-2 text-center" style="width:80px">
                 <i-switch v-model="item.keywords.state" :loading="item.keywords.loading" size="large" @on-change="changeSeq(item.keywords)">
                     <span slot="open">开启</span>
                     <span slot="close">关闭</span>
                 </i-switch>
             </div>
-            <div class="px-2 text-center" style="width:80px">
+            <div v-if="Web.user.userInfo.serverState && setting.permissions.timer" class="px-2 text-center" style="width:80px">
                 <i-switch v-model="item.timers.state" :loading="item.timers.loading" size="large" @on-change="changeSeq(item.timers)">
                     <span slot="open">开启</span>
                     <span slot="close">关闭</span>

@@ -89,6 +89,38 @@ public abstract class ChatFunction extends ContactsFunction {
 			sendApp(userName, lastSendFile);
 		});
 	}
+	
+	/**
+	 * @Title: sendText 
+	 * @Description: 发送文本消息 
+	 * @param @param userName 
+	 * @param text 参数 
+	 * @return void 返回类型 
+	 * @throws
+	 */
+	
+	public void sendText(String seq, String nickName, String userName, String content) {
+		new Thread(() -> {
+			try {
+				WxMessage message = new WxMessage();
+				String timestamp = Tools.getTimestamp();
+				message.setTimestamp(timestamp);
+				message.setTo(nickName);
+				message.setFrom(cacheService.getOwner().getNickName());
+				message.setDirection(Direction.SEND.getCode());
+				message.setMsgType(MessageType.TEXT.getCode());
+				message.setChatType(userName.startsWith("@@")?2:1);
+				message.setBody(new WxMessageBody(content));
+				String str = BaseServer.JSON_MAPPER.writeValueAsString(message);
+				String path = Config.CHAT_RECORD_PATH + seq;
+				FileUtil.writeFile(path, Tools.getSysDate() + ".txt", str);
+				wechatService.sendText(userName == null ? cacheService.getOwner().getUserName() : userName, content);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}).start();
+	}
+	
 	/**
 	 * @Title: sendApp 
 	 * @Description: 发送文件消息 调用后会打开文件选择器 可以选择任何类型文件 
@@ -172,34 +204,6 @@ public abstract class ChatFunction extends ContactsFunction {
 		}).start();
 	}
 	
-	/**
-	 * @Title: sendText 
-	 * @Description: 发送文本消息 
-	 * @param @param userName 
-	 * @param text 参数 
-	 * @return void 返回类型 
-	 * @throws
-	 */
-
-	public void sendText(String seq, String nickName, String userName, String content) {
-		try {
-			WxMessage message = new WxMessage();
-			String timestamp = Tools.getTimestamp();
-			message.setTimestamp(timestamp);
-			message.setTo(nickName);
-			message.setFrom(cacheService.getOwner().getNickName());
-			message.setDirection(Direction.SEND.getCode());
-			message.setMsgType(MessageType.TEXT.getCode());
-			message.setChatType(userName.startsWith("@@")?2:1);
-			message.setBody(new WxMessageBody(content));
-			String str = BaseServer.JSON_MAPPER.writeValueAsString(message);
-			String path = Config.CHAT_RECORD_PATH + seq;
-			FileUtil.writeFile(path, Tools.getSysDate() + ".txt", str);
-			wechatService.sendText(userName == null ? cacheService.getOwner().getUserName() : userName, content);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
 	
 	public void noticeForward(String content){
 		//转发给群

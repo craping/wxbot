@@ -11,13 +11,13 @@
         </i-button>
         <div>分群开关</div>
     </menu-item>
-    <menu-item class="text-center px-3">
+    <menu-item class="text-center px-3" v-if="Web.user.userInfo.serverState && permissions.globalTimer">
         <i-button type="info" class="py-0 px-2" style="font-size: 20px" @click="wxbot.openSetting('globalTimer')">
             <i class="fas fa-clock"></i>
         </i-button>
         <div>全群定时</div>
     </menu-item>
-    <menu-item class="text-center px-3">
+    <menu-item class="text-center px-3" v-if="Web.user.userInfo.serverState && permissions.globalKeyword">
         <i-button type="info" class="py-0 px-2" style="font-size: 20px" @click="wxbot.openSetting('globalKeyword')">
             <i class="fas fa-comment-dots"></i>
         </i-button>
@@ -29,7 +29,7 @@
         </i-button>
         <div>群提示语</div>
     </menu-item>
-    <menu-item class="text-center px-3" v-if="permissions.zombieTest">
+    <menu-item class="text-center px-3" v-if="Web.user.userInfo.serverState && permissions.zombieTest">
         <Poptip trigger="hover">
             <button @click="checkFriend" type="button" class="py-0 px-2 ivu-btn ivu-btn-info ivu-btn-icon-only" style="font-size: 20px;">
                 <i class="fas fa-filter" :class="[!header.checkLoading?'fas fa-filter':'ivu-load-loop ivu-icon ivu-icon-ios-loading']"></i>
@@ -74,7 +74,7 @@
             </div>
         </Poptip>
     </menu-item>
-    <menu-item class="text-center px-3" v-if="permissions.wapSite">
+    <menu-item class="text-center px-3" v-if="Web.user.userInfo.serverState && permissions.wapSite">
         <i-button type="info" class="py-0 px-2" style="font-size: 20px" @click="header.wapSite.modal = true;">
             <i class="fas fa-mobile-alt"></i>
         </i-button>

@@ -11,6 +11,8 @@ import com.teamdev.jxbrowser.chromium.JSONString;
 import com.teamdev.jxbrowser.chromium.JSObject;
 
 import client.pojo.Msg;
+import client.utils.Config;
+import client.view.WxbotView;
 import client.view.server.BaseServer;
 
 @Component
@@ -36,22 +38,24 @@ public class KeywordFunction extends TimerFunction {
 	}
 	
 	public void syncKeywords(JSObject syncKeyMap) {
-		try {
-			KEY_MAP.clear();
-			ConcurrentHashMap<String, ConcurrentHashMap<String, Msg>> keyMap = BaseServer.JSON_MAPPER.readValue(syncKeyMap.toJSONString(), new TypeReference<ConcurrentHashMap<String, ConcurrentHashMap<String, Msg>>>() {});
-			keyMap.forEach((k, v) -> {
-				v.forEach((key, msg) -> {
-					if(msg.getType() != 1){
-						System.out.printf("关键词文件[%s]\n", msg.getContent());
-						downloadAttach(msg.getContent());
-					}
+		new Thread(() -> {
+			try {
+				KEY_MAP.clear();
+				ConcurrentHashMap<String, ConcurrentHashMap<String, Msg>> keyMap = BaseServer.JSON_MAPPER.readValue(syncKeyMap.toJSONString(), new TypeReference<ConcurrentHashMap<String, ConcurrentHashMap<String, Msg>>>() {});
+				keyMap.forEach((k, v) -> {
+					v.forEach((key, msg) -> {
+						if(msg.getType() != 1){
+							System.out.printf("关键词文件[%s]\n", msg.getContent());
+							downloadAttach(msg.getContent());
+						}
+					});
 				});
-			});
-			KEY_MAP.putAll(keyMap);
-			System.out.println(KeywordFunction.KEY_MAP);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+				KEY_MAP.putAll(keyMap);
+				WxbotView.getInstance().executeSettingScript("app.getKeyMap()");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}).start();
 	}
 	
 	public void setKeyMap(String seq, String key, int type, String content){
@@ -65,12 +69,17 @@ public class KeywordFunction extends TimerFunction {
 			KEY_MAP.put(seq, map);
 		}
 		map.put(key, new Msg(type, content));
+		if(Config.GLOBA_SEQ.equals(seq))
+			WxbotView.getInstance().executeSettingScript("app.getKeyMap()");
 	}
 	
 	public void delKeyMap(String seq, String key){
 		ConcurrentHashMap<String, Msg> map = KEY_MAP.get(seq);
 		if(map != null)
 			map.remove(key);
+		
+		if(Config.GLOBA_SEQ.equals(seq))
+			WxbotView.getInstance().executeSettingScript("app.getKeyMap()");
 	}
 	
 }

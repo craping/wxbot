@@ -67,6 +67,16 @@ $script.ready(["header", "contacts", "chat", "keyword", "timer", "info"], () => 
 
             aEle.click();
         },
+        exit(){
+            this.$Modal.confirm({
+                title: "提示",
+                content: "是否确认退出？",
+                onOk:() => {
+                    Web.ajax("user/logout");
+                    wxbot.stop();
+                }
+            });
+        },
         syncSeq(seqMap){
             this.contacts.individuals.forEach(e => {
                 const newSeq = seqMap[e.seq];
@@ -121,6 +131,14 @@ $script.ready(["header", "contacts", "chat", "keyword", "timer", "info"], () => 
                     deferred.resolve(data);
                 },
                 fail: function (data) {
+                    if(data.errCode == 506){
+                        wxbot.exit("提示", "当前账户在其他地点登录！");
+                        return;   
+                    }
+                    if(data.errCode == 507){
+                        wxbot.exit("提示", "您的服务已到期，请联系管理员");
+                        return;   
+                    }
                     deferred.reject();
                     me.sync();
                 },
@@ -138,6 +156,21 @@ $script.ready(["header", "contacts", "chat", "keyword", "timer", "info"], () => 
                     console.log(msg);
                     const data = msg.data;
                     switch (msg.biz) {
+                        case "USER":
+                            switch (msg.action) {
+                                case "LOCK":
+                                    Web.user.userInfo.serverState = data;
+                                    wxbot.syncServerState(data);
+                                    break;
+                                case "DESTROY":
+                                    wxbot.exit("提示", "您已的账号已被注销，请联系管理员");
+                                    break;
+                                case "SERVER_TIME":
+                                    Web.user.userInfo.serverEnd = data;
+                                    wxbot.syncServerTime(data);
+                                    break;
+                            }
+                            break;
                         case "SETTING":
                             me.syncSetting();
                             break;
@@ -216,14 +249,16 @@ $script.ready(["header", "contacts", "chat", "keyword", "timer", "info"], () => 
         updated: function () {
         },
         mounted() {
-            this.syncSetting();
-            // this.loadContacts();
-            this.syncKeywords();
-            this.syncTimers();
-            this.handling();
-            this.noticeList();
-            this.syncTuringKey();
-            new QRCode(document.getElementById("wapSite"), this.header.wapSite.url);
+            setTimeout(() => {
+                this.syncSetting();
+                // this.loadContacts();
+                this.syncKeywords();
+                this.syncTimers();
+                this.handling();
+                this.noticeList();
+                this.syncTuringKey();
+                new QRCode(document.getElementById("wapSite"), this.header.wapSite.url);
+            }, 50);
         },
         methods: methods
     });

@@ -57,18 +57,6 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 		});
 	}
 	
-	public void shutdown(String msg) {
-		Platform.runLater(() -> {
-			Alert alert = new Alert(Alert.AlertType.ERROR);
-			alert.setTitle("错误");
-			alert.setHeaderText(null);
-			alert.setContentText(msg);
-			Optional<ButtonType> result = alert.showAndWait();
-			if(result.isPresent() && result.get() == ButtonType.OK){
-				LoginView.getInstance().close();
-			}
-		});
-	}
 	
 	/**
 	 * 获取用户信息
@@ -77,19 +65,39 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 	 * @return
 	 */
 	public JSONString getUserInfo() {
-		return new JSONString(user.toJSONString());
+		return new JSONString(USER.toJSONString());
 	}
-	  
+	
 	/**  
-	* @Title: syncUserInfo  
-	* @Description: 同步用户信息
-	* @param @param syncUserInfo    参数  
-	* @return void    返回类型  
-	* @throws  
-	*/  
-	    
+	 * @Title: syncUserInfo  
+	 * @Description: 同步用户信息
+	 * @param @param syncUserInfo    参数  
+	 * @return void    返回类型  
+	 * @throws  
+	 */  
+	
 	public void syncUserInfo(JSObject syncUserInfo){
-		this.user = syncUserInfo;
+		new Thread(() -> {
+			USER = syncUserInfo;
+		}).start();
+	}
+	
+	public void syncServerTime(String serverEnd){
+		new Thread(() -> {
+			USER.getProperty("userInfo").asObject().setProperty("serverEnd", serverEnd);
+			JSObject app = WxbotView.getInstance().getSettingBrowser().executeJavaScriptAndReturnValue("app").asObject();
+			JSValue notifyUser = app.getProperty("notifyUser");
+			notifyUser.asFunction().invokeAsync(app, new JSONString(USER.toJSONString()));
+		}).start();
+	}
+	
+	public void syncServerState(boolean serverState){
+		new Thread(() -> {
+			USER.getProperty("userInfo").asObject().setProperty("serverState", serverState);
+			JSObject app = WxbotView.getInstance().getSettingBrowser().executeJavaScriptAndReturnValue("app").asObject();
+			JSValue notifyUser = app.getProperty("notifyUser");
+			notifyUser.asFunction().invokeAsync(app, new JSONString(USER.toJSONString()));
+		}).start();
 	}
 
 	/**
@@ -100,7 +108,7 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 	 * @throws
 	 */
 	public void start(JSObject syncUserInfo) {
-		this.user = syncUserInfo;
+		USER = syncUserInfo;
 		wxbotThread = new Thread(() -> {
 			try {
 				jeeves.start();
@@ -120,18 +128,39 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 	 * @throws
 	 */
 	public void stop() {
-		jeeves.stop();
-		if (wxbotThread != null)
+		if (wxbotThread != null){
 			wxbotThread.interrupt();
+			jeeves.stop();
+		}
 		Platform.runLater(() -> {
-			WxbotView.getInstance().close();
+			WxbotView.exit();
+			LoginView.exit();
 		});
 	}
 
+	public void exit(String title, String msg) {
+		Platform.runLater(() -> {
+			Alert alert = new Alert(Alert.AlertType.ERROR);
+			alert.setTitle(title);
+			alert.setHeaderText(null);
+			alert.setContentText(msg);
+			Optional<ButtonType> result = alert.showAndWait();
+			if(result.isPresent() && result.get() == ButtonType.OK){
+				if (wxbotThread != null){
+					wxbotThread.interrupt();
+					jeeves.stop();
+				}
+				WxbotView.exit();
+				LoginView.exit();
+			}
+		});
+	}
+	
+	
 	@Scheduled(fixedRate=1000)
     private void work() {
 		//定时消息功能是否开启
-		if(SettingFunction.SETTING.getSwitchs().isGlobalTimer() && TIMER_MAP != null){
+		if(SettingFunction.isWorking() && SettingFunction.SETTING.getSwitchs().isGlobalTimer() && TIMER_MAP != null){
 			Date now = new Date();
 			
 			TIMER_MAP.forEach((seq, msgs) -> {

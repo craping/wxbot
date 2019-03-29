@@ -192,7 +192,7 @@ public final class LoginView extends AnchorPane  {
 		viewStage.setScene(viewScene);
 		viewStage.setOnCloseRequest(e -> {
 			new Thread(() -> {
-				System.out.println("wxbotView is disposed = " + browser.dispose(true));
+				System.out.println("loginView is disposed = " + browser.dispose(true));
 			}).start();
 		});
 	}
@@ -245,10 +245,14 @@ public final class LoginView extends AnchorPane  {
 	public void close() {
 		viewStage.close();
 		new Thread(() -> {
-			System.out.println("wxbotView is disposed = " + browser.dispose(true));
+			System.out.println("loginView is disposed = " + browser.dispose(true));
 		}).start();
 	}
 	
+	public static void exit(){
+		if(INSTANCE != null)
+			INSTANCE.close();
+	}
 	  
 	/**  
 	* @Title: hide  
