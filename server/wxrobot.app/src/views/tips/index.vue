@@ -38,7 +38,14 @@
         {{tipFileName}}
     </span>
 
-    <van-button size="large" type="info" @click="setTpis" :loading="loading">确定提交</van-button>
+    <van-button size="large" type="info" @click="setTpis" :loading="loading">确定提交</van-button><br /><br />
+    <van-button size="large" type="danger" @click="isShow=true">取消设置</van-button>
+
+    <!-- 取消dialog -->
+    <van-dialog v-model="isShow" show-cancel-button :beforeClose="beforeClose">
+        <div class="van-dialog__content"><div class="van-dialog__message">取消后，提示语能失效，确定？</div></div>
+    </van-dialog>
+
     <footerNav></footerNav>
 </section>
 </template>

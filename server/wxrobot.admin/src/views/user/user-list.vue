@@ -61,11 +61,18 @@
     </MasterPage>
     <Modal title="修改服务时间" v-model="renewModal.extension" class-name="vertical-center-modal" width="350" @on-ok="renew">
         服务截止时间：
-        <DatePicker type="date" :options="renewModal.dateOptions" @on-change="changeTime" 
-            placeholder="选择时间" style="width: 216px" :editable="false"></DatePicker>
+        <DatePicker type="datetime" placeholder="选择时间" style="width: 216px;" 
+            :options="renewModal.dateOptions"
+            format="yyyy-MM-dd HH:mm" 
+            @on-change="changeTime" 
+            :editable="false"></DatePicker>
     </Modal>
     <Modal v-model="p_modal" class-name="vertical-center-modal" :closable="false" width="350">
         <Table :columns="p_columns" :data="initPermissionsData()"></Table>
+        <div slot="footer">
+            <Button type="text"  @click="p_modal=false">取消</Button>
+            <Button type="primary" :loading="p_loading" @click="syncPermissions">确定修改</Button>
+        </div>
     </Modal>
 </section>
 </template>

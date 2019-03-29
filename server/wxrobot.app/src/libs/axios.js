@@ -1,21 +1,12 @@
 import axios from 'axios';
-//import _config from '@/config'
 import { Toast } from 'vant'
-//import router from '../router'
-
-//axios 配置
-//axios.defaults.timeout = 500000;
-//axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
-//axios.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded;charset=UTF-8";
-//axios.defaults.baseURL = 'http://127.0.0.1/api/';
-//axios.defaults.baseURL = 'http://127.0.0.1:9527/';
 
 var http = axios.create({
-    //baseURL: '/api/',
-    baseURL: 'http://127.0.0.1:80/',
+    baseURL: '/api/',
+    //baseURL: 'http://127.0.0.1:80/',
     headers: { 'Content-Type': 'application/json;charset=utf-8' },
     // 超时时间120s
-    timeout: 120 * 1000,
+    // timeout: 120 * 1000,
 })
 
 // http request 拦截器
