@@ -70,8 +70,6 @@ public final class WxbotView extends AnchorPane  {
 	
 	private Stage settingStage;
 	
-	private boolean debug;
-	
 	public static WxbotView getInstance() {
 		if(INSTANCE == null)
 			INSTANCE = new WxbotView();
@@ -79,13 +77,8 @@ public final class WxbotView extends AnchorPane  {
 	}
 	
 	private WxbotView() {
-		this(true);
-	}
-	
-	private WxbotView(boolean debug) {
-		this.debug = debug;
 		getChildren().remove(browserView);
-		browser = new Browser();
+		browser = new Browser(Launch.CACHE_CONTEXT);
 	    browserView = new BrowserView(browser);
 	    BrowserContext context = browser.getContext();
 
@@ -162,7 +155,7 @@ public final class WxbotView extends AnchorPane  {
             public void onScriptContextCreated(ScriptContextEvent event) {
             	Browser browser = event.getBrowser();
                 JSValue value = browser.executeJavaScriptAndReturnValue("window");
-            	value.asObject().setProperty("wxbot", Launch.context.getBean(Wxbot.class));
+            	value.asObject().setProperty("wxbot", Launch.CONTEXT.getBean(Wxbot.class));
             }
         });
         
@@ -184,7 +177,7 @@ public final class WxbotView extends AnchorPane  {
 		getChildren().add(browserView);
 		
 		viewScene = new Scene(this, 900, 652);
-		if(this.debug)
+		if(Launch.DEBUG)
 			viewScene.setOnKeyPressed(e -> {
 				if(e.getCode() == KeyCode.F12) {
 					debug();
@@ -235,7 +228,7 @@ public final class WxbotView extends AnchorPane  {
 	}
 	
 	public void setting() {
-		settingBrowser = new Browser();
+		settingBrowser = new Browser(Launch.CACHE_CONTEXT);
 		settingBrowserView = new BrowserView(settingBrowser);
 		BrowserContext context = settingBrowser.getContext();
 		
@@ -264,7 +257,7 @@ public final class WxbotView extends AnchorPane  {
             public void onScriptContextCreated(ScriptContextEvent event) {
             	Browser browser = event.getBrowser();
                 JSValue value = browser.executeJavaScriptAndReturnValue("window");
-            	value.asObject().setProperty("wxbot", Launch.context.getBean(Wxbot.class));
+            	value.asObject().setProperty("wxbot", Launch.CONTEXT.getBean(Wxbot.class));
             }
         });
 		settingBrowser.loadURL(getClass().getClassLoader().getResource("view/setting.html").toExternalForm());
@@ -275,7 +268,7 @@ public final class WxbotView extends AnchorPane  {
 		AnchorPane.setBottomAnchor(settingBrowserView, 0.0);
 		AnchorPane.setLeftAnchor(settingBrowserView, 0.0);
         Scene settingScene = new Scene(pane, 700, 500);
-        if(this.debug)
+        if(Launch.DEBUG)
 	        settingScene.setOnKeyPressed(e -> {
 				if(e.getCode() == KeyCode.F12) {
 					debugSetting();
@@ -300,8 +293,8 @@ public final class WxbotView extends AnchorPane  {
 	* @throws  
 	*/  
 	public void debug() {
-		if(this.debug) {
-			Browser debugBrowser = new Browser();
+		if(Launch.DEBUG) {
+			Browser debugBrowser = new Browser(Launch.CACHE_CONTEXT);
 			BrowserView debugBrowserView = new BrowserView(debugBrowser);
 	        debugBrowser.loadURL(browser.getRemoteDebuggingURL());
 	        Scene debugScene = new Scene(debugBrowserView, 790, 790);
@@ -320,8 +313,8 @@ public final class WxbotView extends AnchorPane  {
 	}
 	
 	public void debugSetting() {
-		if(this.debug) {
-			Browser debugBrowser = new Browser();
+		if(Launch.DEBUG) {
+			Browser debugBrowser = new Browser(Launch.CACHE_CONTEXT);
 			BrowserView debugBrowserView = new BrowserView(debugBrowser);
 	        debugBrowser.loadURL(settingBrowser.getRemoteDebuggingURL());
 	        Scene debugScene = new Scene(debugBrowserView, 790, 790);
@@ -411,14 +404,6 @@ public final class WxbotView extends AnchorPane  {
 
 	public void setViewStage(Stage viewStage) {
 		this.viewStage = viewStage;
-	}
-
-	public boolean isDebug() {
-		return debug;
-	}
-
-	public void setDebug(boolean debug) {
-		this.debug = debug;
 	}
 
 	public Browser getSettingBrowser() {

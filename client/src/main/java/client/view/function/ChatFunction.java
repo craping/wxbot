@@ -225,7 +225,7 @@ public abstract class ChatFunction extends ContactsFunction {
 	 * @return
 	 */
 	public String getRootPath() {
-		return System.getProperty("user.dir")+"/";
+		return Config.ROOT;
 	}
 
 	/**

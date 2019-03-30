@@ -252,7 +252,7 @@ $script.ready(["header", "contacts", "chat", "keyword", "timer", "info"], () => 
         },
         mounted() {
             this.syncSetting();
-            this.loadContacts();
+            // this.loadContacts();
             this.syncKeywords();
             this.syncTimers();
             this.noticeList();

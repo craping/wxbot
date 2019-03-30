@@ -64,8 +64,6 @@ public final class LoginView extends AnchorPane  {
 	
 	private Scene viewScene;
 	
-	private boolean debug;
-	
 	public static LoginView getInstance() {
 		if(INSTANCE == null)
 			INSTANCE = new LoginView();
@@ -73,13 +71,8 @@ public final class LoginView extends AnchorPane  {
 	}
 	
 	private LoginView() {
-		this(true);
-	}
-	
-	private LoginView(boolean debug) {
-		this.debug = debug;
 		getChildren().remove(browserView);
-		browser = new Browser();
+		browser = new Browser(Launch.CACHE_CONTEXT);
 	    browserView = new BrowserView(browser);
 	    BrowserContext context = browser.getContext();
 	    ProtocolService protocolService = context.getProtocolService();
@@ -157,7 +150,7 @@ public final class LoginView extends AnchorPane  {
             public void onScriptContextCreated(ScriptContextEvent event) {
             	Browser browser = event.getBrowser();
                 JSValue value = browser.executeJavaScriptAndReturnValue("window");
-            	value.asObject().setProperty("wxbot", Launch.context.getBean(Wxbot.class));
+            	value.asObject().setProperty("wxbot", Launch.CONTEXT.getBean(Wxbot.class));
             }
         });
         browser.addDisposeListener(event -> {
@@ -179,7 +172,7 @@ public final class LoginView extends AnchorPane  {
 		getChildren().add(browserView);
 		
 		viewScene = new Scene(this, 400, 300);
-		if(this.debug)
+		if(Launch.DEBUG)
 			viewScene.setOnKeyPressed(e -> {
 				if(e.getCode() == KeyCode.F12) {
 					debug();
@@ -215,8 +208,8 @@ public final class LoginView extends AnchorPane  {
 	* @throws  
 	*/  
 	public void debug() {
-		if(this.debug) {
-			Browser debugBrowser = new Browser();
+		if(Launch.DEBUG) {
+			Browser debugBrowser = new Browser(Launch.CACHE_CONTEXT);
 			BrowserView debugBrowserView = new BrowserView(debugBrowser);
 			System.out.println(browser.getRemoteDebuggingURL());
 	        debugBrowser.loadURL(browser.getRemoteDebuggingURL());
@@ -290,13 +283,4 @@ public final class LoginView extends AnchorPane  {
 		this.viewStage = viewStage;
 	}
 
-	public boolean isDebug() {
-		return debug;
-	}
-
-	public void setDebug(boolean debug) {
-		this.debug = debug;
-	}
-	
-	
 }

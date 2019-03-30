@@ -8,4 +8,60 @@
     <form-item label="到期时间" class="mb-0">
         {{new Date(parseInt(Web.user.userInfo.serverEnd)).format("yyyy-MM-dd HH:mm:ss")}}
     </form-item>
+    <form-item label="账户权限" class="mb-0">
+        <div class="d-flex flex-wrap w-100">
+            <div class="w-50 d-flex align-items-center">
+                <Icon class="mr-1" size="16" :type="Web.user.userInfo.serverState && setting.permissions.zombieTest?'md-checkbox-outline':'md-square-outline'" />
+                僵尸粉检测
+            </div>
+            <div class="w-50 d-flex align-items-center">
+                <Icon class="mr-1" size="16" :type="setting.permissions.chat?'md-checkbox-outline':'md-square-outline'" />
+                聊天
+            </div>
+            <div class="w-50 d-flex align-items-center">
+                <Icon class="mr-1" size="16" :type="Web.user.userInfo.serverState && setting.permissions.turing?'md-checkbox-outline':'md-square-outline'" />
+                图灵机器人
+            </div>
+            <div class="w-50 d-flex align-items-center">
+                <Icon class="mr-1" size="16" :type="Web.user.userInfo.serverState && setting.permissions.forward?'md-checkbox-outline':'md-square-outline'" />
+                群转发
+            </div>
+            <div class="w-50 d-flex align-items-center">
+                <Icon class="mr-1" size="16" :type="Web.user.userInfo.serverState && setting.permissions.keyword?'md-checkbox-outline':'md-square-outline'" />
+                分群关键词
+            </div>
+            <div class="w-50 d-flex align-items-center">
+                <Icon class="mr-1" size="16" :type="Web.user.userInfo.serverState && setting.permissions.globalKeyword?'md-checkbox-outline':'md-square-outline'" />
+                全群关键词
+            </div>
+            <div class="w-50 d-flex align-items-center">
+                <Icon class="mr-1" size="16" :type="Web.user.userInfo.serverState && setting.permissions.timer?'md-checkbox-outline':'md-square-outline'" />
+                分群定时消息
+            </div>
+            <div class="w-50 d-flex align-items-center">
+                <Icon class="mr-1" size="16" :type="Web.user.userInfo.serverState && setting.permissions.globalTimer?'md-checkbox-outline':'md-square-outline'" />
+                全群定时消息
+            </div>
+            <div class="w-50 d-flex align-items-center">
+                <Icon class="mr-1" size="16" :type="Web.user.userInfo.serverState && setting.permissions.acceptFriend?'md-checkbox-outline':'md-square-outline'" />
+                被动加好友
+            </div>
+            <div class="w-50 d-flex align-items-center">
+                <Icon class="mr-1" size="16" :type="Web.user.userInfo.serverState && setting.permissions.chatRoomFoundTip?'md-checkbox-outline':'md-square-outline'" />
+                发现新群提示语
+            </div>
+            <div class="w-50 d-flex align-items-center">
+                <Icon class="mr-1" size="16" :type="Web.user.userInfo.serverState && setting.permissions.memberJoinTip?'md-checkbox-outline':'md-square-outline'" />
+                成员加入提示语
+            </div>
+            <div class="w-50 d-flex align-items-center">
+                <Icon class="mr-1" size="16" :type="Web.user.userInfo.serverState && setting.permissions.memberLeftTip?'md-checkbox-outline':'md-square-outline'" />
+                成员退出提示语
+            </div>
+            <div class="w-50 d-flex align-items-center">
+                <Icon class="mr-1" size="16" :type="Web.user.userInfo.serverState && setting.permissions.wapSite?'md-checkbox-outline':'md-square-outline'" />
+                移动端管理
+            </div>
+        </div>
+    </form-item>
 </i-form>

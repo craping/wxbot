@@ -10,11 +10,14 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
+import com.teamdev.jxbrowser.chromium.BrowserContext;
+import com.teamdev.jxbrowser.chromium.BrowserContextParams;
 import com.teamdev.jxbrowser.chromium.BrowserCore;
 import com.teamdev.jxbrowser.chromium.BrowserPreferences;
 import com.teamdev.jxbrowser.chromium.bb;
 import com.teamdev.jxbrowser.chromium.internal.Environment;
 
+import client.utils.Config;
 import client.view.LoginView;
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -24,7 +27,11 @@ import javafx.stage.Stage;
 @ComponentScan({"com.cherry.jeeves", "client"})
 public class Launch extends Application {
 	
-	public static ApplicationContext context = new AnnotationConfigApplicationContext(Launch.class);
+	public static ApplicationContext CONTEXT = new AnnotationConfigApplicationContext(Launch.class);
+	/**  
+	* @Fields 开发调试模式
+	*/  
+	public final static boolean DEBUG = false;;
 	
 	static {
 	    try {
@@ -42,8 +49,16 @@ public class Launch extends Application {
 	    } catch (Exception e1) {
 	        e1.printStackTrace();
 	    }
-	    BrowserPreferences.setChromiumSwitches("--disable-google-traffic", "--disable-web-security", "--user-data-dir", "--allow-file-access-from-files", "--remote-debugging-port=9222");
+		BrowserPreferences.setChromiumSwitches(
+			"--disable-google-traffic", 
+			"--disable-web-security", 
+			"--user-data-dir",
+			"--allow-file-access-from-files", 
+			DEBUG?"--remote-debugging-port=9222":""
+		);
 	}
+	
+	public static BrowserContext CACHE_CONTEXT = new BrowserContext(new BrowserContextParams(Config.ROOT+"cache"));
 	
 	@Override
     public void init() throws Exception {

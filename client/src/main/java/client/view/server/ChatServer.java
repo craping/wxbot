@@ -248,11 +248,10 @@ public class ChatServer extends BaseServer {
 			String json = JSON_MAPPER.writeValueAsString(message);
 			FileUtil.writeFile(Config.CHAT_RECORD_PATH + contact.getSeq(), Tools.getSysDate() + ".txt", json);
 			if(!absolute){
-				String root = System.getProperty("user.dir")+"/";
-				message.getBody().setContent(root + localFileUrl);
-				message.getBody().setThumbImageUrl(root + message.getBody().getThumbImageUrl());
+				message.getBody().setContent(Config.ROOT + localFileUrl);
+				message.getBody().setThumbImageUrl(Config.ROOT + message.getBody().getThumbImageUrl());
 				if(message.msgType != MessageType.APP.getCode())
-					message.getBody().setFileName(root + localFileUrl);
+					message.getBody().setFileName(Config.ROOT + localFileUrl);
 				json = JSON_MAPPER.writeValueAsString(message);
 			}
 			msgTool.avatarBadge(contact.getUserName(), json);
@@ -314,7 +313,6 @@ public class ChatServer extends BaseServer {
 
 		RandomAccessFile rf = null;
 		WxMessage msg;
-		String root = System.getProperty("user.dir")+"/";
 		try {
 			rf = new RandomAccessFile(path, "r");
 			long len = rf.length();
@@ -331,10 +329,10 @@ public class ChatServer extends BaseServer {
 					if(line.length() > 0) {
 						msg = BaseServer.JSON_MAPPER.readValue(new String(line.toString().getBytes("ISO-8859-1"), "utf-8"), WxMessage.class);
 						if(msg.direction == Direction.SEND.getCode() && msg.msgType != MessageType.TEXT.getCode() && !msg.getBody().isAbsolute()){
-							msg.getBody().setContent(root + msg.getBody().getContent());
-							msg.getBody().setThumbImageUrl(root + msg.getBody().getThumbImageUrl());
+							msg.getBody().setContent(Config.ROOT + msg.getBody().getContent());
+							msg.getBody().setThumbImageUrl(Config.ROOT + msg.getBody().getThumbImageUrl());
 							if(msg.msgType != MessageType.APP.getCode())
-								msg.getBody().setFileName(root + msg.getBody().getContent());
+								msg.getBody().setFileName(Config.ROOT + msg.getBody().getContent());
 						}
 						link.addFirst(msg);
 						line.setLength(0);
@@ -350,10 +348,10 @@ public class ChatServer extends BaseServer {
 					line.insert(0, (char)rf.read());
 					msg = BaseServer.JSON_MAPPER.readValue(new String(line.toString().getBytes("ISO-8859-1"), "utf-8"), WxMessage.class);
 					if(msg.direction == Direction.SEND.getCode() && msg.msgType != MessageType.TEXT.getCode() && !msg.getBody().isAbsolute()){
-						msg.getBody().setContent(root + msg.getBody().getContent());
-						msg.getBody().setThumbImageUrl(root + msg.getBody().getThumbImageUrl());
+						msg.getBody().setContent(Config.ROOT + msg.getBody().getContent());
+						msg.getBody().setThumbImageUrl(Config.ROOT + msg.getBody().getThumbImageUrl());
 						if(msg.msgType != MessageType.APP.getCode())
-							msg.getBody().setFileName(root + msg.getBody().getContent());
+							msg.getBody().setFileName(Config.ROOT + msg.getBody().getContent());
 					}
 					link.addFirst(msg);
 				}

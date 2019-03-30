@@ -76,17 +76,19 @@ public class SettingFunction {
 	}
 	
 	public void syncSetting(JSObject syncSetting){
-		if(syncSetting != null && syncSetting.toJSONString() != null && !syncSetting.toJSONString().isEmpty()){
-			try {
-				Setting setting = BaseServer.JSON_MAPPER.readValue(syncSetting.toJSONString(), Setting.class);
-				Tips tips = setting.getTips();
-				downloadTips(tips);
-				SETTING = setting;
-				WxbotView.getInstance().executeSettingScript("app.notifySetting()");
-			} catch (IOException e) {
-				e.printStackTrace();
+		new Thread(() -> {
+			if(syncSetting != null && syncSetting.toJSONString() != null && !syncSetting.toJSONString().isEmpty()){
+				try {
+					Setting setting = BaseServer.JSON_MAPPER.readValue(syncSetting.toJSONString(), Setting.class);
+					Tips tips = setting.getTips();
+					downloadTips(tips);
+					SETTING = setting;
+					WxbotView.getInstance().executeSettingScript("app.notifySetting()");
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
-		}
+		}).start();
 	}
 	
 	public void syncTuringKey(String key){

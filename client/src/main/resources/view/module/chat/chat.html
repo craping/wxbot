@@ -82,7 +82,7 @@
     <div class="border border-gray">
         <div class="p-1 bg-transparent">
             <a>
-                <icon :color="'#2db7f5'" size="16" type="ios-folder" ghost @click="sendApp"></icon>
+                <icon :color="'#2db7f5'" size="16" type="ios-folder" v-if="permissions.chat" ghost @click="sendApp"></icon>
             </a>
 
             <Date-Picker
@@ -99,9 +99,9 @@
                 </a>
             </Date-Picker>
         </div>
-        <textarea id="chatText" class="w-100 border-0 px-2 bg-transparent" @keydown.ctrl.enter="sendText" :disable="!permissions.chat" @keydown.alt.83="sendText" type="textarea" rows="3" style="resize:none;outline: none"></textarea>
+        <textarea id="chatText" class="w-100 border-0 px-2 bg-transparent" @keydown.ctrl.enter="sendText" :disabled="!permissions.chat" @keydown.alt.83="sendText" type="textarea" rows="3" style="resize:none;outline: none"></textarea>
         <div class="text-right w-100 p-2">
-            <i-button type="info" size="small" @click="sendText">发 送(S)</i-button>
+            <i-button type="info" size="small" :disabled="!permissions.chat" @click="sendText">发 送(S)</i-button>
         </div>
     </div>
 </card>

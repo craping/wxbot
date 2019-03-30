@@ -19,8 +19,14 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.config.Registry;
+import org.apache.http.config.RegistryBuilder;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.conn.socket.PlainConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
@@ -34,33 +40,39 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 /**
  * HTTP 请求工具类 (当前httpclient版本是4.5.2)
  */
-@SuppressWarnings("deprecation")
 public class HttpUtil {
 
 	private static final Logger logger = LoggerFactory.getLogger(HttpUtil.class);
 	private static PoolingHttpClientConnectionManager connMgr;
 	private static RequestConfig requestConfig;
-	private static final int MAX_TIMEOUT = 7000;
-
+	private static HttpClientBuilder httpBulder;
+	
 	static {
+		Registry<ConnectionSocketFactory> registry = RegistryBuilder.<ConnectionSocketFactory>create()
+            .register("http", PlainConnectionSocketFactory.getSocketFactory())
+            .register("https", SSLConnectionSocketFactory.getSocketFactory())
+            .build();
+		
 		// 设置连接池
-		connMgr = new PoolingHttpClientConnectionManager();
+		connMgr = new PoolingHttpClientConnectionManager(registry);
 		// 设置连接池大小
 		connMgr.setMaxTotal(100);
-		connMgr.setDefaultMaxPerRoute(connMgr.getMaxTotal());
+		connMgr.setDefaultMaxPerRoute(20);
 
-		RequestConfig.Builder configBuilder = RequestConfig.custom();
-		// 设置连接超时
-		configBuilder.setConnectTimeout(MAX_TIMEOUT);
-		// 设置读取超时
-		configBuilder.setSocketTimeout(MAX_TIMEOUT);
-		// 设置从连接池获取连接实例的超时
-		configBuilder.setConnectionRequestTimeout(MAX_TIMEOUT);
-		// 在提交请求之前 测试连接是否可用
-		configBuilder.setStaleConnectionCheckEnabled(true);
-		requestConfig = configBuilder.build();
+		requestConfig = RequestConfig.custom()
+            .setConnectTimeout(5000)
+            .setSocketTimeout(30000)
+            .setConnectionRequestTimeout(3000)
+            .build();
+		
+		httpBulder = HttpClients.custom()
+            .setConnectionManager(connMgr)
+            .setDefaultRequestConfig(requestConfig);
 	}
-
+	
+	private static CloseableHttpClient getHttpClient(){
+		return httpBulder.build();
+	}
 	/** 发送 POST 请求（HTTP），JSON形式 */
 	public static Map<String, Object> sendRequest(String URL, Map<String, Object> params) {
 		logger.info("开始处理HTTP请求：" + URL);
@@ -68,17 +80,16 @@ public class HttpUtil {
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		ObjectMapper jsonMapper = new ObjectMapper();
 
-		CloseableHttpClient httpClient = HttpClients.createDefault();
+//		CloseableHttpClient httpClient = getHttpClient();
 		String responseStr = null;
 		HttpPost httpPost = new HttpPost(URL);
 		CloseableHttpResponse response = null;
 		try {
-			httpPost.setConfig(requestConfig);
 			StringEntity stringEntity = new StringEntity(jsonMapper.writeValueAsString(params), "UTF-8");// 解决中文乱码问题
 			stringEntity.setContentEncoding("UTF-8");
 			stringEntity.setContentType("application/json");
 			httpPost.setEntity(stringEntity);
-			response = httpClient.execute(httpPost);
+			response = getHttpClient().execute(httpPost);
 			HttpEntity entity = response.getEntity();
 			responseStr = EntityUtils.toString(entity, "UTF-8");
 
@@ -116,7 +127,7 @@ public class HttpUtil {
 	 * @return
 	 */
 	public static String doPost(String url, Map<String, Object> params) {
-		CloseableHttpClient httpClient = HttpClients.createDefault();
+//		CloseableHttpClient httpClient = HttpClients.createDefault();  
 		String httpStr = null;
 		HttpPost httpPost = new HttpPost(url);
 		CloseableHttpResponse response = null;
@@ -129,7 +140,7 @@ public class HttpUtil {
 				pairList.add(pair);
 			}
 			httpPost.setEntity(new UrlEncodedFormEntity(pairList, Charset.forName("UTF-8")));
-			response = httpClient.execute(httpPost);
+			response = getHttpClient().execute(httpPost);
 			// System.out.println(response.toString());
 			HttpEntity entity = response.getEntity();
 			httpStr = EntityUtils.toString(entity, "UTF-8");
@@ -155,17 +166,16 @@ public class HttpUtil {
 	 * @return
 	 */
 	public static String doPost(String apiUrl, Object json) {
-		CloseableHttpClient httpClient = HttpClients.createDefault();
+//		CloseableHttpClient httpClient = HttpClients.createDefault();
 		String httpStr = null;
 		HttpPost httpPost = new HttpPost(apiUrl);
 		CloseableHttpResponse response = null;
 		try {
-			httpPost.setConfig(requestConfig);
 			StringEntity stringEntity = new StringEntity(json.toString(), "UTF-8");// 解决中文乱码问题
 			stringEntity.setContentEncoding("UTF-8");
 			stringEntity.setContentType("application/json");
 			httpPost.setEntity(stringEntity);
-			response = httpClient.execute(httpPost);
+			response = getHttpClient().execute(httpPost);
 			HttpEntity entity = response.getEntity();
 			// System.out.println(response.getStatusLine().getStatusCode());
 			httpStr = EntityUtils.toString(entity, "UTF-8");
@@ -184,13 +194,12 @@ public class HttpUtil {
 	}
 	
 	public static void download(String url, String savePath) {
-		CloseableHttpClient httpClient = HttpClients.createDefault();
+//		CloseableHttpClient httpClient = HttpClients.createDefault();
 		OutputStream out = null;
 		InputStream in = null;
 		try {
 			HttpGet httpGet = new HttpGet(url);
-			httpGet.setConfig(requestConfig);
-			CloseableHttpResponse response = httpClient.execute(httpGet);
+			CloseableHttpResponse response = getHttpClient().execute(httpGet);
 			if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
 				return;
 			}

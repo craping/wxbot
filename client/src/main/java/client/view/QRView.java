@@ -37,7 +37,7 @@ public class QRView extends AnchorPane {
 	public QRView() {
 		QR_STAGE = new Stage();
 		// 获取机器人实例
-		wxbot = Launch.context.getBean(Wxbot.class);
+		wxbot = Launch.CONTEXT.getBean(Wxbot.class);
 	}
 	
 	public void close() {
