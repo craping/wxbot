@@ -4,7 +4,7 @@
             <div class="d-flex align-items-center ">
                 <i-input v-model.trim.lazy="contacts.filterKey" class="flex-fill pr-1" clearable size="small" placeholder="搜索..." prefix="ios-search"/>
                 <i-button icon="ios-paper" size="small" type="primary" @click="saveContactsAsTxt" title="导出联系人"></i-button>
-                <i-button icon="ios-sync" size="small" type="primary" :loading="contacts.loading" @click="reloadContacts" title="刷新联系人列表"></i-button>
+                <i-button icon="ios-sync" class="mx-1" size="small" type="primary" :loading="contacts.loading" @click="reloadContacts" title="刷新联系人列表"></i-button>
             </div>
         </form-item>
     </i-form>

@@ -78,20 +78,19 @@ $script.ready(["vue", "iview", "jquery", "crypto", "md5", "common"], function ()
                         const keyCode = event.keyCode;
                         if(keyCode == 13){
                             event.target.setSelectionRange(-1, -1);
-                            this.Login.mobile = event.target.value;
-                            this.$nextTick(() => {
-                                this.loginSubmit();
-                            });
-                        }
-                        if(((keyCode >= 48 && keyCode <= 57) || (keyCode >= 96 && keyCode <= 105))) {
+                            this.loginSubmit();
+                        } else if(((keyCode >= 48 && keyCode <= 57) || (keyCode >= 96 && keyCode <= 105))) {
                             if(window.getSelection().toString() != "")
                                 return;
                             if(event.target.value){
                                 const user = this.users.find(u => u.mobile.indexOf(event.target.value) == 0);
                                 if(user){
                                     const l = event.target.value.length;
-                                    event.target.value = user.mobile;
-                                    event.target.setSelectionRange(l, -1);
+                                    // event.target.value = user.mobile;
+                                    this.Login.mobile = user.mobile;
+                                    this.$nextTick(() => {
+                                        event.target.setSelectionRange(l, -1);
+                                    });
                                     this.Login.password = user.pwd;
                                     this.remember = user.remember;
                                 } else {

@@ -68,16 +68,20 @@ Contacts = {
         //加载群聊
         loadChatRooms(){
             wxbot.getChatRooms(data => {
-                this.contacts.chatRooms = data.sort((e, t) => {
-                    e.count = 0;
-                    t.count = 0;
-                    e.HeadImgUrl += "r="+Date.now();
-                    t.HeadImgUrl += "r="+Date.now();
-                    e.MMOrderSymbol = this.getContactOrderSymbol(e);
-                    t.MMOrderSymbol = this.getContactOrderSymbol(t);
-                    return e.MMOrderSymbol > t.MMOrderSymbol ? 1 : -1
-                });
-                this.syncChatRooms();
+                new Promise(resolve => {
+                    this.contacts.chatRooms = data.sort((e, t) => {
+                        e.count = 0;
+                        t.count = 0;
+                        e.HeadImgUrl += "r="+Date.now();
+                        t.HeadImgUrl += "r="+Date.now();
+                        e.MMOrderSymbol = this.getContactOrderSymbol(e);
+                        t.MMOrderSymbol = this.getContactOrderSymbol(t);
+                        return e.MMOrderSymbol > t.MMOrderSymbol ? 1 : -1
+                    });
+                    resolve();
+                }).then(() =>{
+                    this.syncChatRooms();
+                })
             })
         },
         //同步群聊

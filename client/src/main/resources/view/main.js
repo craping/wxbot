@@ -113,9 +113,9 @@ $script.ready(["header", "contacts", "chat", "keyword", "timer", "info"], () => 
             Web.ajax("setting/getSetting", {
                 success: function (data) {
                     if(data.info){
-                        wxbot.syncSetting(data.info);
                         if(data.info.permissions)
                             me.permissions = data.info.permissions;
+                        wxbot.syncSetting(data.info);
                     }
                 },
                 fail: function (data) {
@@ -131,11 +131,11 @@ $script.ready(["header", "contacts", "chat", "keyword", "timer", "info"], () => 
                     deferred.resolve(data);
                 },
                 fail: function (data) {
-                    if(data.errCode == 506){
+                    if(data.errcode == 506){
                         wxbot.exit("提示", "当前账户在其他地点登录！");
                         return;   
                     }
-                    if(data.errCode == 507){
+                    if(data.errcode == 507){
                         wxbot.exit("提示", "您的服务已到期，请联系管理员");
                         return;   
                     }
@@ -251,16 +251,14 @@ $script.ready(["header", "contacts", "chat", "keyword", "timer", "info"], () => 
         updated: function () {
         },
         mounted() {
-            setTimeout(() => {
-                this.syncSetting();
-                // this.loadContacts();
-                this.syncKeywords();
-                this.syncTimers();
-                this.handling();
-                this.noticeList();
-                this.syncTuringKey();
-                new QRCode(document.getElementById("wapSite"), this.header.wapSite.url);
-            }, 50);
+            this.syncSetting();
+            this.loadContacts();
+            this.syncKeywords();
+            this.syncTimers();
+            this.noticeList();
+            this.syncTuringKey();
+            new QRCode(document.getElementById("wapSite"), this.header.wapSite.url);
+            this.handling();
         },
         methods: methods
     });
