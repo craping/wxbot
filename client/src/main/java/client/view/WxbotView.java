@@ -170,6 +170,8 @@ public final class WxbotView extends AnchorPane  {
             logger.log(Level.toLevel(level), e.getMessage() + " [" + e.getSource() + ":" + e.getLineNumber() + "] ");
         });
 		
+        browser.loadURL(getClass().getClassLoader().getResource("view/main.html").toExternalForm());
+        
 		setTopAnchor(browserView, 0.0);
 		setRightAnchor(browserView, 0.0);
 		setBottomAnchor(browserView, 0.0);
@@ -196,19 +198,6 @@ public final class WxbotView extends AnchorPane  {
 			e.consume();
 		});
 		setting();
-	}
-	
-	  
-	/**  
-	* @Title: load  
-	* @Description: 加载网页主界面视图
-	* @param     参数  
-	* @return void    返回类型  
-	* @throws  
-	*/   
-	public void load() {
-		browser.loadURL(getClass().getClassLoader().getResource("view/main.html").toExternalForm());
-		viewStage.show();
 	}
 	
 	public void show() {

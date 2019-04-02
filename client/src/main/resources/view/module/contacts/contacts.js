@@ -5,7 +5,8 @@ Contacts = {
         filterKey: '', // 搜索关键字
         searchResult: [], // 搜索结果
         contactTab: 'contact',
-        loading: true
+        individualsLoading: true,
+        chatRoomsLoading: true
     },
     computed:{
         filterIndividuals(){
@@ -62,7 +63,7 @@ Contacts = {
                     t.MMOrderSymbol = this.getContactOrderSymbol(t);
                     return e.MMOrderSymbol > t.MMOrderSymbol ? 1 : -1
                 });
-                this.contacts.loading = false;
+                this.contacts.individualsLoading = false;
             })
         },
         //加载群聊
@@ -80,21 +81,29 @@ Contacts = {
                     });
                     resolve();
                 }).then(() =>{
+                    this.contacts.chatRoomsLoading = false;
                     this.syncChatRooms();
                 })
             })
         },
         //同步群聊
         updateChatRooms(){
+            console.log("更新群信息");
             wxbot.getChatRooms(data => {
-                data.forEach(e => {
-                    e.count = 0;
-                    e.HeadImgUrl += "r="+Date.now();
-                    e.MMOrderSymbol = this.getContactOrderSymbol(e);
-                    if(this.contacts.chatRooms.findIndex(c => c.UserName == e.UserName) == -1)
-                        this.contacts.chatRooms.push(e);
-                });
-                this.syncChatRooms();
+                new Promise(resolve => {
+                    data.forEach(e => {
+                        if(this.contacts.chatRooms.findIndex(c => c.UserName == e.UserName) == -1){
+                            e.count = 0;
+                            e.HeadImgUrl += "r="+Date.now();
+                            e.MMOrderSymbol = this.getContactOrderSymbol(e);
+                            this.contacts.chatRooms.push(e);
+                        }
+                    });
+                    resolve();
+                }).then(() =>{
+                    this.contacts.chatRoomsLoading = false;
+                    this.syncChatRooms();
+                })
             })
         },
         addContact(contacts){
@@ -161,10 +170,12 @@ Contacts = {
 
         },
         reloadContacts() {
-            this.contacts.loading = true;
+            this.contacts.individualsLoading = true;
+            this.contacts.chatRoomsLoading = true;
             this.loadContacts();
             this.$nextTick(() => {
-                this.contacts.loading = false;
+                this.contacts.individualsLoading = false;
+                this.contacts.chatRoomsLoading = false;
                 this.$Message.success("刷新联系人列表成功！");
             });
         },

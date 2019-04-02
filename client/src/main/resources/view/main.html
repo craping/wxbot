@@ -18,9 +18,10 @@
 </head>
 
 <body>
-	<div id="app" class="layout" v-cloak @click="global_click">
-		<header id="header" onselectstart="return false" ondragstart="return false"></header>
-		<i-content class="content">
+	<div id="app" class="layout" @click="global_click">
+		<Spin fix size="large" v-show="loading" style="z-index:901"></Spin>
+		<header v-cloak id="header" onselectstart="return false" ondragstart="return false"></header>
+		<i-content v-cloak class="content">
 			<row>
 				<!-- 通讯录模块 -->
 				<i-col id="contacts" span="6" onselectstart="return false" ondragstart="return false"></i-col>

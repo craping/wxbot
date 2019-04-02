@@ -32,7 +32,6 @@ $script.ready(["vue-plugs", "jquery-plugs", "crypto", "common"], () => {
 })
 var app;
 $script.ready(["header", "contacts", "chat", "keyword", "timer", "info"], () => {
-    Chat.data.ownerHeadImg = Web.wxHost + Web.owner.HeadImgUrl;
 
     let methods = Object.assign({
         filterAll(data, argumentObj) {
@@ -152,80 +151,97 @@ $script.ready(["header", "contacts", "chat", "keyword", "timer", "info"], () => 
         handling(){
             const me = this;
             this.sync().then(events => {
-                events.forEach(msg => {
-                    console.log(msg);
-                    const data = msg.data;
-                    switch (msg.biz) {
-                        case "USER":
-                            switch (msg.action) {
-                                case "LOCK":
-                                    Web.user.userInfo.serverState = data;
-                                    wxbot.syncServerState(data);
-                                    me.$forceUpdate();
-                                    break;
-                                case "DESTROY":
-                                    wxbot.exit("提示", "您已的账号已被注销，请联系管理员");
-                                    break;
-                                case "SERVER_TIME":
-                                    Web.user.userInfo.serverEnd = data;
-                                    wxbot.syncServerTime(data);
-                                    break;
-                            }
-                            break;
-                        case "SETTING":
-                            me.syncSetting();
-                            break;
-                        case "SWITCHS":
-                            me.syncSwitchs(data);
-                            break;
-                        case "PERMISSIONS":
-                            me.permissions = data;
-                            wxbot.syncPermissions(data);
-                            me.$forceUpdate();
-                            break;
-                        case "KEYWORD":
-                            switch (msg.action) {
-                                case "DEL":
-                                    wxbot.delKeyMap(data.seq, data.keyList[0]);
-                                    break;
-                                default:
-                                    wxbot.setKeyMap(data.seq, data.key, data.msg.type, data.msg.content);
-                                    break;
-                            }
-                            if(data.seq == me.keyword.form.seq){
-                                me.getKeyMap(data.seq);
-                            }
-                            break;
-                        case "TIMER":
-                            switch (msg.action) {
-                                case "DEL":
-                                    wxbot.delMsg(data.seq, data.uuid);
-                                    break;
-                                default:
-                                    wxbot.addMsg(data.seq, data.timer);
-                                    break;
-                            }
-                            if(data.seq == me.timer.form.seq){
-                                me.getMsgs(data.seq);
-                            }
-                            break;
-                        case "TIPS":
-                            wxbot.syncTips(data);
-                            break;
-                        case "NOTICE":
-                            data.read = false;
-                            me.notify(data);
-                            wxbot.noticeForward(data.content);
-                            break;
-                        default:
-                            break;
-                    }
-                })
+                setTimeout(() => {
+                    events.forEach(msg => {
+                        console.log(msg);
+                        const data = msg.data;
+                        switch (msg.biz) {
+                            case "USER":
+                                switch (msg.action) {
+                                    case "LOCK":
+                                        Web.user.userInfo.serverState = data;
+                                        wxbot.syncServerState(data);
+                                        me.$forceUpdate();
+                                        break;
+                                    case "DESTROY":
+                                        wxbot.exit("提示", "您已的账号已被注销，请联系管理员");
+                                        break;
+                                    case "SERVER_TIME":
+                                        Web.user.userInfo.serverEnd = data;
+                                        wxbot.syncServerTime(data);
+                                        break;
+                                }
+                                break;
+                            case "SETTING":
+                                me.syncSetting();
+                                break;
+                            case "SWITCHS":
+                                wxbot.syncSwitchs(data);
+                                break;
+                            case "PERMISSIONS":
+                                me.permissions = data;
+                                wxbot.syncPermissions(data);
+                                me.$forceUpdate();
+                                break;
+                            case "KEYWORD":
+                                switch (msg.action) {
+                                    case "DEL":
+                                        wxbot.delKeyMap(data.seq, data.keyList[0]);
+                                        break;
+                                    default:
+                                        wxbot.setKeyMap(data.seq, data.key, data.msg.type, data.msg.content);
+                                        break;
+                                }
+                                if(data.seq == me.keyword.form.seq){
+                                    me.getKeyMap(data.seq);
+                                }
+                                break;
+                            case "TIMER":
+                                switch (msg.action) {
+                                    case "DEL":
+                                        wxbot.delMsg(data.seq, data.uuid);
+                                        break;
+                                    default:
+                                        wxbot.addMsg(data.seq, data.timer);
+                                        break;
+                                }
+                                if(data.seq == me.timer.form.seq){
+                                    me.getMsgs(data.seq);
+                                }
+                                break;
+                            case "TIPS":
+                                wxbot.syncTips(data);
+                                break;
+                            case "NOTICE":
+                                data.read = false;
+                                me.notify(data);
+                                wxbot.noticeForward(data.content);
+                                break;
+                            default:
+                                break;
+                        }
+                    })
+                }, 0);
                 this.handling();
             },() => {
                 console.log("reject");
                 this.handling();
             });
+        },
+        init(){
+            Web.wxHost = wxbot.getHostUrl();
+            Web.owner = wxbot.getOwner();
+            Web.user = wxbot.getUserInfo();
+            this.chat.ownerHeadImg = Web.wxHost + Web.owner.HeadImgUrl;
+            this.header.wapSite.url = Web.serverURL+":88/#/home?token="+Web.user.token;
+            new QRCode(document.getElementById("wapSite"), this.header.wapSite.url);
+            
+            this.syncSetting();
+            this.syncKeywords();
+            this.syncTimers();
+            this.noticeList();
+            this.syncTuringKey();
+            this.handling();
         },
         global_click(event){
             if(this.$refs.recordDatePicker && !this.$refs.recordDatePicker.$el.contains(event.target))
@@ -239,6 +255,7 @@ $script.ready(["header", "contacts", "chat", "keyword", "timer", "info"], () => 
         data: {
             skin: "dark",
             rightTab:"info",
+            loading:false,
             permissions:{},
             header: Header.data,
             contacts: Contacts.data,
@@ -251,14 +268,14 @@ $script.ready(["header", "contacts", "chat", "keyword", "timer", "info"], () => 
         updated: function () {
         },
         mounted() {
-            this.syncSetting();
             // this.loadContacts();
-            this.syncKeywords();
-            this.syncTimers();
-            this.noticeList();
-            this.syncTuringKey();
-            new QRCode(document.getElementById("wapSite"), this.header.wapSite.url);
-            this.handling();
+            // this.syncSetting();
+            // this.syncKeywords();
+            // this.syncTimers();
+            // this.noticeList();
+            // this.syncTuringKey();
+            // new QRCode(document.getElementById("wapSite"), this.header.wapSite.url);
+            // this.handling();
         },
         methods: methods
     });

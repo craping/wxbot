@@ -51,13 +51,6 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 		return Config.DOMAIN;
 	}
 	
-	public void showLogin(){
-		Platform.runLater(() -> {
-			LoginView.getInstance().load();
-		});
-	}
-	
-	
 	/**
 	 * 获取用户信息
 	 * 

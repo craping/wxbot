@@ -10,7 +10,7 @@
     </i-form>
     <tabs value="contact" :animated="false" v-model="contacts.contactTab">
         <tab-pane label="联系人" icon="ios-person" name="contact">
-            <Spin fix v-show="contacts.loading">
+            <Spin fix v-show="contacts.individualsLoading">
                 <Icon type="ios-loading" size=18 class="demo-spin-icon-load"></Icon>
             </Spin>
             <Recycle-Scroller class="contact-ul" ref="individualScroller" :items="filterIndividuals" :item-size="50" key-field="UserName">
@@ -27,6 +27,9 @@
             </Recycle-Scroller>
         </tab-pane>
         <tab-pane label="群聊" icon="ios-people" name="chatroom">
+            <Spin fix v-show="contacts.chatRoomsLoading">
+                <Icon type="ios-loading" size=18 class="demo-spin-icon-load"></Icon>
+            </Spin>
             <Recycle-Scroller class="contact-ul" ref="chatRoomScroller" :items="filterChatRooms" :item-size="50" key-field="UserName">
                 <template v-slot="{item}">
                     <div class="contact_item d-flex align-items-center" @click="startChat(item)">

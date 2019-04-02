@@ -196,7 +196,7 @@ public final class LoginView extends AnchorPane  {
 	* @return void    返回类型  
 	* @throws  
 	*/   
-	public void load() {
+	public void show() {
 		viewStage.show();
 	}
 	
@@ -211,7 +211,6 @@ public final class LoginView extends AnchorPane  {
 		if(Launch.DEBUG) {
 			Browser debugBrowser = new Browser(Launch.CACHE_CONTEXT);
 			BrowserView debugBrowserView = new BrowserView(debugBrowser);
-			System.out.println(browser.getRemoteDebuggingURL());
 	        debugBrowser.loadURL(browser.getRemoteDebuggingURL());
 	        Scene debugScene = new Scene(debugBrowserView, 790, 790);
 	        Stage debugStage = new Stage();

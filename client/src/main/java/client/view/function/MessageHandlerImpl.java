@@ -124,7 +124,8 @@ public class MessageHandlerImpl implements MessageHandler {
 				cookieStorage.setSessionCookie("https://wx.qq.com", k, v, ".qq.com", "/", false, false);
 			});
 			cookieStorage.save();
-			WxbotView.getInstance().load();
+			WxbotView.getInstance().executeScript("app.init()");
+			WxbotView.getInstance().executeSettingScript("app.init()");
 		});
 		
 	}
@@ -142,7 +143,7 @@ public class MessageHandlerImpl implements MessageHandler {
 	
 	@Override
 	public void onContactCompleted() {
-		WxbotView.getInstance().executeScript("app.loadContacts()");
+		WxbotView.getInstance().executeScript("app.loadIndividuals()");
 	}
 	
 	@Override

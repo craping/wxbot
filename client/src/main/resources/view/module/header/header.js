@@ -16,7 +16,7 @@ Header = {
         },
         wapSite:{
             modal:false,
-            url:Web.serverURL+":88/#/home?token="+Web.user.token
+            url:""
         }
     },
     computed: {

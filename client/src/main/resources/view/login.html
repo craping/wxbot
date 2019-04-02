@@ -11,7 +11,8 @@
 </head>
 
 <body>
-	<div id="app" class="layout" onselectstart="return false" ondragstart="return false" v-cloak>
+	<div id="app" class="layout" onselectstart="return false" ondragstart="return false" v-cloak style="height: 310px">
+		<Spin fix size="large" v-show="loading" style="z-index:901"></Spin>
 		<Tabs value="login" style="padding-left: 5rem!important;padding-right: 5rem!important;">
 			<Tab-Pane name="login" label="登录">
 				<i-Form ref="Login" :model="Login" :rules="ruleInline" class="signin mt-5">

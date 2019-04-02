@@ -6,213 +6,216 @@ $script("lib/md5.min.js", "md5");
 $script("lib/common.js", "common");
 var app;
 $script.ready(["vue", "iview", "jquery", "crypto", "md5", "common"], function () {
-    Web.ajax("api/getPublicKey", {
-        success: function (data) {
-            Crypto.setRSAPublicKey(data.info.n);
-            Crypto.encryptFlag = data.info.id;
-
-            app = new Vue({
-                el: "#app",
-                data: {
-                    skin: "dark",
-                    modal:false,
-                    user:{},
-                    users:[],
-                    remember:false,
-                    Login:{
-                        mobile:"",
-                        password:"",
-                        loading:false,
-                        error:{}
-                    },
-                    Register:{
-                        mobile:"",
-                        password:"",
-                        repeatPwd:"",
-                        code:"",
-                        loading:false,
-                        disabled:false,
-                        getMessageText:"获取验证码",
-                        error:{}
-                    },
-                    ruleInline:{
-                        mobile: [
-                            { required: true, message: "手机号码不能为空", trigger: 'blur' }
-                        ],
-                        password: [
-                            { required: true, message: "密码不能为空", trigger: 'blur' }
-                        ],
-                        repeatPwd: [{
-                            required: true, validator: (rule, value, callback) => {
-                                if (value === '') {
-                                    callback(new Error("确认密码不能为空"));
-                                } else if (value !== app.Register.password) {
-                                    callback(new Error("两次输入的密码不一致"));
-                                } else {
-                                    callback();
-                                }
-                            }, trigger: 'blur'
-                        }],
-                        code: [
-                            { required: true, message: "验证码", trigger: 'blur' }
-                        ]
-                    }
-                },
-                computed:{
-                },
-                mounted() {
-                    let users = localStorage.getItem("users");
-                    users = users?JSON.parse(users):[];
-                    this.users = users;
-                    const user = users[0];
-                    if(user){
-                        this.Login.mobile = user.mobile;
-                        this.Login.password = user.pwd;
-                        this.remember = user.remember;
-                    }
-                },
-                updated() {
-                },
-                methods:{
-                    search(event){
-                        const keyCode = event.keyCode;
-                        if(keyCode == 13){
-                            event.target.setSelectionRange(-1, -1);
-                            this.loginSubmit();
-                        } else if(((keyCode >= 48 && keyCode <= 57) || (keyCode >= 96 && keyCode <= 105))) {
-                            if(window.getSelection().toString() != "")
-                                return;
-                            if(event.target.value){
-                                const user = this.users.find(u => u.mobile.indexOf(event.target.value) == 0);
-                                if(user){
-                                    const l = event.target.value.length;
-                                    // event.target.value = user.mobile;
-                                    this.Login.mobile = user.mobile;
-                                    this.$nextTick(() => {
-                                        event.target.setSelectionRange(l, -1);
-                                    });
-                                    this.Login.password = user.pwd;
-                                    this.remember = user.remember;
-                                } else {
-                                    this.Login.password = "";
-                                    this.remember = false;
-                                }
-                            } else {
-                                this.Login.password = "";
-                                this.remember = false;
-                            }
+    app = new Vue({
+        el: "#app",
+        data: {
+            skin: "dark",
+            modal:false,
+            user:{},
+            users:[],
+            remember:false,
+            loading:true,
+            Login:{
+                mobile:"",
+                password:"",
+                loading:false,
+                error:{}
+            },
+            Register:{
+                mobile:"",
+                password:"",
+                repeatPwd:"",
+                code:"",
+                loading:false,
+                disabled:false,
+                getMessageText:"获取验证码",
+                error:{}
+            },
+            ruleInline:{
+                mobile: [
+                    { required: true, message: "手机号码不能为空", trigger: 'blur' }
+                ],
+                password: [
+                    { required: true, message: "密码不能为空", trigger: 'blur' }
+                ],
+                repeatPwd: [{
+                    required: true, validator: (rule, value, callback) => {
+                        if (value === '') {
+                            callback(new Error("确认密码不能为空"));
+                        } else if (value !== app.Register.password) {
+                            callback(new Error("两次输入的密码不一致"));
+                        } else {
+                            callback();
                         }
-                    },
-                    selectUser(name) {
-                        this.Login.mobile = name;
-                        const user = this.users.find(u => u.mobile == name);
-                        this.Login.password = user.pwd;
-                        this.remember = user.remember;
-                    },
-                    loginSubmit(){
-                        const me = this;
-                        if(me.Login.loading)
-                            return;
-                        me.$refs.Login.validate((valid) => {
-                            if (valid) {
-                                me.Login.loading = true;
-                                Web.ajax("user/login", {
-                                    safe:true,
-                                    data:{
-                                        login_name:me.Login.mobile,
-                                        login_pwd:md5(me.Login.password)
-                                    },
-                                    success: function (data) {
-                                        const user = {
-                                            mobile:me.Login.mobile,
-                                            pwd:me.remember?me.Login.password:"",
-                                            remember:me.remember
-                                        };
+                    }, trigger: 'blur'
+                }],
+                code: [
+                    { required: true, message: "验证码", trigger: 'blur' }
+                ]
+            }
+        },
+        computed:{
+        },
+        mounted() {
+            const me = this;
+            let users = localStorage.getItem("users");
+            users = users?JSON.parse(users):[];
+            this.users = users;
+            const user = users[0];
+            if(user){
+                this.Login.mobile = user.mobile;
+                this.Login.password = user.pwd;
+                this.remember = user.remember;
+            }
 
-                                        let users = localStorage.getItem("users");
-                                        users = users?JSON.parse(users):[];
-                                        const index = users.findIndex(u => u.mobile == user.mobile);
-                                        if(index != -1){
-                                            users.splice(index, 1);
-                                        }
-                                        users.unshift(user);
-                                        localStorage.setItem("users", JSON.stringify(users));
-
-                                        wxbot.start(data.info);
-                                    },
-                                    fail: function (data) {
-                                        me.Login.loading = false;
-                                        me.$Message.error("登录失败："+data.msg);
-                                    },
-                                    error:function(XMLHttpRequest, textStatus, errorThrown){
-                                        me.Login.loading = false;
-                                        me.$Message.error("登录失败:"+textStatus);
-                                    }
-                                });
-                            } else {
-                            }
-                        })
-                    },
-                    registerSubmit(){
-                        const me = this;
-                        // me.Login.mobile = me.$refs.mobile.value;
-                        if(me.Register.loading)
-                            return;
-                        me.$refs.Register.validate((valid) => {
-                            if (valid) {
-                                me.Register.loading = true;
-                                Web.ajax("user/register", {
-                                    safe:true,
-                                    data:{
-                                        user_name:me.Register.mobile,
-                                        user_pwd:md5(me.Register.password),
-                                        confirm_pwd:md5(me.Register.repeatPwd),
-                                        code:me.Register.code
-                                    },
-                                    success: function (data) {
-                                        me.Register.loading = false;
-                                        me.$Message.success("注册成功");
-                                    },
-                                    fail: function (data) {
-                                        me.Register.loading = false;
-                                        me.$Message.error("注册失败："+data.msg);
-                                    },
-                                    error:function(XMLHttpRequest, textStatus, errorThrown){
-                                        me.Register.loading = false;
-                                        me.$Message.error("注册失败:"+textStatus);
-                                    }
-                                });
-                            } else {
-                            }
-                        })
-                    },
-                    seedMessage(){
-                        const me = this;
-                        me.Register.disabled = true;
-                        let i = 30;
-                        let timer = setInterval(() => {
-                            me.Register.getMessageText = "获取验证码("+(i--)+"s)";
-                            if(i <= 0){
-                                clearInterval(timer);
-                                me.Register.disabled = false;
-                                me.Register.getMessageText = "获取验证码";
-                            }
-                        }, 1000);
-                    },
-                    call(){
-                        wxbot.call(function(data){
-                            console.log(data);
-                        });
-                    }
+            Web.ajax("api/getPublicKey", {
+                success: function (data) {
+                    Crypto.setRSAPublicKey(data.info.n);
+                    Crypto.encryptFlag = data.info.id;
+                    me.loading = false;
+                },
+                fail: function (data) {
+                    wxbot.exit("错误", "机器人始化失败："+data.msg);
+                },
+                error:function(XMLHttpRequest, textStatus, errorThrown){
+                    wxbot.exit("错误", "程序启动失败，请检查网络是否连接");
                 }
             });
-            wxbot.showLogin();
         },
-        fail: function (data) {
-            wxbot.exit("错误", "机器人始化失败："+data.msg);
+        updated() {
         },
-        error:function(XMLHttpRequest, textStatus, errorThrown){
-            wxbot.exit("错误", "程序启动失败，请检查网络是否连接");
+        methods:{
+            search(event){
+                const keyCode = event.keyCode;
+                if(keyCode == 13){
+                    event.target.setSelectionRange(-1, -1);
+                    this.loginSubmit();
+                } else if(((keyCode >= 48 && keyCode <= 57) || (keyCode >= 96 && keyCode <= 105))) {
+                    if(window.getSelection().toString() != "")
+                        return;
+                    if(event.target.value){
+                        const user = this.users.find(u => u.mobile.indexOf(event.target.value) == 0);
+                        if(user){
+                            const l = event.target.value.length;
+                            // event.target.value = user.mobile;
+                            this.Login.mobile = user.mobile;
+                            this.$nextTick(() => {
+                                event.target.setSelectionRange(l, -1);
+                            });
+                            this.Login.password = user.pwd;
+                            this.remember = user.remember;
+                        } else {
+                            this.Login.password = "";
+                            this.remember = false;
+                        }
+                    } else {
+                        this.Login.password = "";
+                        this.remember = false;
+                    }
+                }
+            },
+            selectUser(name) {
+                this.Login.mobile = name;
+                const user = this.users.find(u => u.mobile == name);
+                this.Login.password = user.pwd;
+                this.remember = user.remember;
+            },
+            loginSubmit(){
+                const me = this;
+                if(me.Login.loading)
+                    return;
+                me.$refs.Login.validate((valid) => {
+                    if (valid) {
+                        me.Login.loading = true;
+                        Web.ajax("user/login", {
+                            safe:true,
+                            data:{
+                                login_name:me.Login.mobile,
+                                login_pwd:md5(me.Login.password)
+                            },
+                            success: function (data) {
+                                const user = {
+                                    mobile:me.Login.mobile,
+                                    pwd:me.remember?me.Login.password:"",
+                                    remember:me.remember
+                                };
+
+                                let users = localStorage.getItem("users");
+                                users = users?JSON.parse(users):[];
+                                const index = users.findIndex(u => u.mobile == user.mobile);
+                                if(index != -1){
+                                    users.splice(index, 1);
+                                }
+                                users.unshift(user);
+                                localStorage.setItem("users", JSON.stringify(users));
+
+                                wxbot.start(data.info);
+                            },
+                            fail: function (data) {
+                                me.Login.loading = false;
+                                me.$Message.error("登录失败："+data.msg);
+                            },
+                            error:function(XMLHttpRequest, textStatus, errorThrown){
+                                me.Login.loading = false;
+                                me.$Message.error("登录失败:"+textStatus);
+                            }
+                        });
+                    } else {
+                    }
+                })
+            },
+            registerSubmit(){
+                const me = this;
+                // me.Login.mobile = me.$refs.mobile.value;
+                if(me.Register.loading)
+                    return;
+                me.$refs.Register.validate((valid) => {
+                    if (valid) {
+                        me.Register.loading = true;
+                        Web.ajax("user/register", {
+                            safe:true,
+                            data:{
+                                user_name:me.Register.mobile,
+                                user_pwd:md5(me.Register.password),
+                                confirm_pwd:md5(me.Register.repeatPwd),
+                                code:me.Register.code
+                            },
+                            success: function (data) {
+                                me.Register.loading = false;
+                                me.$Message.success("注册成功");
+                            },
+                            fail: function (data) {
+                                me.Register.loading = false;
+                                me.$Message.error("注册失败："+data.msg);
+                            },
+                            error:function(XMLHttpRequest, textStatus, errorThrown){
+                                me.Register.loading = false;
+                                me.$Message.error("注册失败:"+textStatus);
+                            }
+                        });
+                    } else {
+                    }
+                })
+            },
+            seedMessage(){
+                const me = this;
+                me.Register.disabled = true;
+                let i = 30;
+                let timer = setInterval(() => {
+                    me.Register.getMessageText = "获取验证码("+(i--)+"s)";
+                    if(i <= 0){
+                        clearInterval(timer);
+                        me.Register.disabled = false;
+                        me.Register.getMessageText = "获取验证码";
+                    }
+                }, 1000);
+            },
+            call(){
+                wxbot.call(function(data){
+                    console.log(data);
+                });
+            }
         }
     });
+    // wxbot.showLogin();
 })

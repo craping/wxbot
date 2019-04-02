@@ -26,6 +26,7 @@ var Store = Store||{
 // 		return "http://tv.kmring.com"
 // 	},
 // 	getHostUrl(){},
+// 	syncTuringKey(){},
 // 	getIndividuals(){
 // 		let list = [];
 // 		for (let i = 0; i < 50; i++) {
@@ -105,12 +106,20 @@ var Store = Store||{
 
 
 var Web = {
+	// serverURL: wxbot.getDomain(),
+	// wxHost:wxbot.getHostUrl(),
+	// root:wxbot.getRootPath(),
+    // owner:wxbot.getOwner(),
+	// user:wxbot.getUserInfo(),
+
 	serverURL: wxbot.getDomain(),
-	wxHost:wxbot.getHostUrl(),
+	wxHost:"",
 	root:wxbot.getRootPath(),
-    owner:wxbot.getOwner(),
+    owner:{},
+	user:{
+		userInfo:{}
+	},
 	/* Common - Ajax request */
-	user:wxbot.getUserInfo(),
 	ajax: function (method, param, format) {
 		var cipher = Crypto.generateCipher();
 		if (!param)

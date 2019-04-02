@@ -97,11 +97,10 @@ $script.ready(["user", "general", "seqs", "globalTimer", "globalKeyword", "tips"
                 this.header = constant.header[menu];
                 $("a[name='"+menu+"']").tab("show");
             }
-            this.setting = wxbot.getSetting();
+            this.notifySetting();
             this.notifyChatRooms();
             this.getMsgs();
             this.getKeyMap();
-            this.notifySetting();
             this.general.turingKey = localStorage.getItem("turingKey")?localStorage.getItem("turingKey"):"";
         },
         notifySetting(){
@@ -131,6 +130,11 @@ $script.ready(["user", "general", "seqs", "globalTimer", "globalKeyword", "tips"
             wxbot.getChatRooms(data => {
                 this.chatRooms = data;
             });
+        },
+        init(){
+            Web.wxHost = wxbot.getHostUrl();
+            Web.owner = wxbot.getOwner();
+            Web.user = wxbot.getUserInfo();
         },
         onMembersSeqChanged(seqMap){
             app.modKeywords(seqMap);

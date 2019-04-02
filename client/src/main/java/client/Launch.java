@@ -19,6 +19,7 @@ import com.teamdev.jxbrowser.chromium.internal.Environment;
 
 import client.utils.Config;
 import client.view.LoginView;
+import client.view.WxbotView;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -31,7 +32,7 @@ public class Launch extends Application {
 	/**  
 	* @Fields 开发调试模式
 	*/  
-	public final static boolean DEBUG = false;;
+	public final static boolean DEBUG = true;
 	
 	static {
 	    try {
@@ -50,7 +51,7 @@ public class Launch extends Application {
 	        e1.printStackTrace();
 	    }
 		BrowserPreferences.setChromiumSwitches(
-			"--disable-google-traffic", 
+			"--disable-google-traffic",
 			"--disable-web-security", 
 			"--user-data-dir",
 			"--allow-file-access-from-files", 
@@ -71,7 +72,8 @@ public class Launch extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		try {
-			LoginView.getInstance();
+			LoginView.getInstance().show();;
+			WxbotView.getInstance();
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
