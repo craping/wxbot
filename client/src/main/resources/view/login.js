@@ -102,15 +102,15 @@ $script.ready(["vue", "iview", "jquery", "crypto", "md5", "common"], function ()
                             this.$nextTick(() => {
                                 event.target.setSelectionRange(l, -1);
                             });
-                            this.Login.password = user.pwd;
                             this.remember = user.remember;
+                            this.Login.password = user.pwd;
                         } else {
-                            this.Login.password = "";
                             this.remember = false;
+                            this.Login.password = "";
                         }
                     } else {
-                        this.Login.password = "";
                         this.remember = false;
+                        this.Login.password = "";
                     }
                 }
             },

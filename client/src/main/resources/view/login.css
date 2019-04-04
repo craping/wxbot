@@ -23,7 +23,9 @@ textarea{
 .ivu-card-head {
     border-color:#d6d6d6;
 }
-
+.ivu-tabs-content{
+    height: 265px;
+}
 
 .right .ivu-tabs-content{
     height: 562px;
