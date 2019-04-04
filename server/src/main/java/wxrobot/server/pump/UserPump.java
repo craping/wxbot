@@ -16,6 +16,7 @@ import org.crap.jrain.core.bean.result.Result;
 import org.crap.jrain.core.bean.result.criteria.Data;
 import org.crap.jrain.core.bean.result.criteria.DataResult;
 import org.crap.jrain.core.error.support.Errors;
+import org.crap.jrain.core.util.DateUtil;
 import org.crap.jrain.core.util.StringUtil;
 import org.crap.jrain.core.validate.annotation.BarScreen;
 import org.crap.jrain.core.validate.annotation.Parameter;
@@ -82,6 +83,8 @@ public class UserPump extends DataPump<FullHttpRequest, Channel> {
 		
 		User user = new User();
 		UserInfo userInfo = new UserInfo(params.getString("user_name"), userPwd, params.getString("user_name"));
+		// 新用户注册免费试用一天
+		userInfo.setServerEnd(Tools.dateToStamp(DateUtil.getTomorrow("yyyy-MM-dd HH:mm:ss")));
 		user.setUserInfo(userInfo);
 		userServer.insert(user);
 		
