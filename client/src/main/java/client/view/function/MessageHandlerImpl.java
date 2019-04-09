@@ -269,7 +269,7 @@ public class MessageHandlerImpl implements MessageHandler {
 	}
 
 	@Override
-	public void onReceivingChatRoomMediaMessage(Message message, String mediaUrl) {
+	public void onReceivingChatRoomMediaMessage(Message message, String thumbImageUrl, String mediaUrl) {
 		logger.debug("群聊多媒体消息");
 		logger.debug("from chatroom: " + message.getFromUserName());
 		logger.debug("from person: " + MessageUtils.getSenderOfChatRoomTextMessage(message.getContent()));
@@ -277,7 +277,7 @@ public class MessageHandlerImpl implements MessageHandler {
 		logger.debug("content:" + MessageUtils.getChatRoomTextMessageContent(message.getContent()));
 		logger.debug("mediaUrl:" + mediaUrl);
 		
-		chatServer.writeReceiveRecord(message, MessageType.APP, mediaUrl, mediaUrl);
+		chatServer.writeReceiveRecord(message, MessageType.APP, mediaUrl, thumbImageUrl);
 	}
 
 	@Override
@@ -391,11 +391,12 @@ public class MessageHandlerImpl implements MessageHandler {
 	}
 
 	@Override
-	public void onReceivingPrivateMediaMessage(Message message, String mediaUrl) {
+	public void onReceivingPrivateMediaMessage(Message message, String thumbImageUrl, String mediaUrl) {
 		logger.debug("私聊多媒体消息");
 		logger.debug("mediaUrl:" + mediaUrl);
+		logger.debug("content:" + MessageUtils.getChatRoomTextMessageContent(message.getContent()));
 		
-		WxMessage msg = chatServer.createReceiveMsg(message, MessageType.APP, mediaUrl, mediaUrl);
+		WxMessage msg = chatServer.createReceiveMsg(message, MessageType.APP, mediaUrl, thumbImageUrl);
 		chatServer.writeReceiveRecord(message, msg);
 		
 		//转发给群

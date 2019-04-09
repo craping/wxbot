@@ -248,7 +248,10 @@ Contacts = {
                 this.chat.recordDate = new Date().format("yyyy-MM-dd");
                 this.info.user = item;
                 this.info.members = [];
-                item.count = 0;
+                if(item.count > 0){
+                    wxbot.read(item.UserName);
+                    item.count = 0;
+                }
                 if(this.contacts.contactTab == "chatroom"){
                     this.getKeyMap(item.seq);
                     this.getMsgs(item.seq);

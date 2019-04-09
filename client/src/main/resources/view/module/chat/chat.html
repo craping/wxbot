@@ -15,7 +15,7 @@
                     <div class="user-img" :class="[item.direction==2?'float-left':'float-right']">
                         <img :src="item.direction==2?(item.chatType==1?chat.userHeadImg:item.avatar):chat.ownerHeadImg" />
                     </div>
-                    <div class="popover show position-relative" :class="[item.direction==2?'float-left bs-popover-right contact':'float-right bs-popover-left self']" style="max-width: 75%;">
+                    <div class="popover show position-relative" :class="[item.direction==2?'float-left bs-popover-right':'float-right bs-popover-left', item.msgType==49?'contact':item.direction==2?'contact':'self']" style="max-width: 75%;">
                         <div class="arrow" style="top: .25rem;"></div>
                         
                         <!-- 文本消息 -->
@@ -52,7 +52,21 @@
                         </div>
                         <!-- 多媒体消息 -->
                         <div class="popover-body" v-else-if="item.msgType==49">
-                            <div class="attach_bd" @click="mediaPlay(item)" style="cursor: pointer;">
+                                
+                            <div v-if="item.appMsgType==5" class="attach_bd" style="cursor: pointer;">
+                                <a :href="item.body.content" target="_blank" title="点击打开文件">
+                                    <p class="text-dark" :title="item.body.fileName">{{item.body.fileName}}</p>
+                                    <div class="d-flex">
+                                        <div class="cont overflow-hidden" style="font-size:12px; height:55px; width:170px; color:#c6c6c6">
+                                            {{item.body.fileSize}}
+                                        </div>
+                                        <div class="cover">
+                                            <img width="55" :src="item.body.thumbImageUrl"/>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            <div v-else class="attach_bd" @click="mediaPlay(item)" style="cursor: pointer;">
                                 <div class="cover">
                                     <a href="javascipt:;" title="点击打开文件">
                                         <i style="cursor: pointer;" class="web_wechat_file"></i>

@@ -89,6 +89,7 @@ Chat = {
                     msg.played = false;
                 this.chat.chatRecord.push(msg);
                 this.scrollToBottom(true);
+                wxbot.read(userName);
             } else {
                 this.setCount(userName);
                 $("#msgAudio")[0].play();

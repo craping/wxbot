@@ -4,20 +4,31 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.io.StringReader;
 import java.nio.file.Files;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 import com.cherry.jeeves.domain.response.SendMsgResponse;
 import com.cherry.jeeves.domain.shared.Contact;
 import com.cherry.jeeves.domain.shared.Message;
+import com.cherry.jeeves.enums.AppMessageType;
 import com.cherry.jeeves.enums.MessageType;
 import com.cherry.jeeves.utils.MessageUtils;
 
@@ -105,9 +116,47 @@ public class ChatServer extends BaseServer {
 		default:
 			// 下载文件
 //			mediaUrl = wechatHttpService.download(mediaUrl, message.getMsgId() + "_" + message.getFileName(), MessageType.APP);
-			long fileSize = message.getFileSize() == null || message.getFileSize().isEmpty()?0:Long.valueOf(message.getFileSize());
-			msg = new WxMessage(MessageType.APP.getCode(), new WxMessageBody(fullImageUrl, message.getFileName(), FileUtil.getFileSizeString(fileSize)));
-			msg.getBody().setThumbImageUrl(Config.FILE_PATH +message.getMsgId() + "_" + message.getFileName());
+			if(message.getAppMsgType() == AppMessageType.URL.getCode()){
+				msg = new WxMessage(MessageType.APP.getCode(), new WxMessageBody(fullImageUrl, thumbImageUrl));
+				msg.getBody().setFileName(message.getFileName());
+				String xml = StringEscapeUtils.unescapeXml(content).replace("<br/>", "");
+				try {
+					SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
+					parser.parse(new InputSource(new StringReader(xml)), new DefaultHandler() {
+						
+						private String currentTag = null;
+						@Override
+						public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+							super.startElement(uri, localName, qName, attributes);
+							currentTag = qName;
+						}
+						@Override
+						public void endElement(String uri, String localName, String qName) throws SAXException {
+							super.endElement(uri, localName, qName);
+							currentTag = "";
+						}
+						
+						@Override
+						public void characters(char[] ch, int start, int length) throws SAXException {
+							super.characters(ch, start, length);
+							String value = new String(ch, start, length);
+							switch (currentTag) {
+								case "des":
+									msg.getBody().setFileSize(value);
+									break;
+							}
+						}
+					});
+				} catch (IOException | ParserConfigurationException | SAXException e) {
+					e.printStackTrace();
+				}
+				
+			}else{
+				long fileSize = message.getFileSize() == null || message.getFileSize().isEmpty()?0:Long.valueOf(message.getFileSize());
+				msg = new WxMessage(MessageType.APP.getCode(), new WxMessageBody(fullImageUrl, message.getFileName(), FileUtil.getFileSizeString(fileSize)));
+				msg.getBody().setThumbImageUrl(Config.FILE_PATH +message.getMsgId() + "_" + message.getFileName());
+			}
+			msg.setAppMsgType(message.getAppMsgType());
 			break;
 		}
 		msg.setMsgId(message.getMsgId());

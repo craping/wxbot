@@ -15,6 +15,7 @@ public class WxMessage {
 	public int chatType; // 聊天类型，1私聊，2 群聊
 	public int direction; // 1 发送 , 2接收，
 	public int msgType; // 参考com.cherry.jeeves.enums MessageType.java
+	public int appMsgType;
 	public WxMessageBody body;
 
 	public WxMessage() {
@@ -97,6 +98,14 @@ public class WxMessage {
 
 	public void setMsgType(int msgType) {
 		this.msgType = msgType;
+	}
+	
+	public int getAppMsgType() {
+		return appMsgType;
+	}
+
+	public void setAppMsgType(int appMsgType) {
+		this.appMsgType = appMsgType;
 	}
 
 	public WxMessageBody getBody() {

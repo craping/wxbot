@@ -9,6 +9,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
 import client.pojo.WxMessage;
 import client.pojo.WxMessageBody;
@@ -27,6 +28,8 @@ public abstract class BaseServer {
 		JSON_MAPPER.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
 		JSON_MAPPER.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true); 
 	}
+	
+	public static ObjectMapper XML_MAPPER = new XmlMapper();
 	
 	public static void main(String[] args) throws Exception{
 		System.out.println(JSON_MAPPER.writeValueAsString(new WxMessage(MessageType.TEXT.getCode(), new WxMessageBody("案说法"))));
