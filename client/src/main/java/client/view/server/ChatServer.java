@@ -26,6 +26,7 @@ import client.enums.Direction;
 import client.pojo.Msg;
 import client.pojo.WxMessage;
 import client.pojo.WxMessageBody;
+import client.pojo.disruptor.RecordEvent;
 import client.utils.Config;
 import client.utils.EmojiUtil;
 import client.utils.FileUtil;
@@ -183,7 +184,7 @@ public class ChatServer extends BaseServer {
 			message.setTimestamp(Tools.getTimestamp());
 			message.setChatType(contact.getUserName().startsWith("@@")?2:1);
 			String json = JSON_MAPPER.writeValueAsString(message);
-			FileUtil.writeFile(Config.CHAT_RECORD_PATH + contact.getSeq(), Tools.getSysDate() + ".txt", json);
+			FileUtil.writeFile(new RecordEvent(contact.getSeq(), Tools.getSysDate() + ".txt", json));
 			msgTool.avatarBadge(contact.getUserName(), json);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -246,7 +247,7 @@ public class ChatServer extends BaseServer {
 			message.setTimestamp(Tools.getTimestamp());
 			message.setChatType(contact.getUserName().startsWith("@@")?2:1);
 			String json = JSON_MAPPER.writeValueAsString(message);
-			FileUtil.writeFile(Config.CHAT_RECORD_PATH + contact.getSeq(), Tools.getSysDate() + ".txt", json);
+			FileUtil.writeFile(new RecordEvent(contact.getSeq(), Tools.getSysDate() + ".txt", json));
 			if(!absolute){
 				message.getBody().setContent(Config.ROOT + localFileUrl);
 				message.getBody().setThumbImageUrl(Config.ROOT + message.getBody().getThumbImageUrl());

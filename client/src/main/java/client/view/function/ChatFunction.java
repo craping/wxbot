@@ -26,6 +26,7 @@ import com.teamdev.jxbrowser.chromium.JSObject;
 import client.enums.Direction;
 import client.pojo.WxMessage;
 import client.pojo.WxMessageBody;
+import client.pojo.disruptor.RecordEvent;
 import client.utils.Config;
 import client.utils.FileUtil;
 import client.utils.Tools;
@@ -112,8 +113,8 @@ public abstract class ChatFunction extends ContactsFunction {
 				message.setChatType(userName.startsWith("@@")?2:1);
 				message.setBody(new WxMessageBody(content));
 				String str = BaseServer.JSON_MAPPER.writeValueAsString(message);
-				String path = Config.CHAT_RECORD_PATH + seq;
-				FileUtil.writeFile(path, Tools.getSysDate() + ".txt", str);
+//				String path = Config.CHAT_RECORD_PATH + seq;
+				FileUtil.writeFile(new RecordEvent(seq, Tools.getSysDate() + ".txt", str));
 				wechatService.sendText(userName == null ? cacheService.getOwner().getUserName() : userName, content);
 			} catch (IOException e) {
 				e.printStackTrace();

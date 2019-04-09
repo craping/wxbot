@@ -19,6 +19,7 @@ import client.enums.Direction;
 import client.pojo.Msg;
 import client.pojo.ScheduleMsg;
 import client.pojo.WxMessage;
+import client.pojo.disruptor.RecordEvent;
 import client.view.WxbotView;
 import client.view.function.KeywordFunction;
 import client.view.function.SettingFunction;
@@ -56,8 +57,8 @@ public class WxMessageTool extends BaseServer {
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
-		String filePath = Config.CHAT_RECORD_PATH + recipient.getSeq();
-		FileUtil.writeFile(filePath, Tools.getSysDate() + ".txt", jsonStr);
+//		String filePath = Config.CHAT_RECORD_PATH + recipient.getSeq();
+		FileUtil.writeFile(new RecordEvent(recipient.getSeq(), Tools.getSysDate() + ".txt", jsonStr));
 		avatarBadge(recipient.getUserName(), jsonStr);
 	}
 
@@ -83,8 +84,8 @@ public class WxMessageTool extends BaseServer {
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
-		String path = Config.CHAT_RECORD_PATH + seq;
-		FileUtil.writeFile(path, Tools.getSysDate() + ".txt", jsonStr);
+//		String path = Config.CHAT_RECORD_PATH + seq;
+		FileUtil.writeFile(new RecordEvent(seq, Tools.getSysDate() + ".txt", jsonStr));
 		avatarBadge(sender.getUserName(), jsonStr);
 	}
 
@@ -127,8 +128,8 @@ public class WxMessageTool extends BaseServer {
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
-		String path = Config.CHAT_RECORD_PATH + seq;
-		FileUtil.writeFile(path, Tools.getSysDate() + ".txt", jsonStr);
+//		String path = Config.CHAT_RECORD_PATH + seq;
+		FileUtil.writeFile(new RecordEvent(seq, Tools.getSysDate() + ".txt", jsonStr));
 		avatarBadge(chatRoom.getUserName(), jsonStr);
 	}
 

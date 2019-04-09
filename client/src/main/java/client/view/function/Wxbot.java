@@ -24,6 +24,7 @@ import com.teamdev.jxbrowser.chromium.JSObject;
 import com.teamdev.jxbrowser.chromium.JSValue;
 
 import client.utils.Config;
+import client.utils.FileUtil;
 import client.view.LoginView;
 import client.view.WxbotView;
 import client.view.server.BaseServer;
@@ -104,6 +105,7 @@ public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
 		USER = syncUserInfo;
 		wxbotThread = new Thread(() -> {
 			try {
+				FileUtil.start();
 				jeeves.start();
 			} catch (Exception e) {
 			}

@@ -134,4 +134,14 @@ public class ContactsFunction extends SettingFunction {
 		}
 		return new JSONString("{}");
 	}
+	
+	public void read(String userName) {
+		new Thread(() -> {
+			try {
+				wechatService.notifyNecessary(userName);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}).start();
+	}
 }

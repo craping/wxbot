@@ -1,26 +1,30 @@
 package client.utils;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.io.RandomAccessFile;
 import java.math.BigDecimal;
-import java.nio.channels.FileChannel;
 import java.util.LinkedList;
-
-import javax.imageio.ImageIO;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.lmax.disruptor.dsl.Disruptor;
+import com.lmax.disruptor.util.DaemonThreadFactory;
+
+import client.pojo.disruptor.RecordEvent;
+import client.pojo.disruptor.RecordHandler;
+
 public class FileUtil {
 
 	private static final Logger logger = LogManager.getLogger(FileUtil.class);
-
+	
+	//Disruptor环形数组队列大小
+	private static final int BUFFER_SIZE = 64;
+	
+	public static final Disruptor<RecordEvent> DISRUPTOR = new Disruptor<>(RecordEvent::new, BUFFER_SIZE, DaemonThreadFactory.INSTANCE);
+		
 	public static void main(String args[]) throws IOException {	
 		
 		RandomAccessFile rf = null;
@@ -75,6 +79,16 @@ public class FileUtil {
 		}
 	}
 
+	public static void start(){
+		//消息队列监听启动
+		RecordHandler[] handlers = new RecordHandler[10];
+    	for (int i = 0; i < handlers.length; i++) {
+    		handlers[i] = new RecordHandler(i, handlers.length);
+		}
+    	DISRUPTOR.handleEventsWith(handlers);
+    	DISRUPTOR.start();
+	}
+	
 	public static String getMimeType(String path) {
 		path = path.split("[?]")[0];
 		String ext = path.substring(path.lastIndexOf(".")+1);
@@ -109,13 +123,13 @@ public class FileUtil {
 	 * @param newPath
 	 * @return
 	 */
-	public static boolean renameFile(String oldPath, String newPath) {
+	public static void renameFile(String oldPath, String newPath) {
 		File file = new File(oldPath);
 		if (!file.exists()) {
 			logger.error("目录[" + oldPath + "]不存在");
-			return false;
+			return;
 		}
-		return file.renameTo(new File(newPath));
+		file.renameTo(new File(newPath));
 	}
 
 	/**
@@ -125,31 +139,12 @@ public class FileUtil {
 	 * @param fileName
 	 * @param content
 	 */
-	public static void writeFile(String path, String fileName, String content) {
-		FileOutputStream fos = null;
-		OutputStreamWriter osw = null;
-		try {
-			File file = new File(path);
-			if (!file.exists()) {
-				file.mkdirs();
-			}
-
-			fos = new FileOutputStream(new File(path + File.separator + fileName), true);
-			osw = new OutputStreamWriter(fos, "UTF-8");
-			osw.write(content + System.getProperty("line.separator"));
-			osw.flush();
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				fos.close();
-				osw.close();
-			} catch (IOException e) {
-				// Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+	public static void writeFile(RecordEvent v) {
+		DISRUPTOR.getRingBuffer().publishEvent((event, sequence, data) -> {
+			event.setSeq(v.getSeq());
+			event.setFileName(v.getFileName());
+			event.setContent(v.getContent());
+		}, v);
 	}
 
 	/**
@@ -159,30 +154,30 @@ public class FileUtil {
 	 * @param fileTo
 	 * @return
 	 */
-	public static boolean copy(String fileFrom, String fileTo) {
-		FileInputStream in = null;
-		FileOutputStream out = null;
-		try {
-			in = new java.io.FileInputStream(fileFrom);
-			out = new FileOutputStream(fileTo);
-			byte[] bt = new byte[2048];
-			int count;
-			while ((count = in.read(bt)) > 0) {
-				out.write(bt, 0, count);
-			}
-			return true;
-		} catch (IOException ex) {
-			return false;
-		} finally {
-			try {
-				out.close();
-				in.close();
-			} catch (IOException e) {
-				// Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
+//	public static boolean copy(String fileFrom, String fileTo) {
+//		FileInputStream in = null;
+//		FileOutputStream out = null;
+//		try {
+//			in = new java.io.FileInputStream(fileFrom);
+//			out = new FileOutputStream(fileTo);
+//			byte[] bt = new byte[2048];
+//			int count;
+//			while ((count = in.read(bt)) > 0) {
+//				out.write(bt, 0, count);
+//			}
+//			return true;
+//		} catch (IOException ex) {
+//			return false;
+//		} finally {
+//			try {
+//				out.close();
+//				in.close();
+//			} catch (IOException e) {
+//				// Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		}
+//	}
 
 	/**
 	 * 查询文件夹
@@ -190,68 +185,20 @@ public class FileUtil {
 	 * @param path 目录
 	 * @param mk   是否创建 true创建
 	 */
-	public static boolean mkdirs(String path, boolean mk) {
-		try {
-			File file = new File(path);
-			if (!file.exists())
-				return false;
-			if (mk) {
-				file.mkdir();
-				return true;
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return mk;
-	}
-
-	/**
-	 * 获取图片高度
-	 * 
-	 * @throws IOException
-	 * @throws FileNotFoundException
-	 */
-	public static int getImgHeight(String path) {
-		int height = 0;
-		File picture = new File(path);
-		if (!picture.exists()) {
-			logger.error("目录文件[" + path + "]不存在");
-			return height;
-		}
-		try {
-			BufferedImage sourceImg = ImageIO.read(new FileInputStream(picture));
-			height = sourceImg.getHeight(); // 源图高度
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return height;
-	}
-
-	/**
-	 * 获取图片宽度
-	 * 
-	 * @throws IOException
-	 * @throws FileNotFoundException
-	 */
-	public static int getImgWidth(String path) {
-		int width = 0;
-		File picture = new File(path);
-		if (!picture.exists()) {
-			logger.error("getImgWidth 目录文件[" + path + "]不存在");
-			return width;
-		}
-		try {
-			BufferedImage sourceImg = ImageIO.read(new FileInputStream(picture));
-			width = sourceImg.getWidth(); // 源图宽度
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return width;
-	}
+//	public static boolean mkdirs(String path, boolean mk) {
+//		try {
+//			File file = new File(path);
+//			if (!file.exists())
+//				return false;
+//			if (mk) {
+//				file.mkdir();
+//				return true;
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//		return mk;
+//	}
 
 	/**
 	 * 计算获取文件大小
@@ -259,32 +206,13 @@ public class FileUtil {
 	 * @param path -> 文件目录
 	 * @return 文件大小->long
 	 */
-	@SuppressWarnings("resource")
 	public static long getFileSize(String path) {
-		long fileSize = 0;
-		FileChannel fc = null;
-		try {
-			File file = new File(path);
-			if (!file.exists()) {
-				logger.error("getFileSize 目录文件[" + path + "]不存在");
-				return fileSize;
-			}
-			fc = new FileInputStream(file).getChannel();
-			fileSize = fc.size();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			if (null != fc) {
-				try {
-					fc.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
+		File file = new File(path);
+		if (!file.exists()) {
+			logger.error("getFileSize 目录文件[" + path + "]不存在");
+			return 0;
 		}
-		return fileSize;
+		return file.length();
 	}
 
 	/**

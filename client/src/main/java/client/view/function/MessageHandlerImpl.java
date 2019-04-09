@@ -19,20 +19,16 @@ import com.cherry.jeeves.domain.shared.FriendInvitationContent;
 import com.cherry.jeeves.domain.shared.Member;
 import com.cherry.jeeves.domain.shared.Message;
 import com.cherry.jeeves.domain.shared.RecommendInfo;
+import com.cherry.jeeves.enums.AppMessageType;
 import com.cherry.jeeves.enums.MessageType;
 import com.cherry.jeeves.service.CacheService;
 import com.cherry.jeeves.service.MessageHandler;
 import com.cherry.jeeves.service.WechatHttpService;
-import com.cherry.jeeves.service.disruptor.MsgEvent;
 import com.cherry.jeeves.utils.Coder;
 import com.cherry.jeeves.utils.MessageUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.lmax.disruptor.YieldingWaitStrategy;
-import com.lmax.disruptor.dsl.Disruptor;
-import com.lmax.disruptor.dsl.ProducerType;
-import com.lmax.disruptor.util.DaemonThreadFactory;
 import com.teamdev.jxbrowser.chromium.CookieStorage;
 import com.teamdev.jxbrowser.chromium.JSONString;
 import com.teamdev.jxbrowser.chromium.JSObject;
@@ -57,11 +53,6 @@ import javafx.application.Platform;
 public class MessageHandlerImpl implements MessageHandler {
 
 	private static final Logger logger = LoggerFactory.getLogger(MessageHandlerImpl.class);
-	
-	//Disruptor环形数组队列大小
-	private static final int BUFFER_SIZE = 1024 * 1024;
-	
-	public static final Disruptor<MsgEvent> DISRUPTOR = new Disruptor<>(MsgEvent::new, BUFFER_SIZE, DaemonThreadFactory.INSTANCE, ProducerType.SINGLE, new YieldingWaitStrategy());
 	
 	@Autowired
 	private WechatHttpService wechatHttpService;
@@ -411,8 +402,12 @@ public class MessageHandlerImpl implements MessageHandler {
 		if(SettingFunction.isWorking() && SettingFunction.SETTING.getPermissions().isForward() && cacheService.getOwner().getUserName().equals(message.getFromUserName()) && cacheService.getOwner().getUserName().equals(message.getToUserName())){
 			cacheService.getChatRooms().stream().filter(c -> SettingFunction.SETTING.getForwards().contains(c.getSeq())).forEach(c -> {
 				try {
-					wechatHttpService.forwardMsg(c.getUserName(), message);
-					msgTool.sendMessage(c, msg, cacheService.getOwner().getNickName(), ChatType.CHAT.getCode());
+					if(message.getAppMsgType() == AppMessageType.URL.getCode()){
+						chatServer.writeSendTextRecord(c, mediaUrl, wechatHttpService.sendText(c.getUserName(), mediaUrl).getMsgID());
+					}else{
+						wechatHttpService.forwardMsg(c.getUserName(), message);
+						msgTool.sendMessage(c, msg, cacheService.getOwner().getNickName(), ChatType.CHAT.getCode());
+					}
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
