@@ -29,9 +29,25 @@
             </van-cell>
         </van-cell-group>
     </div>
+    
     <van-cell-group>
-        <van-cell title="全域关键词" icon="label-o" is-link @click="goGlobalKeyword" />
-        <van-cell title="全域定时群发" icon="clock-o" is-link @click="goGlobalTimer" />
+
+        <van-cell icon="label-o">
+            <template slot="title">
+                <span class="custom-text">全域关键词</span>
+                <van-switch v-model="globalKeywords" size="24px" style="float:right" @change="updGlobalSetting($event,'keywords')"/>
+            </template>
+        </van-cell>
+        <van-cell title="全域关键词设置" icon="setting-o" is-link v-show="globalKeywords" @click="goGlobalKeyword" />
+   
+        <van-cell icon="clock-o">
+            <template slot="title">
+                <span class="custom-text">全域定时群发</span>
+                <van-switch v-model="globalTimers" size="24px" style="float:right" @change="updGlobalSetting($event,'timers')"/>
+            </template>
+        </van-cell>
+        <van-cell title="全域定时群发设置" icon="setting-o" is-link v-show="globalTimers" @click="goGlobalTimer" />
+
         <van-cell title="加群自动消息设置" icon="edit" ref="chatRoomFoundTip" is-link @click="goTips('chatRoomFoundTip')"/>
         <van-cell title="进群欢迎语设置" icon="edit" ref="memberJoinTip" is-link @click="goTips('memberJoinTip')" />
         <van-cell title="退群提示语设置" icon="edit" ref="memberLeftTip" is-link @click="goTips('memberLeftTip')" />

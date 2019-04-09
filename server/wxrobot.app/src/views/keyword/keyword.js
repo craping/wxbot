@@ -133,8 +133,9 @@ export default {
             param.append("content", this.radio=="1" ? this.popupItem.content : this.popupItem.contentFile);
             this.$http.post("keyword/set?format=json",  param).then(response => {
                 const data = response.data;
+                this.loadKeyword();
                 if (!data.result) {
-                    this.$set(this.chatRoomKeyMap, this.popupItem.keyword, data.data.info);
+                    //this.$set(this.chatRoomKeyMap, this.popupItem.keyword, data.data.info);
                     Toast.success(data.msg);
                     this.$nextTick(() => {
                         this.closePopup();

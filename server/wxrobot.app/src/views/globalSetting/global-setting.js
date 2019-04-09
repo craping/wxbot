@@ -6,6 +6,8 @@ export default {
     components:{topNav,footerNav},
     data() {
         return {
+            globalKeywords: false,
+            globalTimers: false,
             aafLoading: false,
             gkLoading: false,
             gtLoading: false,
@@ -22,6 +24,10 @@ export default {
         this.loadSetting();
     },
     methods: {
+        initSwitchs() {
+            this.globalTimers = this.$config.setting.timers.includes('global');
+            this.globalKeywords = this.$config.setting.keywords.includes('global');
+        },
         updSwitchs(loding) {
             this[''+loding+''] = true;
             const data = { switchs: JSON.stringify(this.switchs),token: this.token }
@@ -39,6 +45,35 @@ export default {
                 this[''+loding+''] = false;
                 console.log(error);
             });
+        },
+        updGlobalSetting($event, moduleName) {
+            let url = "setting/disableSeq?format=json";
+            if ($event) {
+                url = "setting/enableSeq?format=json";
+            }
+            const data = {
+                seq: 'global', 
+                module: moduleName,
+                token: this.token
+            }
+            this.$http.post(url, data).then(response => {
+                const data = response.data;
+                if (!data.result) {
+                    if ($event) {
+                        this.$config.setting[moduleName].push('global');
+                    } else {
+                        this.$config.setting[moduleName].splice(this.$config.setting[moduleName].indexOf('global'), 1);
+                    }
+                    setTimeout(() => {
+                        Toast('操作成功');
+                    }, 500);
+                } else {
+                    Toast.fail(data.msg);
+                }
+            })
+            .catch(error => {
+                console.log(error);
+            }); 
         },
         goTips(tipType) {
             const title = this.$refs[tipType].innerText;
@@ -73,6 +108,7 @@ export default {
         loadSetting() {
             if (Object.keys(this.$config.setting).length) {
                 this.switchs = this.$config.setting.switchs;
+                this.initSwitchs();
                 return;
             } 
             Toast.loading({
@@ -85,6 +121,7 @@ export default {
                 console.log(data);
                 if (!data.result) {
                     this.$config.setting = data.data.info;
+                    this.initSwitchs();
                     this.switchs = this.$config.setting.switchs;
                     setTimeout(() => {
                         Toast('初始化用户全局配置成功');

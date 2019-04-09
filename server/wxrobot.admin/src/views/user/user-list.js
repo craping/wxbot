@@ -29,6 +29,8 @@ export default {
                 memberJoinTip: false,
                 memberLeftTip: false,
                 wapSite: false,
+                forward: false,
+                turing: false,
             },
             page: {
                 totalNum: 10,
@@ -234,7 +236,9 @@ export default {
                 { name: "发现新群提示语", target:"chatRoomFoundTip", value: this.permissions.chatRoomFoundTip },
                 { name: "成员加入提示语", target:"memberJoinTip", value: this.permissions.memberJoinTip },
                 { name: "成员退出提示语", target:"memberLeftTip", value: this.permissions.memberLeftTip },
-                { name: "移动端管理", target:"wapSite", value: this.permissions.wapSite }
+                { name: "移动端管理", target:"wapSite", value: this.permissions.wapSite },
+                { name: "图灵机器人", target:"turing", value: this.permissions.turing },
+                { name: "群转发", target:"forward", value: this.permissions.forward }
             );
             return data;
         },

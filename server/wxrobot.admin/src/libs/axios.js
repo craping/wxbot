@@ -3,8 +3,8 @@ import router from '../router'
 import { getToken } from '@/libs/util'
 
 var http = axios.create({
-    //baseURL: '/api/',
-    baseURL : 'http://127.0.0.1:80/',
+    baseURL: '/api/',
+    //baseURL : 'http://127.0.0.1:80/',
     headers: { 'Content-Type': 'application/json;charset=utf-8' },
     // 超时时间120s
     timeout: 120 * 1000,
