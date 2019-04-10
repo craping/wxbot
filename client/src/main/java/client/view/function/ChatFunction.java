@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.cherry.jeeves.domain.response.SendMsgResponse;
+import com.cherry.jeeves.domain.shared.Contact;
 import com.cherry.jeeves.enums.MessageType;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.teamdev.jxbrowser.chromium.JSFunction;
@@ -24,6 +25,7 @@ import com.teamdev.jxbrowser.chromium.JSONString;
 import com.teamdev.jxbrowser.chromium.JSObject;
 
 import client.enums.Direction;
+import client.pojo.Msg;
 import client.pojo.WxMessage;
 import client.pojo.WxMessageBody;
 import client.pojo.disruptor.RecordEvent;
@@ -69,7 +71,66 @@ public abstract class ChatFunction extends ContactsFunction {
 		sendChooser.setInitialDirectory(FileSystemView.getFileSystemView().getHomeDirectory());
 	}
 
+	// 僵尸粉检测消息
+	public static Msg zombieTestMsg = new Msg();
+	public JSONString getZombieTestMsg() {
+		try {
+			return new JSONString(BaseServer.JSON_MAPPER.writeValueAsString(zombieTestMsg));
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+		return new JSONString("{}");
+	}
+		
+	/**
+	 * @throws IOException   
+	* @Title: openAppFile  
+	* @Description: 打开文件选择对话框
+	* @param     参数  
+	* @return void    返回类型  
+	* @throws  
+	*/  
+	public void openPicFile() {
+		Platform.runLater(() -> {
+			if (lastSendFile != null && lastSendFile.isFile())
+				sendChooser.setInitialDirectory(lastSendFile.getParentFile());
+			
+			lastSendFile = sendChooser.showOpenDialog(WxbotView.getInstance().getViewStage());
+			if (lastSendFile == null)
+				return;
+			
+			String contentType = null;
+			try {
+				contentType = Files.probeContentType(lastSendFile.toPath());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			if (!contentType.contains(PREFIX_IMG)) {
+				WxbotView.getInstance().executeScript("app.$Message.error('只能选择图片文件！');");
+				return;
+			}
+			 // 发送表情
+	        if (contentType != null && contentType.contains(PREFIX_GIF)) {
+	        	zombieTestMsg.setType(3);
+	        }
+	        // 发送图片
+	        else if (contentType != null && contentType.contains(PREFIX_IMG)) {
+	        	zombieTestMsg.setType(2);
+	        }
+			zombieTestMsg.setContent(lastSendFile.getAbsolutePath());
+			WxbotView.getInstance().executeScript("app.getZombieTestMsg()");
+		});
+	}
 	
+	 /**
+	  * 
+	  * @param contacts
+	  * @param msg
+	  */
+	public void sendImg(String userName) {
+		Contact contact = cacheService.getContact(userName);
+		chatServer.sendImg(contact, zombieTestMsg);
+	}
 	  
 	/**  
 	* @Title: openAppFile  
@@ -78,7 +139,6 @@ public abstract class ChatFunction extends ContactsFunction {
 	* @return void    返回类型  
 	* @throws  
 	*/  
-	    
 	public void openAppFile(String userName){
 		Platform.runLater(() -> {
 			if (lastSendFile != null && lastSendFile.isFile())
@@ -99,7 +159,6 @@ public abstract class ChatFunction extends ContactsFunction {
 	 * @return void 返回类型 
 	 * @throws
 	 */
-	
 	public void sendText(String seq, String nickName, String userName, String content) {
 		new Thread(() -> {
 			try {

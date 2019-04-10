@@ -310,7 +310,28 @@ public class ChatServer extends BaseServer {
 		}
 	}
 	
-	    
+	/**
+	 * 发图片消息  
+	 * @param contact
+	 * @param msg
+	 */
+	public void sendImg(Contact contact, Msg msg) {
+		MessageType msgType = msg.getMsgType();
+		String msgId = null;
+		SendMsgResponse response = null;
+		try {
+			if(msg.getMediaCache() == null){
+				msg.setMediaCache(wechatService.uploadMedia(contact.getUserName(), msg.getContent()));
+			}
+			response = wechatService.forwardAttachMsg(contact.getUserName(), msg.getMediaCache(), msgType);
+			if(msgId == null)
+				msgId = response.getMsgID();
+			//写转发消息聊天记录
+			writeSendAppRecord(contact, msg.getContent(), msgId, false);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 	  
 	/**  
 	* @Title: sendGloba  

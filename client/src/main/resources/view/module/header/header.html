@@ -29,9 +29,9 @@
         </i-button>
         <div>群提示语</div>
     </menu-item>
-    <menu-item class="text-center px-3" v-if="Web.user.userInfo.serverState && permissions.zombieTest">
+    <menu-item class="text-center px-3">
         <Poptip trigger="hover">
-            <button @click="checkFriend" type="button" class="py-0 px-2 ivu-btn ivu-btn-info ivu-btn-icon-only" style="font-size: 20px;">
+            <button @click="onZombieTest" type="button" class="py-0 px-2 ivu-btn ivu-btn-info ivu-btn-icon-only" style="font-size: 20px;">
                 <i class="fas fa-filter" :class="[!header.checkLoading?'fas fa-filter':'ivu-load-loop ivu-icon ivu-icon-ios-loading']"></i>
             </button>
             <div ref="checkDiv">僵尸粉检测</div>
@@ -117,4 +117,25 @@
         <i-input :value="header.wapSite.url" :readonly="true" style="width:256px">
     </div>
     <div slot="footer"></div>
+</modal>
+
+<modal v-model="header.checkProgress.modal" title="僵尸粉检测" width="400" :mask-closable="false" class-name="vertical-center-modal"
+    @on-ok="beginTest" @on-cancel="" ok-text="开始检测">
+    <i-form @submit.native.prevent>
+        <form-item label="发送内容" class="mb-0">
+            <radio-group v-model="header.checkProgress.type">
+                <radio class="mb-0" label="text">文本</radio>
+                <radio class="mb-0" label="file">图片</radio>
+            </radio-group>
+        </form-item>
+        <div>
+            <i-input v-if="header.checkProgress.type == 'text'" type="textarea" :autosize="{maxRows: 4, minRows: 4}" 
+                placeholder="检测发送内容..." v-model="header.checkProgress.text"/>
+            <div v-if="header.checkProgress.type == 'file'">
+                <i-input readonly style="width: 300px;" v-model="header.checkProgress.msg.content"/>
+                <i-button icon="md-images" size="32" type="primary" @click="chooseFile" title="选择图片文件"></i-button>
+            </div>
+            
+        </div>
+    </i-form>
 </modal>
