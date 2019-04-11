@@ -105,10 +105,6 @@ public abstract class ChatFunction extends ContactsFunction {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			if (!contentType.contains(PREFIX_IMG)) {
-				WxbotView.getInstance().executeScript("app.$Message.error('只能选择图片文件！');");
-				return;
-			}
 			 // 发送表情
 	        if (contentType != null && contentType.contains(PREFIX_GIF)) {
 	        	zombieTestMsg.setType(3);
@@ -116,6 +112,21 @@ public abstract class ChatFunction extends ContactsFunction {
 	        // 发送图片
 	        else if (contentType != null && contentType.contains(PREFIX_IMG)) {
 	        	zombieTestMsg.setType(2);
+	        } 
+	        // 发送视频
+	        else if (contentType != null && contentType.contains(PREFIX_VIDEO)) {
+	        	// 文件超限 25MB
+				if (lastSendFile.length() > MAX_VIDEO_SIZE) {
+					WxbotView.getInstance().executeScript("app.$Message.error('发送的视频文件不能大于25M');");
+					return;
+				}
+				zombieTestMsg.setType(4);
+	        } else {
+	        	// 文件超限 100MB
+				if (lastSendFile.length() > MAX_FILE_SIZE) {
+					WxbotView.getInstance().executeScript("app.$Message.error('发送的文件不能大于100M');");
+					return;
+				}
 	        }
 			zombieTestMsg.setContent(lastSendFile.getAbsolutePath());
 			WxbotView.getInstance().executeScript("app.getZombieTestMsg()");
