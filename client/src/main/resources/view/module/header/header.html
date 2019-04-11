@@ -125,7 +125,7 @@
         <form-item label="发送内容" class="mb-0">
             <radio-group v-model="header.checkProgress.type">
                 <radio class="mb-0" label="text">文本</radio>
-                <radio class="mb-0" label="file">图片</radio>
+                <radio class="mb-0" label="file">文件</radio>
             </radio-group>
         </form-item>
         <div>
@@ -133,7 +133,7 @@
                 placeholder="检测发送内容..." v-model="header.checkProgress.text"/>
             <div v-if="header.checkProgress.type == 'file'">
                 <i-input readonly style="width: 300px;" v-model="header.checkProgress.msg.content"/>
-                <i-button icon="md-images" size="32" type="primary" @click="chooseFile" title="选择图片文件"></i-button>
+                <i-button icon="md-images" size="32" type="primary" @click="chooseFile" title="请选择文件"></i-button>
             </div>
             
         </div>
