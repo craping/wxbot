@@ -14,7 +14,7 @@ public class TipsTypeParam extends StringParam implements SingleParam {
 
 	public TipsTypeParam() {
 		this.desc = "提示语类型";
-		this.value = "tipType";
+		this.value = "type";
 	}
 
 	@Override

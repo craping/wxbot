@@ -63,7 +63,7 @@ public class KeywordServer extends BaseServer {
 	* @return long    影响条数 
 	* @throws  
 	*/  
-	    
+	
 	public long addKeyword(String userName, String seq){
 		Query query = new Query(Criteria.where("userName").is(userName));
 		
