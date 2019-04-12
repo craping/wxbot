@@ -12,7 +12,6 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import lombok.Data;
 import wxrobot.dao.entity.field.Permissions;
 import wxrobot.dao.entity.field.Switchs;
-import wxrobot.dao.entity.field.Tips;
 
 @Data
 @Document(collection = "robot_setting")
@@ -44,17 +43,15 @@ public class Setting {
 	@Field
 	private List<String> timers;
 	/**  
+	* @Fields 提示语数组[seq]
+	*/  
+	@Field
+	private List<String> tips;
+	/**  
 	* @Fields 群转发数组[seq]
 	*/  
 	@Field
 	private List<String> forwards;
-	
-	/**  
-	* @Fields 提示语设置
-	*/  
-	@Field
-	private Tips tips;
-	
 	/**  
 	* @Fields 功能开关设置
 	*/  

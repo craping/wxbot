@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import wxrobot.dao.entity.Setting;
 import wxrobot.dao.entity.field.Permissions;
 import wxrobot.dao.entity.field.Switchs;
-import wxrobot.dao.entity.field.Tips;
 import wxrobot.dao.enums.SettingModule;
 
   
@@ -148,24 +147,6 @@ public class SettingServer extends BaseServer {
 		
 		return mongoTemplate.upsert(query, update, Setting.class).getModifiedCount();
 	}
-	
-	/**  
-	* @Title: setTips  
-	* @Description: 设置提示语通用方法
-	* @param @param userName
-	* @param @param tips
-	* @param @return    参数  
-	* @return long    返回类型  
-	* @throws  
-	*/  
-	public long setTips(String userName, Tips tips){
-		Query query = new Query(Criteria.where("userName").is(userName));
-		
-		Update update = Update.update("tips", tips);
-		
-		return mongoTemplate.upsert(query, update, Setting.class).getModifiedCount();
-	}
-	
 	  
 	/**  
 	* @Title: setPermissions  
