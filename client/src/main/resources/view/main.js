@@ -258,7 +258,7 @@ $script.ready(["header", "contacts", "chat", "keyword", "tip", "timer", "info"],
             this.syncTips();
             this.noticeList();
             this.syncTuringKey();
-            // this.handling();
+            this.handling();
         },
         global_click(event){
             if(this.$refs.recordDatePicker && !this.$refs.recordDatePicker.$el.contains(event.target))

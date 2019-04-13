@@ -447,24 +447,18 @@ public class MessageHandlerImpl implements MessageHandler {
 	public void onChatRoomMembersChanged(Contact chatRoom, Set<Contact> membersJoined, Set<Contact> membersLeft) {
 		logger.debug("群成员变动消息");
 		logger.debug("群ID:" + chatRoom.getUserName());
-//		if (membersJoined != null && membersJoined.size() > 0) {
-//			logger.debug("新加入成员:" + String.join(",", membersJoined.stream().map(Contact::getNickName).collect(Collectors.toList())));
-//		}
-//		if (membersLeft != null && membersLeft.size() > 0) {
-//			logger.debug("离开成员:" + String.join(",", membersLeft.stream().map(Contact::getNickName).collect(Collectors.toList())));
-//		}
 		if(SettingFunction.isWorking()){
 			Map<String, Msg> tips = TipFunction.TIP_MAP.get(chatRoom.getSeq());
 			
 			if(SettingFunction.SETTING.getPermissions().isMemberJoinTip() && tips != null && tips.containsKey(TipsType.MEMBERJOIN.getType())){
 				
 				Msg joinTip =  tips.get(TipsType.MEMBERJOIN.getType());
-				if(membersJoined != null && membersJoined.size() > 0 && joinTip != null && joinTip.getType() != 0){
+				if(membersJoined != null && membersJoined.size() > 0 && joinTip != null){
 					StringBuffer members = new StringBuffer();
+					membersJoined.forEach(c -> {
+						members.append("@").append(c.getNickName()).append(" ");
+					});
 					if (joinTip.getMsgType() == MessageType.TEXT) {
-						membersJoined.forEach(c -> {
-							members.append("@").append(c.getNickName()).append(" ");
-						});
 						chatServer.sendGloba(Arrays.asList(chatRoom), new Msg(MessageType.TEXT, joinTip.getContent().replace("[user]", members.toString())));
 					} else {
 						chatServer.sendGloba(Arrays.asList(chatRoom), new Msg(MessageType.TEXT, members.toString()));
@@ -476,12 +470,12 @@ public class MessageHandlerImpl implements MessageHandler {
 			if(SettingFunction.SETTING.getPermissions().isMemberLeftTip() && tips != null && tips.containsKey(TipsType.MEMBERLEFT.getType())) {
 				
 				Msg letfTip = tips.get(TipsType.MEMBERLEFT.getType());
-				if(membersLeft != null && membersLeft.size() > 0 && letfTip != null && letfTip.getType() != 0){
+				if(membersLeft != null && membersLeft.size() > 0 && letfTip != null){
 					StringBuffer members = new StringBuffer();
+					membersLeft.forEach(c -> {
+						members.append("@").append(c.getNickName()).append(" ");
+					});
 					if (letfTip.getMsgType() == MessageType.TEXT) {
-						membersLeft.forEach(c -> {
-							members.append("@").append(c.getNickName()).append(" ");
-						});
 						chatServer.sendGloba(Arrays.asList(chatRoom), new Msg(MessageType.TEXT, letfTip.getContent().replace("[user]", members.toString())));
 					} else {
 						chatServer.sendGloba(Arrays.asList(chatRoom), new Msg(MessageType.TEXT, members.toString()));
@@ -499,13 +493,13 @@ public class MessageHandlerImpl implements MessageHandler {
 		msgTool.execContactsChanged(chatRooms, ChangeType.ADD.getCode());
 		WxbotView.getInstance().executeSettingScript("app.notifyChatRooms()");
 		
-		if(SettingFunction.isWorking() && SettingFunction.SETTING.getPermissions().isChatRoomFoundTip() && chatRooms != null && chatRooms.size() >0){ 
-			chatRooms.forEach(chatRoom -> {
-				Map<String, Msg> tips = TipFunction.TIP_MAP.get(chatRoom.getSeq());
-				if(tips != null && tips.containsKey(TipsType.CHATROOMFOUND.getType()))
-					chatServer.sendGloba(Arrays.asList(chatRoom), tips.get(TipsType.CHATROOMFOUND.getType()));
-			});
-		}
+//		if(SettingFunction.isWorking() && SettingFunction.SETTING.getPermissions().isChatRoomFoundTip() && chatRooms != null && chatRooms.size() >0){ 
+//			chatRooms.forEach(chatRoom -> {
+//				Map<String, Msg> tips = TipFunction.TIP_MAP.get(chatRoom.getSeq());
+//				if(tips != null && tips.containsKey(TipsType.CHATROOMFOUND.getType()))
+//					chatServer.sendGloba(Arrays.asList(chatRoom), tips.get(TipsType.CHATROOMFOUND.getType()));
+//			});
+//		}
 	}
 	
 	@Override
