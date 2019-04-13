@@ -42,7 +42,7 @@ import javafx.scene.control.ButtonType;
 
 @Component
 @EnableScheduling
-public class Wxbot extends KeywordFunction implements SchedulingConfigurer {
+public class Wxbot extends TipFunction implements SchedulingConfigurer {
 	
 	public Wxbot() {
 		super();

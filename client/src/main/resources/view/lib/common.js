@@ -19,13 +19,20 @@ var Store = Store||{
 // 	},
 // 	getUserInfo(){
 // 		return {
-// 			userInfo:{}
+// 			userInfo:{
+// 				serverState:true
+// 			},
+// 			token:"b816d932a19f48f0ae2e273d0906a82d"
 // 		}
 // 	},
 // 	getDomain(){
-// 		return "http://tv.kmring.com"
+// 		return "http://localhost"
 // 	},
 // 	getHostUrl(){},
+// 	syncSetting(){},
+// 	syncKeywords(){},
+// 	syncTimers(){},
+// 	syncTips(){},
 // 	syncTuringKey(){},
 // 	getIndividuals(){
 // 		let list = [];
@@ -45,11 +52,19 @@ var Store = Store||{
 // 			list.push({
 // 				NickName:"名称<span class=\"emoji emoji1f495\"></span><span class=\"emoji emoji1f48d\"></span>🦋燕燕"+i,
 // 				HeadImgUrl:"",
-// 				UserName:"username"+i,
+// 				UserName:"@@username"+i,
 // 				seq:"seq"+i
 // 			});
 // 		}
 // 		callback(list);
+// 	},
+// 	getChatRoomMembers(){return []},
+// 	resetChatRecord(){},
+// 	getKeyMap(){
+// 		return {};
+// 	},
+// 	getMsgs(){
+// 		return [];
 // 	},
 // 	getSetting(){
 // 		return {
@@ -77,9 +92,9 @@ var Store = Store||{
 // 				"timer": true,
 // 				"globalTimer": true,
 // 				"acceptFriend": null,
-// 				"chatRoomFoundTip": null,
-// 				"memberJoinTip": null,
-// 				"memberLeftTip": null,
+// 				"chatRoomFoundTip": true,
+// 				"memberJoinTip": true,
+// 				"memberLeftTip": true,
 // 				"wapSite": true
 // 			},
 // 			"switchs": {

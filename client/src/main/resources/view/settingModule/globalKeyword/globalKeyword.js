@@ -173,7 +173,6 @@ GlobalKeyword = {
                     keyList:[me.globalKeyword.form.delKey]
                 },
                 success: function (data) {
-                    console.log(data);
                     me.$delete(me.globalKeyword.chatRoomKeyMap, me.globalKeyword.form.delKey);
                     wxbot.delKeyMap("global", me.globalKeyword.form.delKey);
                     me.globalKeyword.form.confirm = false;

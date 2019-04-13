@@ -36,6 +36,7 @@ import com.teamdev.jxbrowser.chromium.JSValue;
 
 import client.enums.ChangeType;
 import client.enums.ChatType;
+import client.enums.TipsType;
 import client.pojo.Msg;
 import client.pojo.WxMessage;
 import client.utils.Config;
@@ -453,9 +454,11 @@ public class MessageHandlerImpl implements MessageHandler {
 //			logger.debug("离开成员:" + String.join(",", membersLeft.stream().map(Contact::getNickName).collect(Collectors.toList())));
 //		}
 		if(SettingFunction.isWorking()){
+			Map<String, Msg> tips = TipFunction.TIP_MAP.get(chatRoom.getSeq());
 			
-			if(SettingFunction.SETTING.getPermissions().isMemberJoinTip()){
-				Msg joinTip = SettingFunction.SETTING.getTips().getMemberJoinTip();
+			if(SettingFunction.SETTING.getPermissions().isMemberJoinTip() && tips != null && tips.containsKey(TipsType.MEMBERJOIN.getType())){
+				
+				Msg joinTip =  tips.get(TipsType.MEMBERJOIN.getType());
 				if(membersJoined != null && membersJoined.size() > 0 && joinTip != null && joinTip.getType() != 0){
 					StringBuffer members = new StringBuffer();
 					if (joinTip.getMsgType() == MessageType.TEXT) {
@@ -470,9 +473,9 @@ public class MessageHandlerImpl implements MessageHandler {
 				}
 			}
 			
-			if(SettingFunction.SETTING.getPermissions().isMemberLeftTip()) {
+			if(SettingFunction.SETTING.getPermissions().isMemberLeftTip() && tips != null && tips.containsKey(TipsType.MEMBERLEFT.getType())) {
 				
-				Msg letfTip = SettingFunction.SETTING.getTips().getMemberLeftTip();
+				Msg letfTip = tips.get(TipsType.MEMBERLEFT.getType());
 				if(membersLeft != null && membersLeft.size() > 0 && letfTip != null && letfTip.getType() != 0){
 					StringBuffer members = new StringBuffer();
 					if (letfTip.getMsgType() == MessageType.TEXT) {
@@ -496,9 +499,11 @@ public class MessageHandlerImpl implements MessageHandler {
 		msgTool.execContactsChanged(chatRooms, ChangeType.ADD.getCode());
 		WxbotView.getInstance().executeSettingScript("app.notifyChatRooms()");
 		
-		if(SettingFunction.isWorking() && SettingFunction.SETTING.getPermissions().isChatRoomFoundTip() && chatRooms != null && chatRooms.size() >0 && SettingFunction.SETTING.getTips().getChatRoomFoundTip() != null && SettingFunction.SETTING.getTips().getChatRoomFoundTip().getType() != 0){
+		if(SettingFunction.isWorking() && SettingFunction.SETTING.getPermissions().isChatRoomFoundTip() && chatRooms != null && chatRooms.size() >0){ 
 			chatRooms.forEach(chatRoom -> {
-				chatServer.sendGloba(Arrays.asList(chatRoom), SettingFunction.SETTING.getTips().getChatRoomFoundTip());
+				Map<String, Msg> tips = TipFunction.TIP_MAP.get(chatRoom.getSeq());
+				if(tips != null && tips.containsKey(TipsType.CHATROOMFOUND.getType()))
+					chatServer.sendGloba(Arrays.asList(chatRoom), tips.get(TipsType.CHATROOMFOUND.getType()));
 			});
 		}
 	}

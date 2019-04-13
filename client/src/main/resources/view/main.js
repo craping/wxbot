@@ -26,12 +26,18 @@ $script.ready(["vue-plugs", "jquery-plugs", "crypto", "common"], () => {
     $("#timer").load("module/timer/timer.html", {}, () => {
         $script("module/timer/timer.js", "timer");
     });
+    $("#tip").load("module/tip/tip.html", {},() => {
+        $script("module/tip/tip.js", "tip");
+    });
     $("#info").load("module/info/info.html", {}, () => {
         $script("module/info/info.js", "info");
     });
 })
 var app;
-$script.ready(["header", "contacts", "chat", "keyword", "timer", "info"], () => {
+const constant = {
+    typeIcon:["", "fa-comment-dots", "fa-image", "fa-laugh", "fa-file-video", "fa-file"]
+};
+$script.ready(["header", "contacts", "chat", "keyword", "tip", "timer", "info"], () => {
 
     let methods = Object.assign({
         filterAll(data, argumentObj) {
@@ -210,7 +216,17 @@ $script.ready(["header", "contacts", "chat", "keyword", "timer", "info"], () => 
                                 }
                                 break;
                             case "TIPS":
-                                wxbot.syncTips(data);
+                                switch (msg.action) {
+                                    case "DEL":
+                                        wxbot.delTip(data.seq, data.type);
+                                        break;
+                                    default:
+                                        wxbot.setTip(data.seq, data.type, data.msg.type, data.msg.content);
+                                        break;
+                                }
+                                if(data.seq == me.tip.form.seq){
+                                    me.getTipMap(data.seq);
+                                }
                                 break;
                             case "NOTICE":
                                 data.read = false;
@@ -239,17 +255,18 @@ $script.ready(["header", "contacts", "chat", "keyword", "timer", "info"], () => 
             this.syncSetting();
             this.syncKeywords();
             this.syncTimers();
+            this.syncTips();
             this.noticeList();
             this.syncTuringKey();
-            this.handling();
+            // this.handling();
         },
         global_click(event){
             if(this.$refs.recordDatePicker && !this.$refs.recordDatePicker.$el.contains(event.target))
                 this.chat.datePickerOpen = false;
         }
-    }, Header.methods, Contacts.methods, Chat.methods, Keyword.methods, Timer.methods, Info.methods);
+    }, Header.methods, Contacts.methods, Chat.methods, Keyword.methods, Timer.methods, Tip.methods, Info.methods);
 
-    let computed = Object.assign({}, Header.computed, Contacts.computed, Chat.computed, Keyword.computed, Timer.computed, Info.computed);
+    let computed = Object.assign({}, Header.computed, Contacts.computed, Chat.computed, Keyword.computed, Timer.computed, Tip.computed, Info.computed);
     app = new Vue({
         el: "#app",
         data: {
@@ -262,20 +279,14 @@ $script.ready(["header", "contacts", "chat", "keyword", "timer", "info"], () => 
             chat: Chat.data,
             keyword: Keyword.data,
             timer: Timer.data,
+            tip:Tip.data,
             info: Info.data
         },
         computed:computed,
         updated: function () {
         },
         mounted() {
-            // this.loadContacts();
-            // this.syncSetting();
-            // this.syncKeywords();
-            // this.syncTimers();
-            // this.noticeList();
-            // this.syncTuringKey();
-            // new QRCode(document.getElementById("wapSite"), this.header.wapSite.url);
-            // this.handling();
+            // this.init();
         },
         methods: methods
     });

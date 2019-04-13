@@ -39,11 +39,10 @@ Tips = {
             let me = this;
             me.tips.cancelLoading = true;
             Web.ajax("setting/cancelTips", {
-                data:{ tipType: me.tips.tipType },
+                data:{ type: me.tips.tipType },
                 success: function (data) {
                     me.tips.cancelLoading = false;
                     me.tips.cancelModal = false;
-                    console.log(data);
                     me.tips.form = data.info;
                     wxbot.syncTips(me.tips.form);
                     me.$Message.success("操作成功!");
@@ -77,7 +76,7 @@ Tips = {
             me.tips.loading = true;
             var form = new FormData();
             form.append("token", Web.user.token);
-            form.append("tipType", me.tips.tipType);
+            form.append("type", me.tips.tipType);
             const content =  me.tips.type=="text"?me.tips.text:me.tips.file;
             form.append("content", content);
 

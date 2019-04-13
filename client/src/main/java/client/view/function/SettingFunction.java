@@ -18,7 +18,6 @@ import com.teamdev.jxbrowser.chromium.JSObject;
 import client.pojo.Permissions;
 import client.pojo.Setting;
 import client.pojo.Switchs;
-import client.pojo.Tips;
 import client.utils.Config;
 import client.utils.HttpUtil;
 import client.view.WxbotView;
@@ -79,10 +78,7 @@ public class SettingFunction {
 		new Thread(() -> {
 			if(syncSetting != null && syncSetting.toJSONString() != null && !syncSetting.toJSONString().isEmpty()){
 				try {
-					Setting setting = BaseServer.JSON_MAPPER.readValue(syncSetting.toJSONString(), Setting.class);
-					Tips tips = setting.getTips();
-					downloadTips(tips);
-					SETTING = setting;
+					SETTING = BaseServer.JSON_MAPPER.readValue(syncSetting.toJSONString(), Setting.class);
 					WxbotView.getInstance().executeSettingScript("app.notifySetting()");
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -161,19 +157,6 @@ public class SettingFunction {
 		}
 	}
 	
-	public void syncTips(JSObject syncTips){
-		if(syncTips != null && syncTips.toJSONString() != null && !syncTips.toJSONString().isEmpty()){
-			try {
-				Tips tips = BaseServer.JSON_MAPPER.readValue(syncTips.toJSONString(), Tips.class);
-				downloadTips(tips);
-				SETTING.setTips(tips);
-				WxbotView.getInstance().executeSettingScript("app.notifySetting()");
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-	
 	public void syncPermissions(JSObject syncPermissions){
 		if(syncPermissions != null && syncPermissions.toJSONString() != null && !syncPermissions.toJSONString().isEmpty()){
 			try {
@@ -181,25 +164,6 @@ public class SettingFunction {
 				WxbotView.getInstance().executeSettingScript("app.notifySetting()");
 			} catch (IOException e) {
 				e.printStackTrace();
-			}
-		}
-	}
-	
-	private void downloadTips(Tips tips){
-		if(tips != null){
-			if(tips.getChatRoomFoundTip() != null && tips.getChatRoomFoundTip().getType() != 1){
-				System.out.printf("群体示语文件[%s]\n", tips.getChatRoomFoundTip().getContent());
-				downloadAttach(tips.getChatRoomFoundTip().getContent());
-			}
-			
-			if(tips.getMemberJoinTip() != null && tips.getMemberJoinTip().getType() != 1){
-				System.out.printf("群体示语文件[%s]\n", tips.getMemberJoinTip().getContent());
-				downloadAttach(tips.getMemberJoinTip().getContent());
-			}
-			
-			if(tips.getMemberLeftTip() != null && tips.getMemberLeftTip().getType() != 1){
-				System.out.printf("群体示语文件[%s]\n", tips.getMemberLeftTip().getContent());
-				downloadAttach(tips.getMemberLeftTip().getContent());
 			}
 		}
 	}

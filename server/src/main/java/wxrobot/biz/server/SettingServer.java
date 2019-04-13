@@ -56,7 +56,7 @@ public class SettingServer extends BaseServer {
 		set.setKeywords(new LinkedList<String>());
 		set.setTimers(new LinkedList<String>());
 		set.setForwards(new LinkedList<String>());
-		set.setTips(null);
+		set.setTips(new LinkedList<String>());
 		Switchs switchs =new Switchs();
 		switchs.setAutoAcceptFriend(false);
 		switchs.setGlobalKeyword(false);

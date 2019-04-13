@@ -14,9 +14,9 @@ public class Config {
 	// 图片显示最大宽度
 	public static final int MAX_IMG_WIDTH = 200;
 	//开发环境
-//	public static final String DOMAIN = "http://localhost";
+	public static final String DOMAIN = "http://localhost";
 	//测试环境
-	public static final String DOMAIN = "http://tv.kmring.com";
+//	public static final String DOMAIN = "http://tv.kmring.com";
 	public static final String ROOT = System.getProperty("user.dir")+"/";
 	public static final String CHAT_RECORD_PATH = "resource/chat/";
 	public static final String USERINFO_URL = String.format("%s/user/getUserInfo?format=json", DOMAIN);

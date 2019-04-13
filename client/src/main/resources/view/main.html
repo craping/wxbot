@@ -37,6 +37,7 @@
 						<tabs v-model="rightTab" :animated="false" class="right" @on-click="autoLoadChatRoomMember">
 							<tab-pane v-if="Web.user.userInfo.serverState && permissions.keyword" :disabled="!chat.userName || !chat.userName.includes('@@')" label="分群关键词" name="keyword" id="keyword" class="keyword"></tab-pane>
 							<tab-pane v-if="Web.user.userInfo.serverState && permissions.timer" :disabled="!chat.userName || !chat.userName.includes('@@')" label="分群定时" name="timer" id="timer" class="timer"></tab-pane>
+							<tab-pane v-if="Web.user.userInfo.serverState && (permissions.chatRoomFoundTip || permissions.memberJoinTip || permissions.memberLeftTip)" :disabled="!chat.userName || !chat.userName.includes('@@')" label="分群提示语" name="tip" id="tip" class="tip"></tab-pane>
 							<tab-pane label="详细信息" name="info" id="info" class="info"></tab-pane>
 						</tabs>
 					</card>

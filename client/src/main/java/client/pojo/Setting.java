@@ -34,7 +34,7 @@ public class Setting {
 	* @Fields 提示语设置
 	*/  
 	@JsonProperty
-	private Tips tips = new Tips();
+	private ConcurrentLinkedQueue<String> tips = new ConcurrentLinkedQueue<>();
 	
 	/**  
 	* @Fields 功能开关设置
@@ -81,11 +81,11 @@ public class Setting {
 		this.forwards = forwards;
 	}
 
-	public Tips getTips() {
+	public ConcurrentLinkedQueue<String> getTips() {
 		return tips;
 	}
 
-	public void setTips(Tips tips) {
+	public void setTips(ConcurrentLinkedQueue<String> tips) {
 		this.tips = tips;
 	}
 

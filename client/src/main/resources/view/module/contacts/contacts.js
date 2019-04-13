@@ -255,6 +255,7 @@ Contacts = {
                 if(this.contacts.contactTab == "chatroom"){
                     this.getKeyMap(item.seq);
                     this.getMsgs(item.seq);
+                    this.getTipMap(item.seq);
                     this.rightTab = "keyword";
                 } else {
                     this.rightTab = "info";

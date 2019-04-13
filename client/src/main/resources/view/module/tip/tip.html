@@ -1,0 +1,85 @@
+<table class="table table-hover border fixed mb-0" style="height: 300px;">
+    <thead>
+        <tr>
+            <th width="80">类型</th>
+            <th>内容</th>
+            <th class="text-center" width="90">操作</th>
+        </tr>
+    </thead>
+    <tbody style="height: 375px;">
+        <tr v-if="Web.user.userInfo.serverState && permissions.chatRoomFoundTip">
+            <td width="80">发现新群</td>
+            <td>
+                <tooltip :content="tip.tipMap.chatRoomFoundTip?tip.tipMap.chatRoomFoundTip.content:'未设置'" class="text-truncate w-100">
+                    <i class="far" :class="constant.typeIcon[tip.tipMap.chatRoomFoundTip?tip.tipMap.chatRoomFoundTip.type:0]"></i>
+                    {{tip.tipMap.chatRoomFoundTip?tip.tipMap.chatRoomFoundTip.content:'未设置'}}
+                </tooltip>
+            </td>
+            <td class="text-center" width="90">
+                <i-button icon="ios-settings" size="small" type="primary"  @click="editTip('chatRoomFoundTip','发现新群')" title="设定"></i-button>
+                <i-button v-show="tip.tipMap.chatRoomFoundTip" icon="md-close" size="small" type="error" @click="cancelTip('chatRoomFoundTip','发现新群')" title="取消设定"></i-button>
+            </td>
+        </tr>
+        <tr v-if="Web.user.userInfo.serverState && permissions.memberJoinTip">
+            <td width="80">成员加入</td>
+            <td>
+                <tooltip :content="tip.tipMap.memberJoinTip?tip.tipMap.memberJoinTip.content:'未设置'" class="text-truncate w-100">
+                    <i class="far" :class="constant.typeIcon[tip.tipMap.memberJoinTip?tip.tipMap.memberJoinTip.type:0]"></i>
+                    {{tip.tipMap.memberJoinTip?tip.tipMap.memberJoinTip.content:'未设置'}}
+                </tooltip>
+            </td>
+            <td class="text-center" width="90">
+                <i-button icon="ios-settings" size="small" type="primary"  @click="editTip('memberJoinTip','成员加入')" title="设定"></i-button>
+                <i-button v-show="tip.tipMap.memberJoinTip" icon="md-close" size="small" type="error" @click="cancelTip('memberJoinTip','成员加入')" title="取消设定"></i-button>
+            </td>
+        </tr>
+        <tr v-if="Web.user.userInfo.serverState && permissions.memberLeftTip">
+            <td width="80">成员退出</td>
+            <td>
+                <tooltip :content="tip.tipMap.memberLeftTip?tip.tipMap.memberLeftTip.content:'未设置'" class="text-truncate w-100">
+                    <i class="far" :class="constant.typeIcon[tip.tipMap.memberLeftTip?tip.tipMap.memberLeftTip.type:0]"></i>
+                    {{tip.tipMap.memberLeftTip?tip.tipMap.memberLeftTip.content:'未设置'}}
+                </tooltip>
+            </td>
+            <td class="text-center" width="90">
+                <i-button icon="ios-settings" size="small" type="primary"  @click="editTip('memberLeftTip','成员退出')" title="设定"></i-button>
+                <i-button v-show="tip.tipMap.memberLeftTip" icon="md-close" size="small" type="error" @click="cancelTip('memberLeftTip','成员退出')" title="取消设定"></i-button>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+
+<modal v-model="tip.form.modal" :title="tip.form.title +'提示语设置'" width="400" :mask-closable="false" :closable="false" :loading="tip.form.modalLoading" onselectstart="return false" ondragstart="return false" @on-ok="editTipOk" @on-cancel="editTipCancel">
+    <i-form @submit.native.prevent>
+        <form-item label="消息内容" class="mb-0">
+            <radio-group v-model="tip.form.type">
+                <radio class="mb-0" label="text">文本</radio>
+                <radio class="mb-0" label="file">文件</radio>
+                <div v-show="tip.form.type == 'text' && tip.form.tipType != 'chatRoomFoundTip'" class="text-muted"><span class="text-info">[user]</span> 标签为用户昵称占位符</div>
+            </radio-group>
+        </form-item>
+        <div>
+            <i-input v-if="tip.form.type == 'text'" type="textarea" :autosize="{maxRows: 4, minRows: 4}" placeholder="回复内容..." v-model="tip.form.text"/>
+            <Upload v-if="tip.form.type == 'file'" type="drag" :before-upload="handleTipUpload" :max-size="25600">
+                <div style="padding: 20px 0">
+                    <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
+                    <p>点击选择文件或拖拽文件到该区域</p>
+                </div>
+            </Upload>
+            <div v-if="tip.form.file !== null">文件名: {{ tip.form.file.name }}</div>
+        </div>
+    </i-form>
+</modal>
+<modal v-model="tip.form.confirm" onselectstart="return false" ondragstart="return false" width="360" :mask-closable="false">
+    <p slot="header" class="text-center" style="color:#f60;">
+        <icon type="ios-information-circle"></icon>
+        <span>取消确认</span>
+    </p>
+    <div style="text-align:center">
+        <p>是否继续取消 [{{tip.form.title}}] 提示语？</p>
+    </div>
+    <div slot="footer">
+        <i-button type="error" size="large" long :loading="tip.form.confirmLoading" @click="delTip">取消设置</i-button>
+    </div>
+</modal>

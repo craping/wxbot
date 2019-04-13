@@ -49,7 +49,6 @@ Seqs = {
     },
     methods:{
         changeSeq(e){
-            console.log(e);
             if(e.state)
                 this.enableSeq(e);
             else

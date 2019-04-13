@@ -25,7 +25,6 @@ Keyword = {
             key: "content",
             ellipsis:true,
             render: (h, params) => {
-                const typeIcon = ["", "fa-comment-dots", "fa-image", "fa-laugh", "fa-file-video", "fa-file"];
                 return h("Tooltip", {
                     "class":"text-truncate w-100",
                     props:{
@@ -37,7 +36,7 @@ Keyword = {
                         marginRight: "8px",
                         fontSize:"14px"
                     },
-                    "class":"far "+typeIcon[params.row.type]
+                    "class":"far "+constant.typeIcon[params.row.type]
                 }),params.row.content])
             }
         },{
@@ -109,7 +108,6 @@ Keyword = {
             let me = this;
             Web.ajax("keyword/getKeywords", {
                 success: function (data) {
-                    console.log(data.info)
                     if(data.info)
                         wxbot.syncKeywords(data.info);
                 },
@@ -210,7 +208,6 @@ Keyword = {
                     keyList:[me.keyword.form.delKey]
                 },
                 success: function (data) {
-                    console.log(data);
                     me.$delete(me.keyword.chatRoomKeyMap, me.keyword.form.delKey);
                     wxbot.delKeyMap(me.keyword.form.seq, me.keyword.form.delKey);
                     me.keyword.form.confirm = false;

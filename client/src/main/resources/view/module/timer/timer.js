@@ -53,7 +53,6 @@ Timer = {
             ellipsis:true,
             key: "content",
             render: (h, params) => {
-                const typeIcon = ["", "fa-comment-dots", "fa-image", "fa-laugh", "fa-file-video", "fa-file"];
                 return h("Tooltip", {
                     "class":"text-truncate w-100",
                     props:{
@@ -65,7 +64,7 @@ Timer = {
                         marginRight: "8px",
                         fontSize:"14px"
                     },
-                    "class":"far "+typeIcon[params.row.type]
+                    "class":"far "+constant.typeIcon[params.row.type]
                 }),params.row.content])
             }
         }, {
@@ -105,7 +104,6 @@ Timer = {
             let me = this;
             Web.ajax("timer/getTimers", {
                 success: function (data) {
-                    console.log(data.info)
                     if(data.info)
                         wxbot.syncTimers(data.info);
                 },
@@ -149,7 +147,6 @@ Timer = {
                     schedule.push(me.timer.form.schedule[key]);
                 });
                 schedule = me.timer.form.scheduleType+"|"+schedule.join(",");
-                console.log(schedule);
                 if(schedule.indexOf(",,") != -1){
                     me.$Message.error("时间信息不完整");
                     me.timer.form.modalLoading = false;
@@ -239,7 +236,6 @@ Timer = {
                     uuid:me.timer.form.uuid
                 },
                 success: function (data) {
-                    console.log(data);
                     me.timer.msgs = me.timer.msgs.filter(e => e.uuid != me.timer.form.uuid);
                     wxbot.delMsg(me.timer.form.seq, me.timer.form.uuid);
                     me.timer.form.confirm = false;

@@ -25,9 +25,9 @@ $script.ready(["vue-plugs", "bootstrap", "crypto", "common"], function () {
     $("#globalKeyword").load("settingModule/globalKeyword/globalKeyword.html", {}, function () {
         $script("settingModule/globalKeyword/globalKeyword.js", "globalKeyword");
     });
-    $("#tips").load("settingModule/tips/tips.html", {}, function () {
-        $script("settingModule/tips/tips.js", "tips");
-    });
+    // $("#tips").load("settingModule/tips/tips.html", {}, function () {
+    //     $script("settingModule/tips/tips.js", "tips");
+    // });
 })
 var app;
 const constant = {
@@ -59,7 +59,7 @@ const constant = {
     },
     typeIcon:["", "fa-comment-dots", "fa-image", "fa-laugh", "fa-file-video", "fa-file"]
 };
-$script.ready(["user", "general", "seqs", "globalTimer", "globalKeyword", "tips"], function () {
+$script.ready(["user", "general", "seqs", "globalTimer", "globalKeyword"], function () {
     let data = Object.assign({
         header:{},
         setting:{
@@ -68,7 +68,7 @@ $script.ready(["user", "general", "seqs", "globalTimer", "globalKeyword", "tips"
         chatRooms:[],
         switchTimer:{},
         switchKeyword:{}
-    }, {user:User.data}, {general:General.data}, {seqs:Seqs.data}, {globalTimer:GlobalTimer.data}, {globalKeyword:GlobalKeyword.data}, {tips:Tips.data});
+    }, {user:User.data}, {general:General.data}, {seqs:Seqs.data}, {globalTimer:GlobalTimer.data}, {globalKeyword:GlobalKeyword.data});
     let methods = Object.assign({
         filterAll(data, argumentObj) {
             return data.filter(d => {
@@ -106,7 +106,7 @@ $script.ready(["user", "general", "seqs", "globalTimer", "globalKeyword", "tips"
         notifySetting(){
             this.setting = wxbot.getSetting();
             this.generalReset();
-            this.tipsReset();
+            // this.tipsReset();
             this.switchTimer = {
                 seq: "global",
                 module:"timers",
@@ -139,8 +139,8 @@ $script.ready(["user", "general", "seqs", "globalTimer", "globalKeyword", "tips"
         onMembersSeqChanged(seqMap){
             app.modKeywords(seqMap);
         }
-    }, User.methods, General.methods, Seqs.methods, GlobalTimer.methods, GlobalKeyword.methods, Tips.methods);
-    let computed = Object.assign({}, User.computed, General.computed, Seqs.computed, GlobalTimer.computed, GlobalKeyword.computed, Tips.computed);
+    }, User.methods, General.methods, Seqs.methods, GlobalTimer.methods, GlobalKeyword.methods);
+    let computed = Object.assign({}, User.computed, General.computed, Seqs.computed, GlobalTimer.computed, GlobalKeyword.computed);
     app = new Vue({
         el: "#app",
         data: data,

@@ -31,9 +31,9 @@
 				<a class="nav-link" v-show="Web.user.userInfo.serverState && setting.permissions.globalKeyword" name="globalKeyword" data-toggle="tab" href="#globalKeyword" role="tab" aria-controls="globalKeyword" @click="header = constant.header[$event.target.name]">
 					<i class="fas fa-comment-dots"></i> {{constant.header.globalKeyword.title}}
 				</a>
-				<a class="nav-link" name="tips" data-toggle="tab" href="#tips" role="tab" aria-controls="tips" @click="header = constant.header[$event.target.name]">
+				<!-- <a class="nav-link" name="tips" data-toggle="tab" href="#tips" role="tab" aria-controls="tips" @click="header = constant.header[$event.target.name]">
 					<i class="fas fa-info-circle"></i> {{constant.header.tips.title}}
-				</a>
+				</a> -->
 			</nav>
 		</header>
 		<main class="col-9 offset-3">
@@ -60,7 +60,7 @@
 				<div class="tab-pane" id="seqs" role="tabpanel" aria-labelledby="seqs-tab"></div>
 				<div class="tab-pane" v-show="Web.user.userInfo.serverState && setting.permissions.globalTimer" id="globalTimer" role="tabpanel" aria-labelledby="globalTimer-tab"></div>
 				<div class="tab-pane" v-show="Web.user.userInfo.serverState && setting.permissions.globalKeyword" id="globalKeyword" role="tabpanel" aria-labelledby="globalKeyword-tab"></div>
-				<div class="tab-pane" id="tips" role="tabpanel" aria-labelledby="tips-tab"></div>
+				<!-- <div class="tab-pane" id="tips" role="tabpanel" aria-labelledby="tips-tab"></div> -->
 			</div>
 		</main>
 	</div>
