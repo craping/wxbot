@@ -6,20 +6,17 @@ export default {
     data() {
         return {
             tipType: '',
-            tipsTxt: null,
-            tipFile: {},
+            tipsTxt: '',
+            tipFile: null,
             tipFileName: '',
-            tips: {
-                chatRoomFoundTip: {},
-                memberJoinTip: {},
-                memberLeftTip: {}
-            },
+            tip: {},
             radio: '1',
             imageVal: null,
             loading: false,
             cloading: false,
             isShow: false,
-            token: ''
+            token: '',
+            seq: ''
         }
     },
     watch: {
@@ -33,25 +30,23 @@ export default {
     },
     methods: {
         initTips() {
-            this.tips = Object.assign(this.tips, this.$config.setting.tips);
-            const _obj = this.tips[''+this.tipType+''];
-            if (Object.keys(_obj).length) {
-                this.tipsTxt = _obj.content;
-                if (_obj.type != 1) this.radio="2";
-                if (_obj.type == 2) this.imageVal = _obj.content;
-                if (this.radio == "2") this.tipFileName = _obj.content;
+            if (this.tip != undefined && Object.keys(this.tip).length) {
+                this.tipsTxt = this.tip.content;
+                if (this.tip.type != 1) this.radio="2";
+                if (this.tip.type == 2) this.imageVal = this.tip.content;
+                if (this.radio == "2") this.tipFileName = this.tip.content;
             }
         },
         loadTips() {
-            if (Object.keys(this.$config.setting).length) {
-                this.initTips();
-                return;
-            } 
-            this.$http.post("setting/getSetting?format=json", {token: this.token}).then(response => {
+            const data = { seq: this.seq, token: this.token};
+            this.$http.post("tip/getTips?format=json", data).then(response => {
                 const data = response.data;
+                console.log(data);
                 if (!data.result) {
-                    this.$config.setting = data.data.info;
-                    this.initTips();
+                    if (Object.keys(data.data).length > 0) {
+                        this.tip = data.data.info[this.seq][this.tipType];
+                        this.initTips();
+                    }
                 } else {
                     Toast.fail(data.msg);
                 }
@@ -64,15 +59,23 @@ export default {
             if (action == "cancel")
                 done();
             if (action == "confirm") {
+                if (this.tip == undefined) {
+                    done();
+                    Toast("操作成功！");
+                    setTimeout(() => {
+                        this.$router.go(-1);
+                    }, 1000);
+                    return;
+                }
                 const params = {
                     token: this.token,
-                    tipType: this.tipType
+                    seq: this.seq,
+                    type: this.tipType
                 }
-                this.$http.post("setting/cancelTips?format=json", params).then(response => {
+                this.$http.post("tip/del?format=json", params).then(response => {
                     const data = response.data;
                     done();
                     if (!data.result) {
-                        this.$config.setting.tips = data.data.info;
                         Toast(data.msg);
                         setTimeout(() => {
                             Object.assign(this.$data, this.$options.data());
@@ -122,27 +125,33 @@ export default {
             this.tipType = this.$route.query.tipType;
             this.$route.meta.title = this.$route.query.title;
             this.token = this.$route.query.token;
+            this.seq = this.$route.query.seq;
         },
         setTpis() {
-            if (this.tipsTxt == this.tips[''+this.tipType+''].content){
-                Toast("操作成功！");
-                setTimeout(() => {
-                    Object.assign(this.$data, this.$options.data())
-                    this.$router.go(-1);
-                }, 1000);
-                return;
+            // if (this.tipsTxt == this.tip.content){
+            //     Toast("操作成功！");
+            //     setTimeout(() => {
+            //         Object.assign(this.$data, this.$options.data())
+            //         this.$router.go(-1);
+            //     }, 1000);
+            //     return;
+            // }
+            const content = this.radio=="1" ? this.tipsTxt : this.tipFile;
+            if (!content || content == null || content == "") {
+                Toast('信息不完整');
+                return false
             }
             
             this.loading = true;
             let param = new FormData();
             param.append('token', this.token + "_m");
-            param.append('tipType', this.tipType);
-            param.append('content', this.radio=="1" ? this.tipsTxt : this.tipFile);
-            this.$http.post("setting/setTips?format=json",  param) .then(response => {
+            param.append('seq', this.seq);
+            param.append('type', this.tipType);
+            param.append('content', content);
+            this.$http.post("tip/set?format=json",  param) .then(response => {
                 const data = response.data;
                 this.loading = false;
                 if (!data.result) {
-                    this.$config.setting.tips = data.data.info;
                     Toast(data.msg);
                     setTimeout(() => {
                         Object.assign(this.$data, this.$options.data());

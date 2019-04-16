@@ -75,18 +75,6 @@ export default {
                 console.log(error);
             }); 
         },
-        goTips(tipType) {
-            const title = this.$refs[tipType].innerText;
-            this.$config.active = null;
-            this.$router.push({
-                path: '/tips',
-                query: { 
-                    tipType: tipType, 
-                    title: title,
-                    token: this.token
-                }
-            })
-        },
         goGlobalTimer() {
             this.$config.active = null;
             this.$router.push({

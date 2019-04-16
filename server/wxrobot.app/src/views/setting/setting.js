@@ -35,6 +35,19 @@ export default {
                 }
             })
         },
+        goTips(tipType) {
+            const title = this.$refs[tipType].innerText;
+            this.$config.active = null;
+            this.$router.push({
+                path: '/tips',
+                query: { 
+                    tipType: tipType, 
+                    title: title,
+                    token: this.token,
+                    seq: this.seq
+                }
+            })
+        },
         updSwitchs($event, moduleName) {
             let url = "setting/disableSeq?format=json";
             if ($event) {

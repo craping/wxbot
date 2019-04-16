@@ -233,7 +233,7 @@ export default {
                 { name: "分群定时消息", target:"timer", value: this.permissions.timer },
                 { name: "全群定时消息", target:"globalTimer", value: this.permissions.globalTimer },
                 { name: "自动接受好友请求", target:"acceptFriend", value: this.permissions.acceptFriend },
-                { name: "发现新群提示语", target:"chatRoomFoundTip", value: this.permissions.chatRoomFoundTip },
+                //{ name: "发现新群提示语", target:"chatRoomFoundTip", value: this.permissions.chatRoomFoundTip },
                 { name: "成员加入提示语", target:"memberJoinTip", value: this.permissions.memberJoinTip },
                 { name: "成员退出提示语", target:"memberLeftTip", value: this.permissions.memberLeftTip },
                 { name: "移动端管理", target:"wapSite", value: this.permissions.wapSite },

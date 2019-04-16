@@ -47,10 +47,6 @@
             </template>
         </van-cell>
         <van-cell title="全域定时群发设置" icon="setting-o" is-link v-show="globalTimers" @click="goGlobalTimer" />
-
-        <van-cell title="加群自动消息设置" icon="edit" ref="chatRoomFoundTip" is-link @click="goTips('chatRoomFoundTip')"/>
-        <van-cell title="进群欢迎语设置" icon="edit" ref="memberJoinTip" is-link @click="goTips('memberJoinTip')" />
-        <van-cell title="退群提示语设置" icon="edit" ref="memberLeftTip" is-link @click="goTips('memberLeftTip')" />
     </van-cell-group>
     <footerNav></footerNav>
 </section>
