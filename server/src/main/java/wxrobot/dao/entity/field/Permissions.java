@@ -15,19 +15,19 @@ import lombok.Data;
 public class Permissions {
 	
 	public Permissions() {
-		this.zombieTest= false;
-		this.chat= false;
-		this.turing = false;
-		this.forward = false;
-		this.keyword= false;
-		this.globalKeyword= false;
-		this.timer= false;
-		this.globalTimer= false;
-		this.acceptFriend= false;
-		this.chatRoomFoundTip= false;
-		this.memberJoinTip= false;
-		this.memberLeftTip= false;
-		this.wapSite= false;
+		this.zombieTest= true;
+		this.chat= true;
+		this.turing = true;
+		this.forward = true;
+		this.keyword= true;
+		this.globalKeyword= true;
+		this.timer= true;
+		this.globalTimer= true;
+		this.acceptFriend= true;
+		this.chatRoomFoundTip= true;
+		this.memberJoinTip= true;
+		this.memberLeftTip= true;
+		this.wapSite= true;
 	}
  
 	  
