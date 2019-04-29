@@ -62,6 +62,9 @@ $script.ready(["header", "contacts", "chat", "keyword", "tip", "timer", "info"],
             }
             return res;
         },
+        insertMark(target, content){
+            $(this.$refs.tipInput.$el).find("textarea,input")[0].setRangeText(content);
+        },
         exportFile(content, fileName) {
 
             let aEle = document.createElement("a"), blob = new Blob([new String(content, "utf-8")]);

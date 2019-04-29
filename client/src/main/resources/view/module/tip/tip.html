@@ -43,11 +43,11 @@
             <radio-group v-model="tip.form.type">
                 <radio class="mb-0" label="text">文本</radio>
                 <radio class="mb-0" label="file">文件</radio>
-                <div v-show="tip.form.type == 'text' && tip.form.tipType != 'chatRoomFoundTip'" class="text-muted"><span class="text-info">[user]</span> 标签为用户昵称占位符</div>
+                <div v-show="tip.form.type == 'text' && tip.form.tipType != 'chatRoomFoundTip'" class="text-muted"><a href="javascript:;" @click="insertMark('tipInput', '[user]')" title="点击插入">[user]</a><span class="text-danger">(点击标签插入)</span> 标签为用户昵称占位符</div>
             </radio-group>
         </form-item>
         <div>
-            <i-input v-if="tip.form.type == 'text'" type="textarea" :autosize="{maxRows: 4, minRows: 4}" placeholder="回复内容..." v-model="tip.form.text"/>
+            <i-input v-if="tip.form.type == 'text'" type="textarea" ref="tipInput" :autosize="{maxRows: 4, minRows: 4}" placeholder="回复内容..." v-model="tip.form.text"/>
             <Upload v-if="tip.form.type == 'file'" type="drag" :before-upload="handleTipUpload" :max-size="25600">
                 <div style="padding: 20px 0">
                     <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>

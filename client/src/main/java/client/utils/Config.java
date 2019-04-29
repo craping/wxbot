@@ -10,9 +10,6 @@ import client.enums.OsNameEnum;
  *
  */
 public class Config {
-	
-	// 图片显示最大宽度
-	public static final int MAX_IMG_WIDTH = 200;
 	//开发环境
 //	public static final String DOMAIN = "http://localhost";
 	//测试环境

@@ -369,6 +369,11 @@ public class ChatServer extends BaseServer {
 					e.printStackTrace();
 				}
 			}
+			try {
+				Thread.sleep(3000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	

@@ -16,7 +16,7 @@
 
 <modal v-model="keyword.form.modal" title="关键词" width="400" :mask-closable="false" :closable="false" :loading="keyword.form.modalLoading" onselectstart="return false" ondragstart="return false" @on-ok="editKeyMapOk" @on-cancel="editKeyMapCancel">
     <div>
-        <i-input placeholder="关键词..." clearable :disabled="keyword.form.edit" v-model="keyword.form.key"/>
+        <i-input placeholder="关键词..." :disabled="keyword.form.edit" v-model="keyword.form.key"/>
     </div>
     <br>
     <i-form @submit.native.prevent>

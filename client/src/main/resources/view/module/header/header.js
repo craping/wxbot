@@ -199,7 +199,7 @@ Header = {
                     //继续下一个
                     this.next();
                 }.bind(this);
-                setTimeout(send, 6000);
+                setTimeout(send, 5000);
                 //send();
             };
 

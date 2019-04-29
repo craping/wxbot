@@ -283,7 +283,7 @@ public class MessageHandlerImpl implements MessageHandler {
 
 	@Override
 	public void onReceivingPrivateTextMessage(Message message) {
-		String content = EmojiUtil.formatFace(message.getContent());
+		String content = EmojiUtil.formatFace(message.getContent()).replace("&amp;", "&");
 		logger.debug("私聊文本消息");
 		logger.debug("from: " + message.getFromUserName());
 		logger.debug("to: " + message.getToUserName());
@@ -295,7 +295,7 @@ public class MessageHandlerImpl implements MessageHandler {
 		if(SettingFunction.isWorking() && SettingFunction.SETTING.getPermissions().isForward() && cacheService.getOwner().getUserName().equals(message.getFromUserName()) && cacheService.getOwner().getUserName().equals(message.getToUserName())){
 			cacheService.getChatRooms().stream().filter(c -> SettingFunction.SETTING.getForwards().contains(c.getSeq())).forEach(c -> {
 				try {
-					chatServer.writeSendTextRecord(c, content, wechatHttpService.sendText(c.getUserName(), message.getContent()).getMsgID());
+					chatServer.writeSendTextRecord(c, content, wechatHttpService.sendText(c.getUserName(), content).getMsgID());
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

@@ -47,7 +47,7 @@
 <modal v-model="globalKeyword.form.modal" title="全群关键词" width="400" :mask-closable="false" :closable="false" :loading="globalKeyword.form.modalLoading" class-name="vertical-center-modal"
 @on-ok="editKeyMapOk" @on-cancel="editKeyMapCancel">
     <div>
-        <i-input placeholder="关键词..." clearable :disabled="globalKeyword.form.edit" v-model="globalKeyword.form.key"/>
+        <i-input placeholder="关键词..." :disabled="globalKeyword.form.edit" v-model="globalKeyword.form.key"/>
     </div>
     <br>
     <i-form @submit.native.prevent>
