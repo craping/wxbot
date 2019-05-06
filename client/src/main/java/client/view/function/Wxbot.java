@@ -18,7 +18,9 @@ import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.stereotype.Component;
 
 import com.cherry.jeeves.domain.shared.Contact;
+import com.cherry.jeeves.utils.rest.HttpUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.teamdev.jxbrowser.chromium.CookieStorage;
 import com.teamdev.jxbrowser.chromium.JSONString;
 import com.teamdev.jxbrowser.chromium.JSObject;
 import com.teamdev.jxbrowser.chromium.JSValue;
@@ -151,6 +153,17 @@ public class Wxbot extends TipFunction implements SchedulingConfigurer {
 		});
 	}
 	
+	@Scheduled(fixedDelay=5000)
+    private void sycnCookie() {
+		Platform.runLater(() -> {
+			CookieStorage cookieStorage = WxbotView.getInstance().getBrowser().getCookieStorage();
+			HttpUtil.cookieStore.getCookies().forEach(cookie -> {
+				cookieStorage.setSessionCookie("https://wx2.qq.com", cookie.getName(), cookie.getValue(), ".qq.com", "/", false, false);
+				cookieStorage.setSessionCookie("https://wx.qq.com", cookie.getName(), cookie.getValue(), ".qq.com", "/", false, false);
+			});
+			cookieStorage.save();
+		});
+	}
 	
 	@Scheduled(fixedRate=1000)
     private void work() {

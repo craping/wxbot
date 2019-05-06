@@ -27,8 +27,6 @@ import com.cherry.jeeves.service.WechatHttpService;
 import com.cherry.jeeves.utils.Coder;
 import com.cherry.jeeves.utils.MessageUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.teamdev.jxbrowser.chromium.CookieStorage;
 import com.teamdev.jxbrowser.chromium.JSONString;
 import com.teamdev.jxbrowser.chromium.JSObject;
@@ -111,9 +109,13 @@ public class MessageHandlerImpl implements MessageHandler {
 		logger.debug("用户名：" + member.getNickName());
 		Platform.runLater(() -> {
 			CookieStorage cookieStorage = WxbotView.getInstance().getBrowser().getCookieStorage();
-			wechatHttpService.getCookies().forEach((k, v) -> {
-				cookieStorage.setSessionCookie("https://wx2.qq.com", k, v, ".qq.com", "/", false, false);
-				cookieStorage.setSessionCookie("https://wx.qq.com", k, v, ".qq.com", "/", false, false);
+//			wechatHttpService.getCookies().forEach((k, v) -> {
+//				cookieStorage.setSessionCookie("https://wx2.qq.com", k, v, ".qq.com", "/", false, false);
+//				cookieStorage.setSessionCookie("https://wx.qq.com", k, v, ".qq.com", "/", false, false);
+//			});
+			com.cherry.jeeves.utils.rest.HttpUtil.cookieStore.getCookies().forEach(cookie -> {
+				cookieStorage.setSessionCookie("https://wx2.qq.com", cookie.getName(), cookie.getValue(), ".qq.com", "/", false, false);
+				cookieStorage.setSessionCookie("https://wx.qq.com", cookie.getName(), cookie.getValue(), ".qq.com", "/", false, false);
 			});
 			cookieStorage.save();
 			WxbotView.getInstance().executeScript("app.init()");
@@ -437,8 +439,7 @@ public class MessageHandlerImpl implements MessageHandler {
 		logger.debug("接受好友请求消息");
 //        将该用户的微信号设置成他的昵称
 		String content = StringEscapeUtils.unescapeXml(message.getContent());
-		ObjectMapper xmlMapper = new XmlMapper();
-		FriendInvitationContent friendInvitationContent = xmlMapper.readValue(content, FriendInvitationContent.class);
+		FriendInvitationContent friendInvitationContent = BaseServer.XML_MAPPER.readValue(content, FriendInvitationContent.class);
 		wechatHttpService.setAlias(message.getRecommendInfo().getUserName(), message.getRecommendInfo().getNickName());
 		wechatHttpService.setAlias(message.getRecommendInfo().getUserName(), friendInvitationContent.getFromusername());
 	}

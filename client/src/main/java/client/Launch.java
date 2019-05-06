@@ -32,7 +32,7 @@ public class Launch extends Application {
 	/**  
 	* @Fields 开发调试模式
 	*/  
-	public final static boolean DEBUG = false;
+	public final static boolean DEBUG = true;
 	
 	static {
 	    try {
