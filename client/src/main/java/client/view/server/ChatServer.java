@@ -327,7 +327,7 @@ public class ChatServer extends BaseServer {
 			if(msgId == null)
 				msgId = response.getMsgID();
 			//写转发消息聊天记录
-			writeSendAppRecord(contact, msg.getContent(), msgId, false);
+			writeSendAppRecord(contact, msg.getContent(), msgId, true);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -26,7 +26,6 @@ import com.teamdev.jxbrowser.chromium.JSObject;
 import com.teamdev.jxbrowser.chromium.JSValue;
 
 import client.utils.Config;
-import client.utils.FileUtil;
 import client.view.LoginView;
 import client.view.WxbotView;
 import client.view.server.BaseServer;
@@ -107,7 +106,6 @@ public class Wxbot extends TipFunction implements SchedulingConfigurer {
 		USER = syncUserInfo;
 		wxbotThread = new Thread(() -> {
 			try {
-				FileUtil.start();
 				jeeves.start();
 			} catch (Exception e) {
 			}
@@ -135,6 +133,13 @@ public class Wxbot extends TipFunction implements SchedulingConfigurer {
 		});
 	}
 
+	public void interrupt() {
+		jeeves.stop();
+		if (wxbotThread != null){
+			wxbotThread.interrupt();
+		}
+	}
+	
 	public void exit(String title, String msg) {
 		jeeves.stop();
 		if (wxbotThread != null){
@@ -153,7 +158,7 @@ public class Wxbot extends TipFunction implements SchedulingConfigurer {
 		});
 	}
 	
-	@Scheduled(fixedDelay=5000)
+	@Scheduled(fixedDelay=180000)
     private void sycnCookie() {
 		Platform.runLater(() -> {
 			CookieStorage cookieStorage = WxbotView.getInstance().getBrowser().getCookieStorage();

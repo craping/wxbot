@@ -87,7 +87,7 @@ public class QRView extends AnchorPane {
 
 	public void expired() {
 		// 刷新二维码 要重启机器人程序
-		wxbot.stop();
+		wxbot.interrupt();
 		eventFlag = true;
 		// 更换图片
 		Image mask = new Image(getClass().getClassLoader().getResource("reload.jpg").toString());
@@ -100,7 +100,7 @@ public class QRView extends AnchorPane {
 				pi.setVisible(true);
 				pi.setProgress(0.3f);
 
-				wxbot.start(null);
+				wxbot.start(Wxbot.USER);
 				eventFlag = false;
 			}
 		});

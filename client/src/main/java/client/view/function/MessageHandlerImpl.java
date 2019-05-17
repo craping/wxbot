@@ -39,6 +39,7 @@ import client.pojo.Msg;
 import client.pojo.WxMessage;
 import client.utils.Config;
 import client.utils.EmojiUtil;
+import client.utils.FileUtil;
 import client.utils.HttpUtil;
 import client.utils.WxMessageTool;
 import client.view.LoginView;
@@ -96,6 +97,7 @@ public class MessageHandlerImpl implements MessageHandler {
 	@Override
 	public void onConfirmation() {
 		logger.debug("确认登录");
+		FileUtil.start();
 		Platform.runLater(() -> {
 			qrView.close();
 			WxbotView.getInstance().show();
