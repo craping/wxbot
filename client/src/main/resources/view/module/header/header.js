@@ -145,6 +145,7 @@ Header = {
                     content: '<p>检测未完成，是否取消操作？</p>',
                     okText: '取消检测',
                     onOk() {
+                        wxbot.stopZombieTest();
                         me.header.checkLoading = false;
                         me.$refs.checkDiv.innerHTML = "僵尸粉检测";
                     }
@@ -157,67 +158,23 @@ Header = {
         getZombieTestMsg() {
             this.header.checkProgress.msg = wxbot.getZombieTestMsg();
         },
+        doneTest() {
+            let me = this;
+            me.header.checkLoading = false;
+            me.$refs.checkDiv.innerHTML = "僵尸粉检测";
+        },
         beginTest() {
-        	wxbot.getIndividuals(individuals => {
-	            let me = this;
-	            me.header.checkProgress.checkTime = new Date().format("yyyy-MM-dd HH:mm:ss");
-	            me.header.checkProgress.count = 0;
-	            me.header.checkProgress.deleteMap = {};
-	            me.header.checkProgress.deleteMapNull = true;
-	            me.header.checkProgress.blacklistMap = {};
-	            me.header.checkProgress.blacklistMapNull = true;
-	            me.header.checkLoading = true;
-	            me.$refs.checkDiv.innerHTML = "检测中...";
-	            //创建任务控制类
-	            var TaskControl = function (taskFunction, finishFunction) {
-	                this.finish = false;
-	                this.next = function () {
-	                    if (!this.finish && me.header.checkLoading) {
-	                        taskFunction.call(this);
-	                    } else {
-	                        finishFunction.call(this);
-	                    }
-	                };
-	            };
-	            // 调用发送sendText消息方法
-	            var task = function () {
-	                var send = function () {
-	                    this.index++;
-	                    console.time("任务：" + this.index);
-	                    //判断列表中还有没有任务
-	                    if (this.index >= this.data.length || !me.header.checkLoading) {
-	                        this.finish = true;
-	                    } else {
-	                        me.header.checkProgress.count++;
-	                        var contact = this.data[this.index];
-	                        if (me.header.checkProgress.type == 'text') {
-	                            wxbot.sendText(contact.seq, contact.NickName, contact.UserName, 
-	                                me.header.checkProgress.text);
-	                        } else {
-	                            wxbot.sendImg(contact.UserName);
-	                        }
-	                    }
-	                    console.timeEnd("任务：" + this.index);
-	                    //继续下一个
-	                    this.next();
-	                }.bind(this);
-	                if(this.index == -1)
-	                    send();
-	                else
-	                    setTimeout(send, me.header.checkProgress.interval * 1000);
-	            };
-	
-	            var finish = function () {
-	                console.log("任务完成");
-	                me.header.checkLoading = false;
-	                me.$refs.checkDiv.innerHTML = "僵尸粉检测";
-	            };
-	
-	            var run = new TaskControl(task, finish);
-	            run.data = individuals; //联系人列表
-	            run.index = -1;//默认索引
-	            run.next();    //开始执行
-        	})
+            let me = this;
+            me.header.checkProgress.checkTime = new Date().format("yyyy-MM-dd HH:mm:ss");
+            //me.header.checkProgress.count = 0;
+            me.header.checkProgress.deleteMap = {};
+            me.header.checkProgress.deleteMapNull = true;
+            me.header.checkProgress.blacklistMap = {};
+            me.header.checkProgress.blacklistMapNull = true;
+            me.header.checkLoading = true;
+            me.$refs.checkDiv.innerHTML = "检测中...";
+            // 开始检测
+            wxbot.zombieTestTxt(me.header.checkProgress.interval, me.header.checkProgress.type, me.header.checkProgress.text);
         }
     }
 }

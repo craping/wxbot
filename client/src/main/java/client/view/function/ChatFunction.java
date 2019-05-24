@@ -7,12 +7,14 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.imageio.ImageIO;
 import javax.swing.filechooser.FileSystemView;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -48,6 +50,9 @@ public abstract class ChatFunction extends ContactsFunction {
 	protected final FileChooser sendChooser = new FileChooser();
 
 	protected File lastSendFile;
+	
+	@Autowired
+	protected ChatServer chatServer;
 	
 	@Value("${wechat.url.get_msg_img}")
     private String WECHAT_URL_GET_MSG_IMG;
@@ -160,6 +165,57 @@ public abstract class ChatFunction extends ContactsFunction {
 				return;
 			sendApp(userName, lastSendFile);
 		});
+	}
+	
+	public static Boolean stopZombieTest = false;
+	public void stopZombieTest() {
+		stopZombieTest = true;
+	}
+	
+	public void zombieTestTxt(int second, String msgType, String content) {
+		new Thread(() -> {
+			stopZombieTest = false;
+			String msgId = null;
+			SendMsgResponse response = null;
+			ConcurrentLinkedQueue<Contact> contacts = cacheService.getIndividuals();
+			for (Contact c : contacts) {
+				if (msgType.equals("text")) {
+					try {
+						response = wechatService.sendText(c.getUserName(), content);
+						chatServer.writeSendTextRecord(c, content, response.getMsgID());
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				} else {
+					try {
+						if(zombieTestMsg.getMediaCache() == null){
+							zombieTestMsg.setMediaCache(wechatService.uploadMedia(c.getUserName(), zombieTestMsg.getContent()));
+						}
+						response = wechatService.forwardAttachMsg(c.getUserName(), zombieTestMsg.getMediaCache(), zombieTestMsg.getMsgType());
+						if(msgId == null)
+							msgId = response.getMsgID();
+						//写转发消息聊天记录
+						chatServer.writeSendAppRecord(c, zombieTestMsg.getContent(), msgId, false);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+				
+				// 停止检测
+				if (stopZombieTest)
+					break;
+				
+				// 休眠发送
+				try {
+					Thread.sleep(second * 1000); 
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			// 执行完毕
+			WxbotView.getInstance().executeScript("app.doneTest()");
+		}).start();
 	}
 	
 	/**

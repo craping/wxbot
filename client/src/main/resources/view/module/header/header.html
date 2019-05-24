@@ -38,7 +38,9 @@
             <div slot="content">
                 <div class="ivu-poptip-body-content-inner" style="text-align: left;">检测时间：{{header.checkProgress.checkTime}}</div>
                 <div class="ivu-poptip-body-content-inner" style="text-align: left;">好友总数：{{contacts.individuals.length}}</div>
-                <div class="ivu-poptip-body-content-inner" style="text-align: left;">当前进度：{{header.checkProgress.count}}/{{contacts.individuals.length}}</div>
+                <!--<div class="ivu-poptip-body-content-inner" style="text-align: left;">
+                    当前进度：{{header.checkProgress.count}}/{{contacts.individuals.length}}</div>
+                    -->
                 <tabs value="" :animated="false" size="small" style="height:200px; width: 200px;">
                     <tab-pane label="被删除" icon="ios-trash" name="contact">
                         <Scroll :height="167">
