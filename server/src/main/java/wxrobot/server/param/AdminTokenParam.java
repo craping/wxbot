@@ -25,7 +25,7 @@ public class AdminTokenParam extends StringParam implements SingleParam {
 			return new Result(CustomErrors.USER_NOT_LOGIN);
 		
 		String key = "admin_user_" + token;
-		if (!(new RedisUtil().exists(key))) {
+		if (!(RedisUtil.exists(key))) {
 			return new Result(CustomErrors.USER_NOT_LOGIN);
 		}
 		return Errors.OK;

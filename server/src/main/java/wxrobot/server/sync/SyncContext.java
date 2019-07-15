@@ -45,8 +45,6 @@ public class SyncContext implements SchedulingConfigurer {
 	
 	protected static ObjectMapper MAPPER = new ObjectMapper();
 	
-	private static RedisUtil redisUtil = new RedisUtil();
-	
 	static{
 		MAPPER.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 		MAPPER.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
@@ -68,10 +66,10 @@ public class SyncContext implements SchedulingConfigurer {
 	*/  
 	    
 	public static void putGlobalMsg(SyncMsg msg){
-		Set<String> tokens = redisUtil.keys("user_*");
+		Set<String> tokens = RedisUtil.keys("user_*");
 		tokens.forEach(key -> {
 			try {
-				redisUtil.rpush("queue_"+key.split("_")[1], MAPPER.writeValueAsString(msg));
+				RedisUtil.rpush("queue_"+key.split("_")[1], MAPPER.writeValueAsString(msg));
 			} catch (JsonProcessingException e) {
 				e.printStackTrace();
 			}
@@ -90,7 +88,7 @@ public class SyncContext implements SchedulingConfigurer {
 	public static void putMsg(String token, SyncMsg msg){
 		token = token.contains("_m")?token.split("_")[0]:token+"_m";
 		try {
-			redisUtil.rpush("queue_"+token, MAPPER.writeValueAsString(msg));
+			RedisUtil.rpush("queue_"+token, MAPPER.writeValueAsString(msg));
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
@@ -108,7 +106,7 @@ public class SyncContext implements SchedulingConfigurer {
 	    
 	public static void toMsg(String token, SyncMsg msg){
 		try {
-			redisUtil.rpush("queue_"+token, MAPPER.writeValueAsString(msg));
+			RedisUtil.rpush("queue_"+token, MAPPER.writeValueAsString(msg));
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
@@ -128,9 +126,9 @@ public class SyncContext implements SchedulingConfigurer {
 			queue = "queue_"+session.getToken();
 			currentTime = System.currentTimeMillis();
 			
-			list = redisUtil.lrange(queue, 0, 50);
+			list = RedisUtil.lrange(queue, 0, 50);
 			if(list.size() > 0){
-				redisUtil.ltrim(queue, list.size(), -1);
+				RedisUtil.ltrim(queue, list.size(), -1);
 				 msgs = list.stream().map(s -> {
 					try {
 						return MAPPER.readValue(s, SyncMsg.class);

@@ -41,8 +41,8 @@ export default {
             login_loading: false,
             login_img: require("@/assets/login-bg.jpg"),
             userForm: {
-                username: 'admin',
-                password: '123456'
+                username: '',
+                password: ''
             },
             ruleCustom: {
                 username: [{

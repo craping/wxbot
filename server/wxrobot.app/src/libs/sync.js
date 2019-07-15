@@ -68,20 +68,20 @@ export const syncGlobalKeyWords = (token) => {
 }
 
 export const handling = (token) => {
-    sync(token).then(events => {
-        console.log(events);
-        events.data.forEach(msg => {
-            console.log(msg.biz);
-            console.log(msg.action);
-            if (msg.biz == "SETTING" || msg.biz == "SWITCHS" || msg.biz == "TIPS" || msg.biz == "PERMISSIONS") {
-                syncSetting(token);
-            } else if (msg.biz == "CONTACT") {
-                syncContacts(token);
-            }
-        });
-        handling(token);
-    }, () => {
-        console.log("reject");
-        handling(token);
-    });
+    // sync(token).then(events => {
+    //     console.log(events);
+    //     events.data.forEach(msg => {
+    //         console.log(msg.biz);
+    //         console.log(msg.action);
+    //         if (msg.biz == "SETTING" || msg.biz == "SWITCHS" || msg.biz == "TIPS" || msg.biz == "PERMISSIONS") {
+    //             syncSetting(token);
+    //         } else if (msg.biz == "CONTACT") {
+    //             syncContacts(token);
+    //         }
+    //     });
+    //     handling(token);
+    // }, () => {
+    //     console.log("reject");
+    //     handling(token);
+    // });
 }

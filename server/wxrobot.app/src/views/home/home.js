@@ -12,7 +12,8 @@ export default {
             chatRooms: [],
             loading: true,
             finished: false,
-            token: ''
+            token: '',
+            user:''
         }
     },
     computed: {
@@ -24,6 +25,7 @@ export default {
     },
     mounted() {
         this.token = getParams(window.location.href).token;
+        this.user = getParams(window.location.href).user;
         this.getContacts();
     },
     methods: {
@@ -33,7 +35,8 @@ export default {
                 path: '/setting',
                 query: {
                     seq: seq,
-                    token: this.token
+                    token: this.token,
+                    user: this.user
                 }
             })
         },

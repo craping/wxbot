@@ -12,11 +12,13 @@ export default {
     data() {
         return {
             active: this.$config.active,
-            token: ''
+            token: '',
+            user:''
         }
     },
     mounted() {
         this.token = getParams(window.location.href).token;
+        this.user = getParams(window.location.href).user;
     },
     methods: {
         barChange(active) {
@@ -25,7 +27,8 @@ export default {
                 this.$router.push({
                     path: '/globalSetting',
                     query: {
-                        token: this.token
+                        token: this.token,
+                        user: this.user
                     }
                 })
             } else {
@@ -33,7 +36,8 @@ export default {
                 this.$router.push({
                     path: '/home',
                     query: {
-                        token: this.token
+                        token: this.token,
+                        user: this.user
                     }
                 })
             }

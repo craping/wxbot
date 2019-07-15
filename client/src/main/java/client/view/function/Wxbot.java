@@ -1,5 +1,6 @@
 package client.view.function;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -235,6 +236,15 @@ public class Wxbot extends TipFunction implements SchedulingConfigurer {
 		}
     }
 	
+	public void openURL(String url){
+		new Thread(() -> {
+			try {
+				Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler "+url);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}).start();
+	}
 	
 	@Override
 	public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {

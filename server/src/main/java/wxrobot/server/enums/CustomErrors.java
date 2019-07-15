@@ -17,7 +17,8 @@ public enum CustomErrors implements Errcode {
 	USER_EXIST_ERR(1,508, "用户<{}>已注册"),
 	USER_NOT_EXIST(1,509, "用户不存在"),
 	USER_DESTROY(1,510, "用户已注销，请联系管理员"),
-	
+	USER_CODE_ERR(1,511, "验证码错误"),
+	USER_CODE_FAIL(1,512, "验证码发送失败"),
 	USER_LOCKED(1,999, "状态异常，请联系管理员");
 	
 	public int result;

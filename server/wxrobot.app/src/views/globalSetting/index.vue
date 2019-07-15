@@ -48,6 +48,11 @@
         </van-cell>
         <van-cell title="全域定时群发设置" icon="setting-o" is-link v-show="globalTimers" @click="goGlobalTimer" />
     </van-cell-group>
+    <br/>
+    <van-cell-group>
+        <van-cell title="充值" is-link :url="'http://qd.qyt8.com/u.php?m=Home&c=Order&a=form&token='+token+'&username='+user" />
+    </van-cell-group>
+
     <footerNav></footerNav>
 </section>
 </template>

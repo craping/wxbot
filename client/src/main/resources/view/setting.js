@@ -8,8 +8,9 @@ $script('lib/jquery/jquery-3.3.1.min.js', 'jquery', function (){
     $script(['lib/bootstrap-4.2.1-dist/js/popper.min.js', 'lib/bootstrap-4.2.1-dist/js/bootstrap.min.js'], 'bootstrap');
 });
 $script("lib/crypto.min.js", "crypto");
+$script("lib/md5.min.js", "md5");
 $script("lib/common.js", "common");
-$script.ready(["vue-plugs", "bootstrap", "crypto", "common"], function () {
+$script.ready(["vue-plugs", "bootstrap", "crypto", "md5", "common"], function () {
     $("#user").load("settingModule/user/user.html", {}, function () {
         $script("settingModule/user/user.js", "user");
     });
@@ -132,6 +133,16 @@ $script.ready(["user", "general", "seqs", "globalTimer", "globalKeyword"], funct
             });
         },
         init(){
+            Web.ajax("api/getPublicKey", {
+                success: function (data) {
+                    Crypto.setRSAPublicKey(data.info.n);
+                    Crypto.encryptFlag = data.info.id;
+                },
+                fail: function (data) {
+                },
+                error:function(XMLHttpRequest, textStatus, errorThrown){
+                }
+            });
             Web.wxHost = wxbot.getHostUrl();
             Web.owner = wxbot.getOwner();
             Web.user = wxbot.getUserInfo();

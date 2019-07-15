@@ -16,11 +16,13 @@ export default {
                 globalKeyword: false,
                 globalTimer: false,
             },
-            token: ''
+            token: '',
+            user:''
         }
     },
     mounted() { 
         this.token = getParams(window.location.href).token;
+        this.user = getParams(window.location.href).user;
         this.loadSetting();
     },
     methods: {
@@ -80,7 +82,8 @@ export default {
             this.$router.push({
                 path: '/globalTimer',
                 query: {
-                    token: this.token
+                    token: this.token,
+                    user: this.user
                 }
             })
         },
@@ -89,7 +92,8 @@ export default {
             this.$router.push({
                 path: '/globalKeyword',
                 query: {
-                    token: this.token
+                    token: this.token,
+                    user: this.user
                 }
             })
         },

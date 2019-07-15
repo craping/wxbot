@@ -68,7 +68,7 @@ public class ContactPump extends DataPump<FullHttpRequest, Channel> {
 	)
 	public Errcode test(JSONObject params) throws ErrcodeException {
 		String key = "user_" + params.getString("token");
-		if (!(new RedisUtil().exists(key))) 
+		if (!(RedisUtil.exists(key))) 
 			return new Result(CustomErrors.USER_NOT_LOGIN);
 		
 		Map<Object, Object> userMap = redisTemplate.opsForHash().entries(key);

@@ -16,11 +16,13 @@ export default {
             timers: false,
             forwards: false,
             setting: {},
-            token: ''
+            token: '',
+            user: ''
         }
     },
     mounted() {
         this.token = getParams(window.location.href).token;
+        this.user = getParams(window.location.href).user;
         this.seq = getParams(window.location.href).seq;
         this.loadSetting();
     },
@@ -31,7 +33,8 @@ export default {
                 path: '/'+ mode,
                 query: {
                     seq: seq,
-                    token: this.token
+                    token: this.token,
+                    user: this.user
                 }
             })
         },

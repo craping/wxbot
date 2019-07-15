@@ -38,8 +38,6 @@ public class BaseServer {
 		JSON_MAPPER.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
 		JSON_MAPPER.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
 	}
-	@Autowired
-	protected RedisUtil redisUtil;
 	
 	@Autowired
 	protected MongoTemplate mongoTemplate;
@@ -55,11 +53,11 @@ public class BaseServer {
 		String token = params.get("token").toString().split("_")[0];
 		String key = "user_"+token;
 		
-		if(!redisUtil.exists(key)) 
+		if(!RedisUtil.exists(key)) 
 			throw new ValidationException(CustomErrors.USER_NOT_LOGIN);
 		
 		User user = new User();
-		user.setId(redisUtil.hget(key, "uid"));
+		user.setId(RedisUtil.hget(key, "uid"));
 		user.setToken(token);
 		return user;
 	}
@@ -68,7 +66,7 @@ public class BaseServer {
 		if(!params.containsKey(new TokenParam().getValue()))
 			throw new ValidationException(CustomErrors.USER_PARAM_NULL.setArgs("token"));
 		
-		String userInfoJson = redisUtil.hget("user_"+params.get("token").toString().split("_")[0], "userInfo");
+		String userInfoJson = RedisUtil.hget("user_"+params.get("token").toString().split("_")[0], "userInfo");
 		try {
 			return JSON_MAPPER.readValue(userInfoJson, UserInfo.class);
 		} catch (IOException e) {
@@ -105,7 +103,7 @@ public class BaseServer {
 			return false;
 		// redis 没有查询到 ->未登录
 		String key = "user_" + token;
-		if (!(new RedisUtil().exists(key))) 
+		if (!(RedisUtil.exists(key))) 
 			return false;
 		
 		return true;

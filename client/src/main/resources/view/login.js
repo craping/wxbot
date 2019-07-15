@@ -10,6 +10,7 @@ $script.ready(["vue", "iview", "jquery", "crypto", "md5", "common"], function ()
         el: "#app",
         data: {
             skin: "dark",
+            tab:"login",
             modal:false,
             user:{},
             users:[],
@@ -27,6 +28,14 @@ $script.ready(["vue", "iview", "jquery", "crypto", "md5", "common"], function ()
                 repeatPwd:"",
                 code:"",
                 loading:false,
+                disabled:false,
+                getMessageText:"获取验证码",
+                error:{}
+            },
+            Reset:{
+                mobile:"",
+                code:"",
+                loading:true,
                 disabled:false,
                 getMessageText:"获取验证码",
                 error:{}
@@ -182,6 +191,8 @@ $script.ready(["vue", "iview", "jquery", "crypto", "md5", "common"], function ()
                             },
                             success: function (data) {
                                 me.Register.loading = false;
+                                me.$refs.Register.resetFields();
+                                me.tab = "login";
                                 me.$Message.success("注册成功");
                             },
                             fail: function (data) {
@@ -197,18 +208,122 @@ $script.ready(["vue", "iview", "jquery", "crypto", "md5", "common"], function ()
                     }
                 })
             },
-            seedMessage(){
+            registerCode(){
                 const me = this;
-                me.Register.disabled = true;
-                let i = 30;
-                let timer = setInterval(() => {
-                    me.Register.getMessageText = "获取验证码("+(i--)+"s)";
-                    if(i <= 0){
-                        clearInterval(timer);
-                        me.Register.disabled = false;
-                        me.Register.getMessageText = "获取验证码";
+                me.$refs.Register.validateField("mobile", (valid) => {
+                    if (!valid && !me.Register.disabled) {
+                        me.Register.disabled = true;
+                        Web.ajax("user/registerCode", {
+                            data:{
+                                user_name:me.Register.mobile
+                            },
+                            success: function (data) {
+                                let i = 60;
+                                let timer = setInterval(() => {
+                                    me.Register.getMessageText = "获取验证码("+(i--)+"s)";
+                                    if(i <= 0){
+                                        clearInterval(timer);
+                                        me.Register.disabled = false;
+                                        me.Register.getMessageText = "获取验证码";
+                                    }
+                                }, 1000);
+                                me.$Message.success("验证码发送成功");
+                            },
+                            fail: function (data) {
+                                me.Register.disabled = false;
+                                me.$Message.error("验证码发送失败："+data.msg);
+                            },
+                            error:function(XMLHttpRequest, textStatus, errorThrown){
+                                me.Register.disabled = false;
+                                me.$Message.error("验证码发送失败:"+textStatus);
+                            }
+                        });
                     }
-                }, 1000);
+                });
+            },
+            resetModel(){
+                const me = this;
+                me.modal = true;
+                me.$refs.Reset.resetFields();
+            },
+            resetCode(){
+                const me = this;
+                
+                me.$refs.Reset.validateField("mobile", (valid) => {
+                    if (!valid && !me.Reset.disabled) {
+                        me.Reset.disabled = true;
+                        Web.ajax("user/resetCode", {
+                            data:{
+                                user_name:me.Reset.mobile
+                            },
+                            success: function (data) {
+                                let i = 60;
+                                let timer = setInterval(() => {
+                                    me.Reset.getMessageText = "获取验证码("+(i--)+"s)";
+                                    if(i <= 0){
+                                        clearInterval(timer);
+                                        me.Reset.disabled = false;
+                                        me.Reset.getMessageText = "获取验证码";
+                                    }
+                                }, 1000);
+                                me.$Message.success("验证码发送成功");
+                            },
+                            fail: function (data) {
+                                me.Reset.disabled = false;
+                                me.$Message.error("验证码发送失败："+data.msg);
+                            },
+                            error:function(XMLHttpRequest, textStatus, errorThrown){
+                                me.Reset.disabled = false;
+                                me.$Message.error("验证码发送失败:"+textStatus);
+                            }
+                        });
+                    }
+                });
+            },
+            resetPassword(){
+                const me = this;
+                
+                me.$refs.Reset.validate((valid) => {
+                    if (valid) {
+                        Web.ajax("user/resetPwd", {
+                            data:{
+                                user_name:me.Reset.mobile,
+                                code:me.Reset.code
+                            },
+                            success: function (data) {
+                                me.modal = false;
+                                me.Reset.loading = false;
+                                me.$nextTick(() => {
+                                    me.Reset.loading = true;
+                                });
+                                me.$Message.success({
+                                    content:"您的密码已经重置为<"+data.info+">请牢记",
+                                    duration:0,
+                                    closable: true
+                                });
+                            },
+                            fail: function (data) {
+                                me.Reset.loading = false;
+                                me.$nextTick(() => {
+                                    me.Reset.loading = true;
+                                });
+                                me.$Message.error("重置密码失败："+data.msg);
+                            },
+                            error:function(XMLHttpRequest, textStatus, errorThrown){
+                                me.Reset.loading = false;
+                                me.$nextTick(() => {
+                                    me.Reset.loading = true;
+                                });
+                                me.$Message.error("重置密码失败:"+textStatus);
+                            }
+                        });
+                    } else {
+                        me.Reset.loading = false;
+                        me.$nextTick(() => {
+                            me.Reset.loading = true;
+                        });
+                    }
+                });
             },
             call(){
                 wxbot.call(function(data){

@@ -252,7 +252,7 @@ $script.ready(["header", "contacts", "chat", "keyword", "tip", "timer", "info"],
             Web.owner = wxbot.getOwner();
             Web.user = wxbot.getUserInfo();
             this.chat.ownerHeadImg = Web.wxHost + Web.owner.HeadImgUrl;
-            this.header.wapSite.url = Web.serverURL+":88/#/home?token="+Web.user.token;
+            this.header.wapSite.url = Web.serverURL+":88/#/home?token="+Web.user.token+"&user="+Web.user.userInfo.userName;
             new QRCode(document.getElementById("wapSite"), this.header.wapSite.url);
             
             this.syncSetting();

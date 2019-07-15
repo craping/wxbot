@@ -64,4 +64,23 @@
             </div>
         </div>
     </form-item>
+    <form-item label="修改密码" class="mb-0">
+        <i-Form ref="Pwd" :model="user.pwd" :rules="user.ruleInline" class="w-75">
+            <Form-Item prop="oldPwd" class="mb-3">
+                <i-Input prefix="ios-lock" type="password" v-model="user.pwd.oldPwd" placeholder="当前密码"></i-Input>
+            </Form-Item>
+            <Form-Item prop="newPwd" class="mb-3">
+                <i-Input prefix="ios-lock" type="password" v-model="user.pwd.newPwd" placeholder="新密码"></i-Input>
+            </Form-Item>
+            <Form-Item prop="repeatPwd" class="mb-3">
+                <i-Input prefix="ios-lock" type="password" v-model="user.pwd.repeatPwd" placeholder="确认新密码"></i-Input>
+            </Form-Item>
+            <Form-Item class="mb-0">
+                <i-Button type="primary" :loading="user.pwd.loading" @click="changePwd" long>确认修改</i-Button>
+            </Form-Item>
+        </i-Form>
+    </form-item>
 </i-form>
+<br/>
+<br/>
+<br/>
