@@ -9,10 +9,8 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-import lombok.Data;
 import wxrobot.dao.entity.field.Msg;
 
-@Data
 @Document(collection = "robot_tip")
 @JsonInclude(Include.NON_NULL)
 public class Tip {
@@ -26,4 +24,30 @@ public class Tip {
 	
 	@Field
 	private Map<String, Map<String, Msg>> tipMap;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public Map<String, Map<String, Msg>> getTipMap() {
+		return tipMap;
+	}
+
+	public void setTipMap(Map<String, Map<String, Msg>> tipMap) {
+		this.tipMap = tipMap;
+	}
+	
+	
 }

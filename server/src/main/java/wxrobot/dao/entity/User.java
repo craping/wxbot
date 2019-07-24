@@ -4,7 +4,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import lombok.Data;
 import wxrobot.dao.entity.field.UserInfo;
 
 /**
@@ -13,7 +12,6 @@ import wxrobot.dao.entity.field.UserInfo;
  * @author wr
  *
  */
-@Data
 @Document(collection = "robot_user")
 public class User {
 
@@ -25,4 +23,24 @@ public class User {
 	/** 用户token */
 	@Field
 	private String token;
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
+	public UserInfo getUserInfo() {
+		return userInfo;
+	}
+	public void setUserInfo(UserInfo userInfo) {
+		this.userInfo = userInfo;
+	}
+	public String getToken() {
+		return token;
+	}
+	public void setToken(String token) {
+		this.token = token;
+	}
+	
+	
 }

@@ -1,14 +1,11 @@
 package wxrobot.dao.entity.field;
 
-import lombok.Data;
-
 /**
  * 联系人详情
  * 
  * @author wr
  *
  */
-@Data
 public class ContactInfo {
 
 	public ContactInfo() {
@@ -23,4 +20,29 @@ public class ContactInfo {
 	private String seq;
 	private String nickName;
 	private String headImgUrl;
+	public String getSeq() {
+		return seq;
+	}
+
+	public void setSeq(String seq) {
+		this.seq = seq;
+	}
+
+	public String getNickName() {
+		return nickName;
+	}
+
+	public void setNickName(String nickName) {
+		this.nickName = nickName;
+	}
+
+	public String getHeadImgUrl() {
+		return headImgUrl;
+	}
+
+	public void setHeadImgUrl(String headImgUrl) {
+		this.headImgUrl = headImgUrl;
+	}
+	
+	
 }

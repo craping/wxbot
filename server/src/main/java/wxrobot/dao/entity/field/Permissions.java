@@ -1,8 +1,5 @@
 package wxrobot.dao.entity.field;
 
-import lombok.Data;
-
-  
 /**  
 * @ClassName= Permissions  
 * @Description= 用户权限实体类
@@ -11,7 +8,6 @@ import lombok.Data;
 *    
 */  
     
-@Data
 public class Permissions {
 	
 	public Permissions() {
@@ -115,4 +111,136 @@ public class Permissions {
 	*/  
 	    
 	private Boolean wapSite;
+
+
+	public Boolean getZombieTest() {
+		return zombieTest;
+	}
+
+
+	public void setZombieTest(Boolean zombieTest) {
+		this.zombieTest = zombieTest;
+	}
+
+
+	public Boolean getChat() {
+		return chat;
+	}
+
+
+	public void setChat(Boolean chat) {
+		this.chat = chat;
+	}
+
+
+	public Boolean getTuring() {
+		return turing;
+	}
+
+
+	public void setTuring(Boolean turing) {
+		this.turing = turing;
+	}
+
+
+	public Boolean getForward() {
+		return forward;
+	}
+
+
+	public void setForward(Boolean forward) {
+		this.forward = forward;
+	}
+
+
+	public Boolean getKeyword() {
+		return keyword;
+	}
+
+
+	public void setKeyword(Boolean keyword) {
+		this.keyword = keyword;
+	}
+
+
+	public Boolean getGlobalKeyword() {
+		return globalKeyword;
+	}
+
+
+	public void setGlobalKeyword(Boolean globalKeyword) {
+		this.globalKeyword = globalKeyword;
+	}
+
+
+	public Boolean getTimer() {
+		return timer;
+	}
+
+
+	public void setTimer(Boolean timer) {
+		this.timer = timer;
+	}
+
+
+	public Boolean getGlobalTimer() {
+		return globalTimer;
+	}
+
+
+	public void setGlobalTimer(Boolean globalTimer) {
+		this.globalTimer = globalTimer;
+	}
+
+
+	public Boolean getAcceptFriend() {
+		return acceptFriend;
+	}
+
+
+	public void setAcceptFriend(Boolean acceptFriend) {
+		this.acceptFriend = acceptFriend;
+	}
+
+
+	public Boolean getChatRoomFoundTip() {
+		return chatRoomFoundTip;
+	}
+
+
+	public void setChatRoomFoundTip(Boolean chatRoomFoundTip) {
+		this.chatRoomFoundTip = chatRoomFoundTip;
+	}
+
+
+	public Boolean getMemberJoinTip() {
+		return memberJoinTip;
+	}
+
+
+	public void setMemberJoinTip(Boolean memberJoinTip) {
+		this.memberJoinTip = memberJoinTip;
+	}
+
+
+	public Boolean getMemberLeftTip() {
+		return memberLeftTip;
+	}
+
+
+	public void setMemberLeftTip(Boolean memberLeftTip) {
+		this.memberLeftTip = memberLeftTip;
+	}
+
+
+	public Boolean getWapSite() {
+		return wapSite;
+	}
+
+
+	public void setWapSite(Boolean wapSite) {
+		this.wapSite = wapSite;
+	}
+	
+	
 }

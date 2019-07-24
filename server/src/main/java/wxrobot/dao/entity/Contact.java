@@ -6,7 +6,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import lombok.Data;
 import wxrobot.dao.entity.field.ContactInfo;
 
 /**
@@ -16,7 +15,6 @@ import wxrobot.dao.entity.field.ContactInfo;
  * @author wr
  *
  */
-@Data
 @Document(collection = "robot_contact")
 public class Contact {
 
@@ -29,4 +27,30 @@ public class Contact {
 	private List<ContactInfo> individuals;
 	@Field
 	private List<ContactInfo> chatRooms;
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
+	public String getUid() {
+		return uid;
+	}
+	public void setUid(String uid) {
+		this.uid = uid;
+	}
+	public List<ContactInfo> getIndividuals() {
+		return individuals;
+	}
+	public void setIndividuals(List<ContactInfo> individuals) {
+		this.individuals = individuals;
+	}
+	public List<ContactInfo> getChatRooms() {
+		return chatRooms;
+	}
+	public void setChatRooms(List<ContactInfo> chatRooms) {
+		this.chatRooms = chatRooms;
+	}
+	
+	
 }

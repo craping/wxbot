@@ -4,15 +4,12 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import lombok.Data;
-
 /**
  * 管理员
  * 
  * @author
  *
  */
-@Data
 @Document(collection = "robot_admin")
 public class AdminUser {
 
@@ -25,4 +22,30 @@ public class AdminUser {
 	private String userPwd;
 	@Field
 	private String token;
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
+	public String getUserName() {
+		return userName;
+	}
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+	public String getUserPwd() {
+		return userPwd;
+	}
+	public void setUserPwd(String userPwd) {
+		this.userPwd = userPwd;
+	}
+	public String getToken() {
+		return token;
+	}
+	public void setToken(String token) {
+		this.token = token;
+	}
+	
+	
 }
