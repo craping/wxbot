@@ -23,9 +23,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
+import com.alibaba.fastjson.JSONObject;
+
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.FullHttpRequest;
-import net.sf.json.JSONObject;
 import wxrobot.biz.server.AdminServer;
 import wxrobot.dao.entity.AdminUser;
 import wxrobot.server.enums.CustomErrors;
@@ -114,7 +115,7 @@ public class AdminPump extends DataPump<FullHttpRequest, Channel> {
 		}
 	)
 	public Errcode userInfo (JSONObject params) {
-		String key = "admin_user_" + params.optString("token");
+		String key = "admin_user_" + params.getString("token");
 		Map<Object, Object> userMap = redisTemplate.opsForHash().entries(key);
 		if (userMap.isEmpty() || userMap == null)
 			return new DataResult(CustomErrors.USER_NOT_LOGIN);

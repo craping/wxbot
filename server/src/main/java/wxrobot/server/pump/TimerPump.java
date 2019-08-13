@@ -24,9 +24,10 @@ import org.crap.jrain.mvc.netty.decoder.Part;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.alibaba.fastjson.JSONObject;
+
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.FullHttpRequest;
-import net.sf.json.JSONObject;
 import wxrobot.biz.server.TimerServer;
 import wxrobot.dao.entity.field.ScheduleMsg;
 import wxrobot.dao.entity.field.UserInfo;
@@ -59,7 +60,7 @@ public class TimerPump extends DataPump<FullHttpRequest, Channel> {
 		
 		UserInfo userInfo = timerServer.getUserInfo(params);
 		
-		Map<String, List<ScheduleMsg>> timerMap = timerServer.getTimers(userInfo.getUserName(), params.optString("seq", null));
+		Map<String, List<ScheduleMsg>> timerMap = timerServer.getTimers(userInfo.getUserName(), params.getString("seq"));
 		
 		return new DataResult(Errors.OK, new Data(timerMap));
 	}

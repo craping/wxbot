@@ -21,11 +21,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
+import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.core.type.TypeReference;
 
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.FullHttpRequest;
-import net.sf.json.JSONObject;
 import wxrobot.biz.server.ContactServer;
 import wxrobot.biz.server.KeywordServer;
 import wxrobot.biz.server.SettingServer;

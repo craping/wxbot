@@ -15,9 +15,10 @@ import org.crap.jrain.core.validate.annotation.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.alibaba.fastjson.JSONObject;
+
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.FullHttpRequest;
-import net.sf.json.JSONObject;
 import wxrobot.biz.server.NoticeServer;
 import wxrobot.dao.entity.Notice;
 import wxrobot.server.param.AdminTokenParam;
@@ -66,9 +67,9 @@ public class NoticePump extends DataPump<FullHttpRequest, Channel> {
 		
 		// 如果勾选发布，并且发布时间为未设定时间 则设定时间为当前时间
 		if (params.getBoolean("state")) {
-			notice.setSendTime(Tools.isStrEmpty(params.optString("sendTime")) ? Tools.getTimestamp() : Tools.dateUTCToStamp(params.getString("sendTime")));
+			notice.setSendTime(Tools.isStrEmpty(params.getString("sendTime")) ? Tools.getTimestamp() : Tools.dateUTCToStamp(params.getString("sendTime")));
 		} else {
-			notice.setSendTime(Tools.isStrEmpty(params.optString("sendTime")) ? "" : Tools.dateUTCToStamp(params.getString("sendTime")));
+			notice.setSendTime(Tools.isStrEmpty(params.getString("sendTime")) ? "" : Tools.dateUTCToStamp(params.getString("sendTime")));
 		}
 		
 		notice = noticeServer.insert(notice);

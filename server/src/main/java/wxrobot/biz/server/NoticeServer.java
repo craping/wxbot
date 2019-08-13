@@ -10,7 +10,8 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
-import net.sf.json.JSONObject;
+import com.alibaba.fastjson.JSONObject;
+
 import wxrobot.dao.entity.Notice;
 import wxrobot.server.utils.Tools;
 
@@ -79,14 +80,14 @@ public class NoticeServer extends BaseServer {
 	 * @return
 	 */
 	public DataResult getNoticeList(JSONObject params) {
-		Page page = new Page(params.optInt("curPage", 1), params.optInt("pageSize", 10));
+		Page page = new Page((Integer)params.getOrDefault("curPage", 1), (Integer)params.getOrDefault("pageSize", 10));
 		Query query = new Query();
-		if (!Tools.isStrEmpty(params.optString("title"))) {
-			Pattern pattern = Pattern.compile("^.*" + params.optString("title") + ".*$", Pattern.CASE_INSENSITIVE);
+		if (!Tools.isStrEmpty(params.getString("title"))) {
+			Pattern pattern = Pattern.compile("^.*" + params.getString("title") + ".*$", Pattern.CASE_INSENSITIVE);
 			query.addCriteria(Criteria.where("title").regex(pattern));
 		}
-		if (!Tools.isStrEmpty(params.optString("state"))) {
-			query.addCriteria(Criteria.where("state").is(params.optBoolean("state")));
+		if (!Tools.isStrEmpty(params.getString("state"))) {
+			query.addCriteria(Criteria.where("state").is(params.getBoolean("state")));
 		}
 		return findPage(page, query, Notice.class);
 	}
@@ -107,9 +108,9 @@ public class NoticeServer extends BaseServer {
 		// 如果勾选发布，并且发布时间为未设定时间 则设定时间为当前时间
 		String sendTime = "";
 		if (params.getBoolean("state")) {
-			sendTime = Tools.isStrEmpty(params.optString("sendTime")) ? Tools.getTimestamp() : Tools.dateUTCToStamp(params.getString("sendTime"));
+			sendTime = Tools.isStrEmpty(params.getString("sendTime")) ? Tools.getTimestamp() : Tools.dateUTCToStamp(params.getString("sendTime"));
 		} else {
-			sendTime = Tools.isStrEmpty(params.optString("sendTime")) ? "" : Tools.dateUTCToStamp(params.getString("sendTime"));
+			sendTime = Tools.isStrEmpty(params.getString("sendTime")) ? "" : Tools.dateUTCToStamp(params.getString("sendTime"));
 		}
 		
 		update.set("sendTime", sendTime);

@@ -26,9 +26,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.FullHttpRequest;
-import net.sf.json.JSONObject;
 import wxrobot.biz.server.NoticeServer;
 import wxrobot.biz.server.SettingServer;
 import wxrobot.biz.server.UserServer;
@@ -229,7 +231,7 @@ public class UserPump extends DataPump<FullHttpRequest, Channel> {
 		user.getUserInfo().setUserPwd(null);
 		Map<Object, Object> userMap = new HashMap<Object, Object>();
 		userMap.put("uid", user.getId());
-		userMap.put("userInfo", JSONObject.fromObject(user.getUserInfo()).toString());
+		userMap.put("userInfo", JSON.toJSONString(user.getUserInfo()));
 		userMap.put("token", new_token);
 		userMap.put("loginTime", String.valueOf(new Date().getTime()));
 		userMap.put("loginIP", ip);
@@ -246,7 +248,7 @@ public class UserPump extends DataPump<FullHttpRequest, Channel> {
 		}
 	)
 	public Errcode getUserInfo (JSONObject params) {
-		if (Tools.isStrEmpty(params.optString("token")))
+		if (Tools.isStrEmpty(params.getString("token")))
 			return new Result(CustomErrors.USER_PARAM_NULL.setArgs("token"));
 		
 		String key = "user_" + params.getString("token").split("_")[0];
@@ -255,7 +257,7 @@ public class UserPump extends DataPump<FullHttpRequest, Channel> {
 		
 		Map<Object, Object> userMap = redisTemplate.opsForHash().entries(key);
 		userMap.put("loginTime", Long.valueOf(userMap.get("loginTime").toString()));
-		userMap.put("userInfo", JSONObject.fromObject(userMap.get("userInfo")));
+		userMap.put("userInfo", JSON.toJSON(userMap.get("userInfo")));
 		return new DataResult(Errors.OK, new Data(userMap));
 	}
 	

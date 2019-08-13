@@ -10,7 +10,8 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
-import net.sf.json.JSONObject;
+import com.alibaba.fastjson.JSONObject;
+
 import wxrobot.dao.entity.AdminUser;
 import wxrobot.dao.entity.User;
 import wxrobot.server.utils.Tools;
@@ -47,20 +48,20 @@ public class AdminServer extends BaseServer {
 	 * @return
 	 */
 	public DataResult getUserList(JSONObject params) {
-		Page page = new Page(params.optInt("curPage", 1), params.optInt("pageSize", 10));
+		Page page = new Page((Integer)params.getOrDefault("curPage", 1), (Integer)params.getOrDefault("pageSize", 10));
 		Query query = new Query();
-		if (!Tools.isStrEmpty(params.optString("userName"))) {
-			Pattern pattern = Pattern.compile("^.*" + params.optString("userName") + ".*$", Pattern.CASE_INSENSITIVE);
+		if (!Tools.isStrEmpty(params.getString("userName"))) {
+			Pattern pattern = Pattern.compile("^.*" + params.getString("userName") + ".*$", Pattern.CASE_INSENSITIVE);
 			query.addCriteria(Criteria.where("userInfo.userName").regex(pattern));
 		}
-		if (!Tools.isStrEmpty(params.optString("phoneState"))) {
-			query.addCriteria(Criteria.where("userInfo.phoneState").is(params.optBoolean("phoneState")));
+		if (!Tools.isStrEmpty(params.getString("phoneState"))) {
+			query.addCriteria(Criteria.where("userInfo.phoneState").is(params.getBoolean("phoneState")));
 		}
-		if (!Tools.isStrEmpty(params.optString("serverState"))) {
-			query.addCriteria(Criteria.where("userInfo.serverState").is(params.optBoolean("serverState")));
+		if (!Tools.isStrEmpty(params.getString("serverState"))) {
+			query.addCriteria(Criteria.where("userInfo.serverState").is(params.getBoolean("serverState")));
 		}
-		if (!Tools.isStrEmpty(params.optString("destroy"))) {
-			query.addCriteria(Criteria.where("userInfo.destroy").is(params.optBoolean("destroy")));
+		if (!Tools.isStrEmpty(params.getString("destroy"))) {
+			query.addCriteria(Criteria.where("userInfo.destroy").is(params.getBoolean("destroy")));
 		}
 		return findPage(page, query, User.class);
 	}
@@ -73,7 +74,7 @@ public class AdminServer extends BaseServer {
 	 */
 	public long extension(JSONObject params) {
 		Query query = new Query();
-		query.addCriteria(Criteria.where("_id").is(params.optString("id")));
+		query.addCriteria(Criteria.where("_id").is(params.getString("id")));
 		Update update = Update.update("userInfo.serverEnd", Tools.dateToStamp(params.getString("server_end"), "yyyy-MM-dd HH:mm"));
 		return mongoTemplate.updateFirst(query, update, User.class).getModifiedCount();
 	}
@@ -86,7 +87,7 @@ public class AdminServer extends BaseServer {
 	 */
 	public long resetPwd(JSONObject params) {
 		Query query = new Query();
-		query.addCriteria(Criteria.where("_id").is(params.optString("id")));
+		query.addCriteria(Criteria.where("_id").is(params.getString("id")));
 		Update update = Update.update("userInfo.userPwd", Coder.encryptMD5("888888"));
 		return mongoTemplate.updateFirst(query, update, User.class).getModifiedCount();
 	}
@@ -99,8 +100,8 @@ public class AdminServer extends BaseServer {
 	 */
 	public long destroy(JSONObject params) {
 		Query query = new Query();
-		query.addCriteria(Criteria.where("_id").is(params.optString("id")));
-		Update update = Update.update("userInfo.destroy", params.optBoolean("destroy"));
+		query.addCriteria(Criteria.where("_id").is(params.getString("id")));
+		Update update = Update.update("userInfo.destroy", params.getBoolean("destroy"));
 		return mongoTemplate.updateFirst(query, update, User.class).getModifiedCount();
 	}
 
@@ -112,8 +113,8 @@ public class AdminServer extends BaseServer {
 	 */
 	public long lockUser(JSONObject params) {
 		Query query = new Query();
-		query.addCriteria(Criteria.where("_id").is(params.optString("id")));
-		Update update = Update.update("userInfo.serverState", params.optBoolean("server_state"));
+		query.addCriteria(Criteria.where("_id").is(params.getString("id")));
+		Update update = Update.update("userInfo.serverState", params.getBoolean("server_state"));
 		return mongoTemplate.updateFirst(query, update, User.class).getModifiedCount();
 	}
 }

@@ -23,9 +23,10 @@ import org.crap.jrain.mvc.netty.decoder.Part;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.alibaba.fastjson.JSONObject;
+
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.FullHttpRequest;
-import net.sf.json.JSONObject;
 import wxrobot.biz.server.TipServer;
 import wxrobot.dao.entity.field.Msg;
 import wxrobot.dao.entity.field.UserInfo;
@@ -59,7 +60,7 @@ public class TipPump extends DataPump<FullHttpRequest, Channel> {
 		
 		UserInfo userInfo = tipServer.getUserInfo(params);
 		
-		Map<String, Map<String, Msg>> tips = tipServer.getTips(userInfo.getUserName(), params.optString("seq", null));
+		Map<String, Map<String, Msg>> tips = tipServer.getTips(userInfo.getUserName(), params.getString("seq"));
 		
 		return new DataResult(Errors.OK, new Data(tips));
 	}

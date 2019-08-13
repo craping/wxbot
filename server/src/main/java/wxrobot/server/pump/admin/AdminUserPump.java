@@ -20,9 +20,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.FullHttpRequest;
-import net.sf.json.JSONObject;
 import wxrobot.biz.server.AdminServer;
 import wxrobot.biz.server.BaseServer;
 import wxrobot.biz.server.SettingServer;
@@ -134,7 +136,7 @@ public class AdminUserPump extends DataPump<FullHttpRequest, Channel> {
 			
 			user = userServer.find(params.getString("id"));
 			String key = "user_" + user.getToken();
-			redisTemplate.opsForHash().put(key, "userInfo", JSONObject.fromObject(user.getUserInfo()).toString());
+			redisTemplate.opsForHash().put(key, "userInfo", JSON.toJSONString(user.getUserInfo()));
 		}
 		return new DataResult(Errors.OK);
 	}
